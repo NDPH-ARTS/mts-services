@@ -9,7 +9,7 @@
     <relativePath/>  
     <!-- lookup parent from repository --> 
   </parent>  
-  <groupId>com.microsoft</groupId>  
+  <groupId>uk.ac.ox.ctsu</groupId>
   <artifactId>java-base-app</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
   <name>java-base-app</name>  
