@@ -9,11 +9,11 @@
     <relativePath/>  
     <!-- lookup parent from repository --> 
   </parent>  
-  <groupId>ndph</groupId>  
+  <groupId>com.microsoft</groupId>  
   <artifactId>java-base-app</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
   <name>java-base-app</name>  
-  <description>Base project for Spring Boot</description>  
+  <description>Base project for Azure Spring Boot</description>  
   <properties> 
     <java.version>11</java.version>  
     <azure.version>2.3.5</azure.version>
@@ -29,7 +29,11 @@
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
       </exclusions>
-    </dependency> 
+    </dependency>  
+    <dependency> 
+      <groupId>com.microsoft.azure</groupId>  
+      <artifactId>azure-keyvault-secrets-spring-boot-starter</artifactId> 
+    </dependency>  
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-test</artifactId>  
