@@ -13,7 +13,7 @@
   <artifactId>java-base-app</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
   <name>java-base-app</name>  
-  <description>Base project for Spring Boot</description>  
+  <description>Base project for Spring Boot and Spring Cloud</description>
   <properties> 
     <java.version>11</java.version>  
     <azure.version>2.3.5</azure.version>
