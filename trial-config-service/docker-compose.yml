@@ -1,0 +1,55 @@
+version: '3'
+services:
+  trial-config-service:
+    build: .
+    image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
+    container_name: trial-config-service
+    depends_on: 
+      - postgres
+      - global-trial-config-mock
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://trial-config-service/swagger-ui/ || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    environment:
+      JDBC_URL: jdbc:postgresql://postgres:5432/arts?user=ndph@arts-db&password=England99!
+      JDBC_DRIVER: "org.postgresql.Driver"
+      SERVER_PORT: "80"
+    ports:
+      - "80:80"
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: "England99!"
+      POSTGRES_USER: "ndph@arts-db"
+      POSTGRES_DB: "arts"
+    ports:
+      - "5432:5432"
+
+  global-trial-config-mock:
+    image: ghcr.io/ndph-arts/global-trial-config-mock:latest
+    container_name: global-trial-config-mock
+    ports:
+      - "8085:8085"
+    volumes:
+     - ./src/test/resources:/tmp
+
+  postman-checks:
+    container_name: postman-checks
+    depends_on:
+      trial-config-service:
+        condition: service_healthy      
+    image: ghcr.io/ndph-arts/postman-html-reporter:latest
+    command:  
+            run /newman/Trial_Config_Service.postman_collection.json 
+              --verbose 
+              --environment="/newman/environments/PR.postman_environment.json"
+              --reporters=cli,html
+              --reporter-html-export="/test-reports/newman-report.html"
+    volumes:
+      - ./src/test/resources/collections:/newman
+      - ./test-reports:/test-reports

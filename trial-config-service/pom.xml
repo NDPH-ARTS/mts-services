@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">  
+  <modelVersion>4.0.0</modelVersion>  
+  <parent> 
+    <groupId>org.springframework.boot</groupId>  
+    <artifactId>spring-boot-starter-parent</artifactId>  
+    <version>2.3.5.RELEASE</version>
+    <relativePath/>  
+    <!-- lookup parent from repository --> 
+  </parent>  
+  <groupId>uk.ac.ox.ctsu</groupId>  
+  <artifactId>trial-config-service</artifactId>
+  <version>0.0.1-SNAPSHOT</version>  
+  <name>trial-config-service</name>
+  <description>Service for configuring clinical trials</description>
+  <properties>
+    <java.version>1.8</java.version>
+    <azure.version>2.3.5</azure.version>
+    <sonar.projectKey>NDPH-ARTS_trial-config-service</sonar.projectKey>
+    <sonar.organization>ndph-arts</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+  </properties>
+  <dependencies> 
+    <dependency> 
+      <groupId>org.springframework.boot</groupId>  
+      <artifactId>spring-boot-starter-data-rest</artifactId> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.springframework.boot</groupId>  
+      <artifactId>spring-boot-starter-jdbc</artifactId> 
+    </dependency>  
+    <dependency> 
+      <groupId>io.springfox</groupId>  
+      <artifactId>springfox-boot-starter</artifactId>  
+      <version>3.0.0</version> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.mockito</groupId>  
+      <artifactId>mockito-junit-jupiter</artifactId>  
+      <version>2.28.2</version>  
+      <scope>test</scope> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.springframework.boot</groupId>  
+      <artifactId>spring-boot-starter-data-jpa</artifactId> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.liquibase</groupId>  
+      <artifactId>liquibase-core</artifactId>  
+      <version>3.10.1</version> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.springframework.data</groupId>  
+      <artifactId>spring-data-envers</artifactId>  
+      <version>2.3.1.RELEASE</version> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.postgresql</groupId>  
+      <artifactId>postgresql</artifactId>  
+      <scope>runtime</scope> 
+    </dependency>  
+    <dependency> 
+      <groupId>com.microsoft.azure</groupId>  
+      <artifactId>applicationinsights-web-auto</artifactId>  
+      <!-- or applicationinsights-web for manual web filter registration -->  
+      <!-- or applicationinsights-core for bare API -->  
+      <version>2.5.0</version> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.springframework.boot</groupId>  
+      <artifactId>spring-boot-starter-test</artifactId>  
+      <scope>test</scope>  
+      <exclusions> 
+        <exclusion> 
+          <groupId>org.junit.vintage</groupId>  
+          <artifactId>junit-vintage-engine</artifactId> 
+        </exclusion> 
+      </exclusions> 
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <version>2.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <executable>false</executable>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <!-- see versions at https://search.maven.org/search?q=g:org.sonarsource.scanner.maven%20AND%20a:sonar-maven-plugin -->
+        <version>3.7.0.1746</version>
+      </plugin>
+     <!-- Azure plugin goes here -->
+    </plugins>
+  </build>
+</project>
