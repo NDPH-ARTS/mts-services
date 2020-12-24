@@ -6,29 +6,33 @@ on:
 
 jobs:
   build:
-    name: Build and push image
+    name: Build sample-service
+    env:
+      SERVICE_NAME: sample-service
+      GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build
+      - name: Build & test
         run: |
           export DOCKER_BUILDKIT=1
-          docker build --target export -t test . --output out
+          docker build $SERVICE_NAME --file $SERVICE_NAME/Dockerfile --target export -t test --output out
       - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
         with:
           fail_on_test_failures: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: out/TEST*.xml
+          report_paths: "**/out/TEST*.xml"
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
-      - name: Build and push
+      - name: Build & publish runtime image
+        working-directory: ${{env.SERVICE_NAME}}
         run: |
-          docker build -t ghcr.io/ndph-arts/trial-config-service:${{ github.sha }} .
-          docker push ghcr.io/ndph-arts/trial-config-service:${{ github.sha }}
+          docker build -t $GHCR/$SERVICE_NAME:${{ github.sha }} .
+          docker push $GHCR/$SERVICE_NAME:${{ github.sha }}
