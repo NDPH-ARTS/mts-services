@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.practitiner_service;
+package uk.ac.ox.ndph.arts.practitioner_service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
