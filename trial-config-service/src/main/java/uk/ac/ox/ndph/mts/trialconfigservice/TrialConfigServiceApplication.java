@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.trialconfigservice;
+package uk.ac.ox.ndph.mts.trialconfigservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

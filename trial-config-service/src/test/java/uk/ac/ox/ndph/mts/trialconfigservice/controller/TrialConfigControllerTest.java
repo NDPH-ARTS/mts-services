@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.trialconfigservice.controller;
+package uk.ac.ox.ndph.mts.trialconfigservice.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,12 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ox.ndph.arts.trialconfigservice.config.WebConfig;
-import uk.ac.ox.ndph.arts.trialconfigservice.exception.InvalidConfigException;
-import uk.ac.ox.ndph.arts.trialconfigservice.model.Trial;
-import uk.ac.ox.ndph.arts.trialconfigservice.model.TrialRepository;
-import uk.ac.ox.ndph.arts.trialconfigservice.model.TrialSite;
-import uk.ac.ox.ndph.arts.trialconfigservice.service.TrialConfigService;
+import uk.ac.ox.ndph.mts.trialconfigservice.config.WebConfig;
+import uk.ac.ox.ndph.mts.trialconfigservice.exception.InvalidConfigException;
+import uk.ac.ox.ndph.mts.trialconfigservice.model.Trial;
+import uk.ac.ox.ndph.mts.trialconfigservice.model.TrialRepository;
+import uk.ac.ox.ndph.mts.trialconfigservice.model.TrialSite;
+import uk.ac.ox.ndph.mts.trialconfigservice.service.TrialConfigService;
 
 import java.util.Collections;
 

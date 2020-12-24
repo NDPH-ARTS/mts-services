@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.trialconfigservice.service;
+package uk.ac.ox.ndph.mts.trialconfigservice.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,11 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.ac.ox.ndph.arts.trialconfigservice.exception.InvalidConfigException;
-import uk.ac.ox.ndph.arts.trialconfigservice.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.arts.trialconfigservice.model.Trial;
-import uk.ac.ox.ndph.arts.trialconfigservice.model.TrialRepository;
-import uk.ac.ox.ndph.arts.trialconfigservice.model.TrialSite;
+import uk.ac.ox.ndph.mts.trialconfigservice.exception.InvalidConfigException;
+import uk.ac.ox.ndph.mts.trialconfigservice.exception.ResourceAlreadyExistsException;
+import uk.ac.ox.ndph.mts.trialconfigservice.model.Trial;
+import uk.ac.ox.ndph.mts.trialconfigservice.model.TrialRepository;
+import uk.ac.ox.ndph.mts.trialconfigservice.model.TrialSite;
 
 import java.util.Collections;
 

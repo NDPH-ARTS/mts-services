@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.trialconfigservice.model;
+package uk.ac.ox.ndph.mts.trialconfigservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;

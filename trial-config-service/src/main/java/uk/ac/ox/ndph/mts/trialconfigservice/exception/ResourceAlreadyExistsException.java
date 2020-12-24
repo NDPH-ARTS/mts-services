@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.trialconfigservice.exception;
+package uk.ac.ox.ndph.mts.trialconfigservice.exception;
 
 
 import org.springframework.http.HttpStatus;
