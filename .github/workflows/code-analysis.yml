@@ -3,13 +3,16 @@ name: Code Analysis
 on:
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '**.md'
 
 jobs:
   build:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up JDK 11
