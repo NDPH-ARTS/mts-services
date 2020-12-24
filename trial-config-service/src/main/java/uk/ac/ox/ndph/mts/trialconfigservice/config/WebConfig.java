@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.trialconfigservice.config;
+package uk.ac.ox.ndph.mts.trialconfigservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 
         return new Docket(DocumentationType.SWAGGER_2).select().apis(
-            RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.arts.trialconfigservice.controller"))
+            RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.mts.trialconfigservice.controller"))
                                                       .paths(PathSelectors.any()).build()
                                                       .securitySchemes(asList(securityScheme()))
                                                       .securityContexts(asList(securityContext()));

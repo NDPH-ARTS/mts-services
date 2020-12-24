@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.trialconfigservice.config;
+package uk.ac.ox.ndph.mts.trialconfigservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
