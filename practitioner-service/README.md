@@ -30,7 +30,7 @@ Creates a new practitioner entity.
 
 **Condition** : If practitioner was created succesfully in the FHIR store.
 
-**Code** : `200 OK`
+**Code** : `201 CREATED`
 
 **Content example**
 

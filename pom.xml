@@ -13,6 +13,7 @@
   <artifactId>java-base-app</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
   <name>java-base-app</name>  
+  <packaging>pom</packaging>
   <description>Base project for Spring Boot and Spring Cloud</description>
   <properties> 
     <java.version>11</java.version>  
