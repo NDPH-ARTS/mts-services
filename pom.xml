@@ -15,7 +15,7 @@
   <packaging>pom</packaging>
   <version>0.0.1-SNAPSHOT</version>  
   <name>NDPH - Project ARTS</name>  
-  <description>Parnt POM for all microservices.</description>
+  <description>Parent POM for all microservices.</description>
   <organization>
     <name>Oxford Medical Science Division</name>
     <url>https://github.com/NDPH-ARTS/mts-services</url>
