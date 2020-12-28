@@ -5,73 +5,78 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.converter.ConvertWith;
-import org.hl7.fhir.r4.model.Practitioner;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.Captor;
 import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Assertions;
-import uk.ac.ox.ndph.arts.practitioner_service.model.Person;
+import uk.ac.ox.ndph.arts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.arts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.arts.practitioner_service.repository.FhirRepository;
-import uk.ac.ox.ndph.arts.practitioner_service.exception.HttpStatusException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.ArgumentException;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-public class PersonServiceTests {
+@ExtendWith(MockitoExtension.class)
+public class PractitionerServiceTests {
+
+    @Mock
+    private FhirRepository fhirRepository;
+
+    @Captor
+    ArgumentCaptor<org.hl7.fhir.r4.model.Practitioner> practitionerCaptor;
 
     @ParameterizedTest
     @CsvSource({",,", ",test,test", "test,,test", ",test,", "null,null,null", "test,null,test"})
-    void TestSavePerson_WhenFieldsAreEmptyOrNull_ThrowsArgumentException(
+    void TestSavePractitioner_WhenFieldsAreEmptyOrNull_ThrowsArgumentException(
         @ConvertWith(NullableConverter.class)String prefix, 
         @ConvertWith(NullableConverter.class)String givenName, 
         @ConvertWith(NullableConverter.class)String familyName) {
         // Arrange
-        EntityService personService = new PersonService(Mockito.mock(FhirRepository.class));
-        Person person = new Person(prefix, givenName, familyName);
+        EntityService entityService = new PractitionerService(fhirRepository);
+        Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
         
         // Act + Assert
         Assertions.assertThrows(ArgumentException.class, () -> {
-            personService.savePerson(person);
+            entityService.savePractitioner(practitioner);
           }, "Expecting empty fields to throw");
     } 
 
     @Test
-    void TestSavePerson_WhenSavePerson_SavePractitionerToRepository(){
+    void TestSavePractitioner_WhenSavePractitioner_SavePractitionerToRepository(){
         // Arrange
         String prefix = "prefix";
         String givenName = "givenName";
         String familyName = "familyName";
-        FhirRepository mockFhirRepository = Mockito.mock(FhirRepository.class);
-        ArgumentCaptor<Practitioner> argumentCaptor = ArgumentCaptor.forClass(Practitioner.class);
-        EntityService personService = new PersonService(mockFhirRepository);
-        Person person = new Person(prefix, givenName, familyName);
+        EntityService entityService = new PractitionerService(fhirRepository);
+        Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
         
         // Act
-        personService.savePerson(person);
+        entityService.savePractitioner(practitioner);
 
         // Assert
-        Mockito.verify(mockFhirRepository).savePractitioner(argumentCaptor.capture());
-        Practitioner value = argumentCaptor.getValue();
+        Mockito.verify(fhirRepository).savePractitioner(practitionerCaptor.capture());
+        org.hl7.fhir.r4.model.Practitioner value = practitionerCaptor.getValue();
         Assertions.assertEquals(prefix, value.getName().get(0).getPrefix().get(0).toString());
         Assertions.assertEquals(givenName, value.getName().get(0).getGiven().get(0).toString());
         Assertions.assertEquals(familyName, value.getName().get(0).getFamily().toString());
     }
 
     @Test
-    void TestSavePerson_WhenRepositoryThrows_ThrowsSameException(){
-        FhirRepository mockFhirRepository = Mockito.mock(FhirRepository.class);
-        when(mockFhirRepository.savePractitioner(Mockito.any(Practitioner.class)))
+    void TestSavePractitioner_WhenRepositoryThrows_ThrowsSameException(){
+        when(fhirRepository.savePractitioner(Mockito.any(org.hl7.fhir.r4.model.Practitioner.class)))
             .thenThrow(RestException.class);
   
-        EntityService personService = new PersonService(mockFhirRepository);
-        Person person = new Person("prefix", "givenName", "familyName");
+        EntityService entityService = new PractitionerService(fhirRepository);
+        Practitioner practitioner = new Practitioner("prefix", "givenName", "familyName");
         
         // Act + Assert
         Assertions.assertThrows(RestException.class, () -> {
-            personService.savePerson(person);
+            entityService.savePractitioner(practitioner);
           }, "Expecting empty fields to throw");
     }
 }

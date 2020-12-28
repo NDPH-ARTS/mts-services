@@ -13,7 +13,7 @@
   <artifactId>practitioner-service</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
   <name>Practitioner Service</name>  
-  <description>Spring Cloud microservice which validates the input person details and adds it as a practitioner entity to the FHIR store.</description>  
+  <description>Spring Cloud microservice which validates the input practitioner details and adds it as a FHIR practitioner entity to the FHIR store.</description>  
   <properties> 
     <java.version>11</java.version>  
     <azure.version>2.3.5</azure.version>

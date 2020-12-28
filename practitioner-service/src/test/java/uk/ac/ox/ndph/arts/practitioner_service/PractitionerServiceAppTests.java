@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import uk.ac.ox.ndph.arts.practitioner_service.model.Person;
+import uk.ac.ox.ndph.arts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.arts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.ArgumentException;
@@ -41,7 +41,7 @@ public class PractitionerServiceAppTests {
     @Test
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
-        when(entityService.savePerson(Mockito.any(Person.class))).thenReturn("123");
+        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenReturn("123");
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         ResultActions secret = this.mockMvc
@@ -52,7 +52,7 @@ public class PractitionerServiceAppTests {
     @Test
     void TestPostPractitioner_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
-        when(entityService.savePerson(Mockito.any(Person.class))).thenThrow(RestException.class);
+        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenThrow(RestException.class);
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
@@ -64,7 +64,7 @@ public class PractitionerServiceAppTests {
     @Test
     void TestPostPractitioner_WhenArgumentException_Returns400() throws Exception {
         // Arrange
-        when(entityService.savePerson(Mockito.any(Person.class))).thenThrow(ArgumentException.class);
+        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenThrow(ArgumentException.class);
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
-import uk.ac.ox.ndph.arts.practitioner_service.exception.HttpStatusException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
 
 /**
@@ -36,7 +35,7 @@ class AzureFhirRepository implements FhirRepository {
         fhirContext = FhirContext.forR4();
     }
 
-    public String savePractitioner(Practitioner practitioner) throws HttpStatusException {
+    public String savePractitioner(Practitioner practitioner){
         // Log the request
         logger.info(String.format("request to fhir: %s",
                 fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner)));

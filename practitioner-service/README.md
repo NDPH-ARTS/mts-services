@@ -1,5 +1,5 @@
 # Practitioner Service
-Practitioner service validates the input person's details and adds it as a practitioner entity to the FHIR store.
+Practitioner service validates the input practitioner details and adds it as a FHIR practitioner entity to the FHIR store.
 
 ## API Endpoints
 ### Create Practitioner
