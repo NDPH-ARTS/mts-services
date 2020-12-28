@@ -15,7 +15,7 @@ public class PractitionerServiceApp {
 	private static final String ENDPOINT_PATH = "success";
 	private static final String APPLICATION_JSON = "success";
 
-	// TODO: Complete implementation as part of US #177 in next PR.
+	// TODO: Complete implementation as part of user story in next PR.
 	@PostMapping(path = ENDPOINT_PATH, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
 	public String person(@RequestBody Person person) {
 		return SUCCESS_STATUS;
