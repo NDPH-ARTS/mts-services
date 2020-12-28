@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.practitioner_service.model;
+package uk.ac.ox.ndph.mts.practitioner_service.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;
