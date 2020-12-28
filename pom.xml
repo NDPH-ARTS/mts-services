@@ -11,10 +11,10 @@
   </parent>  
   
   <groupId>uk.ac.ox.ndph.mts</groupId>
-  <artifactId>ndph-art-base-repo</artifactId>
+  <artifactId>mts-services-parent</artifactId>
   <packaging>pom</packaging>
   <version>0.0.1-SNAPSHOT</version>  
-  <name>NDPH - Project ARTS</name>  
+  <name>MTS Services Parent Project</name>  
   <description>Parent POM for all microservices.</description>
   <organization>
     <name>Oxford Medical Science Division</name>
@@ -29,6 +29,10 @@
     <sonar.organization>ndph-arts</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
+
+  <modules>
+    <module>sample-service</module>
+  </modules>
 
   <dependencies> 
     <dependency> 

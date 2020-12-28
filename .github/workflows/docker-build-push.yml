@@ -20,10 +20,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build & test
-        working-directory: "${{ matrix.service_name }}"
+        #working-directory: "${{ matrix.service_name }}"
         run: |
           export DOCKER_BUILDKIT=1
-          docker build --target export -t test --output out .
+          docker build --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
       - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
@@ -38,7 +38,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
       - name: Build & publish runtime image
-        working-directory: "${{ matrix.service_name }}"
+        #working-directory: "${{ matrix.service_name }}"
         run: |
-          docker build -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} .
+          docker build -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
           docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
