@@ -10,7 +10,7 @@
     <!-- lookup parent from repository --> 
   </parent>  
   <groupId>uk.ac.ox.ndph.arts</groupId>
-  <artifactId>practitioner_service</artifactId>  
+  <artifactId>practitioner-service</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
   <name>Practitioner Service</name>  
   <description>Spring Cloud microservice which validates the input person details and adds it as a practitioner entity to the FHIR store.</description>  
