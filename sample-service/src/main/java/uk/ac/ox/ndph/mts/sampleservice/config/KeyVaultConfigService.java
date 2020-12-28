@@ -1,4 +1,4 @@
-package com.microsoft.baseapp.config;
+package uk.ac.ox.ndph.mts.sampleservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

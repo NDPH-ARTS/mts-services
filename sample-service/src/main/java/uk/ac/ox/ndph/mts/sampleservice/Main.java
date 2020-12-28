@@ -1,4 +1,4 @@
-package com.microsoft.baseapp;
+package uk.ac.ox.ndph.mts.sampleservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

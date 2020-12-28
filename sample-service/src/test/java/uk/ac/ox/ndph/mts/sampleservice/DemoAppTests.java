@@ -1,6 +1,6 @@
-package com.microsoft.baseapp;
+package uk.ac.ox.ndph.mts.sampleservice;
 
-import com.microsoft.baseapp.config.IConfigService;
+import uk.ac.ox.ndph.mts.sampleservice.config.IConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
