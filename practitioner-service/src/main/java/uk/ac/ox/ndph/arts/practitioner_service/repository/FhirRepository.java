@@ -6,7 +6,7 @@ import uk.ac.ox.ndph.arts.practitioner_service.exception.HttpStatusException;
 /**
 * Interface for a FHIR entity repository
 */
-public interface IFhirRepository {
+public interface FhirRepository {
 
    /**
    * save a practitioner entity to FHIR store

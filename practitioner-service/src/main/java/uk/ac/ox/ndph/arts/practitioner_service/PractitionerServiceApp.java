@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.arts.practitioner_service.model.Person;
-import uk.ac.ox.ndph.arts.practitioner_service.service.IEntityService;
+import uk.ac.ox.ndph.arts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.HttpStatusException;
 
 @RestController
 @SpringBootApplication
 public class PractitionerServiceApp {
 
-	private IEntityService entityService;
+	private EntityService entityService;
 
 	@Autowired
-	public PractitionerServiceApp(IEntityService entityService) {
+	public PractitionerServiceApp(EntityService entityService) {
 		this.entityService = entityService;
 	}
 

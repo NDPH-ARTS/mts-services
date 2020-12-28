@@ -13,8 +13,8 @@ import org.mockito.Mockito;
 import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Assertions;
 import uk.ac.ox.ndph.arts.practitioner_service.model.Person;
-import uk.ac.ox.ndph.arts.practitioner_service.service.IEntityService;
-import uk.ac.ox.ndph.arts.practitioner_service.repository.IFhirRepository;
+import uk.ac.ox.ndph.arts.practitioner_service.service.EntityService;
+import uk.ac.ox.ndph.arts.practitioner_service.repository.FhirRepository;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.HttpStatusException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.ArgumentException;
@@ -29,7 +29,7 @@ public class PersonServiceTests {
         @ConvertWith(NullableConverter.class)String givenName, 
         @ConvertWith(NullableConverter.class)String familyName) {
         // Arrange
-        IEntityService personService = new PersonService(Mockito.mock(IFhirRepository.class));
+        EntityService personService = new PersonService(Mockito.mock(FhirRepository.class));
         Person person = new Person(prefix, givenName, familyName);
         
         // Act + Assert
@@ -44,9 +44,9 @@ public class PersonServiceTests {
         String prefix = "prefix";
         String givenName = "givenName";
         String familyName = "familyName";
-        IFhirRepository mockFhirRepository = Mockito.mock(IFhirRepository.class);
+        FhirRepository mockFhirRepository = Mockito.mock(FhirRepository.class);
         ArgumentCaptor<Practitioner> argumentCaptor = ArgumentCaptor.forClass(Practitioner.class);
-        IEntityService personService = new PersonService(mockFhirRepository);
+        EntityService personService = new PersonService(mockFhirRepository);
         Person person = new Person(prefix, givenName, familyName);
         
         // Act
@@ -62,11 +62,11 @@ public class PersonServiceTests {
 
     @Test
     void TestSavePerson_WhenRepositoryThrows_ThrowsSameException(){
-        IFhirRepository mockFhirRepository = Mockito.mock(IFhirRepository.class);
+        FhirRepository mockFhirRepository = Mockito.mock(FhirRepository.class);
         when(mockFhirRepository.savePractitioner(Mockito.any(Practitioner.class)))
             .thenThrow(RestException.class);
   
-        IEntityService personService = new PersonService(mockFhirRepository);
+        EntityService personService = new PersonService(mockFhirRepository);
         Person person = new Person("prefix", "givenName", "familyName");
         
         // Act + Assert

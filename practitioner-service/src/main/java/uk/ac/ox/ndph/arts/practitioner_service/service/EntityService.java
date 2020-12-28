@@ -6,7 +6,7 @@ import uk.ac.ox.ndph.arts.practitioner_service.exception.HttpStatusException;
 /**
 * Interface for validating and saving an entity
 */
-public interface IEntityService {
+public interface EntityService {
 
     /**
    * Validate and save a person entity

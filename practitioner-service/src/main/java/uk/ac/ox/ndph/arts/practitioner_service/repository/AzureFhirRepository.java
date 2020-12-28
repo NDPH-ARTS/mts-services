@@ -18,11 +18,11 @@ import uk.ac.ox.ndph.arts.practitioner_service.exception.HttpStatusException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
 
 /**
- * Implement IFhirRepository using HAPI client sdk and backed up by an Azure
+ * Implement FhirRepository interface using HAPI client sdk and backed up by an Azure
  * FHIR store.
  */
 @Component
-class AzureFhirRepository implements IFhirRepository {
+class AzureFhirRepository implements FhirRepository {
 
     final String PRACTITIONER_ENTITY_NAME = "Practitioner";
 

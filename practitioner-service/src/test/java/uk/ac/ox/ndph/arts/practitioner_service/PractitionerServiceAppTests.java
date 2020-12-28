@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import uk.ac.ox.ndph.arts.practitioner_service.model.Person;
-import uk.ac.ox.ndph.arts.practitioner_service.service.IEntityService;
+import uk.ac.ox.ndph.arts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.arts.practitioner_service.exception.ArgumentException;
 
@@ -28,7 +28,7 @@ public class PractitionerServiceAppTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private IEntityService entityService;
+    private EntityService entityService;
 
     @Test
     void TestPostPractitioner_WhenNoInput_Returns400() throws Exception {
