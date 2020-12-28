@@ -9,7 +9,7 @@
     <relativePath>../</relativePath>  
     <!-- lookup parent from repository --> 
   </parent>  
-  <groupId>uk.ac.ox.ndph.arts</groupId>
+  <groupId>uk.ac.ox.ndph.mts</groupId>
   <artifactId>practitioner-service</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
   <name>Practitioner Service</name>  
