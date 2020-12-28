@@ -1,6 +1,6 @@
-package uk.ac.ox.ndph.arts.practitioner_service.service;
+package uk.ac.ox.ndph.mts.practitioner_service.service;
 
-import uk.ac.ox.ndph.arts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 
 /**
 * Interface for validating and saving an entity

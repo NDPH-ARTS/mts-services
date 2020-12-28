@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.practitioner_service.repository;
+package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
-import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by an Azure

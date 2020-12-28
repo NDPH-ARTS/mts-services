@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.practitioner_service;
+package uk.ac.ox.ndph.mts.practitioner_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import uk.ac.ox.ndph.arts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.arts.practitioner_service.service.EntityService;
-import uk.ac.ox.ndph.arts.practitioner_service.exception.RestException;
-import uk.ac.ox.ndph.arts.practitioner_service.exception.ArgumentException;
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.ArgumentException;
 
 @SpringBootTest
 @AutoConfigureMockMvc

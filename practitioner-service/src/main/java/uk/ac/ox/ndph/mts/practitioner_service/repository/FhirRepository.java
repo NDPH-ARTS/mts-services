@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.practitioner_service.repository;
+package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import org.hl7.fhir.r4.model.Practitioner;
 

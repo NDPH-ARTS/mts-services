@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.practitioner_service.service;
+package uk.ac.ox.ndph.mts.practitioner_service.service;
 
 import java.util.UUID;
 
@@ -6,9 +6,9 @@ import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.ac.ox.ndph.arts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.arts.practitioner_service.repository.FhirRepository;
-import uk.ac.ox.ndph.arts.practitioner_service.exception.ArgumentException;
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.ArgumentException;
 
 /**
 * Implement an EntityService interface.

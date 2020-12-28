@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.arts.practitioner_service.service;
+package uk.ac.ox.ndph.mts.practitioner_service.service;
 
 import org.junit.jupiter.params.converter.DefaultArgumentConverter;
 import org.junit.jupiter.params.converter.SimpleArgumentConverter;
