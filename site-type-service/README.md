@@ -8,5 +8,5 @@ The following properties are required:
     -Dserver.port=**http port**
 
 *e.g.*
-```-Djdbc.driver=org.postgresql.Driver -Djdbc.url=jdbc:postgresql://localhost:5432/arts?user=postgres&password=pass -Dserver.port=8081```
+```-Djdbc.driver=org.postgresql.Driver -Djdbc.url=jdbc:postgresql://localhost:5432/arts?user=postgres&password=pass -Dserver.port=8086```
 
