@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.sample_service;
 
-import uk.ac.ox.ndph.mts.sample_service.config.IConfigService;
+import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,7 +28,7 @@ class DemoAppTests {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private IConfigService configService;
+	private ConfigService configService;
 
 	@Test
 	void TestGetSecret_WhenConfigServiceExists_CorrectValueReturned() throws Exception {

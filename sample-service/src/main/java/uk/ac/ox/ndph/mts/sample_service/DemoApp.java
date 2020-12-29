@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.sample_service;
 
-import uk.ac.ox.ndph.mts.sample_service.config.IConfigService;
+import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoApp {
 
 	@Autowired
-	public DemoApp(IConfigService configService)
+	public DemoApp(ConfigService configService)
 	{
 		this.myConfig = configService;
 	}
 
-	private IConfigService myConfig;
+	private ConfigService myConfig;
 
 	@Value("${application.message:Not configured by a Spring Cloud Server}")
 	private String message;
