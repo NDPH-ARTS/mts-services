@@ -1,38 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">  
-  <modelVersion>4.0.0</modelVersion>  
-  <parent> 
-    <groupId>org.springframework.boot</groupId>  
-    <artifactId>spring-boot-starter-parent</artifactId>  
-    <version>2.3.6.RELEASE</version>
-    <relativePath/>  
-    <!-- lookup parent from repository --> 
-  </parent>  
-  <groupId>uk.ac.ox.ctsu</groupId>  
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>uk.ac.ox.ndph.mts</groupId>
+    <artifactId>mts-services-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <groupId>uk.ac.ox.ndph.mts</groupId>
   <artifactId>trial-config-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>  
   <name>trial-config-service</name>
   <description>Service for configuring clinical trials</description>
-  <properties>
-    <java.version>11</java.version>
-    <azure.version>2.3.5</azure.version>
-    <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
-    <sonar.projectKey>NDPH-ARTS_trial-config-service</sonar.projectKey>
-    <sonar.organization>ndph-arts</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-  </properties>
+
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+
     <dependency>
       <groupId>com.microsoft.azure</groupId>
       <artifactId>azure-keyvault-secrets-spring-boot-starter</artifactId>
@@ -74,14 +57,7 @@
       <groupId>org.postgresql</groupId>  
       <artifactId>postgresql</artifactId>  
       <scope>runtime</scope> 
-    </dependency>  
-    <dependency> 
-      <groupId>com.microsoft.azure</groupId>  
-      <artifactId>applicationinsights-web-auto</artifactId>  
-      <!-- or applicationinsights-web for manual web filter registration -->  
-      <!-- or applicationinsights-core for bare API -->  
-      <version>2.5.0</version> 
-    </dependency>  
+    </dependency>
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-test</artifactId>  
@@ -102,59 +78,10 @@
       <artifactId>json-path</artifactId>
       <version>2.2.0</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.cloud</groupId>-->
-<!--      <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>com.microsoft.azure</groupId>-->
-<!--      <artifactId>spring-cloud-starter-azure-spring-cloud-client</artifactId>-->
-<!--      <version>2.1.0</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>com.microsoft.azure</groupId>-->
-<!--      <artifactId>applicationinsights-logging-log4j2</artifactId>-->
-<!--      <version>[2.0,)</version>-->
-<!--    </dependency>-->
+
   </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.microsoft.azure</groupId>
-        <artifactId>azure-spring-boot-bom</artifactId>
-        <version>${azure.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-<!--      <dependency>-->
-<!--        <groupId>org.springframework.cloud</groupId>-->
-<!--        <artifactId>spring-cloud-dependencies</artifactId>-->
-<!--        <version>${spring-cloud.version}</version>-->
-<!--        <type>pom</type>-->
-<!--        <scope>import</scope>-->
-<!--      </dependency>-->
-    </dependencies>
-  </dependencyManagement>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <executable>false</executable>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <!-- see versions at https://search.maven.org/search?q=g:org.sonarsource.scanner.maven%20AND%20a:sonar-maven-plugin -->
-        <version>3.7.0.1746</version>
-      </plugin>
-     <!-- Azure plugin goes here -->
-    </plugins>
-  </build>
 </project>
