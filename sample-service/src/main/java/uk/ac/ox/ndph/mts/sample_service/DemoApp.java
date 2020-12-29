@@ -1,6 +1,6 @@
-package uk.ac.ox.ndph.mts.sampleservice;
+package uk.ac.ox.ndph.mts.sample_service;
 
-import uk.ac.ox.ndph.mts.sampleservice.config.IConfigService;
+import uk.ac.ox.ndph.mts.sample_service.config.IConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
