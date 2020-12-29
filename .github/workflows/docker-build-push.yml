@@ -31,9 +31,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: "**/out/TEST*.xml"
       - name: Publish Test Report
-          if: ${{ always() }}
-          uses: actions/upload-artifact@v2
-          with:
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
             name: postman-reports
             path: test-reports/newman-report.html
       - name: Login to GitHub Container Registry
