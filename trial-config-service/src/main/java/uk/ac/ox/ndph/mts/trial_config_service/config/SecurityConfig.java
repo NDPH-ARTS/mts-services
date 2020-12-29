@@ -9,19 +9,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers(HttpMethod.OPTIONS,  "/trial-config/**").permitAll()
             .anyRequest().authenticated()
             .and().oauth2ResourceServer(oauth2 -> oauth2.jwt()
-                /*.jwtAuthenticationConverter(getCustomJwtAuthConverter())*/);// not yet
+                /*.jwtAuthenticationConverter(getCustomJwtAuthConverter())*/);// TODO ARTS-196
     }
-
-
-
 
     @Override
     public void configure(WebSecurity web) throws Exception {
