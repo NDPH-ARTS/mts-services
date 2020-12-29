@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.trialconfigservice.config;
+package uk.ac.ox.ndph.mts.trial_config_service.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
