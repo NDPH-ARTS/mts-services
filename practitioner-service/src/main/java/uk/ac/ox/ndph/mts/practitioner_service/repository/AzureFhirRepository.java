@@ -17,8 +17,8 @@ import ca.uhn.fhir.util.BundleUtil;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 /**
- * Implement FhirRepository interface using HAPI client sdk and backed up by an Azure
- * FHIR store.
+ * Implement FhirRepository interface using HAPI client sdk and backed up by 
+ * a FHIR store.
  */
 @Component
 class AzureFhirRepository implements FhirRepository {

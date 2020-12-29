@@ -75,3 +75,9 @@ Creates a new practitioner entity.
 }
 ```
 ___
+
+## Service Dependecies
+
+### FHIR Store and HL7 Model
+Practitioner service is backed up by a FHIR store which is accessible as an HTTP/S endpoint and configurable by the "fhir.uri" application property.
+Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir/docs/client/examples.html) to handle the model and trasactions with FHIR store.
