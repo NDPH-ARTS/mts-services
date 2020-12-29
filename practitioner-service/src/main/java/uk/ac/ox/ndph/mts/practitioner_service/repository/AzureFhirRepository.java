@@ -23,7 +23,11 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 @Component
 class AzureFhirRepository implements FhirRepository {
 
-    final String PRACTITIONER_ENTITY_NAME = "Practitioner";
+    private final static String PRACTITIONER_ENTITY_NAME = "Practitioner";
+    private final static String INFO_LOG_SAVE_PRACTITIONER = "request to fhir: %s";
+    private final static String INFO_LOG_RESPONSE_PRACTITIONER = "response from fhir: %s";
+    private final static String ERROR_UPDATE_FHIR = "error while updating fhir store";
+    private final static String ERROR_BAD_RESPONSE_SIZE = "bad response size from FHIR: %d";
 
     private final FhirContext fhirContext;
     private final Logger logger = LoggerFactory.getLogger(AzureFhirRepository.class);
@@ -37,7 +41,7 @@ class AzureFhirRepository implements FhirRepository {
 
     public String savePractitioner(Practitioner practitioner){
         // Log the request
-        logger.info(String.format("request to fhir: %s",
+        logger.info(String.format(INFO_LOG_SAVE_PRACTITIONER,
                 fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner)));
 
         Bundle responseBundle;
@@ -45,13 +49,13 @@ class AzureFhirRepository implements FhirRepository {
             responseBundle = fhirContext.newRestfulGenericClient(fhirUri).transaction()
                     .withBundle(bundle(practitioner, PRACTITIONER_ENTITY_NAME)).execute();
         } catch (BaseServerResponseException e) {
-            logger.warn("error while updating fhir store", e);
+            logger.warn(ERROR_UPDATE_FHIR, e);
             throw new RestException(e.getMessage());
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        logger.info(String.format("response from fhir: %s",
+        logger.info(String.format(INFO_LOG_RESPONSE_PRACTITIONER,
                 fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement)));
         return practitioner.getIdElement().getValue();
     }
@@ -61,8 +65,8 @@ class AzureFhirRepository implements FhirRepository {
         resp.addAll(BundleUtil.toListOfResources(fhirContext, bundle));
 
         if (resp.size() != 1) {
-            logger.info(String.format("expecting reponse size to be 1. was %d", resp.size()));
-            throw new RestException(String.format("bad response size from FHIR: %d", resp.size()));
+            logger.info(String.format(ERROR_BAD_RESPONSE_SIZE, resp.size()));
+            throw new RestException(String.format(ERROR_BAD_RESPONSE_SIZE, resp.size()));
 
         }
         return resp.get(0);

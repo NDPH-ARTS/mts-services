@@ -16,6 +16,10 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.ArgumentException;
 */
 @Service
 public class PractitionerService implements EntityService {
+    private static final String FIELD_NAME_PREFIX = "prefix";
+    private static final String FIELD_NAME_GIVEN_NAME = "given name";
+    private static final String FIELD_NAME_FAMILY_NAME = "family name";
+    private static final String ERROR_MESSAGE = "value of argument %s cannot be empty";
 
     private FhirRepository fhirRepository;
 
@@ -25,16 +29,16 @@ public class PractitionerService implements EntityService {
     }
 
     public String savePractitioner(Practitioner practitioner) {
-        validateArgument(practitioner.getPrefix(), "prefix");
-        validateArgument(practitioner.getGivenName(), "given name");
-        validateArgument(practitioner.getFamilyName(), "family name");
+        validateArgument(practitioner.getPrefix(), FIELD_NAME_PREFIX);
+        validateArgument(practitioner.getGivenName(), FIELD_NAME_GIVEN_NAME);
+        validateArgument(practitioner.getFamilyName(), FIELD_NAME_FAMILY_NAME);
         
         return fhirRepository.savePractitioner(toFhirPractitioner(practitioner));
     }
 
     private void validateArgument(String value, String argumentName){
         if (value == null || value.isBlank()){
-            throw new ArgumentException(String.format("value of argument %s cannot be empty", argumentName));
+            throw new ArgumentException(String.format(ERROR_MESSAGE, argumentName));
         }
     }
 

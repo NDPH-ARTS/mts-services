@@ -16,6 +16,7 @@ public class PractitionerServiceApp {
 	private static final String SUCCESS_STATUS = "success";
 	private static final String ENDPOINT_PATH = "/practitioner";
 	private static final String APPLICATION_JSON = "application/json";
+	private static final String RESPONSE = "{\"id\": \"%s\"}";
 
 	private EntityService entityService;
 
@@ -27,6 +28,6 @@ public class PractitionerServiceApp {
 	@PostMapping(path = ENDPOINT_PATH, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
 	public ResponseEntity<String> practitioner(@RequestBody Practitioner practitioner) {
 		String practitionerId = entityService.savePractitioner(practitioner);
-		return ResponseEntity.status(HttpStatus.CREATED).body(String.format("{\"id\": \"%s\"}", practitionerId));
+		return ResponseEntity.status(HttpStatus.CREATED).body(String.format(RESPONSE, practitionerId));
 	}
 }
