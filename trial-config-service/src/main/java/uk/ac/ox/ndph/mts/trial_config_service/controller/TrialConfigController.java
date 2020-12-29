@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.trialconfigservice.controller;
+package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
 
 import org.jboss.logging.Logger;
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import uk.ac.ox.ndph.mts.trialconfigservice.config.WebConfig;
-import uk.ac.ox.ndph.mts.trialconfigservice.exception.InvalidConfigException;
-import uk.ac.ox.ndph.mts.trialconfigservice.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.mts.trialconfigservice.model.Trial;
-import uk.ac.ox.ndph.mts.trialconfigservice.model.TrialRepository;
-import uk.ac.ox.ndph.mts.trialconfigservice.service.TrialConfigService;
+import uk.ac.ox.ndph.mts.trial_config_service.config.WebConfig;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
+import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
 
 
 @RestController

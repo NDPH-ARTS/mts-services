@@ -1,12 +1,12 @@
-package uk.ac.ox.ndph.mts.trialconfigservice.service;
+package uk.ac.ox.ndph.mts.trial_config_service.service;
 
 import org.springframework.stereotype.Service;
-import uk.ac.ox.ndph.mts.trialconfigservice.exception.InvalidConfigException;
-import uk.ac.ox.ndph.mts.trialconfigservice.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.mts.trialconfigservice.model.Person;
-import uk.ac.ox.ndph.mts.trialconfigservice.model.Trial;
-import uk.ac.ox.ndph.mts.trialconfigservice.model.TrialRepository;
-import uk.ac.ox.ndph.mts.trialconfigservice.model.TrialSite;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
