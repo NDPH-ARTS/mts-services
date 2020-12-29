@@ -24,13 +24,13 @@ import static java.util.Arrays.asList;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
-    private String CLIENT_SECRET;
+    private String clientSecret;
 
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
-    private String CLIENT_ID;
+    private String clientId;
 
     @Value("${swagger.authserver.url}")
-    private String AUTH_SERVER;
+    private String authServer;
 
     private List<AuthorizationScope> authorizationScopeList;
 
@@ -52,13 +52,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityConfiguration security() {
-        return SecurityConfigurationBuilder.builder().clientId(CLIENT_ID).clientSecret(CLIENT_SECRET)
+        return SecurityConfigurationBuilder.builder().clientId(clientId).clientSecret(clientSecret)
                                            .scopeSeparator(" ").useBasicAuthenticationWithAccessCodeGrant(true).build();
     }
 
     private SecurityScheme securityScheme() {
-        TokenRequestEndpoint token = new TokenRequestEndpointBuilder().url(AUTH_SERVER + "/authorize").build();
-        TokenEndpoint authToken = new TokenEndpointBuilder().url(AUTH_SERVER + "/token").build();
+        TokenRequestEndpoint token = new TokenRequestEndpointBuilder().url(authServer + "/authorize").build();
+        TokenEndpoint authToken = new TokenEndpointBuilder().url(authServer + "/token").build();
         GrantType grantType = new AuthorizationCodeGrant(token, authToken);
 
         return new OAuthBuilder().grantTypes(asList(grantType)).scopes(authorizationScopeList).name("azure").build();
