@@ -20,17 +20,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build & test
-        working-directory: "${{ matrix.service_name }}"
         run: |
           export DOCKER_BUILDKIT=1
-          docker build --target export -t test --output out .
+          docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
       - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
         with:
           fail_on_test_failures: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: "${{ matrix.service_name }}/**/out/TEST*.xml"
+          report_paths: "**/out/TEST*.xml"
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -38,7 +37,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
       - name: Build & publish runtime image
-        working-directory: "${{ matrix.service_name }}"
         run: |
-          docker build -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} .
+          docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
           docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
