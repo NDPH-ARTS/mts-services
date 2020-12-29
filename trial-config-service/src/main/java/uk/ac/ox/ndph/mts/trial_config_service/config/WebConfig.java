@@ -32,7 +32,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${swagger.authserver.url}")
     private String AUTH_SERVER;
 
-    private List<AuthorizationScope> authorizationScopeList = new ArrayList<>();
+    private List<AuthorizationScope> authorizationScopeList;
+
+    WebConfig() {
+        authorizationScopeList = new ArrayList<>();
+    }
 
     @Bean
     public Docket api() {
