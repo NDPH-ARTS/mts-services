@@ -22,7 +22,7 @@ jobs:
       - name: Build & test
         run: |
           export DOCKER_BUILDKIT=1
-          docker build --build-arg SVC=${{ matrix.service_name }} --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
+          docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
       - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
@@ -38,5 +38,5 @@ jobs:
           password: ${{ secrets.GHCR_LOGIN }}
       - name: Build & publish runtime image
         run: |
-          docker build --build-arg SVC=${{ matrix.service_name }} -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
+          docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
           docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
