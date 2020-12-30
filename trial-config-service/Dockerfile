@@ -1,14 +1,26 @@
-FROM maven:3-jdk-8-openj9 AS build
+ARG SVC
+
+FROM maven:3-openjdk-11 as builder
+ARG SVC
+
+#TODO: bring only rquired pom files.
+COPY ./trial-config-service/pom.xml ./trial-config-service/pom.xml
+COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
+COPY ./sample-service/pom.xml ./sample-service/pom.xml
+COPY ./${SVC}/src ${SVC}/src
+
 COPY ./pom.xml pom.xml
-COPY ./src src
-RUN mvn package -B --no-transfer-progress -Dmaven.test.failure.ignore=true
+
+RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
 
 FROM scratch AS export
-COPY --from=build target/surefire-reports/*.xml test-reports/
+ARG SVC
+COPY --from=builder ${SVC}/target/surefire-reports/*.xml test-reports/
 
-FROM openjdk:8-jdk-alpine
-ARG JAR_FILE=target/*.jar
-COPY --from=build ${JAR_FILE} app.jar
+FROM openjdk:11.0.9.1-jre-buster
+ARG SVC
+ARG JAR_FILE=${SVC}/target/*.jar
+COPY --from=builder ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 EXPOSE 8080:80
 
