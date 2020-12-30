@@ -3,10 +3,10 @@ package uk.ac.ox.ndph.mts.trial_config_service.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
@@ -24,19 +24,15 @@ import static java.util.Arrays.asList;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
-    private String clientSecret;
+    private String CLIENT_SECRET;
 
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
-    private String clientId;
+    private String CLIENT_ID;
 
     @Value("${swagger.authserver.url}")
-    private String authServer;
+    private String AUTH_SERVER;
 
-    private List<AuthorizationScope> authorizationScopeList;
-
-    WebConfig() {
-        authorizationScopeList = new ArrayList<>();
-    }
+    private List<AuthorizationScope> authorizationScopeList = new ArrayList<>();
 
     @Bean
     public Docket api() {
@@ -52,13 +48,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityConfiguration security() {
-        return SecurityConfigurationBuilder.builder().clientId(clientId).clientSecret(clientSecret)
+        return SecurityConfigurationBuilder.builder().clientId(CLIENT_ID).clientSecret(CLIENT_SECRET)
                                            .scopeSeparator(" ").useBasicAuthenticationWithAccessCodeGrant(true).build();
     }
 
     private SecurityScheme securityScheme() {
-        TokenRequestEndpoint token = new TokenRequestEndpointBuilder().url(authServer + "/authorize").build();
-        TokenEndpoint authToken = new TokenEndpointBuilder().url(authServer + "/token").build();
+        TokenRequestEndpoint token = new TokenRequestEndpointBuilder().url(AUTH_SERVER + "/authorize").build();
+        TokenEndpoint authToken = new TokenEndpointBuilder().url(AUTH_SERVER + "/token").build();
         GrantType grantType = new AuthorizationCodeGrant(token, authToken);
 
         return new OAuthBuilder().grantTypes(asList(grantType)).scopes(authorizationScopeList).name("azure").build();
@@ -88,8 +84,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
+    public WebClient webClient(){
+        return WebClient.create();
     }
-
 }
