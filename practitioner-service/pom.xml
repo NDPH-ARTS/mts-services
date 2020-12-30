@@ -10,8 +10,7 @@
   </parent>  
   <groupId>uk.ac.ox.ndph.mts</groupId>
   <artifactId>practitioner-service</artifactId>  
-  <version>0.0.1-SNAPSHOT</version>  
-  <name>Practitioner Service</name>  
+  <name>practitioner-service</name>  
   <description>Spring Cloud microservice which validates the input practitioner details and adds it as a FHIR practitioner entity to the FHIR store.</description>  
   <properties> 
     <azure.version>2.3.5</azure.version>
