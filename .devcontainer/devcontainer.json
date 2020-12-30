@@ -23,7 +23,10 @@
 	
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"vscjava.vscode-java-pack"
+		"vscjava.vscode-java-pack",
+		"redhat.java",
+		"gabrielbb.vscode-lombok",
+		"humao.rest-client"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
