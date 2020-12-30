@@ -3,11 +3,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">  
   <modelVersion>4.0.0</modelVersion>  
   <parent> 
-    <groupId>uk.ac.ox.ctsu</groupId>  
-    <artifactId>java-base-app</artifactId>  
-    <version>0.0.1-SNAPSHOT</version>  
-    <relativePath>../</relativePath>  
-    <!-- lookup parent from repository --> 
+    <groupId>uk.ac.ox.ndph.mts</groupId>
+    <artifactId>mts-services-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>  
   <groupId>uk.ac.ox.ndph.mts</groupId>
   <artifactId>practitioner-service</artifactId>  
@@ -15,54 +14,15 @@
   <name>Practitioner Service</name>  
   <description>Spring Cloud microservice which validates the input practitioner details and adds it as a FHIR practitioner entity to the FHIR store.</description>  
   <properties> 
-    <java.version>11</java.version>  
     <azure.version>2.3.5</azure.version>
-    <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
     <hapifhir_version>5.0.2</hapifhir_version>
   </properties>  
   <dependencies> 
-    <dependency> 
-      <groupId>org.springframework.boot</groupId>  
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>  
-    <dependency> 
-      <groupId>com.microsoft.azure</groupId>  
-      <artifactId>azure-keyvault-secrets-spring-boot-starter</artifactId> 
-    </dependency>  
-    <dependency> 
-      <groupId>org.springframework.boot</groupId>  
-      <artifactId>spring-boot-starter-test</artifactId>  
-      <scope>test</scope>  
-    </dependency> 
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.microsoft.azure</groupId>
-        <artifactId>spring-cloud-starter-azure-spring-cloud-client</artifactId>
-        <version>2.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>applicationinsights-logging-log4j2</artifactId>
-      <version>[2.0,)</version>
-    </dependency>
+    
     <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
-        <version>1.18.10</version>
-        <scope>provided</scope>
+        <version>1.18.16</version>
     </dependency>
     <!-- This dependency includes the core HAPI-FHIR classes -->
 		<dependency>

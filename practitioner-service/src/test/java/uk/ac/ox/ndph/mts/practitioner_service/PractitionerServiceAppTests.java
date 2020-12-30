@@ -6,7 +6,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.http.MediaType;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
@@ -34,7 +33,7 @@ public class PractitionerServiceAppTests {
     void TestPostPractitioner_WhenNoInput_Returns400() throws Exception {
 
         // Act + Assert
-        ResultActions secret = this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
@@ -44,7 +43,7 @@ public class PractitionerServiceAppTests {
         when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenReturn("123");
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
-        ResultActions secret = this.mockMvc
+        this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
@@ -56,7 +55,7 @@ public class PractitionerServiceAppTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
-        ResultActions secret = this.mockMvc
+        this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway());
     }
@@ -68,7 +67,7 @@ public class PractitionerServiceAppTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
-        ResultActions secret = this.mockMvc
+        this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadRequest());
     }

@@ -2,11 +2,9 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.converter.ConvertWith;
 
-import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 import org.mockito.Mock;
@@ -14,9 +12,9 @@ import org.mockito.Captor;
 import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Assertions;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ArgumentException;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
 
 import java.util.UUID;
 
-import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,7 @@ public class PractitionerService implements EntityService {
     }
 
     public String savePractitioner(Practitioner practitioner) {
+        
         validateArgument(practitioner.getPrefix(), FIELD_NAME_PREFIX);
         validateArgument(practitioner.getGivenName(), FIELD_NAME_GIVEN_NAME);
         validateArgument(practitioner.getFamilyName(), FIELD_NAME_FAMILY_NAME);

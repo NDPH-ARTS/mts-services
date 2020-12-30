@@ -13,7 +13,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 @RestController
 @SpringBootApplication
 public class PractitionerServiceApp {
-	private static final String SUCCESS_STATUS = "success";
+	
 	private static final String ENDPOINT_PATH = "/practitioner";
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String RESPONSE = "{\"id\": \"%s\"}";
