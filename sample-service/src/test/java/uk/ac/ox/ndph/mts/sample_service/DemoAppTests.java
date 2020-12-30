@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
@@ -36,7 +35,7 @@ class DemoAppTests {
 		when(configService.getSecret()).thenReturn("123");
 
 		// Act + Assert
-		ResultActions secret = this.mockMvc.perform(get("/getsecret"))
+		this.mockMvc.perform(get("/getsecret"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString("123")));
