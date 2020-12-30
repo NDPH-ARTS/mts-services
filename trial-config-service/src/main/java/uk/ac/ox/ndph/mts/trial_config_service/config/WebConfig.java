@@ -22,13 +22,20 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer, WebConfigService {
+
+    private static final String API_MTS_APPS_ADMIN = "api://mts-apps/admin";
+    private static final String ADMIN_SCOPE = "admin scope";
+
+    // TODO ARTS-264 put these values into Azure Key Vault
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
     private String clientSecret;
 
+    // TODO ARTS-264 put these values into Azure Key Vault
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
     private String clientId;
 
+    // TODO ARTS-264 put these values into Azure Key Vault
     @Value("${swagger.authserver.url}")
     private String authServer;
 
@@ -40,7 +47,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket api() {
-        authorizationScopeList.add(new AuthorizationScope("api://mts-apps/admin", "admin scope"));
+        authorizationScopeList.add(new AuthorizationScope(API_MTS_APPS_ADMIN, ADMIN_SCOPE));
 
 
         return new Docket(DocumentationType.SWAGGER_2).select().apis(
@@ -92,4 +99,18 @@ public class WebConfig implements WebMvcConfigurer {
         return new RestTemplate();
     }
 
+    @Override
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    @Override
+    public String getClientId() {
+        return clientId;
+    }
+
+    @Override
+    public String getAuthServer() {
+        return authServer;
+    }
 }
