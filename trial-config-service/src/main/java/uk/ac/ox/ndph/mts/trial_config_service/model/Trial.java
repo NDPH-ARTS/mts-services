@@ -28,6 +28,9 @@ public class Trial {
     @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
     private List<TrialSite> trialSites;
 
+    @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
+    private List<Role> roles;
+
     @Column
     @CreatedDate
     private LocalDateTime modifiedTime;
@@ -35,6 +38,14 @@ public class Trial {
     @Column
     @CreatedBy
     private String modifiedBy;
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
     public enum Status {
         IN_CONFIGURATION //expand this enum in future future story about moving from in-config to launched state
