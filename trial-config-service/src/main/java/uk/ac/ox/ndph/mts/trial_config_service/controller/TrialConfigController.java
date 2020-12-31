@@ -1,21 +1,19 @@
 package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
 
-import org.jboss.logging.Logger;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
-import uk.ac.ox.ndph.mts.trial_config_service.config.WebConfig;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import reactor.core.publisher.Mono;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
-import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
 
 
@@ -25,17 +23,20 @@ public class TrialConfigController {
 
     private TrialConfigService trialConfigService;
 
-    private TrialRepository trialRepository;
-
-    private WebConfig webConfig;
+    private WebClient webClient;
 
 
     private static final String USER_IDENTITY_IN_TOKEN = "oid";
 
-    public TrialConfigController(TrialConfigService trialConfigService, TrialRepository trialRepository, WebConfig webConfig){
+    @Autowired
+    public TrialConfigController(TrialConfigService trialConfigService, WebClient webClient){
         this.trialConfigService = trialConfigService;
-        this.trialRepository = trialRepository;
-        this.webConfig = webConfig;
+        this.webClient = webClient;
+    }
+
+    public TrialConfigController(TrialConfigService trialConfigService, String baseUrl){
+        this.trialConfigService = trialConfigService;
+        this.webClient = WebClient.create(baseUrl);
     }
 
 
@@ -45,18 +46,19 @@ public class TrialConfigController {
                     String trialConfigURL,
             @AuthenticationPrincipal Jwt jwt) throws InvalidConfigException, ResourceAlreadyExistsException {
 
-        return trialConfigService.saveTrial(createTrial(trialConfigURL), jwt.getClaimAsString(USER_IDENTITY_IN_TOKEN));
+        return trialConfigService.saveTrial(createTrial(trialConfigURL).block(), jwt.getClaimAsString(USER_IDENTITY_IN_TOKEN));
 
     }
 
-    protected Trial createTrial(String trialConfigURL) throws InvalidConfigException {
-        try {
-            RestTemplate restTemplate = webConfig.restTemplate();
-            ResponseEntity<Trial> response = restTemplate.getForEntity(trialConfigURL, Trial.class);
-            return response.getBody();
-        } catch(Exception e) {
-            Logger.getLogger(TrialConfigController.class).error("Failed to parse trial config!", e);
-            throw new InvalidConfigException("Failed to parse trial config: " + e.getMessage());
-        }
+    protected Mono<Trial> createTrial(String trialConfigURL) throws WebClientException {
+
+        Mono<Trial> response = webClient.get()
+                .uri(trialConfigURL)
+                .retrieve()
+                .bodyToMono(Trial.class);
+        return response;
     }
+
+
+
 }
