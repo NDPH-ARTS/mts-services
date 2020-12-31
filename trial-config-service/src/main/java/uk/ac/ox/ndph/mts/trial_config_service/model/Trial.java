@@ -14,7 +14,7 @@ public class Trial {
 
     @Id
     @Column
-    private String trialId; //String rather than long is required: https://ndph-arts.atlassian.net/wiki/spaces/ARTS/pages/74187670/Trial+configuration+data
+    private String id; //String rather than long is required: https://ndph-arts.atlassian.net/wiki/spaces/ARTS/pages/74187670/Trial+configuration+data
 
     @Column
     private String trialName;
@@ -28,6 +28,9 @@ public class Trial {
     @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
     private List<TrialSite> trialSites;
 
+    @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
+    private List<Role> roles;
+
     @Column
     @CreatedDate
     private LocalDateTime modifiedTime;
@@ -36,16 +39,24 @@ public class Trial {
     @CreatedBy
     private String modifiedBy;
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
     public enum Status {
         IN_CONFIGURATION //expand this enum in future future story about moving from in-config to launched state
     }
 
-    public String getTrialId() {
-        return trialId;
+    public String getId() {
+        return id;
     }
 
-    public void setTrialId(String trialId) {
-        this.trialId = trialId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTrialName() {
