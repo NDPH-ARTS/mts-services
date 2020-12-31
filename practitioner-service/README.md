@@ -1,5 +1,5 @@
 # Practitioner Service
-Practitioner service validates the input person's details and adds it as a practitioner entity to the FHIR store.
+Practitioner service validates the input practitioner details and adds it as a FHIR practitioner entity to the FHIR store.
 
 ## API Endpoints
 ### Create Practitioner
@@ -30,7 +30,7 @@ Creates a new practitioner entity.
 
 **Condition** : If practitioner was created succesfully in the FHIR store.
 
-**Code** : `200 OK`
+**Code** : `201 CREATED`
 
 **Content example**
 
@@ -75,3 +75,9 @@ Creates a new practitioner entity.
 }
 ```
 ___
+
+## Service Dependecies
+
+### FHIR Store and HL7 Model
+Practitioner service is backed up by a FHIR store which is accessible as an HTTP/S endpoint and configurable by the "fhir.uri" application property.
+Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir/docs/client/examples.html) to handle the model and trasactions with FHIR store.
