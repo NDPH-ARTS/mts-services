@@ -9,7 +9,7 @@ COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
 COPY ./${SVC}/src ${SVC}/src
 
-COPY ../pom.xml pom.xml
+COPY ./pom.xml pom.xml
 
 RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
 
