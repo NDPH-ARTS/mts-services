@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
@@ -37,15 +38,37 @@ class TrialConfigServiceTest {
 
     @Test
     void createInitialTrial() {
-        Trial validConfig = new Trial();
-        validConfig.setTrialSites(Collections.singletonList(new TrialSite(TrialSite.SiteType.CCO)));
+        Trial testTrial = new Trial();
+        testTrial.setTrialName("testTrial");
+        testTrial.setId("testId");
+        TrialSite testTrialSite = new TrialSite(TrialSite.SiteType.CCO);
+        testTrialSite.setSiteName("testTrialSiteName");
+
+        Role testRole = new Role();
+        testRole.setRoleName("testRoleName");
+
+        testTrial.setTrialSites(Collections.singletonList(testTrialSite));
+        testTrial.setRoles(Collections.singletonList(testRole));
 
         when(trialRepository.save(Mockito.any(Trial.class))).thenAnswer(i -> i.getArguments()[0]);
-        Trial savedTrial = trialConfigService.saveTrial(validConfig, DUMMY_OID);
+        Trial savedTrial = trialConfigService.saveTrial(testTrial, DUMMY_OID);
 
+        //hardcoded value in create/saveTrial
         assertEquals(savedTrial.getStatus(), Trial.Status.IN_CONFIGURATION);
+        //test trial element
+        assertEquals(savedTrial.getTrialName(), testTrial.getTrialName());
+        assertEquals(savedTrial.getId(), testTrial.getId());
+        //test trial site element
         assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
+        assertEquals(savedTrial.getTrialSites().get(0).getSiteName(), testTrialSite.getSiteName());
+        //test if bootstrap user added
+        assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
+        //test if roles are added
+        assertEquals(savedTrial.getRoles().size(), testTrial.getRoles().size());
+        assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());
+        //test that audited data is saved
         assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
+
 
     }
 
