@@ -27,7 +27,34 @@
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-jdbc</artifactId> 
-    </dependency>  
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectreactor</groupId>
+      <artifactId>reactor-spring</artifactId>
+      <version>1.0.1.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>4.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver</artifactId>
+      <version>4.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-test</artifactId>
+      <scope>test</scope>
+      <version>3.2.3.RELEASE</version>
+    </dependency>
     <dependency> 
       <groupId>io.springfox</groupId>  
       <artifactId>springfox-boot-starter</artifactId>  

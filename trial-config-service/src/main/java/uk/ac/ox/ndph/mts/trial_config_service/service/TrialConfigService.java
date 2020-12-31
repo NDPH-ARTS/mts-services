@@ -35,7 +35,7 @@ public class TrialConfigService {
                 .filter(site -> Objects.nonNull(site.getSiteType()) && site.getSiteType().equals(ROOT_NODE_TYPE))
                 .findFirst();
 
-        if(!trialSite.isPresent()){
+        if(trialSite.isEmpty()){
             throw new InvalidConfigException();
         }
 
