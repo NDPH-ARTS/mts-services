@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd   http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <changeSet author="kedarl (generated)" id="1001">
+        <insert tableName="site_type">
+            <column name="id" valueSequenceNext="site_type_sequence"/>
+            <column name="name" value="CCO"/>
+            <column name="description" value="CCO"/>
+            <column name="changed_who" value="kkl"/>
+            <column name="changed_when" value="now"/>
+        </insert>
+        <insert tableName="site_type">
+            <column name="id" valueSequenceNext="site_type_sequence"/>
+            <column name="name" value="Region"/>
+            <column name="description" value="Region"/>
+            <column name="changed_who" value="kkl"/>
+            <column name="changed_when" value="now"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
