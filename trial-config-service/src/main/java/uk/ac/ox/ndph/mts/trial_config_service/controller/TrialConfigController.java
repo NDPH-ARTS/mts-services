@@ -3,12 +3,7 @@ package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
 import org.jboss.logging.Logger;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import uk.ac.ox.ndph.mts.trial_config_service.config.WebConfig;
@@ -38,14 +33,12 @@ public class TrialConfigController {
         this.webConfig = webConfig;
     }
 
-
     @PostMapping("/trial")
     Trial saveTrial(
             @RequestBody
-                    String trialConfigURL,
-            @AuthenticationPrincipal Jwt jwt) throws InvalidConfigException, ResourceAlreadyExistsException {
+                    String trialConfigURL) throws InvalidConfigException, ResourceAlreadyExistsException {
 
-        return trialConfigService.saveTrial(createTrial(trialConfigURL), jwt.getClaimAsString(USER_IDENTITY_IN_TOKEN));
+        return trialConfigService.saveTrial(createTrial(trialConfigURL));
 
     }
 
