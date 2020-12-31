@@ -53,23 +53,20 @@ class TrialConfigServiceTest {
         when(trialRepository.save(Mockito.any(Trial.class))).thenAnswer(i -> i.getArguments()[0]);
         Trial savedTrial = trialConfigService.saveTrial(testTrial, DUMMY_OID);
 
-        //hardcoded value in create/saveTrial
         assertEquals(savedTrial.getStatus(), Trial.Status.IN_CONFIGURATION);
-        //test trial element
+
         assertEquals(savedTrial.getTrialName(), testTrial.getTrialName());
         assertEquals(savedTrial.getId(), testTrial.getId());
-        //test trial site element
+
         assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
         assertEquals(savedTrial.getTrialSites().get(0).getSiteName(), testTrialSite.getSiteName());
-        //test if bootstrap user added
+
         assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
-        //test if roles are added
+
         assertEquals(savedTrial.getRoles().size(), testTrial.getRoles().size());
         assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());
-        //test that audited data is saved
+
         assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
-
-
     }
 
     @Test
