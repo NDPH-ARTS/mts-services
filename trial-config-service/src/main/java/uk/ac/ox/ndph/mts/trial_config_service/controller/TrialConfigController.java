@@ -1,15 +1,7 @@
 package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
 
-import org.jboss.logging.Logger;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import uk.ac.ox.ndph.mts.trial_config_service.config.WebConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +42,8 @@ public class TrialConfigController {
             @RequestBody
                     String trialConfigURL) throws InvalidConfigException, ResourceAlreadyExistsException {
 
-        return trialConfigService.saveTrial(createTrial(trialConfigURL).block(), jwt.getClaimAsString(USER_IDENTITY_IN_TOKEN));
+        String userId = "admin001";
+        return trialConfigService.saveTrial(createTrial(trialConfigURL).block(), userId);
 
     }
 

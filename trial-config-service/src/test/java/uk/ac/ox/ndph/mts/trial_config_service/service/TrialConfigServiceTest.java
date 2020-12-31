@@ -36,7 +36,7 @@ class TrialConfigServiceTest {
 
     private static final String DUMMY_OID = "dummy-oid";
 
-    /*
+
     @Test
     void createInitialTrial() {
         Trial testTrial = new Trial();
@@ -82,6 +82,4 @@ class TrialConfigServiceTest {
         invalidConfig.setTrialSites(Collections.singletonList(new TrialSite()));
         assertThrows(InvalidConfigException.class, () -> trialConfigService.saveTrial(invalidConfig, DUMMY_OID));
     }
-
-     */
 }

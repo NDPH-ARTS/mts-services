@@ -21,13 +21,11 @@ public class TrialConfigService {
         this.trialRepository = trialRepository;
     }
 
-    public Trial saveTrial(Trial trial) throws InvalidConfigException, ResourceAlreadyExistsException {
+    public Trial saveTrial(Trial trial, String userId) throws InvalidConfigException, ResourceAlreadyExistsException {
 
         TrialSite.SiteType ROOT_NODE_TYPE = TrialSite.SiteType.CCO; // this is the assumption for now
 
-        String userId = "admin001";
-
-        if(trialRepository.existsById(trial.getTrialId())) {
+        if(trialRepository.existsById(trial.getId())) {
             throw new ResourceAlreadyExistsException();
         }
 
