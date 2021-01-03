@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.converter.ConvertWith;
 
 import static org.mockito.Mockito.when;
+
 import org.mockito.Mockito;
 import org.mockito.Mock;
 import org.mockito.Captor;
@@ -31,28 +32,26 @@ public class PractitionerServiceTests {
     @ParameterizedTest
     @CsvSource({",,", ",test,test", "test,,test", ",test,", "null,null,null", "test,null,test"})
     void TestSavePractitioner_WhenFieldsAreEmptyOrNull_ThrowsArgumentException(
-        @ConvertWith(NullableConverter.class)String prefix, 
-        @ConvertWith(NullableConverter.class)String givenName, 
-        @ConvertWith(NullableConverter.class)String familyName) {
+            @ConvertWith(NullableConverter.class) String prefix,
+            @ConvertWith(NullableConverter.class) String givenName,
+            @ConvertWith(NullableConverter.class) String familyName) {
         // Arrange
         EntityService entityService = new PractitionerService(fhirRepository);
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
-        
+
         // Act + Assert
-        Assertions.assertThrows(ArgumentException.class, () -> {
-            entityService.savePractitioner(practitioner);
-          }, "Expecting empty fields to throw");
-    } 
+        Assertions.assertThrows(ArgumentException.class, () -> entityService.savePractitioner(practitioner), "Expecting empty fields to throw");
+    }
 
     @Test
-    void TestSavePractitioner_WhenSavePractitioner_SavePractitionerToRepository(){
+    void TestSavePractitioner_WhenSavePractitioner_SavePractitionerToRepository() {
         // Arrange
         String prefix = "prefix";
         String givenName = "givenName";
         String familyName = "familyName";
         EntityService entityService = new PractitionerService(fhirRepository);
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
-        
+
         // Act
         entityService.savePractitioner(practitioner);
 
@@ -61,20 +60,19 @@ public class PractitionerServiceTests {
         org.hl7.fhir.r4.model.Practitioner value = practitionerCaptor.getValue();
         Assertions.assertEquals(prefix, value.getName().get(0).getPrefix().get(0).toString());
         Assertions.assertEquals(givenName, value.getName().get(0).getGiven().get(0).toString());
-        Assertions.assertEquals(familyName, value.getName().get(0).getFamily().toString());
+        Assertions.assertEquals(familyName, value.getName().get(0).getFamily());
     }
 
     @Test
-    void TestSavePractitioner_WhenRepositoryThrows_ThrowsSameException(){
+    void TestSavePractitioner_WhenRepositoryThrows_ThrowsSameException() {
         when(fhirRepository.savePractitioner(Mockito.any(org.hl7.fhir.r4.model.Practitioner.class)))
-            .thenThrow(RestException.class);
-  
+                .thenThrow(RestException.class);
+
         EntityService entityService = new PractitionerService(fhirRepository);
         Practitioner practitioner = new Practitioner("prefix", "givenName", "familyName");
-        
+
         // Act + Assert
-        Assertions.assertThrows(RestException.class, () -> {
-            entityService.savePractitioner(practitioner);
-          }, "Expecting empty fields to throw");
+        Assertions.assertThrows(RestException.class, () ->
+                entityService.savePractitioner(practitioner), "Expecting empty fields to throw");
     }
 }
