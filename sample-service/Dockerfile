@@ -4,8 +4,10 @@ FROM maven:3-openjdk-11 as builder
 ARG SVC
 
 #TODO: bring only rquired pom files.
+COPY ./build-tools ./build-tools
 COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
+
 COPY ./${SVC}/src ${SVC}/src
 
 COPY ./pom.xml pom.xml
