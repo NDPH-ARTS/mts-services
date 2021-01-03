@@ -1,16 +1,16 @@
-ARG SVC
-
 FROM maven:3-openjdk-11 as builder
 ARG SVC
 
-#TODO: bring only rquired pom files.
+# copy common things
 COPY ./build-tools ./build-tools
+COPY ./pom.xml pom.xml
+
+# copy poms of ALL services
 COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
 
+# copy current service source
 COPY ./${SVC}/src ${SVC}/src
-
-COPY ./pom.xml pom.xml
 
 RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
 
