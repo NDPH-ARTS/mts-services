@@ -30,7 +30,7 @@ public class TrialSite {
     private String siteName;
 
     public enum SiteType {//expand this enum in future story about configuring site types
-        CCO, REGION
+        CCO, REGION, LLC
     }
 
 
@@ -84,11 +84,11 @@ public class TrialSite {
         this.siteType = siteType;
     }
 
-    public String getFHIROrganizationId() {
+    public String getFhirOrganizationId() {
         return fhirOrganizationId;
     }
 
-    public void setFHIROrganizationId(String fhirOrganizationId) {
+    public void setFhirOrganizationId(String fhirOrganizationId) {
         this.fhirOrganizationId = fhirOrganizationId;
     }
 
