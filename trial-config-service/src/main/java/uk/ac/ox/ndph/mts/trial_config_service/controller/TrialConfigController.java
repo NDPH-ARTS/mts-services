@@ -27,12 +27,12 @@ public class TrialConfigController {
     private static final String USER_IDENTITY_IN_TOKEN = "oid";
 
     @Autowired
-    public TrialConfigController(TrialConfigService trialConfigService, WebClient webClient){
+    public TrialConfigController(TrialConfigService trialConfigService, WebClient webClient) {
         this.trialConfigService = trialConfigService;
         this.webClient = webClient;
     }
 
-    public TrialConfigController(TrialConfigService trialConfigService, String baseUrl){
+    public TrialConfigController(TrialConfigService trialConfigService, String baseUrl) {
         this.trialConfigService = trialConfigService;
         this.webClient = WebClient.create(baseUrl);
     }
@@ -55,7 +55,6 @@ public class TrialConfigController {
                 .bodyToMono(Trial.class);
         return response;
     }
-
 
 
 }

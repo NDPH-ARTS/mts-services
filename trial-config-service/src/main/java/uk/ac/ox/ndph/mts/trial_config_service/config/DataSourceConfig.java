@@ -9,17 +9,17 @@ import javax.sql.DataSource;
 
 @Configuration
 public class DataSourceConfig implements DataSourceConfigService {
-    @Value( "${jdbc.driver}" )
+    @Value("${jdbc.driver}")
     private String driverClass;
-    @Value( "${jdbc.url}" )
+    @Value("${jdbc.url}")
     private String url;
 
     @Bean
     public DataSource getDataSource() {
         return DataSourceBuilder.create()
-            .driverClassName(getDriverClass())
-            .url(url)
-            .build();
+                .driverClassName(getDriverClass())
+                .url(url)
+                .build();
     }
 
     @Override
