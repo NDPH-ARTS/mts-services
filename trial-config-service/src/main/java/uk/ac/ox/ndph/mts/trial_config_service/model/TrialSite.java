@@ -37,7 +37,7 @@ public class TrialSite {
     private SiteType siteType;
 
     @Column
-    private String FHIROrganizationId;
+    private String fhirOrganizationId;
 
     @JsonIgnore
     @ManyToOne
@@ -84,12 +84,12 @@ public class TrialSite {
         this.siteType = siteType;
     }
 
-    public String getFHIROrganizationId() {
-        return FHIROrganizationId;
+    public String getFhirOrganizationId() {
+        return fhirOrganizationId;
     }
 
-    public void setFHIROrganizationId(String FHIROrganizationId) {
-        this.FHIROrganizationId = FHIROrganizationId;
+    public void setFhirOrganizationId(String fhirOrganizationId) {
+        this.fhirOrganizationId = fhirOrganizationId;
     }
 
     public Trial getTrial() {

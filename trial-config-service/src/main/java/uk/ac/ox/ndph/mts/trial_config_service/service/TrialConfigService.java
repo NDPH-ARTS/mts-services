@@ -23,14 +23,14 @@ public class TrialConfigService {
 
     public Trial saveTrial(Trial trial, String userId) throws InvalidConfigException, ResourceAlreadyExistsException {
 
-        TrialSite.SiteType ROOT_NODE_TYPE = TrialSite.SiteType.CCO; // this is the assumption for now
+        TrialSite.SiteType rootNodeType = TrialSite.SiteType.CCO; // this is the assumption for now
 
         if (trialRepository.existsById(trial.getId())) {
             throw new ResourceAlreadyExistsException();
         }
 
         Optional<TrialSite> trialSite = trial.getTrialSites().stream()
-                .filter(site -> Objects.nonNull(site.getSiteType()) && site.getSiteType().equals(ROOT_NODE_TYPE))
+                .filter(site -> Objects.nonNull(site.getSiteType()) && site.getSiteType().equals(rootNodeType))
                 .findFirst();
 
         if (trialSite.isEmpty()) {

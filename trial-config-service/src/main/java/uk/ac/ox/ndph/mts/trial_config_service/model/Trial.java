@@ -31,7 +31,7 @@ public class Trial {
     private Status status;
 
     @Column
-    private String FHIROrganizationId;
+    private String fhirOrganizationId;
 
     @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<TrialSite> trialSites;
@@ -83,12 +83,12 @@ public class Trial {
         this.status = status;
     }
 
-    public String getFHIROrganizationId() {
-        return FHIROrganizationId;
+    public String getFhirOrganizationId() {
+        return fhirOrganizationId;
     }
 
-    public void setFHIROrganizationId(String FHIROrganizationId) {
-        this.FHIROrganizationId = FHIROrganizationId;
+    public void setFhirOrganizationId(String fhirOrganizationId) {
+        this.fhirOrganizationId = fhirOrganizationId;
     }
 
     public List<TrialSite> getTrialSites() {
