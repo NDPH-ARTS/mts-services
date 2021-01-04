@@ -85,11 +85,11 @@ public class TrialSite {
     }
 
     public String getFHIROrganizationId() {
-        return FHIROrganizationId;
+        return fhirOrganizationId;
     }
 
-    public void setFHIROrganizationId(String FHIROrganizationId) {
-        this.FHIROrganizationId = FHIROrganizationId;
+    public void setFHIROrganizationId(String fhirOrganizationId) {
+        this.fhirOrganizationId = fhirOrganizationId;
     }
 
     public Trial getTrial() {
