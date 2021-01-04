@@ -1,0 +1,131 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 3,
+    "passes": 3,
+    "pending": 0,
+    "failures": 0,
+    "start": "2021-01-04T13:42:41.362Z",
+    "end": "2021-01-04T13:42:43.874Z",
+    "duration": 2512,
+    "testsRegistered": 3,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "passPercentClass": "success",
+    "pendingPercentClass": "danger"
+  },
+  "suites": {
+    "uuid": "518bc352-0b9b-4f1b-98e3-103e163b52b5",
+    "title": "",
+    "fullFile": "",
+    "file": "",
+    "beforeHooks": [
+      {
+        "title": "\"before each\" hook",
+        "fullTitle": " \"before each\" hook",
+        "timedOut": false,
+        "duration": 0,
+        "pass": false,
+        "fail": false,
+        "pending": false,
+        "code": "baseRequest = request(conf.BASE_URL)",
+        "err": {},
+        "isRoot": true,
+        "uuid": "760ea9b0-ca6f-4aa3-99bc-58f5efa45b27",
+        "isHook": true,
+        "skipped": false
+      }
+    ],
+    "afterHooks": [],
+    "tests": [],
+    "suites": [
+      {
+        "uuid": "8e04eae2-65df-4899-bbc3-e1008138d35a",
+        "title": "Check the end point response of a simple microservice",
+        "fullFile": "/Users/sameerapurini/Documents/Sam/NDPH/mts-services/api-tests/specs/Get_trials.js",
+        "file": "/api-tests/specs/Get_trials.js",
+        "beforeHooks": [],
+        "afterHooks": [],
+        "tests": [
+          {
+            "title": " Check GET of translation/fr-fr",
+            "fullTitle": "Check the end point response of a simple microservice  Check GET of translation/fr-fr",
+            "timedOut": false,
+            "duration": 860,
+            "state": "passed",
+            "speed": "slow",
+            "pass": true,
+            "fail": false,
+            "pending": false,
+            "code": "const response = await baseRequest.get(\"/translation/fr-fr\")\nexpect(response.status).to.equal(HttpStatus.OK)\nconsole.log('response message' + response.status)\nexpect(response.body.title).to.equal('Arts Admin')\nexpect(response.body.id).to.equal('Id')",
+            "err": {},
+            "isRoot": false,
+            "uuid": "4288af7b-562f-4ae4-b16c-7606f08a4395",
+            "isHook": false,
+            "skipped": false
+          },
+          {
+            "title": " Check GET of  translation/ja-jp",
+            "fullTitle": "Check the end point response of a simple microservice  Check GET of  translation/ja-jp",
+            "timedOut": false,
+            "duration": 805,
+            "state": "passed",
+            "speed": "slow",
+            "pass": true,
+            "fail": false,
+            "pending": false,
+            "code": "const response = await baseRequest.get(\"/translation/ja-jp\")\nexpect(response.status).to.equal(HttpStatus.OK)\nexpect(response.body.title).to.equal('Arts Admin')\nexpect(response.body.id).to.equal('Id')",
+            "err": {},
+            "isRoot": false,
+            "uuid": "bfc3dbe3-9d53-4076-b113-ed28ed9f0568",
+            "isHook": false,
+            "skipped": false
+          },
+          {
+            "title": " Check GET of  translation/en-gb",
+            "fullTitle": "Check the end point response of a simple microservice  Check GET of  translation/en-gb",
+            "timedOut": false,
+            "duration": 830,
+            "state": "passed",
+            "speed": "slow",
+            "pass": true,
+            "fail": false,
+            "pending": false,
+            "code": "const response = await baseRequest.get(\"/translation/en-gb\")\nexpect(response.status).to.equal(HttpStatus.OK)\nexpect(response.body.title).to.equal('Arts Admin')\nexpect(response.body.id).to.equal('Id')",
+            "err": {},
+            "isRoot": false,
+            "uuid": "623dbad6-5b68-4d4e-9ca9-34c4022fcbbd",
+            "isHook": false,
+            "skipped": false
+          }
+        ],
+        "suites": [],
+        "passes": [
+          "4288af7b-562f-4ae4-b16c-7606f08a4395",
+          "bfc3dbe3-9d53-4076-b113-ed28ed9f0568",
+          "623dbad6-5b68-4d4e-9ca9-34c4022fcbbd"
+        ],
+        "failures": [],
+        "pending": [],
+        "skipped": [],
+        "duration": 2495,
+        "root": false,
+        "rootEmpty": false,
+        "_timeout": 2000
+      }
+    ],
+    "passes": [],
+    "failures": [],
+    "pending": [],
+    "skipped": [],
+    "duration": 0,
+    "root": true,
+    "rootEmpty": true,
+    "_timeout": 2000
+  },
+  "copyrightYear": 2021
+}
