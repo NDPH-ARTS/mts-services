@@ -141,4 +141,7 @@
     <changeSet author="katesan (generated)" id="1608062861281-15">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="trialsite_sequence" startValue="1"/>
     </changeSet>
+    <changeSet author="katesan (generated)" id="1608062861281-16">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="role_sequence" startValue="1"/>
+    </changeSet>
 </databaseChangeLog>

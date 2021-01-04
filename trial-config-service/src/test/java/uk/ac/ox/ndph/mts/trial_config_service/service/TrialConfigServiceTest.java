@@ -68,6 +68,8 @@ class TrialConfigServiceTest {
         assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());
 
         assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
+        assertEquals(savedTrial.getTrialSites().get(0).getModifiedBy(), DUMMY_OID);
+        assertEquals(savedTrial.getRoles().get(0).getModifiedBy(), DUMMY_OID);
     }
 
     @Test

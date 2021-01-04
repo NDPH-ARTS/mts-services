@@ -61,7 +61,7 @@ class TrialConfigControllerTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(objectMapper.writeValueAsString(mockTrial))
                 .addHeader("Content-Type", "application/json"));
-        Mono<Trial> mockResponseTrial = trialConfigController.createTrial(TEST_CONFIG_ENDPOINT);
+        Mono<Trial> mockResponseTrial = trialConfigController.createTrialFromURL(TEST_CONFIG_ENDPOINT);
 
         StepVerifier.create(mockResponseTrial)
                 .expectNextMatches(trial -> trial.getId().equals(mockTrial.getId()) &&

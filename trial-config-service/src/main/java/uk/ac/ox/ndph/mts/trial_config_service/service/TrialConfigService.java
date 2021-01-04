@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
@@ -25,7 +26,7 @@ public class TrialConfigService {
 
         TrialSite.SiteType ROOT_NODE_TYPE = TrialSite.SiteType.CCO; // this is the assumption for now
 
-        if(trialRepository.existsById(trial.getId())) {
+        if (trialRepository.existsById(trial.getId())) {
             throw new ResourceAlreadyExistsException();
         }
 
@@ -33,7 +34,7 @@ public class TrialConfigService {
                 .filter(site -> Objects.nonNull(site.getSiteType()) && site.getSiteType().equals(ROOT_NODE_TYPE))
                 .findFirst();
 
-        if(trialSite.isEmpty()){
+        if (trialSite.isEmpty()) {
             throw new InvalidConfigException();
         }
 
@@ -51,15 +52,20 @@ public class TrialConfigService {
         bootstrapUser.setTrialSite(trialSite);
     }
 
-    private void addAuditData(Trial trial, String userId){
-
+    private void addAuditData(Trial trial, String userId) {
         trial.setModifiedTime(LocalDateTime.now());
         trial.setModifiedBy(userId);
 
-        for(TrialSite trialSite : trial.getTrialSites()){
+        for (TrialSite trialSite : trial.getTrialSites()) {
             trialSite.setModifiedTime(LocalDateTime.now());
             trialSite.setModifiedBy(userId);
             trialSite.setTrial(trial);
+        }
+
+        for (Role role : trial.getRoles()) {
+            role.setModifiedTime(LocalDateTime.now());
+            role.setModifiedBy(userId);
+            role.setTrial(trial);
         }
     }
 

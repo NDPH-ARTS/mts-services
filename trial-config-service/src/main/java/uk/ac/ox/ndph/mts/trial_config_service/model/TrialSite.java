@@ -21,7 +21,7 @@ public class TrialSite {
     private String siteName;
 
     public enum SiteType {//expand this enum in future story about configuring site types
-        CCO, REGION
+        CCO, REGION, LLC
     }
 
 
@@ -32,7 +32,7 @@ public class TrialSite {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "trial_trial_id")
+    @JoinColumn(name = "trial_id")
     private Trial trial;
 
     @OneToOne(cascade=CascadeType.ALL, mappedBy="trialSite") /* This is a dummy relationship - it won't be a direct 1:1 here but will be mediated by Roles.  Dummied for the purpose of story 170. */

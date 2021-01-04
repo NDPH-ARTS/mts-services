@@ -21,7 +21,7 @@ public class Role {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "trial_trial_id")
+    @JoinColumn(name = "trial_id")
     private Trial trial;
 
     @Column
