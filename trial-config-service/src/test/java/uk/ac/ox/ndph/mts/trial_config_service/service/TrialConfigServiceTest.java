@@ -36,6 +36,7 @@ class TrialConfigServiceTest {
 
     private static final String DUMMY_OID = "dummy-oid";
 
+
     @Test
     void createInitialTrial() {
         Trial testTrial = new Trial();

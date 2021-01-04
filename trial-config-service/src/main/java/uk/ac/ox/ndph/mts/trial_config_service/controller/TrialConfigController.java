@@ -2,8 +2,6 @@ package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,14 +37,13 @@ public class TrialConfigController {
         this.webClient = WebClient.create(baseUrl);
     }
 
-
     @PostMapping("/trial")
     Trial saveTrial(
             @RequestBody
-                    String trialConfigURL,
-            @AuthenticationPrincipal Jwt jwt) throws InvalidConfigException, ResourceAlreadyExistsException {
+                    String trialConfigURL) throws InvalidConfigException, ResourceAlreadyExistsException {
 
-        return trialConfigService.saveTrial(createTrial(trialConfigURL).block(), jwt.getClaimAsString(USER_IDENTITY_IN_TOKEN));
+        String userId = "admin001";
+        return trialConfigService.saveTrial(createTrial(trialConfigURL).block(), userId);
 
     }
 
