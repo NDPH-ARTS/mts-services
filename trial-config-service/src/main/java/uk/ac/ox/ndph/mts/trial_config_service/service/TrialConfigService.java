@@ -23,7 +23,6 @@ public class TrialConfigService {
     }
 
     public Trial saveTrial(Trial trial, String userId) throws InvalidConfigException, ResourceAlreadyExistsException {
-
         TrialSite.SiteType rootNodeType = TrialSite.SiteType.CCO; // this is the assumption for now
 
         if (trialRepository.existsById(trial.getId())) {
@@ -46,14 +45,12 @@ public class TrialConfigService {
     }
 
     private void addBootstrapUser(TrialSite trialSite, String userId) { // this will change once we have Roles
-
         Person bootstrapUser = new Person(userId, LocalDateTime.now(), userId);
         trialSite.setUser(bootstrapUser);
         bootstrapUser.setTrialSite(trialSite);
     }
 
     private void addAuditData(Trial trial, String userId) {
-
         trial.setModifiedTime(LocalDateTime.now());
         trial.setModifiedBy(userId);
 

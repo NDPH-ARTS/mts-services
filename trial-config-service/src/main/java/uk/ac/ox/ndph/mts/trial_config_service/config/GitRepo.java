@@ -26,7 +26,6 @@ public class GitRepo {
 
     @PostConstruct
     public void init() throws GitAPIException, IOException {
-
         Files.createDirectories(getRepoPath());
 
         Git git = Git.cloneRepository()
@@ -41,9 +40,7 @@ public class GitRepo {
     }
 
     public byte[] getTrialFile(String fileName) throws IOException {
-
         ObjectId lastCommitId = getRepo().resolve(Constants.HEAD);
-
         byte[] fileBytes;
 
         try (RevWalk revwalk = new RevWalk(getRepo())) {
@@ -61,12 +58,11 @@ public class GitRepo {
 
                 ObjectId objectId = treeWalk.getObjectId(0);
                 ObjectLoader loader = getRepo().open(objectId);
-
                 loader.copyTo(System.out);
 
                 fileBytes = loader.getBytes();
-
             }
+
             revwalk.dispose();
         }
 
@@ -81,7 +77,6 @@ public class GitRepo {
 
     @PreDestroy
     public void deleteRepo() throws IOException {
-        //close repo
         Git.shutdown();
         FileUtils.deleteDirectory(getRepoPath().toFile());
     }

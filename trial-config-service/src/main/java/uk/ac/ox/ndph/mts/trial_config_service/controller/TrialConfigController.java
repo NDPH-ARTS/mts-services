@@ -73,6 +73,7 @@ public class TrialConfigController {
                 .uri(trialConfig)
                 .retrieve()
                 .bodyToMono(Trial.class);
+
         return response;
     }
 
