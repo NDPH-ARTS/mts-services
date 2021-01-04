@@ -71,13 +71,13 @@ class TrialConfigServiceTest {
     }
 
     @Test
-    void resourceAlreadyExistsErrorThrown(){
+    void resourceAlreadyExistsErrorThrown() {
         when(trialRepository.existsById(any())).thenReturn(true);
         assertThrows(ResourceAlreadyExistsException.class, () -> trialConfigService.saveTrial(new Trial(), DUMMY_OID));
     }
 
     @Test
-    void invalidConfigExceptionThrownForNoRoot(){
+    void invalidConfigExceptionThrownForNoRoot() {
         Trial invalidConfig = new Trial();
         invalidConfig.setTrialSites(Collections.singletonList(new TrialSite()));
         assertThrows(InvalidConfigException.class, () -> trialConfigService.saveTrial(invalidConfig, DUMMY_OID));

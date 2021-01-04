@@ -4,7 +4,11 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +18,11 @@ public class Trial {
 
     @Id
     @Column
-    private String id; //String rather than long is required: https://ndph-arts.atlassian.net/wiki/spaces/ARTS/pages/74187670/Trial+configuration+data
+    /*
+    String rather than long is required.
+    https://ndph-arts.atlassian.net/wiki/spaces/ARTS/pages/74187670/Trial+configuration+data
+     */
+    private String id;
 
     @Column
     private String trialName;
@@ -25,10 +33,10 @@ public class Trial {
     @Column
     private String FHIROrganizationId;
 
-    @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<TrialSite> trialSites;
 
-    @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<Role> roles;
 
     @Column

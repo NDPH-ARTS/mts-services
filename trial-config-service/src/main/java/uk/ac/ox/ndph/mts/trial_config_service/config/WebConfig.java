@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.trial_config_service.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,8 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select().apis(
-            RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.mts.trial_config_service.controller"))
-                                                      .paths(PathSelectors.any()).build();
+                RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.mts.trial_config_service.controller"))
+                .paths(PathSelectors.any()).build();
     }
 
     @Bean
@@ -43,7 +42,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public WebClient webClient(){
+    public WebClient webClient() {
         return WebClient.create();
     }
 
