@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ *
+ */
 @Data
 @Getter
 @Setter
@@ -16,5 +19,5 @@ public class Practitioner {
     private String prefix;
     private String givenName;
     private String familyName;
-    
+
 }

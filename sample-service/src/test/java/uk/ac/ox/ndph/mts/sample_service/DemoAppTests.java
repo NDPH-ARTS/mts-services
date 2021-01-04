@@ -19,26 +19,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class DemoAppTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
-	@Autowired
-	private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-	@MockBean
-	private ConfigService configService;
+    @MockBean
+    private ConfigService configService;
 
-	@Test
-	void TestGetSecret_WhenConfigServiceExists_CorrectValueReturned() throws Exception {
-		// Arrange
-		when(configService.getSecret()).thenReturn("123");
+    @Test
+    void TestGetSecret_WhenConfigServiceExists_CorrectValueReturned() throws Exception {
+        // Arrange
+        when(configService.getSecret()).thenReturn("123");
 
-		// Act + Assert
-		this.mockMvc.perform(get("/getsecret"))
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("123")));
-	}
+        // Act + Assert
+        this.mockMvc.perform(get("/getsecret"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("123")));
+    }
 
 }

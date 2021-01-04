@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
@@ -16,17 +17,17 @@ import ca.uhn.fhir.util.BundleUtil;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 /**
- * Implement FhirRepository interface using HAPI client sdk and backed up by 
+ * Implement FhirRepository interface using HAPI client sdk and backed up by
  * a FHIR store.
  */
 @Component
 class AzureFhirRepository implements FhirRepository {
 
-    private final static String PRACTITIONER_ENTITY_NAME = "Practitioner";
-    private final static String INFO_LOG_SAVE_PRACTITIONER = "request to fhir: %s";
-    private final static String INFO_LOG_RESPONSE_PRACTITIONER = "response from fhir: %s";
-    private final static String ERROR_UPDATE_FHIR = "error while updating fhir store";
-    private final static String ERROR_BAD_RESPONSE_SIZE = "bad response size from FHIR: %d";
+    private static final String PRACTITIONER_ENTITY_NAME = "Practitioner";
+    private static final String INFO_LOG_SAVE_PRACTITIONER = "request to fhir: %s";
+    private static final String INFO_LOG_RESPONSE_PRACTITIONER = "response from fhir: %s";
+    private static final String ERROR_UPDATE_FHIR = "error while updating fhir store";
+    private static final String ERROR_BAD_RESPONSE_SIZE = "bad response size from FHIR: %d";
 
     private final FhirContext fhirContext;
     private final Logger logger = LoggerFactory.getLogger(AzureFhirRepository.class);
@@ -34,11 +35,15 @@ class AzureFhirRepository implements FhirRepository {
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
-    public AzureFhirRepository() {
+    AzureFhirRepository() {
         fhirContext = FhirContext.forR4();
     }
 
-    public String savePractitioner(Practitioner practitioner){
+    /**
+     * @param practitioner the practitioner to save.
+     * @return
+     */
+    public String savePractitioner(Practitioner practitioner) {
         // Log the request
         logger.info(String.format(INFO_LOG_SAVE_PRACTITIONER,
                 fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner)));
