@@ -46,7 +46,7 @@ class TrialConfigControllerTest {
     void initialize() {
         String baseUrl = String.format("http://localhost:%s",
                 mockBackEnd.getPort());
-        trialConfigController = new TrialConfigController(trialConfigService,baseUrl);
+        trialConfigController = new TrialConfigController(trialConfigService, baseUrl);
     }
 
     @AfterAll
@@ -55,7 +55,7 @@ class TrialConfigControllerTest {
     }
 
     @Test
-    void createTrialFromJsonFile() throws Exception{
+    void createTrialFromJsonFile() throws Exception {
 
         Trial mockTrial = mockedTrial();
         mockBackEnd.enqueue(new MockResponse()
@@ -72,7 +72,7 @@ class TrialConfigControllerTest {
     }
 
 
-    Trial mockedTrial(){
+    Trial mockedTrial() {
         Trial trial = new Trial();
         TrialSite trialSite = new TrialSite();
 

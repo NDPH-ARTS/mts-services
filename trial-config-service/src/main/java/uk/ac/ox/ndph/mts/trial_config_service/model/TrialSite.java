@@ -5,7 +5,16 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,21 +30,25 @@ public class TrialSite {
     private String siteName;
 
     public enum SiteType {//expand this enum in future story about configuring site types
-        CCO, REGION, LLC
+        CCO, REGION
     }
 
 
     private SiteType siteType;
 
     @Column
-    private String FHIROrganizationId;
+    private String fhirOrganizationId;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "trial_id")
     private Trial trial;
 
-    @OneToOne(cascade=CascadeType.ALL, mappedBy="trialSite") /* This is a dummy relationship - it won't be a direct 1:1 here but will be mediated by Roles.  Dummied for the purpose of story 170. */
+    /*
+    This is a dummy relationship - it won't be a direct 1:1 here but will be mediated by Roles.
+    Dummied for the purpose of story 170.
+    */
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "trialSite")
     private Person user;
 
     @Column
