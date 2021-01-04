@@ -26,9 +26,12 @@
         <java.version>11</java.version>
         <azure.version>2.3.5</azure.version>
         <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
+        <checkstyle.path>build-tools/src/main/resources</checkstyle.path>
     </properties>
 
     <modules>
+<!--        <module>build-tools</module>-->
+
         <module>sample-service</module>
         <module>practitioner-service</module>
     </modules>
@@ -98,6 +101,30 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <configLocation>${checkstyle.path}/checkstyle.xml</configLocation>
+                    <includeTestResources>false</includeTestResources>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <linkXRef>false</linkXRef>
+                    <propertyExpansion>samedir=${checkstyle.path}</propertyExpansion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
