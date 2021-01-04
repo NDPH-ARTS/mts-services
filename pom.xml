@@ -125,14 +125,6 @@
                         </goals>
                     </execution>
                 </executions>
-<!--                This doesn't work for some reason so had to reference the project directly. -->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>uk.ac.ox.ndph.mts</groupId>-->
-<!--                        <artifactId>build-tools</artifactId>-->
-<!--                        <version>1.0</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
             </plugin>
         </plugins>
     </build>
