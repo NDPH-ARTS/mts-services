@@ -1,86 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">  
-  <modelVersion>4.0.0</modelVersion>  
-  <parent> 
-    <groupId>uk.ac.ox.ndph.mts</groupId>
-    <artifactId>mts-services-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>  
-  <groupId>uk.ac.ox.ndph.mts</groupId>
-  <artifactId>practitioner-service</artifactId>  
-  <name>practitioner-service</name>  
-  <description>Spring Cloud microservice which validates the input practitioner details and adds it as a FHIR practitioner entity to the FHIR store.</description>  
-  <properties> 
-    <azure.version>2.3.5</azure.version>
-    <hapifhir_version>5.0.2</hapifhir_version>
-  </properties>  
-  <dependencies> 
-    
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.16</version>
-    </dependency>
-    <!-- This dependency includes the core HAPI-FHIR classes -->
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-base</artifactId>
-			<version>${hapifhir_version}</version>
-		</dependency>
-      
-      <!-- Include the client -->
-     	<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-client</artifactId>
-			<version>${hapifhir_version}</version>
-      </dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>uk.ac.ox.ndph.mts</groupId>
+        <artifactId>mts-services-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>practitioner-service</artifactId>
+    <name>practitioner-service</name>
+    <description>Spring Cloud microservice which validates the input practitioner details and adds
+        it as a FHIR practitioner entity to the FHIR store.
+    </description>
+    <properties>
+        <azure.version>2.3.5</azure.version>
+        <hapifhir.version>5.0.2</hapifhir.version>
+    </properties>
 
-		<!-- At least one "structures" JAR must also be included -->
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<version>${hapifhir_version}</version>
-		</dependency>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
-      <version>5.6.3</version>
-      <scope>test</scope>
-  </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+        </dependency>
+        <!-- This dependency includes the core HAPI-FHIR classes -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-base</artifactId>
+            <version>${hapifhir.version}</version>
+        </dependency>
 
-  </dependencies>  
-  <dependencyManagement> 
-    <dependencies> 
-      <dependency> 
-        <groupId>com.microsoft.azure</groupId>  
-        <artifactId>azure-spring-boot-bom</artifactId>  
-        <version>${azure.version}</version>  
-        <type>pom</type>  
-        <scope>import</scope> 
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies> 
-  </dependencyManagement>  
-  <build> 
-    <plugins> 
-      <plugin> 
-        <groupId>org.springframework.boot</groupId>  
-        <artifactId>spring-boot-maven-plugin</artifactId> 
-      </plugin> 
-    </plugins> 
-    <resources>
-      <resource>
-        <directory>src/main/resources/</directory>
-      </resource>
-    </resources>
-  </build> 
+        <!-- Include the client -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-client</artifactId>
+            <version>${hapifhir.version}</version>
+        </dependency>
+
+        <!-- At least one "structures" JAR must also be included -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
+            <version>${hapifhir.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.6.3</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>
