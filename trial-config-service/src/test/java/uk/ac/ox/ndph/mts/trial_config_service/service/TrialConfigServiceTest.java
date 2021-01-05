@@ -8,10 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
-import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
-import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
+import uk.ac.ox.ndph.mts.trial_config_service.model.*;
 
 import java.util.Collections;
 
@@ -45,11 +42,16 @@ class TrialConfigServiceTest {
         TrialSite testTrialSite = new TrialSite(TrialSite.SiteType.CCO);
         testTrialSite.setSiteName("testTrialSiteName");
 
+        SiteTypes testSiteTypes = new SiteTypes();
+        testSiteTypes.setSiteName("testTrialSiteName");
+        testSiteTypes.setSiteDescription("testTrialSiteName");
+
         Role testRole = new Role();
         testRole.setRoleName("testRoleName");
 
         testTrial.setTrialSites(Collections.singletonList(testTrialSite));
         testTrial.setRoles(Collections.singletonList(testRole));
+        testTrial.setSiteTypes(Collections.singletonList(testSiteTypes));
 
         when(trialRepository.save(Mockito.any(Trial.class))).thenAnswer(i -> i.getArguments()[0]);
         Trial savedTrial = trialConfigService.saveTrial(testTrial, DUMMY_OID);
@@ -80,6 +82,7 @@ class TrialConfigServiceTest {
     void invalidConfigExceptionThrownForNoRoot(){
         Trial invalidConfig = new Trial();
         invalidConfig.setTrialSites(Collections.singletonList(new TrialSite()));
+        invalidConfig.setSiteTypes(Collections.singletonList(new SiteTypes()));
         assertThrows(InvalidConfigException.class, () -> trialConfigService.saveTrial(invalidConfig, DUMMY_OID));
     }
 }

@@ -31,6 +31,9 @@ public class Trial {
     @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
     private List<Role> roles;
 
+    @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
+    private List<SiteTypes> siteTypes;
+
     @Column
     @CreatedDate
     private LocalDateTime modifiedTime;
@@ -90,6 +93,15 @@ public class Trial {
     public void setTrialSites(List<TrialSite> trialSites) {
 
         this.trialSites = trialSites;
+    }
+
+    public List<SiteTypes> getSiteTypes() {
+        return siteTypes;
+    }
+
+    public void setSiteTypes(List<SiteTypes> siteTypes) {
+
+        this.siteTypes = siteTypes;
     }
 
     public String getModifiedBy() {

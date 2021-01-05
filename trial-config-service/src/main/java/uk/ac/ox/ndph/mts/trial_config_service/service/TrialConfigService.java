@@ -3,10 +3,7 @@ package uk.ac.ox.ndph.mts.trial_config_service.service;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
-import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
-import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
+import uk.ac.ox.ndph.mts.trial_config_service.model.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -60,6 +57,12 @@ public class TrialConfigService {
             trialSite.setModifiedTime(LocalDateTime.now());
             trialSite.setModifiedBy(userId);
             trialSite.setTrial(trial);
+        }
+        
+        for(SiteTypes siteTypes : trial.getSiteTypes()){
+            siteTypes.setModifiedTime(LocalDateTime.now());
+            siteTypes.setModifiedBy(userId);
+            siteTypes.setTrial(trial);
         }
     }
 

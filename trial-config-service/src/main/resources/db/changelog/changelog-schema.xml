@@ -113,7 +113,42 @@
             <column name="trial_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-9">
+    <changeSet author="kedarl (generated)" id="1608062861281-9">
+        <createTable tableName="site_types">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="site_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="site_types_pkey"/>
+            </column>
+            <column name="site_description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="trial_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kedarl (generated)" id="1608062861281-10">
+        <createTable tableName="site_types_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="site_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="site_types_aud_pkey"/>
+            </column>
+            <column name="rev" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="site_types_aud_pkey"/>
+            </column>
+            <column name="revtype" type="SMALLINT"/>
+            <column name="modified_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="site_description" type="VARCHAR(255)"/>
+            <column name="trial_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="katesan (generated)" id="1608062861281-11">
         <createTable tableName="revinfo">
             <column name="rev" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="revinfo_pkey"/>
@@ -123,22 +158,25 @@
         <addForeignKeyConstraint baseColumnNames="rev" baseTableName="trial_aud" constraintName="fkcc7vlgg86eqe1dmvivbkv046v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-10">
+    <changeSet author="katesan (generated)" id="1608062861281-12">
         <addUniqueConstraint columnNames="azure_oid" constraintName="uk_tmnipuyul9xdeeg7b7oi4thfb" tableName="person"/>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-11">
+    <changeSet author="katesan (generated)" id="1608062861281-13">
         <addForeignKeyConstraint baseColumnNames="trialsite_id" baseTableName="person" constraintName="fk7fwruaygke24ajkmcwr9eh0ag" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="trial_site" validate="true"/>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-12">
+    <changeSet author="katesan (generated)" id="1608062861281-14">
         <addForeignKeyConstraint baseColumnNames="trial_id" baseTableName="trial_site" constraintName="fkqkv9jw9saxp4goho8xc6eatyb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="trial" validate="true"/>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-13">
+    <changeSet author="katesan (generated)" id="1608062861281-15">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-14">
+    <changeSet author="katesan (generated)" id="1608062861281-16">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="person_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-15">
+    <changeSet author="katesan (generated)" id="1608062861281-17">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="trialsite_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="kedarl (generated)" id="1608062861281-18">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="site_types_sequence" startValue="1"/>
     </changeSet>
 </databaseChangeLog>

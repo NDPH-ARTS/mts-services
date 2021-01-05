@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import uk.ac.ox.ndph.mts.trial_config_service.config.WebConfig;
+import uk.ac.ox.ndph.mts.trial_config_service.model.SiteTypes;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
@@ -75,13 +76,14 @@ class TrialConfigControllerTest {
     Trial mockedTrial(){
         Trial trial = new Trial();
         TrialSite trialSite = new TrialSite();
+        SiteTypes siteTypes = new SiteTypes();
 
         trialSite.setSiteName("mockYTrialSiteName");
         trialSite.setSiteType(TrialSite.SiteType.CCO);
         trial.setId("trialMockId");
         trial.setTrialName("trialMockId");
         trial.setTrialSites(Collections.singletonList(trialSite));
-
+        trial.setSiteTypes(Collections.singletonList(siteTypes));
         return trial;
     }
 
