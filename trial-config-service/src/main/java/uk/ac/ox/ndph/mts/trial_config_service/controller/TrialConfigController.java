@@ -47,14 +47,14 @@ public class TrialConfigController {
     }
 
     @GetMapping("/trial")
-    Trial saveTrialFromGit(
+    public Trial saveTrialFromGit(
             @RequestParam
                     String trialConfig) throws InvalidConfigException, ResourceAlreadyExistsException {
         return trialConfigService.saveTrial(createTrialFromGitRepo(trialConfig), userId);
     }
 
     @PostMapping("/trial")
-    Trial saveTrialFromJson(
+    public Trial saveTrialFromJson(
             @RequestBody
                     String trialConfigURL) throws InvalidConfigException, ResourceAlreadyExistsException {
         return trialConfigService.saveTrial(createTrialFromJsonData(trialConfigURL), userId);
