@@ -43,9 +43,9 @@ public class GitRepo {
     }
 
     private Repository getRepo() throws IOException {
-        Git git = Git.open(getRepoPath().toFile());
-
-        return git.getRepository();
+        try (Git git = Git.open(getRepoPath().toFile())) {
+            return git.getRepository();
+        }
     }
 
     public byte[] getTrialFile(String fileName) {
