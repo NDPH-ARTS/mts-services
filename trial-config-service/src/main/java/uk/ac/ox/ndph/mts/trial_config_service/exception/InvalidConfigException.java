@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class InvalidConfigException extends RuntimeException {
-    public  InvalidConfigException(String message) {
+    public InvalidConfigException(String message) {
         super(message);
     }
 
-    public  InvalidConfigException() {
+    public InvalidConfigException() {
         super();
     }
 

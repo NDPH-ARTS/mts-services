@@ -5,7 +5,14 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import java.time.LocalDateTime;
 
 
@@ -19,11 +26,15 @@ public class Person {
     @Column
     private Long id;
 
-    @Column (unique=true)
+    @Column(unique = true)
     private String azureOid;
 
     @JsonIgnore
-    @OneToOne  /* This is a dummy relationship - it won't be a direct 1:1 here but will be mediated by Roles.  Dummied for the purpose of story 170. */
+    /*
+    This is a dummy relationship - it won't be a direct 1:1 here but will be mediated by Roles.
+    Dummied for the purpose of story 170.
+     */
+    @OneToOne
     @JoinColumn(name = "trialsite_id")
     private TrialSite trialSite;
 
@@ -60,13 +71,14 @@ public class Person {
         this.trialSite = trialSite;
     }
 
-    public Person(String azureOid, LocalDateTime modifiedTime, String modifiedBy){
-        this.azureOid=azureOid;
+    public Person(String azureOid, LocalDateTime modifiedTime, String modifiedBy) {
+        this.azureOid = azureOid;
         this.modifiedTime = modifiedTime;
         this.modifiedBy = modifiedBy;
     }
-    public Person(){}
 
+    public Person() {
+    }
 
 
 }

@@ -70,16 +70,18 @@ class TrialConfigServiceTest {
         assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());
 
         assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
+        assertEquals(savedTrial.getTrialSites().get(0).getModifiedBy(), DUMMY_OID);
+        assertEquals(savedTrial.getRoles().get(0).getModifiedBy(), DUMMY_OID);
     }
 
     @Test
-    void resourceAlreadyExistsErrorThrown(){
+    void resourceAlreadyExistsErrorThrown() {
         when(trialRepository.existsById(any())).thenReturn(true);
         assertThrows(ResourceAlreadyExistsException.class, () -> trialConfigService.saveTrial(new Trial(), DUMMY_OID));
     }
 
     @Test
-    void invalidConfigExceptionThrownForNoRoot(){
+    void invalidConfigExceptionThrownForNoRoot() {
         Trial invalidConfig = new Trial();
         invalidConfig.setTrialSites(Collections.singletonList(new TrialSite()));
         invalidConfig.setSiteTypes(Collections.singletonList(new SiteTypes()));

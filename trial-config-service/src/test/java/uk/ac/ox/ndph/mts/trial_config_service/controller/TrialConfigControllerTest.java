@@ -47,7 +47,7 @@ class TrialConfigControllerTest {
     void initialize() {
         String baseUrl = String.format("http://localhost:%s",
                 mockBackEnd.getPort());
-        trialConfigController = new TrialConfigController(trialConfigService,baseUrl);
+        trialConfigController = new TrialConfigController(trialConfigService, baseUrl);
     }
 
     @AfterAll
@@ -56,13 +56,13 @@ class TrialConfigControllerTest {
     }
 
     @Test
-    void createTrialFromJsonFile() throws Exception{
+    void createTrialFromJsonFile() throws Exception {
 
         Trial mockTrial = mockedTrial();
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(objectMapper.writeValueAsString(mockTrial))
                 .addHeader("Content-Type", "application/json"));
-        Mono<Trial> mockResponseTrial = trialConfigController.createTrial(TEST_CONFIG_ENDPOINT);
+        Mono<Trial> mockResponseTrial = trialConfigController.createTrialFromURL(TEST_CONFIG_ENDPOINT);
 
         StepVerifier.create(mockResponseTrial)
                 .expectNextMatches(trial -> trial.getId().equals(mockTrial.getId()) &&
@@ -73,7 +73,7 @@ class TrialConfigControllerTest {
     }
 
 
-    Trial mockedTrial(){
+    Trial mockedTrial() {
         Trial trial = new Trial();
         TrialSite trialSite = new TrialSite();
         SiteTypes siteTypes = new SiteTypes();

@@ -18,7 +18,7 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="trial_site_pkey"/>
             </column>
-            <column name="fhirorganization_id" type="VARCHAR(255)"/>
+            <column name="fhir_organization_id" type="VARCHAR(255)"/>
             <column name="modified_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="site_name" type="VARCHAR(255)"/>
@@ -51,7 +51,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="trial_site_aud_pkey"/>
             </column>
             <column name="revtype" type="SMALLINT"/>
-            <column name="fhirorganization_id" type="VARCHAR(255)"/>
+            <column name="fhir_organization_id" type="VARCHAR(255)"/>
             <column name="modified_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="site_name" type="VARCHAR(255)"/>
@@ -68,7 +68,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="trial_aud_pkey"/>
             </column>
             <column name="revtype" type="SMALLINT"/>
-            <column name="fhirorganization_id" type="VARCHAR(255)"/>
+            <column name="fhir_organization_id" type="VARCHAR(255)"/>
             <column name="modified_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="status" type="INTEGER"/>
@@ -106,7 +106,7 @@
             <column name="id" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="trial_pkey"/>
             </column>
-            <column name="fhirorganization_id" type="VARCHAR(255)"/>
+            <column name="fhir_organization_id" type="VARCHAR(255)"/>
             <column name="modified_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="status" type="INTEGER"/>
@@ -176,7 +176,10 @@
     <changeSet author="katesan (generated)" id="1608062861281-17">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="trialsite_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="kedarl (generated)" id="1608062861281-18">
+    <changeSet author="katesan (generated)" id="1608062861281-18">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="role_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="kedarl (generated)" id="1608062861281-19">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="site_types_sequence" startValue="1"/>
     </changeSet>
 </databaseChangeLog>
