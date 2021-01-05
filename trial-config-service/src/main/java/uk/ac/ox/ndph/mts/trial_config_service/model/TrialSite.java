@@ -30,7 +30,7 @@ public class TrialSite {
     private String siteName;
 
     public enum SiteType { //expand this enum in future story about configuring site types
-        CCO, REGION
+        CCO, REGION, LLC
     }
 
 
@@ -41,7 +41,7 @@ public class TrialSite {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "trial_trial_id")
+    @JoinColumn(name = "trial_id")
     private Trial trial;
 
     /*
@@ -116,8 +116,7 @@ public class TrialSite {
         this.modifiedBy = modifiedBy;
     }
 
-    public TrialSite() {
-    }
+    public TrialSite() { }
 
     public TrialSite(SiteType siteType) {
         this.siteType = siteType;
