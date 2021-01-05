@@ -55,7 +55,6 @@ public class TrialConfigController {
 
     @PostMapping("/trial")
     public Trial saveTrialFromJson(
-        feature/trial-config-service
             @RequestBody
                     String trialConfigURL) throws InvalidConfigException, ResourceAlreadyExistsException {
         return trialConfigService.saveTrial(createTrialFromJsonData(trialConfigURL), userId);
