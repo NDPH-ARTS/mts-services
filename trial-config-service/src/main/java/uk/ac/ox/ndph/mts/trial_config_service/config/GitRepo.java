@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.trial_config_service.config;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidConfigurationException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -13,6 +14,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.springframework.stereotype.Component;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -25,45 +27,57 @@ import java.nio.file.Paths;
 public class GitRepo {
 
     @PostConstruct
-    public void init() throws GitAPIException, IOException {
-        Files.createDirectories(getRepoPath());
+    public void init() throws InvalidConfigurationException {
+        try {
+            Files.createDirectories(getRepoPath());
 
-        Git git = Git.cloneRepository()
+            Git git = Git.cloneRepository()
                 .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                 .setDirectory(getRepoPath().toFile())
                 .call();
+        } catch (GitAPIException gitEx) {
+            throw new InvalidConfigurationException(gitEx.getMessage());
+        } catch (IOException ioEx) {
+            throw new InvalidConfigurationException(ioEx.getMessage());
+        }
     }
 
     private Repository getRepo() throws IOException {
         Git git = Git.open(getRepoPath().toFile());
+
         return git.getRepository();
     }
 
-    public byte[] getTrialFile(String fileName) throws IOException {
-        ObjectId lastCommitId = getRepo().resolve(Constants.HEAD);
+    public byte[] getTrialFile(String fileName) {
         byte[] fileBytes;
 
-        try (RevWalk revwalk = new RevWalk(getRepo())) {
-            RevCommit commit = revwalk.parseCommit(lastCommitId);
+        try {
+            ObjectId lastCommitId = getRepo().resolve(Constants.HEAD);
 
-            RevTree tree = commit.getTree();
+            try (RevWalk revwalk = new RevWalk(getRepo())) {
+                RevCommit commit = revwalk.parseCommit(lastCommitId);
 
-            try (TreeWalk treeWalk = new TreeWalk(getRepo())) {
-                treeWalk.addTree(tree);
-                treeWalk.setRecursive(true);
-                treeWalk.setFilter(PathFilter.create(fileName));
-                if (!treeWalk.next()) {
-                    throw new IllegalStateException("Did not find expected file");
+                RevTree tree = commit.getTree();
+
+                try (TreeWalk treeWalk = new TreeWalk(getRepo())) {
+                    treeWalk.addTree(tree);
+                    treeWalk.setRecursive(true);
+                    treeWalk.setFilter(PathFilter.create(fileName));
+                    if (!treeWalk.next()) {
+                        throw new IllegalStateException("Did not find expected file");
+                    }
+
+                    ObjectId objectId = treeWalk.getObjectId(0);
+                    ObjectLoader loader = getRepo().open(objectId);
+                    loader.copyTo(System.out);
+
+                    fileBytes = loader.getBytes();
                 }
 
-                ObjectId objectId = treeWalk.getObjectId(0);
-                ObjectLoader loader = getRepo().open(objectId);
-                loader.copyTo(System.out);
-
-                fileBytes = loader.getBytes();
+                revwalk.dispose();
             }
-
-            revwalk.dispose();
+        } catch (IOException ioEx) {
+            throw new InvalidConfigException(ioEx.getMessage());
         }
 
         return fileBytes;
@@ -72,13 +86,19 @@ public class GitRepo {
     private Path getRepoPath() {
         Path source = Paths.get(this.getClass().getResource("/").getPath());
         Path newFolder = Paths.get(source.toAbsolutePath() + "/config/");
+
         return newFolder;
     }
 
     @PreDestroy
-    public void deleteRepo() throws IOException {
+    public void deleteRepo() {
         Git.shutdown();
-        FileUtils.deleteDirectory(getRepoPath().toFile());
+
+        try {
+            FileUtils.deleteDirectory(getRepoPath().toFile());
+        } catch (IOException ioEx) {
+            throw new InvalidConfigException(ioEx.getMessage());
+        }
     }
 
 }

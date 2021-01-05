@@ -29,7 +29,7 @@ public class TrialSite {
 
     private String siteName;
 
-    public enum SiteType {//expand this enum in future story about configuring site types
+    public enum SiteType { //expand this enum in future story about configuring site types
         CCO, REGION, LLC
     }
 
@@ -116,10 +116,10 @@ public class TrialSite {
         this.modifiedBy = modifiedBy;
     }
 
-    public TrialSite(){}
+    public TrialSite() { }
 
-    public TrialSite(SiteType siteType){
-        this.siteType=siteType;
+    public TrialSite(SiteType siteType) {
+        this.siteType = siteType;
     }
 
     public Person getUser() {
