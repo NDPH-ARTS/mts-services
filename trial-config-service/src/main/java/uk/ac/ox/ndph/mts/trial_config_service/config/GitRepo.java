@@ -3,7 +3,6 @@ package uk.ac.ox.ndph.mts.trial_config_service.config;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidConfigurationException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +26,7 @@ import java.nio.file.Paths;
 public class GitRepo {
 
     @PostConstruct
-    public void init() throws InvalidConfigurationException {
+    public void init() throws InvalidConfigException {
         try {
             Files.createDirectories(getRepoPath());
 
@@ -37,9 +35,9 @@ public class GitRepo {
                 .setDirectory(getRepoPath().toFile())
                 .call();
         } catch (GitAPIException gitEx) {
-            throw new InvalidConfigurationException(gitEx.getMessage());
+            throw new InvalidConfigException(gitEx.getMessage());
         } catch (IOException ioEx) {
-            throw new InvalidConfigurationException(ioEx.getMessage());
+            throw new InvalidConfigException(ioEx.getMessage());
         }
     }
 
@@ -86,13 +84,13 @@ public class GitRepo {
 
     private Path getRepoPath() {
         Path source = Paths.get("resources");
-        Path newFolder = Paths.get(source + File.separator + "configx" + File.separator);
+        Path newFolder = Paths.get(source + File.separator + "jsonConfig" + File.separator);
 
         return newFolder;
     }
 
-    @PreDestroy
-    public void deleteRepo() {
+
+    public void destroy() {
         Git.shutdown();
 
         try {

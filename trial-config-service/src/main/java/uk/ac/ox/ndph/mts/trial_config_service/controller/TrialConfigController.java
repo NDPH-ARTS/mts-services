@@ -67,6 +67,7 @@ public class TrialConfigController {
             byte[] fileBytes = gitRepo.getTrialFile(fileName);
             ObjectMapper objMapper = new ObjectMapper();
             trial = objMapper.readValue(fileBytes, Trial.class);
+            gitRepo.destroy();
         } catch (IOException ioException) {
             throw new InvalidConfigException(ioException.getMessage());
         }
