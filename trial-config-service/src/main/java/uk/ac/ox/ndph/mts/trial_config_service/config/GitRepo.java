@@ -18,6 +18,7 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,8 +85,8 @@ public class GitRepo {
     }
 
     private Path getRepoPath() {
-        Path source = Paths.get(this.getClass().getResource("/").getPath());
-        Path newFolder = Paths.get(source.toAbsolutePath() + "/config/");
+        Path source = Paths.get("resources");
+        Path newFolder = Paths.get(source + File.separator + "configx" + File.separator);
 
         return newFolder;
     }
