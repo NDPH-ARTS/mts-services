@@ -38,7 +38,7 @@ public class TrialConfigController {
     }
 
     @PostMapping("/trial")
-    Trial saveTrial(
+    public Trial saveTrial(
             @RequestBody
                     String trialConfigURL) throws InvalidConfigException, ResourceAlreadyExistsException {
 
