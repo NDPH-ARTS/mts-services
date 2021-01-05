@@ -5,7 +5,7 @@ services:
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
     container_name: trial-config-service
     depends_on: 
-      - postgres
+      - mssql
       - global-trial-config-mock
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://trial-config-service/swagger-ui/ || exit 1
@@ -14,21 +14,20 @@ services:
       retries: 5
       start_period: 60s
     environment:
-      JDBC_URL: jdbc:postgresql://postgres:5432/arts?user=ndph@arts-db&password=England99!
-      JDBC_DRIVER: "org.postgresql.Driver"
+      JDBC_URL: jdbc:sqlserver://localhost:1433;databaseName=master;user=sa;password=Technocrat123!£^
+      JDBC_DRIVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
       SERVER_PORT: "80"
     ports:
       - "80:80"
 
-  postgres:
-    image: postgres
-    container_name: postgres
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql
     environment:
-      POSTGRES_PASSWORD: "England99!"
-      POSTGRES_USER: "ndph@arts-db"
-      POSTGRES_DB: "arts"
+      ACCEPT_EULA : "Y"
+      SA_PASSWORD: "Technocrat123!£^"
     ports:
-      - "5432:5432"
+      - "1433:1433"
 
   global-trial-config-mock:
     image: ghcr.io/ndph-arts/global-trial-config-mock:latest
@@ -42,7 +41,7 @@ services:
     container_name: postman-checks
     depends_on:
       trial-config-service:
-        condition: service_healthy      
+        condition: service_healthy
     image: ghcr.io/ndph-arts/postman-html-reporter:latest
     command:  
             run /newman/Trial_Config_Service.postman_collection.json 
