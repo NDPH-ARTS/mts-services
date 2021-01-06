@@ -17,6 +17,7 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -82,10 +83,9 @@ public class GitRepo {
         return fileBytes;
     }
 
-    private Path getRepoPath() {
-        Path source = Paths.get("resources");
+    private Path getRepoPath() throws FileNotFoundException {
+        Path source = Paths.get("gitRepo");
         Path newFolder = Paths.get(source + File.separator + "jsonConfig" + File.separator);
-
         return newFolder;
     }
 
