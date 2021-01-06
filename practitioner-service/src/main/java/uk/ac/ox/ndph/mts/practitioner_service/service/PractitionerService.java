@@ -28,7 +28,7 @@ public class PractitionerService implements EntityService {
     private static final String FIELD_NAME_GIVEN_NAME = "givenName";
     private static final String FIELD_NAME_FAMILY_NAME = "familyName";
     private static final String ERROR_MESSAGE = "value of argument %s cannot be empty";
-    private static final String LOG_START = "Loaded practitioner service with configuration: %s";
+    private static final String LOG_START = "Loaded practitioner service with configuration: {}";
 
     private final FhirRepository fhirRepository;    
     private final Map<String, Pair<String, Pattern>> validationMap;
@@ -45,7 +45,7 @@ public class PractitionerService implements EntityService {
         this.fhirRepository = fhirRepository;
         validationMap = new HashMap<>();
         var configuration = configurationProvider.getConfiguration();
-        logger.info(String.format(LOG_START, configuration));
+        logger.info(LOG_START, configuration);
         for (var attribute : configuration.getAttributes()) {
             validationMap.put(
                 attribute.getName(),
