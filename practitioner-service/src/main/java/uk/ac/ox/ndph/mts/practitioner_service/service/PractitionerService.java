@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerAttribute;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.ServerError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 
 /**
@@ -29,7 +30,7 @@ public class PractitionerService implements EntityService {
     private static final String LOG_START = "Loaded practitioner service with configuration: %s";
 
     private final FhirRepository fhirRepository;    
-    private final Map<String, Pair<String, Pattern>> validationMap;;
+    private final Map<String, Pair<String, Pattern>> validationMap;
     private final Logger logger = LoggerFactory.getLogger(PractitionerService.class);
 
     /**
@@ -41,9 +42,10 @@ public class PractitionerService implements EntityService {
     public PractitionerService(FhirRepository fhirRepository,
         PractitionerConfigurationProvider configurationProvider) {
         this.fhirRepository = fhirRepository;
-        validationMap = new HashMap<String, Pair<String, Pattern>>();
-        logger.info(String.format(LOG_START, configurationProvider.getConfiguration()));
-        for (var attribute : configurationProvider.getConfiguration().getAttributes()) {
+        validationMap = new HashMap<>();
+        var configuration = configurationProvider.getConfiguration();
+        logger.info(String.format(LOG_START, configuration));
+        for (var attribute : configuration.getAttributes()) {
             validationMap.put(
                 attribute.getName(),
                 Pair.of(
@@ -91,7 +93,7 @@ public class PractitionerService implements EntityService {
         if (validationMap.get(FIELD_NAME_PREFIX) == null
             || validationMap.get(FIELD_NAME_GIVEN_NAME) == null
             || validationMap.get(FIELD_NAME_FAMILY_NAME) == null) {
-            throw new RuntimeException("Configuration field cannot be missing");
+            throw new ServerError("Configuration field cannot be missing");
         }
     }
 

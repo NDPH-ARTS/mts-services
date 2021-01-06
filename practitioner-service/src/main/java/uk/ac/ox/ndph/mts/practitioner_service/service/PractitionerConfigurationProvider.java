@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfiguration;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.ServerError;
 
 /**
  * Provide Practitioner Configuration 
@@ -31,10 +32,9 @@ public class PractitionerConfigurationProvider {
         if (configuration == null) {
             try {
                 String jsonString = new String(Files.readAllBytes(configurationFile.getFile().toPath()));
-                configuration = (PractitionerConfiguration) 
-                    new ObjectMapper().readValue(jsonString, PractitionerConfiguration.class);
+                configuration = new ObjectMapper().readValue(jsonString, PractitionerConfiguration.class);
             } catch (Exception e) {
-                throw new RuntimeException(ERROR_LOADING_CONFIGURATION, e);
+                throw new ServerError(ERROR_LOADING_CONFIGURATION, e);
             }
         }
         return configuration;
