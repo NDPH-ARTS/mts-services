@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -16,18 +17,18 @@ public class GitRepoTest {
     GitRepo gitRepo = new GitRepo();
 
     @BeforeAll
-    void setUp() throws GitAPIException, IOException {
+    void setUp() throws InvalidConfigException {
         gitRepo.init();
     }
 
     @Test
-    void getTrialFile() throws IOException {
+    void getTrialFile() throws InvalidConfigException {
         assertNotNull(gitRepo.getTrialFile("config.json"));
     }
 
     @AfterAll
-    void tearDown() throws IOException {
-        gitRepo.deleteRepo();
+    void tearDown() throws InvalidConfigException{
+        gitRepo.destroy();
     }
 
 }
