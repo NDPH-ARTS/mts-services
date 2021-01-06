@@ -29,9 +29,7 @@ public class GitRepo {
     @PostConstruct
     public void init() throws InvalidConfigException {
         try {
-            if(Files.exists(Paths.get(gitLocation))){
-                Git git = Git.open(Paths.get(gitLocation).toFile());
-            }else{
+            if(!Files.exists(Paths.get(gitLocation))){
                 Git git = Git.cloneRepository()
                     .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                     .setDirectory(Paths.get(gitLocation).toFile())
@@ -39,8 +37,6 @@ public class GitRepo {
             }
         } catch (GitAPIException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
-        } catch (IOException ioEx) {
-            throw new InvalidConfigException(ioEx.getMessage());
         }
     }
 
