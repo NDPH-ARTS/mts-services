@@ -3,7 +3,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Thrown when an outgoing REST call to a dependant service failed
+ * Thrown when an internal error is raised.
  */
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 public class ServerError extends RuntimeException {

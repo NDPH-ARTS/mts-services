@@ -17,8 +17,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.ServerError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 
 /**
- * Implement an EntityService interface. validation is for empty values on all
- * fields.
+ * Implement an EntityService interface.
+ * Validation of practitioner based on the input configuration regex fields before
+ * sending the entity to store in the fhir repository.
  */
 @Service
 public class PractitionerService implements EntityService {
