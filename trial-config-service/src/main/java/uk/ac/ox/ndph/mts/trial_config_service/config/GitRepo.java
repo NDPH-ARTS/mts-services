@@ -28,19 +28,27 @@ public class GitRepo {
 
     @PostConstruct
     public void init() throws InvalidConfigException {
+        if(!Files.exists(Paths.get(gitLocation))){
+            cloneRepository();
+        }
+    }
+
+    private void cloneRepository() {
         try {
-            if(!Files.exists(Paths.get(gitLocation))){
-                Git git = Git.cloneRepository()
+                Git.cloneRepository()
                     .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                     .setDirectory(Paths.get(gitLocation).toFile())
                     .call();
-            }
         } catch (GitAPIException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
     }
 
     private Repository getRepo() throws IOException {
+        if(!Files.exists(Paths.get(gitLocation))){
+            cloneRepository();
+        }
+
         try (Git git = Git.open(Paths.get(gitLocation).toFile())) {
             return git.getRepository();
         }
@@ -50,14 +58,15 @@ public class GitRepo {
         byte[] fileBytes;
 
         try {
-            ObjectId lastCommitId = getRepo().resolve(Constants.HEAD);
+            Repository repo =  getRepo();
+            ObjectId lastCommitId = repo.resolve(Constants.HEAD);
 
-            try (RevWalk revwalk = new RevWalk(getRepo())) {
+            try (RevWalk revwalk = new RevWalk(repo)) {
                 RevCommit commit = revwalk.parseCommit(lastCommitId);
 
                 RevTree tree = commit.getTree();
 
-                try (TreeWalk treeWalk = new TreeWalk(getRepo())) {
+                try (TreeWalk treeWalk = new TreeWalk(repo)) {
                     treeWalk.addTree(tree);
                     treeWalk.setRecursive(true);
                     treeWalk.setFilter(PathFilter.create(fileName));
