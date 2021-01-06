@@ -36,7 +36,7 @@ public class PractitionerServiceAppTests {
 
         // Act + Assert
         this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isUnprocessableEntity());
+                .andDo(print()).andExpect(status().isBadRequest());
     }
 
     @Test
