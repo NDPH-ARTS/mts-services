@@ -115,13 +115,13 @@
     </changeSet>
     <changeSet author="katesan (generated)" id="1608062861281-9">
         <createTable tableName="revinfo">
-            <column name="rev" type="INTEGER">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="revinfo_pkey"/>
-            </column>
+<!--            <column name="rev" type="INTEGER">-->
+<!--                <constraints nullable="false" primaryKey="true" primaryKeyName="revinfo_pkey"/>-->
+<!--            </column>-->
             <column name="revtstmp" type="BIGINT"/>
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="trial_aud" constraintName="fkcc7vlgg86eqe1dmvivbkv046v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
+<!--        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="trial_aud" constraintName="fkcc7vlgg86eqe1dmvivbkv046v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>-->
+        <createSequence cacheSize="1" cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
     </changeSet>
     <changeSet author="katesan (generated)" id="1608062861281-10">
         <addUniqueConstraint columnNames="azure_oid" constraintName="uk_tmnipuyul9xdeeg7b7oi4thfb" tableName="person"/>
@@ -132,16 +132,13 @@
     <changeSet author="katesan (generated)" id="1608062861281-12">
         <addForeignKeyConstraint baseColumnNames="trial_id" baseTableName="trial_site" constraintName="fkqkv9jw9saxp4goho8xc6eatyb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="trial" validate="true"/>
     </changeSet>
-    <changeSet author="katesan (generated)" id="1608062861281-13">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
-    </changeSet>
     <changeSet author="katesan (generated)" id="1608062861281-14">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="person_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="person_sequence" startValue="1"/>
     </changeSet>
     <changeSet author="katesan (generated)" id="1608062861281-15">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="trialsite_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="trialsite_sequence" startValue="1"/>
     </changeSet>
     <changeSet author="katesan (generated)" id="1608062861281-16">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="role_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="role_sequence" startValue="1"/>
     </changeSet>
 </databaseChangeLog>
