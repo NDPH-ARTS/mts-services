@@ -132,9 +132,6 @@
     <changeSet author="katesan (generated)" id="1608062861281-12">
         <addForeignKeyConstraint baseColumnNames="trial_id" baseTableName="trial_site" constraintName="fkqkv9jw9saxp4goho8xc6eatyb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="trial" validate="true"/>
     </changeSet>
-<!--    <changeSet author="katesan (generated)" id="1608062861281-13">-->
-<!--        <createSequence cacheSize="1" cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>-->
-<!--    </changeSet>-->
     <changeSet author="katesan (generated)" id="1608062861281-14">
         <createSequence cacheSize="1" cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="person_sequence" startValue="1"/>
     </changeSet>
