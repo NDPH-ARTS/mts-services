@@ -17,24 +17,26 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Component
 public class GitRepo {
 
+    private final String gitLocation = "gitRepo"+ File.separator + "jsonConfig";
+
     @PostConstruct
     public void init() throws InvalidConfigException {
         try {
-            Files.createDirectories(getRepoPath());
-
-            Git git = Git.cloneRepository()
-                .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
-                .setDirectory(getRepoPath().toFile())
-                .call();
+            if(Files.exists(Paths.get(gitLocation))){
+                Git git = Git.open(Paths.get(gitLocation).toFile());
+            }else{
+                Git git = Git.cloneRepository()
+                    .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
+                    .setDirectory(Paths.get(gitLocation).toFile())
+                    .call();
+            }
         } catch (GitAPIException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         } catch (IOException ioEx) {
@@ -43,7 +45,7 @@ public class GitRepo {
     }
 
     private Repository getRepo() throws IOException {
-        try (Git git = Git.open(getRepoPath().toFile())) {
+        try (Git git = Git.open(Paths.get(gitLocation).toFile())) {
             return git.getRepository();
         }
     }
@@ -83,18 +85,11 @@ public class GitRepo {
         return fileBytes;
     }
 
-    private Path getRepoPath() throws FileNotFoundException {
-        Path source = Paths.get("gitRepo");
-        Path newFolder = Paths.get(source + File.separator + "jsonConfig" + File.separator);
-        return newFolder;
-    }
-
-
     public void destroy() {
         Git.shutdown();
 
         try {
-            FileUtils.deleteDirectory(getRepoPath().toFile());
+            FileUtils.deleteDirectory(Paths.get(gitLocation).toFile());
         } catch (IOException ioEx) {
             throw new InvalidConfigException(ioEx.getMessage());
         }
