@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.trial_config_service.config;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
@@ -24,32 +23,32 @@ import java.nio.file.Paths;
 @Component
 public class GitRepo {
 
-    private static final String gitLocation = "gitRepo"+ File.separator + "jsonConfig";
+    private static final String GIT_LOCATION = "gitRepo" + File.separator + "jsonConfig";
 
     @PostConstruct
     public void init() throws InvalidConfigException {
-        if(!Files.exists(Paths.get(gitLocation))){
+        if (!Files.exists(Paths.get(GIT_LOCATION))) {
             cloneRepository();
         }
     }
 
     private void cloneRepository() {
         try {
-                Git.cloneRepository()
-                    .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
-                    .setDirectory(Paths.get(gitLocation).toFile())
-                    .call();
+            Git.cloneRepository()
+                .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
+                .setDirectory(Paths.get(GIT_LOCATION).toFile())
+                .call();
         } catch (GitAPIException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
     }
 
     private Repository getRepo() throws IOException {
-        if(!Files.exists(Paths.get(gitLocation))){
+        if (!Files.exists(Paths.get(GIT_LOCATION))) {
             cloneRepository();
         }
 
-        try (Git git = Git.open(Paths.get(gitLocation).toFile())) {
+        try (Git git = Git.open(Paths.get(GIT_LOCATION).toFile())) {
             return git.getRepository();
         }
     }
