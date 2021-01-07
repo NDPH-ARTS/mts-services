@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 @Component
 public class GitRepo {
 
-    private final String gitLocation = "gitRepo"+ File.separator + "jsonConfig";
+    private static final String gitLocation = "gitRepo"+ File.separator + "jsonConfig";
 
     @PostConstruct
     public void init() throws InvalidConfigException {
