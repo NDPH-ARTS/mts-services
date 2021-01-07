@@ -25,9 +25,4 @@ public class GitRepoTest {
         assertNotNull(gitRepo.getTrialFile("config.json"));
     }
 
-    @AfterAll
-    void tearDown() throws InvalidConfigException{
-        gitRepo.destroy();
-    }
-
 }

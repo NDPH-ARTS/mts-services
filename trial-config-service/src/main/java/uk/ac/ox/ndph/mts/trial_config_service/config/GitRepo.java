@@ -90,14 +90,4 @@ public class GitRepo {
         return fileBytes;
     }
 
-    public void destroy() {
-        Git.shutdown();
-
-        try {
-            FileUtils.deleteDirectory(Paths.get(gitLocation).toFile());
-        } catch (IOException ioEx) {
-            throw new InvalidConfigException(ioEx.getMessage());
-        }
-    }
-
 }
