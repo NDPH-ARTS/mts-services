@@ -39,7 +39,7 @@ public class Trial {
     @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<Role> roles;
 
-    @OneToMany(mappedBy="trial", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<SiteTypes> siteTypes;
 
     @Column

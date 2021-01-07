@@ -8,7 +8,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.mts.trial_config_service.model.*;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
+import uk.ac.ox.ndph.mts.trial_config_service.model.SiteTypes;
 
 import java.util.Collections;
 
@@ -68,6 +72,10 @@ class TrialConfigServiceTest {
 
         assertEquals(savedTrial.getRoles().size(), testTrial.getRoles().size());
         assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());
+
+        assertEquals(savedTrial.getSiteTypes().size(), testTrial.getSiteTypes().size());
+        assertEquals(savedTrial.getSiteTypes().get(0).getSiteName(), testTrial.getSiteTypes().get(0).getSiteName());
+        assertEquals(savedTrial.getSiteTypes().get(0).getSiteDescription(), testTrial.getSiteTypes().get(0).getSiteDescription());
 
         assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
         assertEquals(savedTrial.getTrialSites().get(0).getModifiedBy(), DUMMY_OID);

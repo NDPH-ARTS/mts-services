@@ -8,8 +8,6 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.IOException;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GitRepoTest {
 
@@ -26,7 +24,7 @@ public class GitRepoTest {
     }
 
     @AfterAll
-    void tearDown() throws InvalidConfigException{
+    void tearDown() throws InvalidConfigException {
         gitRepo.destroy();
     }
 

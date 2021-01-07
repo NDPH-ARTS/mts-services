@@ -24,31 +24,23 @@ import java.nio.file.Paths;
 @Component
 public class GitRepo {
 
-    private final String gitLocation = "gitRepo"+ File.separator + "jsonConfig";
+    private final String gitLocation = "gitRepo" + File.separator + "jsonConfig";
 
     @PostConstruct
     public void init() throws InvalidConfigException {
-        if(!Files.exists(Paths.get(gitLocation))){
-            cloneRepository();
-        }
-    }
-
-    private void cloneRepository() {
         try {
-                Git.cloneRepository()
+            if (!Files.exists(Paths.get(gitLocation))) {
+                Git git = Git.cloneRepository()
                     .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                     .setDirectory(Paths.get(gitLocation).toFile())
                     .call();
+            }
         } catch (GitAPIException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
     }
 
     private Repository getRepo() throws IOException {
-        if(!Files.exists(Paths.get(gitLocation))){
-            cloneRepository();
-        }
-
         try (Git git = Git.open(Paths.get(gitLocation).toFile())) {
             return git.getRepository();
         }
@@ -58,15 +50,14 @@ public class GitRepo {
         byte[] fileBytes;
 
         try {
-            Repository repo =  getRepo();
-            ObjectId lastCommitId = repo.resolve(Constants.HEAD);
+            ObjectId lastCommitId = getRepo().resolve(Constants.HEAD);
 
-            try (RevWalk revwalk = new RevWalk(repo)) {
+            try (RevWalk revwalk = new RevWalk(getRepo())) {
                 RevCommit commit = revwalk.parseCommit(lastCommitId);
 
                 RevTree tree = commit.getTree();
 
-                try (TreeWalk treeWalk = new TreeWalk(repo)) {
+                try (TreeWalk treeWalk = new TreeWalk(getRepo())) {
                     treeWalk.addTree(tree);
                     treeWalk.setRecursive(true);
                     treeWalk.setFilter(PathFilter.create(fileName));
