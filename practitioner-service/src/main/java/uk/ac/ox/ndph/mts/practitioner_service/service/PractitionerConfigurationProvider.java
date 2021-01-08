@@ -1,7 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
-import java.nio.file.Files;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +29,7 @@ public class PractitionerConfigurationProvider {
     public PractitionerConfiguration getConfiguration() {
         if (configuration == null) {
             try {
-                String jsonString = new String(Files.readAllBytes(configurationFile.getFile().toPath()));
+                String jsonString = new String(configurationFile.getInputStream().readAllBytes());
                 configuration = new ObjectMapper().readValue(jsonString, PractitionerConfiguration.class);
             } catch (Exception e) {
                 throw new ServerError(ERROR_LOADING_CONFIGURATION, e);
