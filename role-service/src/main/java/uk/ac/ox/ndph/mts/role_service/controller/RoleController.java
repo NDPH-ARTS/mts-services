@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/roles")
@@ -31,7 +33,7 @@ public class RoleController {
     }
 
     @PostMapping
-    Role create(@RequestBody Role role) {
+    Role create(@Valid @RequestBody Role role) {
 
         return roleRepository.save(role);
     }

@@ -1,41 +1,79 @@
 package uk.ac.ox.ndph.mts.role_service.controller;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import javax.ws.rs.core.MediaType;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(SpringRunner.class)
+@WebMvcTest(RoleController.class)
 class RoleControllerTest {
 
-    private RoleController roleController;
 
-    @Mock
-    RoleRepository roleRepository;
+    @Autowired
+    private MockMvc mvc;
+    @Autowired
+    private ObjectMapper mapper;
 
-    @BeforeEach
-    void setUp() {
-        roleController = new RoleController(roleRepository);
-    }
-
+    @MockBean
+    private RoleRepository service;
 
 
     @Test
-    void createRole() {
+    public void givenValidRole_whenPost_thenReturnJson()
+            throws Exception {
 
-        Role testRole = new Role();
-        testRole.setRoleName("testRoleName");
-        when(roleRepository.save(Mockito.any(Role.class))).thenAnswer(i -> i.getArguments()[0]);
-        Role savedRole = roleController.create(testRole);
-        assertEquals(savedRole.getRoleName(), testRole.getRoleName());
+        String dummyName="Dummy role name";
+        Role role = new Role();
+        role.setRoleName(dummyName);
+
+        String jsonRole = mapper.writeValueAsString(role);
+
+        mvc.perform(post("/roles/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRole)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void givenInvalidRole_whenPost_thenReturn400()
+            throws Exception {
+
+
+        Role role = new Role(); // no name
+
+        String jsonRole = mapper.writeValueAsString(role);
+
+        mvc.perform(post("/roles/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRole)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
 
     }
 
