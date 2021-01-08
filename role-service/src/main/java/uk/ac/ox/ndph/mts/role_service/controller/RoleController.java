@@ -22,7 +22,7 @@ public class RoleController {
 
 
     @GetMapping("")
-    Page<Role> getPaged(
+    Page<Role> getPaged( // Not required for this story but useful for testing, stub
             @RequestParam
                     int page,
             @RequestParam
