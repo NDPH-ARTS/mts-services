@@ -42,8 +42,8 @@ class AzureFhirRepository implements FhirRepository {
      */
     public String savePractitioner(Practitioner practitioner) {
         // Log the request
-        logger.info(String.format(Consts.FHIR_REPO_SAVE_PRACTITIONER_LOG.getValue(),
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner)));
+        logger.info(Consts.FHIR_REPO_SAVE_PRACTITIONER_LOG.getValue(),
+                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner));
 
         Bundle responseBundle;
         try {
@@ -56,8 +56,8 @@ class AzureFhirRepository implements FhirRepository {
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        logger.info(String.format(Consts.FHIR_REPO_SAVE_RESPONSE_LOG.getValue(),
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement)));
+        logger.info(Consts.FHIR_REPO_SAVE_RESPONSE_LOG.getValue(),
+                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement));
         return practitioner.getIdElement().getValue();
     }
 
@@ -66,7 +66,7 @@ class AzureFhirRepository implements FhirRepository {
         resp.addAll(BundleUtil.toListOfResources(fhirContext, bundle));
 
         if (resp.size() != 1) {
-            logger.info(String.format(Consts.FHIR_REPO_BAD_RESPONSE_SIZE_LOG.getValue(), resp.size()));
+            logger.info(Consts.FHIR_REPO_BAD_RESPONSE_SIZE_LOG.getValue(), resp.size());
             throw new RestException(String.format(Consts.FHIR_REPO_BAD_RESPONSE_SIZE_LOG.getValue(), resp.size()));
 
         }

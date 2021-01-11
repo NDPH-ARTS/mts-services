@@ -25,7 +25,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 @SpringBootTest(properties = { "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
-public class PractitionerServiceIntegrationTests {
+class PractitionerServiceIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;

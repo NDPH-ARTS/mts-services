@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -46,7 +47,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
      */
     @Autowired
     public PractitionerValidation(PractitionerConfigurationProvider configurationProvider) {
-        validationMap = new HashMap<>();
+        validationMap = new EnumMap<>(Attribute.class);
         var configuration = configurationProvider.getConfiguration();
         loadValidationMap(configuration);
 
@@ -57,10 +58,11 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
         for (var attribute : configuration.getAttributes()) {
             var attributeEnum = Attribute.fromString(attribute.getName());
             validationMap.put(
-                Attribute.fromString(attribute.getName()),
+                attributeEnum,
                 new AttributeData(
                     attribute.getDisplayName(), 
-                    Pattern.compile(getRegexStringOrDefault(attribute)), attributeEnum.getGetValue()));
+                    Pattern.compile(getRegexStringOrDefault(attribute.getValidationRegex())), 
+                    attributeEnum.getGetValue()));
         }
         validateMap();
     }
@@ -104,10 +106,10 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
         }
     }
 
-    private String getRegexStringOrDefault(PractitionerAttributeConfiguration attribute) {
-        if (attribute.getValidationRegex().isBlank()) {
+    private String getRegexStringOrDefault(String regexString) {
+        if (regexString.isBlank()) {
             return REGEX_ALL;
         }
-        return attribute.getValidationRegex();
+        return regexString;
     }
 }

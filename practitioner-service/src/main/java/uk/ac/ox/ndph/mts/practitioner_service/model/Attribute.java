@@ -10,9 +10,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
  */
 public enum Attribute {
 
-    PREFIX(ModelConstants.ATTRIBUTE_NAME_PREFIX, (practitioner) -> practitioner.getPrefix()),
-    GIVEN_NAME(ModelConstants.ATTRIBUTE_NAME_GIVEN_NAME, (practitioner) -> practitioner.getGivenName()),
-    FAMILY_NAME(ModelConstants.ATTRIBUTE_NAME_FAMILY_NAME, (practitioner) -> practitioner.getFamilyName());
+    PREFIX(ModelConstants.ATTRIBUTE_NAME_PREFIX, Practitioner::getPrefix),
+    GIVEN_NAME(ModelConstants.ATTRIBUTE_NAME_GIVEN_NAME, Practitioner::getGivenName),
+    FAMILY_NAME(ModelConstants.ATTRIBUTE_NAME_FAMILY_NAME, Practitioner::getFamilyName);
 
     private String attributeName;
     private Function<Practitioner, String> getValue;

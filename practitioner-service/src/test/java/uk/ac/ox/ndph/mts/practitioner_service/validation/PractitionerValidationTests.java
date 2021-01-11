@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class PractitionerValidationTests {
+class PractitionerValidationTests {
 
     @Mock
     private PractitionerConfigurationProvider configurationProvider;

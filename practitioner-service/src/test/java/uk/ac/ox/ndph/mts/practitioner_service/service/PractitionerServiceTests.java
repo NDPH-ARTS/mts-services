@@ -19,7 +19,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 
 @ExtendWith(MockitoExtension.class)
-public class PractitionerServiceTests {
+class PractitionerServiceTests {
     
     @Mock
     private EntityStore<Practitioner> practitionerStore;
@@ -35,7 +35,7 @@ public class PractitionerServiceTests {
 
 
     @Test
-    public void TestSavePractitioner_WithPractitioner_ValidatesPractitioner() {
+    void TestSavePractitioner_WithPractitioner_ValidatesPractitioner() {
         // Arrange
         String prefix = "prefix";
         String givenName = "givenName";
@@ -54,7 +54,7 @@ public class PractitionerServiceTests {
     }
 
     @Test
-    public void TestSavePractitioner_WhenValidPractitioner_SavesToStore(){
+    void TestSavePractitioner_WhenValidPractitioner_SavesToStore(){
         // Arrange
         String prefix = "prefix";
         String givenName = "givenName";
@@ -73,7 +73,7 @@ public class PractitionerServiceTests {
     }
 
     @Test
-    public void TestSavePractitioner_WhenInvalidPractitioner_ThrowsValidationException(){
+    void TestSavePractitioner_WhenInvalidPractitioner_ThrowsValidationException(){
         // Arrange
         String prefix = "prefix";
         String givenName = "givenName";
@@ -87,7 +87,7 @@ public class PractitionerServiceTests {
     }
 
     @Test
-    public void TestSavePractitioner_WhenInvalidPractitioner_DoesntSavesToStore(){
+    void TestSavePractitioner_WhenInvalidPractitioner_DoesntSavesToStore(){
         // Arrange
         String prefix = "prefix";
         String givenName = "givenName";
@@ -102,7 +102,7 @@ public class PractitionerServiceTests {
     }
 
     @Test
-    public void TestPractitionerService_WhenNullValues_ThrowsInitialisationError(){
+    void TestPractitionerService_WhenNullValues_ThrowsInitialisationError(){
         // Arrange + Act + Assert
         Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(null, practitionerValidation),
                 "null store should throw");
