@@ -1,7 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -18,7 +17,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfigur
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Attribute;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerAttributeConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 
