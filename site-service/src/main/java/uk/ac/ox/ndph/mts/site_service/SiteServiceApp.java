@@ -1,0 +1,45 @@
+package uk.ac.ox.ndph.mts.site_service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.service.EntityService;
+
+/**
+ *
+ */
+@RestController
+@SpringBootApplication
+public class SiteServiceApp {
+
+    private static final String ENDPOINT_PATH = "/site";
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String RESPONSE = "{\"id\": \"%s\"}";
+
+    private final EntityService entityService;
+
+    /**
+     *
+     * @param entityService
+     */
+    @Autowired
+    public SiteServiceApp(EntityService entityService) {
+        this.entityService = entityService;
+    }
+
+    /**
+     *
+     * @param site
+     * @return ResponseEntity
+     */
+    @PostMapping(path = ENDPOINT_PATH, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+    public ResponseEntity<String> site(@RequestBody Site site) {
+        String siteId = entityService.saveSite(site);
+        return ResponseEntity.status(HttpStatus.CREATED).body(String.format(RESPONSE, siteId));
+    }
+}
