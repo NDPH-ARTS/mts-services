@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.converter.ConvertWith;
-
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import java.util.List;
 import org.mockito.Mock;
@@ -66,8 +67,8 @@ class PractitionerValidationTests {
 
         // Act + Assert
         var result = practitionerValidation.validate(practitioner);
-        Assertions.assertFalse(result.isValid());
-        Assertions.assertTrue(result.getErrorMessage().contains(expectedField));
+        assertThat(result.isValid(), is(false));
+        assertThat(result.getErrorMessage(), containsString(expectedField));
     }
 
     @Test
@@ -106,7 +107,7 @@ class PractitionerValidationTests {
         // Act
         var result = practitionerValidation.validate(practitioner);
         // Assert
-        Assertions.assertTrue(result.isValid());
+        assertThat(result.isValid(), is(true));
     }
 
     @Test
@@ -123,7 +124,7 @@ class PractitionerValidationTests {
         // Act
         var result = practitionerValidation.validate(practitioner);
         // Assert
-        Assertions.assertTrue(result.isValid());
+        assertThat(result.isValid(), is(true));
     }
 
     @Test
@@ -140,7 +141,7 @@ class PractitionerValidationTests {
         // Act
         var result = practitionerValidation.validate(practitioner);
         // Assert
-        Assertions.assertTrue(result.isValid());
+        assertThat(result.isValid(), is(true));
     }
 
     @Test
@@ -157,7 +158,7 @@ class PractitionerValidationTests {
         // Act
         var result = practitionerValidation.validate(practitioner);
         // Assert
-        Assertions.assertTrue(result.isValid());
+        assertThat(result.isValid(), is(true));
     }
 
     @Test
@@ -174,6 +175,6 @@ class PractitionerValidationTests {
         // Act
         var result = practitionerValidation.validate(practitioner);
         // Assert
-        Assertions.assertTrue(result.isValid());
+        assertThat(result.isValid(), is(true));
     }
 }

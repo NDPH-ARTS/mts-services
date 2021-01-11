@@ -10,10 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -57,7 +56,7 @@ class PractitionerServiceIntegrationTests {
         var error = this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
-        assertTrue(error.contains("Given Name"));
+        assertThat(error, containsString("Given Name"));
     }
 
     @Test
@@ -71,6 +70,6 @@ class PractitionerServiceIntegrationTests {
         var error = this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
-        assertTrue(error.contains("test error"));
+        assertThat(error, containsString("test error"));
     }
 }

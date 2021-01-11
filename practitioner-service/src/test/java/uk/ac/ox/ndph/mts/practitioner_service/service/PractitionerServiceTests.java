@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Assertions;
@@ -47,7 +49,7 @@ class PractitionerServiceTests {
         //Assert
         Mockito.verify(practitionerValidation).validate(practitionerCaptor.capture());
         var value = practitionerCaptor.getValue();
-        Assertions.assertEquals(value, practitioner);
+        assertThat(practitioner, equalTo(value));
     }
 
     @Test
@@ -66,7 +68,7 @@ class PractitionerServiceTests {
         //Assert
         Mockito.verify(practitionerStore).saveEntity(practitionerCaptor.capture());
         var value = practitionerCaptor.getValue();
-        Assertions.assertEquals(value, practitioner);
+        assertThat(practitioner, equalTo(value));
     }
 
     @Test

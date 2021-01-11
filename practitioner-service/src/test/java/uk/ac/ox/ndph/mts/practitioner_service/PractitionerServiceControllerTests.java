@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
-
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 
@@ -83,6 +83,6 @@ class PractitionerServiceControllerTests {
         String error = this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
-        assertTrue(error.contains("prefix"));
+        assertThat(error, containsString("prefix"));
     }
 }
