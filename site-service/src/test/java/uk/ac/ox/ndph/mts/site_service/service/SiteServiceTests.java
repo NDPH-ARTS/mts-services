@@ -87,7 +87,7 @@ public class SiteServiceTests {
     }
     
     @ParameterizedTest
-    @CsvSource({ ",,", ",test,test", "test,,test", ",test,", "null,null,null", "test,null,test" })
+    @CsvSource({ ",", "test,test", ",test", "test,", "null,null", "null,test" })
     void TestSaveSite_WhenFieldsAreEmptyOrNull_ThrowsArgumentException(
             @ConvertWith(NullableConverter.class) String name,
             @ConvertWith(NullableConverter.class) String alias) {
