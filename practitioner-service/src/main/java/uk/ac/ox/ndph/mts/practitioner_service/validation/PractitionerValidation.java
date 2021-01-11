@@ -1,9 +1,11 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
-import java.util.EnumMap;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfigur
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Attribute;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 
 /**
@@ -35,7 +36,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
         private Function<Practitioner, String> getValue;
     }
 
-    private static final String REGEX_ALL = ".*";    
+    private static final String REGEX_ALL = ".*";
 
     private final Map<Attribute, AttributeData> validationMap;
     private final Logger logger = LoggerFactory.getLogger(PractitionerValidation.class);
@@ -45,26 +46,17 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
      */
     @Autowired
     public PractitionerValidation(PractitionerConfigurationProvider configurationProvider) {
-        validationMap = new EnumMap<>(Attribute.class);
         var configuration = configurationProvider.getConfiguration();
-        loadValidationMap(configuration);
+        validationMap = configuration.getAttributes().stream()
+                .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
+                .collect(Collectors.toMap(pair -> pair.getRight(),
+                    pair -> new AttributeData(pair.getLeft().getDisplayName(),
+                                Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
+                                pair.getRight().getGetValue())));
 
+        validateMap();
         logger.info(Consts.VALIDATION_STARTUP_LOG.getValue(), configuration);
     }
-
-    private void loadValidationMap(PractitionerConfiguration configuration) {
-        for (var attribute : configuration.getAttributes()) {
-            var attributeEnum = Attribute.fromString(attribute.getName());
-            validationMap.put(
-                attributeEnum,
-                new AttributeData(
-                    attribute.getDisplayName(), 
-                    Pattern.compile(getRegexStringOrDefault(attribute.getValidationRegex())), 
-                    attributeEnum.getGetValue()));
-        }
-        validateMap();
-    }
-    
 
     @Override
     public ValidationResponse validate(Practitioner entity) {
@@ -90,16 +82,15 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
             value = "";
         }
         if (!validation.getRegex().matcher(value).matches()) {
-            return new ValidationResponse(false, String.format(Consts.VALIDATION_ERROR_MESSAGE.getValue(), 
-                validation.getDescription()));
+            return new ValidationResponse(false,
+                    String.format(Consts.VALIDATION_ERROR_MESSAGE.getValue(), validation.getDescription()));
         }
         return new ValidationResponse(true, "");
     }
 
     private void validateMap() {
-        if (validationMap.get(Attribute.PREFIX) == null
-            || validationMap.get(Attribute.GIVEN_NAME) == null
-            || validationMap.get(Attribute.FAMILY_NAME) == null) {
+        if (validationMap.get(Attribute.PREFIX) == null || validationMap.get(Attribute.GIVEN_NAME) == null
+                || validationMap.get(Attribute.FAMILY_NAME) == null) {
             throw new InitialisationError("Configuration field cannot be missing");
         }
     }
