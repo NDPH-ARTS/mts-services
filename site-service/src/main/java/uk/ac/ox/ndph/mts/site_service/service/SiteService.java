@@ -64,7 +64,7 @@ public class SiteService implements EntityService {
         validateArgument(site.getName(), FIELD_NAME_NAME);
         validateArgument(site.getAlias(), FIELD_NAME_ALIAS);
 
-        return fhirRepository.saveSite(toFhirOrganization(site));
+        return fhirRepository.saveOrganization(toFhirOrganization(site));
     }
 
     private void validateArgument(String value, String argumentName) {

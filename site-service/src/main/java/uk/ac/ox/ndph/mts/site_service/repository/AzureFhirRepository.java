@@ -40,18 +40,18 @@ class AzureFhirRepository implements FhirRepository {
     }
 
     /**
-     * @param site the site to save.
+     * @param organization the organization to save.
      * @return
      */
-    public String saveSite(Organization site) {
+    public String saveOrganization(Organization organization) {
         // Log the request
         logger.info(String.format(INFO_LOG_SAVE_ORGANIZATION,
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(site)));
+                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(organization)));
 
         Bundle responseBundle;
         try {
             responseBundle = fhirContext.newRestfulGenericClient(fhirUri).transaction()
-                    .withBundle(bundle(site, ORGANIZATION_ENTITY_NAME)).execute();
+                    .withBundle(bundle(organization, ORGANIZATION_ENTITY_NAME)).execute();
         } catch (BaseServerResponseException e) {
             logger.warn(ERROR_UPDATE_FHIR, e);
             throw new RestException(e.getMessage());
@@ -61,7 +61,7 @@ class AzureFhirRepository implements FhirRepository {
         // Log the response
         logger.info(String.format(INFO_LOG_RESPONSE_ORGANIZATION,
                 fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement)));
-        return site.getIdElement().getValue();
+        return organization.getIdElement().getValue();
     }
 
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {

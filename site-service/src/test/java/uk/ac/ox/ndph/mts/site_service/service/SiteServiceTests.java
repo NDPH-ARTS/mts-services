@@ -138,7 +138,7 @@ public class SiteServiceTests {
         entityService.saveSite(site);
 
         // Assert
-        Mockito.verify(fhirRepository).saveSite(organizationCaptor.capture());
+        Mockito.verify(fhirRepository).saveOrganization(organizationCaptor.capture());
         org.hl7.fhir.r4.model.Organization value = organizationCaptor.getValue();
         Assertions.assertEquals(name, value.getName());
         Assertions.assertEquals(alias, value.getAlias().get(0).getValue());
@@ -158,7 +158,7 @@ public class SiteServiceTests {
         entityService.saveSite(site);
 
         // Assert
-        Mockito.verify(fhirRepository).saveSite(organizationCaptor.capture());
+        Mockito.verify(fhirRepository).saveOrganization(organizationCaptor.capture());
         org.hl7.fhir.r4.model.Organization value = organizationCaptor.getValue();
         Assertions.assertEquals(name, value.getName());
         Assertions.assertEquals(alias, value.getAlias().get(0).getValue());
@@ -178,7 +178,7 @@ public class SiteServiceTests {
         entityService.saveSite(site);
 
         // Assert
-        Mockito.verify(fhirRepository).saveSite(organizationCaptor.capture());
+        Mockito.verify(fhirRepository).saveOrganization(organizationCaptor.capture());
         org.hl7.fhir.r4.model.Organization value = organizationCaptor.getValue();
         Assertions.assertEquals(name, value.getName());
         Assertions.assertEquals(alias, value.getAlias().get(0).getValue());
@@ -198,7 +198,7 @@ public class SiteServiceTests {
         entityService.saveSite(site);
 
         // Assert
-        Mockito.verify(fhirRepository).saveSite(organizationCaptor.capture());
+        Mockito.verify(fhirRepository).saveOrganization(organizationCaptor.capture());
         org.hl7.fhir.r4.model.Organization value = organizationCaptor.getValue();
         Assertions.assertEquals(name, value.getName());
         Assertions.assertEquals(alias, value.getAlias().get(0).getValue());
@@ -218,7 +218,7 @@ public class SiteServiceTests {
         entityService.saveSite(site);
 
         // Assert
-        Mockito.verify(fhirRepository).saveSite(organizationCaptor.capture());
+        Mockito.verify(fhirRepository).saveOrganization(organizationCaptor.capture());
         org.hl7.fhir.r4.model.Organization value = organizationCaptor.getValue();
         Assertions.assertEquals(name, value.getName());
         Assertions.assertEquals(alias, value.getAlias().get(0).getValue());
@@ -226,7 +226,7 @@ public class SiteServiceTests {
 
     @Test
     void TestSaveSite_WhenRepositoryThrows_ThrowsSameException() {
-        when(fhirRepository.saveSite(Mockito.any(org.hl7.fhir.r4.model.Organization.class)))
+        when(fhirRepository.saveOrganization(Mockito.any(org.hl7.fhir.r4.model.Organization.class)))
                 .thenThrow(RestException.class);
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
                 "Site", ALL_REQUIRED_UNDER_35_MAP));

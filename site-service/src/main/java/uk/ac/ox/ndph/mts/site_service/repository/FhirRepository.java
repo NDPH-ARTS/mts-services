@@ -10,8 +10,8 @@ public interface FhirRepository {
     /**
      * save a site entity to FHIR store
      *
-     * @param site the site to save.
+     * @param organization the organization to save.
      * @return Nothing.
      */
-    String saveSite(Organization site);
+    String saveOrganization(Organization organization);
 }
