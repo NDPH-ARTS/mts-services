@@ -16,14 +16,10 @@ import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfigur
 @Configuration
 public class TestPractitionerConfigurationProvider {
     
-    private static List<PractitionerAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP;
-    static {
-        ALL_REQUIRED_UNDER_35_MAP = new LinkedList<PractitionerAttributeConfiguration>();
-        ALL_REQUIRED_UNDER_35_MAP.add(new PractitionerAttributeConfiguration("givenName", "Given Name", "^[a-zA-Z]{1,35}$"));
-        ALL_REQUIRED_UNDER_35_MAP.add(new PractitionerAttributeConfiguration("familyName", "Family Name", "^[a-zA-Z]{1,35}$"));
-        ALL_REQUIRED_UNDER_35_MAP.add(
-                new PractitionerAttributeConfiguration("prefix", "Prefix", "^[a-zA-Z]{1,35}$"));
-    }
+    private static List<PractitionerAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
+        new PractitionerAttributeConfiguration("givenName", "Given Name", "^[a-zA-Z]{1,35}$"),
+        new PractitionerAttributeConfiguration("familyName", "Family Name", "^[a-zA-Z]{1,35}$"),
+        new PractitionerAttributeConfiguration("prefix", "Prefix", "^[a-zA-Z]{1,35}$"));
 
     @Bean
     @Primary

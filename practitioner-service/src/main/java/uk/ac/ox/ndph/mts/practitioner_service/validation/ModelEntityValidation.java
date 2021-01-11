@@ -5,12 +5,12 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 /**
  * Interface for entity validation
  */
-public interface ModelEntityValidation<ModelEntity> {
+public interface ModelEntityValidation<MODELENTITY> {
     
     /**
      * Check if an the entity is valid
      * @param entity - the entity to validate
      * @return ValidationReponse
      */
-    ValidationResponse validate(ModelEntity entity);
+    ValidationResponse validate(MODELENTITY entity);
 }

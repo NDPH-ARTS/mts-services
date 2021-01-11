@@ -42,8 +42,10 @@ class AzureFhirRepository implements FhirRepository {
      */
     public String savePractitioner(Practitioner practitioner) {
         // Log the request
-        logger.info(Consts.FHIR_REPO_SAVE_PRACTITIONER_LOG.getValue(),
+        if (logger.isInfoEnabled()) {
+            logger.info(Consts.FHIR_REPO_SAVE_PRACTITIONER_LOG.getValue(),
                 fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner));
+        }
 
         Bundle responseBundle;
         try {
@@ -56,8 +58,10 @@ class AzureFhirRepository implements FhirRepository {
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        logger.info(Consts.FHIR_REPO_SAVE_RESPONSE_LOG.getValue(),
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement));
+        if (logger.isInfoEnabled()) {
+            logger.info(Consts.FHIR_REPO_SAVE_RESPONSE_LOG.getValue(),
+                    fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement));
+        }
         return practitioner.getIdElement().getValue();
     }
 

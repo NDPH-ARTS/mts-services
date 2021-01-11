@@ -26,10 +26,7 @@ class PractitionerServiceTests {
 
     @Mock
     private ModelEntityValidation<Practitioner> practitionerValidation;
-
-    // @Captor
-    // ArgumentCaptor<Practitioner> practitionerValidationCaptor;
-
+    
     @Captor
     ArgumentCaptor<Practitioner> practitionerCaptor;
 
