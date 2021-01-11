@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GitRepoTest {
+class GitRepoTest {
 
     GitRepo gitRepo = new GitRepo();
 

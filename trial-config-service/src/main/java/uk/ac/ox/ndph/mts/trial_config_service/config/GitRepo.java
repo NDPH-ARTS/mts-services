@@ -11,18 +11,22 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Component
 public class GitRepo {
 
+    private final Logger logger = LoggerFactory.getLogger(GitRepo.class);
     private static final String GIT_LOCATION = "gitRepo" + File.separator + "jsonConfig";
 
     @PostConstruct
@@ -75,7 +79,8 @@ public class GitRepo {
 
                     ObjectId objectId = treeWalk.getObjectId(0);
                     ObjectLoader loader = getRepo().open(objectId);
-                    loader.copyTo(System.out);
+
+                    logger.info(new String(loader.getBytes(), StandardCharsets.UTF_8));
 
                     fileBytes = loader.getBytes();
                 }
