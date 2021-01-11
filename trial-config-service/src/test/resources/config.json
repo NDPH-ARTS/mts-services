@@ -3,7 +3,6 @@
     {
       "id": "test_1",
       "trialName":"Hello World Trial",
-      "trialId":"prefix/1",
       "trialSites":[
         {
           "siteName": "(Root node)",
