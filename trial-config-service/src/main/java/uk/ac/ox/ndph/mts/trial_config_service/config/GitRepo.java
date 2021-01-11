@@ -80,7 +80,9 @@ public class GitRepo {
                     ObjectId objectId = treeWalk.getObjectId(0);
                     ObjectLoader loader = getRepo().open(objectId);
 
-                    if(logger.isDebugEnabled()) logger.info(new String(loader.getBytes(), StandardCharsets.UTF_8));
+                    if (logger.isDebugEnabled()) {
+                        logger.info(new String(loader.getBytes(), StandardCharsets.UTF_8));
+                    }
 
                     fileBytes = loader.getBytes();
                 }
