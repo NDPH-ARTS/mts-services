@@ -8,8 +8,7 @@ import org.springframework.boot.SpringApplication;
  *
  */
 public class Main {
-    // TODO: take static strings from resource file
-    private static final String STARTUP_LOG = "Staring practitioner service...";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     /**
@@ -17,9 +16,8 @@ public class Main {
      * @param args command line args
      */
     public static void main(String[] args) {
-
-        LOGGER.info(STARTUP_LOG);
-        SpringApplication.run(PractitionerServiceApp.class, args);
+        LOGGER.info(Consts.PRACTITIONER_APPLICATION_STARTUP_LOG.getValue());
+        SpringApplication.run(PractitionerServiceController.class, args);
     }
 
 }

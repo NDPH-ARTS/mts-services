@@ -24,7 +24,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 
 @SpringBootTest(properties = { "server.error.include-message=always" })
 @AutoConfigureMockMvc
-public class PractitionerServiceAppTests {
+public class PractitionerServiceControllerTests {
     @Autowired
     private MockMvc mockMvc;
 

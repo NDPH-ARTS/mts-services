@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.practitioner_service.service;
+package uk.ac.ox.ndph.mts.practitioner_service.configuration;
 
 import java.nio.file.Files;
 
@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfiguration;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.ServerError;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
+import uk.ac.ox.ndph.mts.practitioner_service.Consts;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 
 /**
  * Provide Practitioner Configuration 
@@ -17,15 +18,13 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.ServerError;
 @Component
 public class PractitionerConfigurationProvider {
 
-    private static final String ERROR_LOADING_CONFIGURATION = "Error while loading configuration file";
-
     @Value("classpath:practitioner-configuration.json")
     Resource configurationFile;
 
     private PractitionerConfiguration configuration;
 
     /**
-     * Get Pracititioner Configuration
+     * Get Practitioner Configuration
      * @return PractitionerConfiguration
      */
     public PractitionerConfiguration getConfiguration() {
@@ -34,7 +33,7 @@ public class PractitionerConfigurationProvider {
                 String jsonString = new String(Files.readAllBytes(configurationFile.getFile().toPath()));
                 configuration = new ObjectMapper().readValue(jsonString, PractitionerConfiguration.class);
             } catch (Exception e) {
-                throw new ServerError(ERROR_LOADING_CONFIGURATION, e);
+                throw new InitialisationError(Consts.CONFIGURATION_ERROR_LOADING_LOG.getValue(), e);
             }
         }
         return configuration;
