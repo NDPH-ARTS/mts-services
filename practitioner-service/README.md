@@ -42,7 +42,7 @@ Creates a new practitioner entity.
 
 #### Error Responses
 
-**Condition** : If is input is malformed.
+**Condition** : If input is malformed.
 
 **Code** : `400 Bad Request`
 
