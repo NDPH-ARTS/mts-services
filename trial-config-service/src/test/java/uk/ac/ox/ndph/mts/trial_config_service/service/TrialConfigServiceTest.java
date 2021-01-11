@@ -54,15 +54,15 @@ class TrialConfigServiceTest {
         when(trialRepository.save(Mockito.any(Trial.class))).thenAnswer(i -> i.getArguments()[0]);
         Trial savedTrial = trialConfigService.saveTrial(testTrial, DUMMY_OID);
 
-        assertEquals(savedTrial.getStatus(), Trial.Status.IN_CONFIGURATION);
+        assertEquals(Trial.Status.IN_CONFIGURATION, savedTrial.getStatus());
 
-        assertEquals(savedTrial.getTrialName(), testTrial.getTrialName());
-        assertEquals(savedTrial.getId(), testTrial.getId());
+        assertEquals(testTrial.getTrialName(), savedTrial.getTrialName());
+        assertEquals(testTrial.getId(), savedTrial.getId());
 
-        assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
-        assertEquals(savedTrial.getTrialSites().get(0).getSiteName(), testTrialSite.getSiteName());
+        assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getUser().getAzureOid());
+        assertEquals(testTrialSite.getSiteName(), savedTrial.getTrialSites().get(0).getSiteName());
 
-        assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
+        assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getUser().getAzureOid());
 
         assertEquals(savedTrial.getRoles().size(), testTrial.getRoles().size());
         assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());

@@ -71,8 +71,6 @@ public class TrialConfigController {
             trial = objMapper.readValue(fileBytes, Trial.class);
         } catch (IOException ioException) {
             throw new InvalidConfigException(ioException.getMessage());
-        } finally {
-            gitRepo.destroy();
         }
 
         return trial;
