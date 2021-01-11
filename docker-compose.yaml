@@ -1,0 +1,39 @@
+version: "2"
+services:
+  site-service:
+    build: ./site-service
+    image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
+    depends_on:
+      - fhir-api
+    environment:
+      SERVER_PORT: "82"
+    ports:
+      - "82:82"
+
+  fhir-api:
+    image: "marrobi/r4-fhir-server"
+    restart: on-failure
+    environment:
+      FHIRServer__Security__Enabled: "false"
+      SqlServer__ConnectionString: "Server=tcp:sql,1433;Initial Catalog=FHIR;Persist Security Info=False;User ID=sa;Password=${SAPASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
+      SqlServer__AllowDatabaseCreation: "true"
+      SqlServer__SchemaOptions__AutomaticUpdatesEnabled: "true"
+      SqlServer__Initialize: "true"
+      DataStore: "SqlServer"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sql
+
+  sql:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: ${SAPASSWORD}
+      ACCEPT_EULA: "Y"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+    ports:
+      - "1433:1433"
