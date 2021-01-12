@@ -14,16 +14,7 @@ import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
 import javax.ws.rs.core.MediaType;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -45,7 +36,7 @@ class RoleControllerTest {
     public void givenValidRole_whenPost_thenReturnJson()
             throws Exception {
 
-        String dummyName="Dummy role name";
+        String dummyName = "Dummy role name";
         Role role = new Role();
         role.setRoleName(dummyName);
 

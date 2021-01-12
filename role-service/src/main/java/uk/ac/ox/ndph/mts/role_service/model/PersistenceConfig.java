@@ -12,15 +12,15 @@ import java.util.Optional;
 public class PersistenceConfig {
 
     @Bean
-    public AuditorAware<String> auditorAware(){
+    public AuditorAware<String> auditorAware() {
         return new AuditorAwareImpl();
     }
 
     public class AuditorAwareImpl implements AuditorAware<String> {
 
         @Override
-        public Optional<String> getCurrentAuditor(){
-            return Optional.of("fake-id"); // TBC following conclusion of Liza's auth work - oid from token is one option.
+        public Optional<String> getCurrentAuditor() {
+            return Optional.of("fake-id"); // TBC following conclusion of Liza's auth work - oid from token?
         }
     }
 }

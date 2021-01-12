@@ -12,4 +12,9 @@
     <suppress checks="MissingJavadocMethod" files="trial-config-service.*\.java"/>
     <suppress checks="MissingJavadocType" files="trial-config-service.*\.java"/>
 
+    <!-- TODO: can we do this across the board?  Just extending to role-service for now -->
+    <suppress checks="MissingJavadocMethod" files="role-service.*\.java"/>
+    <suppress checks="MissingJavadocType" files="role-service.*\.java"/>
+    <suppress checks="MissingJavadocPackage" files="role-service.*\.java"/>
+
 </suppressions>
