@@ -1,7 +1,11 @@
-version: "2"
+version: "3"
 services:
-  trial-config:
-    build: ./trial-config-service
+  trial-config-service:
+    build:
+          context: .
+          dockerfile: trial-config-service/Dockerfile
+          args:
+            SVC: trial-config-service
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
     depends_on:
       - sqlserver
