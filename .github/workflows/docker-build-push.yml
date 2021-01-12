@@ -23,19 +23,13 @@ jobs:
         run: |
           export DOCKER_BUILDKIT=1
           docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
-      - name: Publish Unit Test Report
+      - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
         with:
           fail_on_test_failures: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: "**/out/TEST*.xml"
-      - name: Publish Test Report
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-            name: postman-reports
-            path: test-reports/newman-report.html
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
