@@ -66,8 +66,11 @@ class AzureFhirRepository implements FhirRepository {
         return organization.getIdElement().getValue();
     }
 
-    public ResearchStudy saveResearchStudy(ResearchStudy researchStudy)
-    {
+    /**
+     * @param researchStudy the researchStudy to save.
+     * @return
+     */
+    public ResearchStudy saveResearchStudy(ResearchStudy researchStudy) {
         // Log the request
         logger.info(String.format(INFO_LOG_REQUEST_TO_FHIR,
                 fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(researchStudy)));

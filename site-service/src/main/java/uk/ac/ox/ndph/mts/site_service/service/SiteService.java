@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.site_service.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
@@ -67,16 +68,17 @@ public class SiteService implements EntityService {
         validateArgument(site.getAlias(), FIELD_NAME_ALIAS);
 
         // TODO: Add research study only when needed.
-        ResearchStudy researchStudyId = CreateReserchStudy();
+        ResearchStudy researchStudyId = createResearchStudy();
         Organization org = toFhirOrganization(site);
         org.setPartOf(new Reference(researchStudyId));
+
+        // TODO: Check if the Organization already exists.
 
         //save
         return fhirRepository.saveOrganization(org);
     }
 
-    private ResearchStudy CreateReserchStudy()
-    {
+    private ResearchStudy createResearchStudy() {
         ResearchStudy rs = new ResearchStudy();
         rs.setStatus(ResearchStudy.ResearchStudyStatus.ACTIVE);
         return fhirRepository.saveResearchStudy(rs);
@@ -105,21 +107,19 @@ public class SiteService implements EntityService {
     }
 
     private void setParentOrganization(Site site, Organization fhirOrganization) {
-        //Optional<String> optParentFhirId = Optional.ofNullable(site.getParentFhirId());
-        //if (optParentFhirId.isPresent()) {
-            //String parentFhirId = optParentFhirId.get();
-
-        if (null != site.getParentFhirId()) {
-            String parentFhirId = site.getParentFhirId();
+        Optional<String> optParentFhirId = Optional.ofNullable(site.getParentFhirId());
+        if (optParentFhirId.isPresent()) {
+            String parentFhirId = optParentFhirId.get();
 
             // Create Identifier
-            org.hl7.fhir.r4.model.Identifier identifierParentOrg = new org.hl7.fhir.r4.model.Identifier();
+            Identifier identifierParentOrg = new Identifier();
             identifierParentOrg.setValue(parentFhirId);
 
             // Create Reference
-            org.hl7.fhir.r4.model.Reference fhirReferenceOrg = new org.hl7.fhir.r4.model.Reference();
+            Reference fhirReferenceOrg = new Reference();
             fhirReferenceOrg.setIdentifier(identifierParentOrg);
 
+            // Set the Parent Organization
             fhirOrganization.setPartOf(fhirReferenceOrg);
         }
     }

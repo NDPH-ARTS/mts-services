@@ -63,28 +63,22 @@ public class SiteServiceTests {
     private static List<SiteAttribute> ALL_EMPTY_REGEX_MAP;
     static {
         ALL_EMPTY_REGEX_MAP = new LinkedList<SiteAttribute>();
-        ALL_EMPTY_REGEX_MAP
-                .add(new SiteAttribute("name", "Name", ""));
-        ALL_EMPTY_REGEX_MAP
-                .add(new SiteAttribute("alias", "Alias", ""));
+        ALL_EMPTY_REGEX_MAP.add(new SiteAttribute("name", "Name", ""));
+        ALL_EMPTY_REGEX_MAP.add(new SiteAttribute("alias", "Alias", ""));
     }
 
     private static List<SiteAttribute> INCOMNPLETE_MAP;
     static {
         INCOMNPLETE_MAP = new LinkedList<SiteAttribute>();
-        INCOMNPLETE_MAP
-                .add(new SiteAttribute("name", "Name", ""));
+        INCOMNPLETE_MAP.add(new SiteAttribute("name", "Name", ""));
     }
 
     private static List<SiteAttribute> ERROR_MAP;
     static {
         ERROR_MAP = new LinkedList<SiteAttribute>();
-        ERROR_MAP
-                .add(new SiteAttribute("name", "Name",""));
-        ERROR_MAP
-                .add(new SiteAttribute("alias", "Alias",""));
-        ERROR_MAP
-                .add(new SiteAttribute("wrongname", "Name",""));
+        ERROR_MAP.add(new SiteAttribute("name", "Name",""));
+        ERROR_MAP.add(new SiteAttribute("alias", "Alias",""));
+        ERROR_MAP.add(new SiteAttribute("wrongname", "Name",""));
     }
     
     @ParameterizedTest
@@ -95,6 +89,7 @@ public class SiteServiceTests {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", ALL_REQUIRED_UNDER_35_MAP));
+
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site(name, alias);
 
@@ -133,10 +128,12 @@ public class SiteServiceTests {
         String researchStudy = "123";
         ResearchStudy mockRS = new ResearchStudy();
         mockRS.setId(researchStudy);
+
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", ALL_REQUIRED_UNDER_35_MAP));
         when(fhirRepository.saveResearchStudy(Mockito.any(org.hl7.fhir.r4.model.ResearchStudy.class)))
                 .thenReturn(mockRS);
+
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site(name, alias);
 
@@ -156,8 +153,10 @@ public class SiteServiceTests {
         // Arrange
         String name = "name";
         String alias = "alias";
+
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
         "Site", PREFIX_NOT_REQUIRED_REGEX_MAP));
+
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site(name, alias);
 
@@ -176,8 +175,10 @@ public class SiteServiceTests {
         // Arrange
         String name = "name";
         String alias = "alias";
+
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", PREFIX_EMPTY_REGEX_MAP));
+
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site(name, alias);
 
@@ -196,8 +197,10 @@ public class SiteServiceTests {
         // Arrange
         String name = "name";
         String alias = "alias";
+
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site", "Site",
             ALL_EMPTY_REGEX_MAP));
+
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site(name, alias);
 
@@ -216,8 +219,10 @@ public class SiteServiceTests {
         // Arrange
         String name = "name";
         String alias = "alias";
+
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
         "Site", PREFIX_NOT_REQUIRED_REGEX_MAP));
+
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site(name, alias);
 
@@ -237,6 +242,7 @@ public class SiteServiceTests {
                 .thenThrow(RestException.class);
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
                 "Site", ALL_REQUIRED_UNDER_35_MAP));
+
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site("name", "alias");
 
