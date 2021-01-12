@@ -47,7 +47,7 @@ public class HapiFhirRepository implements FhirRepository {
                 bundle(practitioner, PRACTITIONER_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
             logger.warn(RepositoryConsts.FHIR_REPO_ERROR_UPDATE_LOG.getValue(), e);
-            throw new RestException(e.getMessage());
+            throw new RestException(e.getMessage(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 

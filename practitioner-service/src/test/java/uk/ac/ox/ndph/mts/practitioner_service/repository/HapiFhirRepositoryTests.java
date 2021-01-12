@@ -31,7 +31,7 @@ class HapiFhirRepositoryTests {
     private ArgumentCaptor<Bundle> bundleCaptor;
 
     @Test
-    public void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTrasactionType()
+    void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTrasactionType()
     {
         // Arrange
         var responseBundle = new Bundle();
