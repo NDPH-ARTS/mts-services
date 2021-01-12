@@ -32,6 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 */logs/*
+**/mochawesome-report/**
+**/node_modules/**
 
 .DS_Store
 
