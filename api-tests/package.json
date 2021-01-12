@@ -4,10 +4,10 @@
   "description": "A base repo for all microservices",
   "main": "index.js",
   "scripts": {
-    "test:awesome": "mocha specs/*.js --reporter mochawesome || true",
+    "test:awesome": "mocha specs/*/*.js --reporter mochawesome || true",
     "open:report": "open mochawesome-report/mochawesome.html",
-    "test": "mocha specs/*.js",
-    "test-ci": "mocha specs/*.js --reporter mocha-junit-reporter"
+    "test": "mocha specs/*/*.js",
+    "test-ci": "mocha specs/*/*.js --reporter mocha-junit-reporter"
   },
   "devDependencies": {
     "chai": "^3.5.0",

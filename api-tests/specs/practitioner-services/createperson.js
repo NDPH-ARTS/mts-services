@@ -1,10 +1,9 @@
-const { validPerson, invalidCharacterLength, missingGivenName, missingfamilyName, missingPrefix } = require('../data/createPerson')
-const conf = require('../config/conf')
+const { validPerson, invalidCharacterLength, missingGivenName, missingfamilyName, missingPrefix } = require('../../data/createPerson')
+const conf = require('../../config/conf')
 
 //const request = require("supertest")
 
 beforeEach(function () {
-    console.log(`Base URL2: ${conf.BASE_URL}`)
     baseRequest = request(conf.BASE_URL)
 })
 
@@ -28,13 +27,18 @@ describe('Given the fields have been configured for Persons in the Trial Instanc
 
     it('When I submit an API request to create a Person with missing manadatory familyName field, Then a new Person record is not created And I receive an error notification', async () => {
         const response = await baseRequest.post("/practitioner").send(missingfamilyName);
-        console.log('the response message' + response.text)
+        expect(response.text).to.contain("argument Family Name failed validation")
+    });
+
+    it('When I submit an API request to create a Person with missing manadatory familyName field, Then a new Person record is not created And I receive an error notification', async () => {
+        const response = await baseRequest.post("/practitioner").send(missingfamilyName);
         expect(response.text).to.contain("argument Family Name failed validation")
     });
 
     it('When I submit an API request to create a Person with any fields exceeding their specified maximum length, Then a new Person record is not created And I receive an error notification', async () => {
         const response = await baseRequest.post("/practitioner").send(invalidCharacterLength);
         expect(response.status).to.equal(422)
+        expect(response.text).to.contain("argument Family Name failed validation")
     });
 
 });

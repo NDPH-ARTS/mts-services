@@ -30,8 +30,8 @@ const missingfamilyName = {
 module.exports.missingfamilyName = missingfamilyName;
 
 const invalidCharacterLength = {
-    "prefix": "",
-    "givenName": "",
+    "prefix": "qwertyuioplkjhgfdsazxcvbnmqwertyuiw",
+    "givenName": "qwertyuioplkjhgfdsazxcvbnmqwertyuiw",
     "familyName": "ghfghdfgdhfgdhgfdhfgdhgfhdgfhdgfhdgfdhgfhdgfhdgfhdgfhfgdhfgdhf"
 }
 
