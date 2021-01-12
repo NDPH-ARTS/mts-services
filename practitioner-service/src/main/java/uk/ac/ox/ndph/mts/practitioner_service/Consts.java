@@ -14,7 +14,8 @@ public enum Consts {
     FHIR_REPO_SAVE_RESPONSE_LOG("response from fhir: %s"),
     FHIR_REPO_ERROR_UPDATE_LOG("error while updating fhir store"),
     FHIR_REPO_BAD_RESPONSE_SIZE_LOG("bad response size from FHIR: %d"),
-    CONFIGURATION_ERROR_LOADING_LOG("Error while loading configuration file");
+    CONFIGURATION_ERROR_LOADING_LOG("Error while loading configuration file"),
+    ATTRIBUTE_FROM_STRING_ERROR("cannot convert %s to Attribute enum");
     
     private String value;
  

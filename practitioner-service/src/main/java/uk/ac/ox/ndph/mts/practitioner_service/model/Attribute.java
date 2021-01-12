@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.model;
 
 import java.util.function.Function;
 
+import uk.ac.ox.ndph.mts.practitioner_service.Consts;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 
 /**
@@ -52,6 +53,6 @@ public enum Attribute {
         } else if (ModelConstants.ATTRIBUTE_NAME_FAMILY_NAME.equals(input)) {
             return FAMILY_NAME;
         }
-        throw new InitialisationError(String.format("cannot convert %s to Attribute enum", input));
+        throw new InitialisationError(String.format(Consts.ATTRIBUTE_FROM_STRING_ERROR.getValue(), input));
     }
 }
