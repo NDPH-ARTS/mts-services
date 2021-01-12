@@ -130,6 +130,7 @@ class TrialConfigControllerTest {
         SiteTypes siteTypes = new SiteTypes();
         siteTypes.setModifiedBy("me");
         siteTypes.setSiteName("siteName");
+        siteTypes.setSiteDescription("siteName");
 
         trialSite.setSiteName("mockYTrialSiteName");
         trialSite.setSiteType(TrialSite.SiteType.CCO);
