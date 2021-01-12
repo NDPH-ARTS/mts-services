@@ -13,11 +13,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Audited
-public class SiteTypes {
+public class SiteTypes implements Serializable {
+
+    private static final long serialVersionUID = 987456232L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "site_types_sequence")
     @SequenceGenerator(name = "site_types_sequence", sequenceName = "site_types_sequence", allocationSize = 1)
