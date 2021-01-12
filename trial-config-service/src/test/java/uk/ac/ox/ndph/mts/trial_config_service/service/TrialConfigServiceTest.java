@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
@@ -29,9 +31,12 @@ class TrialConfigServiceTest {
     @Mock
     TrialRepository trialRepository;
 
+    @Mock
+    WebClient webClient;
+
     @BeforeEach
     void setUp() {
-        trialConfigService = new TrialConfigService(trialRepository);
+        trialConfigService = new TrialConfigService(trialRepository, webClient);
     }
 
     private static final String DUMMY_OID = "dummy-oid";
@@ -44,7 +49,6 @@ class TrialConfigServiceTest {
         testTrial.setId("testId");
         TrialSite testTrialSite = new TrialSite(TrialSite.SiteType.CCO);
         testTrialSite.setSiteName("testTrialSiteName");
-
         testTrial.setTrialSites(Collections.singletonList(testTrialSite));
 
         when(trialRepository.save(Mockito.any(Trial.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -64,6 +68,8 @@ class TrialConfigServiceTest {
         assertEquals(savedTrial.getTrialSites().get(0).getModifiedBy(), DUMMY_OID);
 
     }
+
+
 
     @Test
     void resourceAlreadyExistsErrorThrown() {

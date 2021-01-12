@@ -86,9 +86,7 @@ public class TrialConfigController {
 
             ObjectMapper objMapper = new ObjectMapper();
             trial = objMapper.readValue(trialConfig, Trial.class);
-            Logger.getAnonymousLogger().info("object mapper worked");
         } catch (JsonProcessingException jpeEx) {
-            Logger.getAnonymousLogger().info("invalid config "+jpeEx.getMessage());
             throw new InvalidConfigException(jpeEx.getMessage());
         }
         return trial;
