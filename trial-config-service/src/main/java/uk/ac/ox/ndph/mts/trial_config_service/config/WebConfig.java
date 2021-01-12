@@ -27,6 +27,12 @@ public class WebConfig implements WebMvcConfigurer {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
+        source.registerCorsConfiguration("/trial-config/**", getConfiguration());
+
+        return new CorsFilter(source);
+    }
+
+    protected CorsConfiguration getConfiguration() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedHeader("*");
@@ -35,10 +41,10 @@ public class WebConfig implements WebMvcConfigurer {
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
-        source.registerCorsConfiguration("/trial-config/**", config);
 
-        return new CorsFilter(source);
+        return config;
     }
+
 
     @Bean
     public WebClient webClient() {

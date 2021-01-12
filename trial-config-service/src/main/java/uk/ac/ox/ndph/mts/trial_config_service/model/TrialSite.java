@@ -15,11 +15,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Audited
-public class TrialSite {
+public class TrialSite implements Serializable {
+
+    private static final long serialVersionUID = 987456231L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trialsite_sequence")
