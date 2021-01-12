@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import uk.ac.ox.ndph.mts.practitioner_service.Consts;
 import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfigurationProvider;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Attribute;
@@ -55,7 +54,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
                                 pair.getRight().getGetValue())));
 
         validateMap();
-        logger.info(Consts.VALIDATION_STARTUP_LOG.getValue(), configuration);
+        logger.info(ValidationConsts.VALIDATION_STARTUP_LOG.getValue(), configuration);
     }
 
     @Override
@@ -83,7 +82,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
         }
         if (!validation.getRegex().matcher(value).matches()) {
             return new ValidationResponse(false,
-                    String.format(Consts.VALIDATION_ERROR_MESSAGE.getValue(), validation.getDescription()));
+                    String.format(ValidationConsts.VALIDATION_ERROR_MESSAGE.getValue(), validation.getDescription()));
         }
         return new ValidationResponse(true, "");
     }

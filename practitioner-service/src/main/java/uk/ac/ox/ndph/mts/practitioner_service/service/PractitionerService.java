@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import uk.ac.ox.ndph.mts.practitioner_service.Consts;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
@@ -40,7 +39,7 @@ public class PractitionerService implements EntityService {
         }
         this.practitionerStore = practitionerStore;
         this.entityValidation = entityValidation;
-        logger.info(Consts.PRACTITIONER_SERVICE_STARTUP_LOG.getValue());
+        logger.info(ServiceConsts.PRACTITIONER_SERVICE_STARTUP_LOG.getValue());
     }
 
     /**

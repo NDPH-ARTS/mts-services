@@ -7,7 +7,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
-import uk.ac.ox.ndph.mts.practitioner_service.Consts;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 
 /**
@@ -31,7 +30,7 @@ public class PractitionerConfigurationProvider {
                 String jsonString = new String(configurationFile.getInputStream().readAllBytes());
                 configuration = new ObjectMapper().readValue(jsonString, PractitionerConfiguration.class);
             } catch (Exception e) {
-                throw new InitialisationError(Consts.CONFIGURATION_ERROR_LOADING_LOG.getValue(), e);
+                throw new InitialisationError(ConfigurationConsts.CONFIGURATION_ERROR_LOADING_LOG.getValue(), e);
             }
         }
         return configuration;
