@@ -1,10 +1,26 @@
 # role-service
 
-The following properties are required:
+## How to run - test env
 
-    -Djdbc.driver=**db driver class name** 
-    -Djdbc.url=< **arts db path** > 
-    -Dserver.port=**http port**
+    docker-compose up role-service
 
-*e.g.*
-```-Djdbc.driver=com.microsoft.sqlserver.jdbc.SQLServerDriver -Djdbc.url=jdbc:sqlserver://localhost:1433;databaseName=master;user=sa;password=Technocrat123!^ -Dserver.port=8083```
+Env vars:
+
+    set GITHUB_SHA=test
+    set JDBC_DRIVER=com.microsoft.sqlserver.jdbc.SQLServerDriver
+    set JDBC_URL=jdbc:sqlserver://mts-services_sqlserver_1:1433;databaseName=master;user=sa;password=SomePasswordGoesHere123
+    set SAPASSWORD=SomePasswordGoesHere123
+
+## How to run - dev env
+
+### 1. Database in a docker container
+
+    docker pull mcr.microsoft.com/mssql/server:2019-latest
+    docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SomePasswordGoesHere123" -p 1466:1433 --name mssql1 -h mssql1 -d mcr.microsoft.com/mssql/server:2019-latest
+
+### 2. Run spring boot application with VM opts
+
+    -Djdbc.driver=com.microsoft.sqlserver.jdbc.SQLServerDriver -Djdbc.url=jdbc:sqlserver://localhost:1466;databaseName=master;user=sa;password=SomePasswordGoesHere123 -Dserver.port=8083
+
+
+

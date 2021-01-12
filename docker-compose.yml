@@ -16,6 +16,22 @@ services:
     ports:
       - "81:81"
 
+  role-service:
+    build:
+      context: .
+      dockerfile: role-service/Dockerfile
+      args:
+        SVC: role-service
+    image: ghcr.io/ndph-arts/role-config-service:${GITHUB_SHA}
+    depends_on:
+      - sqlserver
+    environment:
+      SERVER_PORT: "82"
+      JDBC_DRIVER: ${JDBC_DRIVER}
+      JDBC_URL: ${JDBC_URL}
+    ports:
+      - "82:82"
+
   sqlserver:
     image: "mcr.microsoft.com/mssql/server"
     environment:
