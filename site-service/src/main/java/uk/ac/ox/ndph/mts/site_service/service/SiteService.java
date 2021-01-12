@@ -2,11 +2,13 @@ package uk.ac.ox.ndph.mts.site_service.service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.ResearchStudy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,34 +32,32 @@ public class SiteService implements EntityService {
     private static final String ERROR_MESSAGE = "value of argument %s cannot be empty";
     private static final String LOG_START = "Loaded practitioner service with configuration: {}";
 
-    private final FhirRepository fhirRepository;    
+    private final FhirRepository fhirRepository;
     private final Map<String, Pair<String, Pattern>> validationMap;
     private final Logger logger = LoggerFactory.getLogger(SiteService.class);
 
     /**
-     *
      * @param fhirRepository - FHIR repository interface
      * @param configurationProvider - provider of validation configuration
      */
     @Autowired
     public SiteService(FhirRepository fhirRepository,
-        SiteConfigurationProvider configurationProvider) {
+                       SiteConfigurationProvider configurationProvider) {
         this.fhirRepository = fhirRepository;
         validationMap = new HashMap<>();
         var configuration = configurationProvider.getConfiguration();
         logger.info(LOG_START, configuration);
         for (var attribute : configuration.getAttributes()) {
             validationMap.put(
-                attribute.getName(),
-                Pair.of(
-                    attribute.getDisplayName(),
-                    Pattern.compile(getRegexStringOrDefault(attribute))));
+                    attribute.getName(),
+                    Pair.of(
+                            attribute.getDisplayName(),
+                            Pattern.compile(getRegexStringOrDefault(attribute))));
         }
         validateMap();
     }
 
     /**
-     *
      * @param site the Site to save.
      * @return A new Site
      */
@@ -66,7 +66,20 @@ public class SiteService implements EntityService {
         validateArgument(site.getName(), FIELD_NAME_NAME);
         validateArgument(site.getAlias(), FIELD_NAME_ALIAS);
 
-        return fhirRepository.saveOrganization(toFhirOrganization(site));
+        // TODO: Add research study only when needed.
+        ResearchStudy researchStudyId = CreateReserchStudy();
+        Organization org = toFhirOrganization(site);
+        org.setPartOf(new Reference(researchStudyId));
+
+        //save
+        return fhirRepository.saveOrganization(org);
+    }
+
+    private ResearchStudy CreateReserchStudy()
+    {
+        ResearchStudy rs = new ResearchStudy();
+        rs.setStatus(ResearchStudy.ResearchStudyStatus.ACTIVE);
+        return fhirRepository.saveResearchStudy(rs);
     }
 
     private void validateArgument(String value, String argumentName) {
@@ -95,7 +108,7 @@ public class SiteService implements EntityService {
         //Optional<String> optParentFhirId = Optional.ofNullable(site.getParentFhirId());
         //if (optParentFhirId.isPresent()) {
             //String parentFhirId = optParentFhirId.get();
-        
+
         if (null != site.getParentFhirId()) {
             String parentFhirId = site.getParentFhirId();
 
