@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
+import org.hl7.fhir.r4.model.ResearchStudy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -129,8 +130,13 @@ public class SiteServiceTests {
         // Arrange
         String name = "name";
         String alias = "alias";
+        String researchStudy = "123";
+        ResearchStudy mockRS = new ResearchStudy();
+        mockRS.setId(researchStudy);
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", ALL_REQUIRED_UNDER_35_MAP));
+        when(fhirRepository.saveResearchStudy(Mockito.any(org.hl7.fhir.r4.model.ResearchStudy.class)))
+                .thenReturn(mockRS);
         EntityService entityService = new SiteService(fhirRepository, configurationProvider);
         Site site = new Site(name, alias);
 
@@ -142,6 +148,7 @@ public class SiteServiceTests {
         org.hl7.fhir.r4.model.Organization value = organizationCaptor.getValue();
         Assertions.assertEquals(name, value.getName());
         Assertions.assertEquals(alias, value.getAlias().get(0).getValue());
+        Assertions.assertEquals(researchStudy, value.getPartOf().getResource().getIdElement().getValue());
     }
 
     @Test
