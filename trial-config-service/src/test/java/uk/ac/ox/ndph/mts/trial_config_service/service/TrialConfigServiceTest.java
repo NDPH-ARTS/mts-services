@@ -60,32 +60,33 @@ class TrialConfigServiceTest {
         when(trialRepository.save(Mockito.any(Trial.class))).thenAnswer(i -> i.getArguments()[0]);
         Trial savedTrial = trialConfigService.saveTrial(testTrial, DUMMY_OID);
 
-        assertEquals(savedTrial.getStatus(), Trial.Status.IN_CONFIGURATION);
+        assertEquals(Trial.Status.IN_CONFIGURATION, savedTrial.getStatus());
 
-        assertEquals(savedTrial.getTrialName(), testTrial.getTrialName());
-        assertEquals(savedTrial.getId(), testTrial.getId());
+        assertEquals(testTrial.getTrialName(), savedTrial.getTrialName());
+        assertEquals(testTrial.getId(), savedTrial.getId());
 
-        assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
-        assertEquals(savedTrial.getTrialSites().get(0).getSiteName(), testTrialSite.getSiteName());
+        assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getUser().getAzureOid());
+        assertEquals(testTrialSite.getSiteName(), savedTrial.getTrialSites().get(0).getSiteName());
 
-        assertEquals(savedTrial.getTrialSites().get(0).getUser().getAzureOid(), DUMMY_OID);
+        assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getUser().getAzureOid());
 
-        assertEquals(savedTrial.getRoles().size(), testTrial.getRoles().size());
-        assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());
+        assertEquals(testTrial.getRoles().size(), savedTrial.getRoles().size());
+        assertEquals(testTrial.getRoles().get(0).getRoleName(), savedTrial.getRoles().get(0).getRoleName());
 
-        assertEquals(savedTrial.getSiteTypes().size(), testTrial.getSiteTypes().size());
-        assertEquals(savedTrial.getSiteTypes().get(0).getSiteName(), testTrial.getSiteTypes().get(0).getSiteName());
-        assertEquals(savedTrial.getSiteTypes().get(0).getSiteDescription(), testTrial.getSiteTypes().get(0).getSiteDescription());
+        assertEquals(testTrial.getSiteTypes().size(), testTrial.getSiteTypes().size());
+        assertEquals(testTrial.getSiteTypes().get(0).getSiteName(), testTrial.getSiteTypes().get(0).getSiteName());
+        assertEquals(testTrial.getSiteTypes().get(0).getSiteDescription(), testTrial.getSiteTypes().get(0).getSiteDescription());
 
-        assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
-        assertEquals(savedTrial.getTrialSites().get(0).getModifiedBy(), DUMMY_OID);
-        assertEquals(savedTrial.getRoles().get(0).getModifiedBy(), DUMMY_OID);
+        assertEquals(DUMMY_OID, savedTrial.getModifiedBy());
+        assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getModifiedBy());
+        assertEquals(DUMMY_OID, savedTrial.getRoles().get(0).getModifiedBy());
     }
 
     @Test
     void resourceAlreadyExistsErrorThrown() {
+        Trial t = new Trial();
         when(trialRepository.existsById(any())).thenReturn(true);
-        assertThrows(ResourceAlreadyExistsException.class, () -> trialConfigService.saveTrial(new Trial(), DUMMY_OID));
+        assertThrows(ResourceAlreadyExistsException.class, () -> trialConfigService.saveTrial(t, DUMMY_OID));
     }
 
     @Test

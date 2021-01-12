@@ -51,7 +51,6 @@ public class TrialConfigService {
         bootstrapUser.setTrialSite(trialSite);
     }
 
-    @SuppressWarnings("checkstyle:WhitespaceAfter")
     private void addAuditData(Trial trial, String userId) {
         trial.setModifiedTime(LocalDateTime.now());
         trial.setModifiedBy(userId);
