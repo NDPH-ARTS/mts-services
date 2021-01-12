@@ -8,7 +8,7 @@ import org.hl7.fhir.r4.model.Organization;
 public interface FhirRepository {
 
     /**
-     * save a site entity to FHIR store
+     * save a site entity to FHIR store site-service
      *
      * @param organization the organization to save.
      * @return Nothing.

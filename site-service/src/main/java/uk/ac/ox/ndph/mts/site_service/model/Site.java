@@ -16,7 +16,19 @@ import lombok.Data;
 @NoArgsConstructor
 public class Site {
 
+    /**
+     * Site Constructor with two parameters
+     *
+     * @param name the Site name
+     * @param alias the Site alias
+     */
+    public Site(String name, String alias) {
+        this.name = name;
+        this.alias = alias;
+    }
+
     private String name;
     private String alias;
+    private String parentFhirId;
 
 }

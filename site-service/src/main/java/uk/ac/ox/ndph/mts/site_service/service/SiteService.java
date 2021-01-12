@@ -2,9 +2,11 @@ package uk.ac.ox.ndph.mts.site_service.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hl7.fhir.r4.model.Organization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,9 +84,31 @@ public class SiteService implements EntityService {
         fhirOrganization.setName(site.getName());
         fhirOrganization.addAlias(site.getAlias());
 
+        setParentOrganization(site, fhirOrganization);
+
         String id = UUID.randomUUID().toString();
         fhirOrganization.setId(id);
         return fhirOrganization;
+    }
+
+    private void setParentOrganization(Site site, Organization fhirOrganization) {
+        //Optional<String> optParentFhirId = Optional.ofNullable(site.getParentFhirId());
+        //if (optParentFhirId.isPresent()) {
+            //String parentFhirId = optParentFhirId.get();
+        
+        if (null != site.getParentFhirId()) {
+            String parentFhirId = site.getParentFhirId();
+
+            // Create Identifier
+            org.hl7.fhir.r4.model.Identifier identifierParentOrg = new org.hl7.fhir.r4.model.Identifier();
+            identifierParentOrg.setValue(parentFhirId);
+
+            // Create Reference
+            org.hl7.fhir.r4.model.Reference fhirReferenceOrg = new org.hl7.fhir.r4.model.Reference();
+            fhirReferenceOrg.setIdentifier(identifierParentOrg);
+
+            fhirOrganization.setPartOf(fhirReferenceOrg);
+        }
     }
 
     private void validateMap() {
