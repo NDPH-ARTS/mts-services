@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service;
 import static org.mockito.Mockito.when;
-import java.util.LinkedList;
 import java.util.List;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;

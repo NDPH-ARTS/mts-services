@@ -1,8 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
@@ -11,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
-import ca.uhn.fhir.util.BundleUtil;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 /**
@@ -21,35 +16,35 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
  * a FHIR store.
  */
 @Component
-class AzureFhirRepository implements FhirRepository {
+public class HapiFhirRepository implements FhirRepository {
 
     private static final String PRACTITIONER_ENTITY_NAME = "Practitioner";
 
-    private final FhirContext fhirContext;
-    private final Logger logger = LoggerFactory.getLogger(AzureFhirRepository.class);
+    private final FhirContextWrapper fhirContextWrapper;
+    private final Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
 
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
-    AzureFhirRepository() {
-        fhirContext = FhirContext.forR4();
+    HapiFhirRepository(FhirContextWrapper fhirContextWrapper) {
+        this.fhirContextWrapper = fhirContextWrapper;
     }
 
     /**
      * @param practitioner the practitioner to save.
-     * @return
+     * @return id of the saved practitioner
      */
     public String savePractitioner(Practitioner practitioner) {
         // Log the request
         if (logger.isInfoEnabled()) {
             logger.info(RepositoryConsts.FHIR_REPO_SAVE_PRACTITIONER_LOG.getValue(),
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner));
+                fhirContextWrapper.prettyPrint(practitioner));
         }
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContext.newRestfulGenericClient(fhirUri).transaction()
-                    .withBundle(bundle(practitioner, PRACTITIONER_ENTITY_NAME)).execute();
+            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
+                bundle(practitioner, PRACTITIONER_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
             logger.warn(RepositoryConsts.FHIR_REPO_ERROR_UPDATE_LOG.getValue(), e);
             throw new RestException(e.getMessage());
@@ -59,15 +54,13 @@ class AzureFhirRepository implements FhirRepository {
         // Log the response
         if (logger.isInfoEnabled()) {
             logger.info(RepositoryConsts.FHIR_REPO_SAVE_RESPONSE_LOG.getValue(),
-                    fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement));
+                    fhirContextWrapper.prettyPrint(responseElement));
         }
         return practitioner.getIdElement().getValue();
     }
-
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
-        List<IBaseResource> resp = new ArrayList<>();
-        resp.addAll(BundleUtil.toListOfResources(fhirContext, bundle));
-
+        var resp = fhirContextWrapper.toListOfResources(bundle);
+        
         if (resp.size() != 1) {
             logger.info(RepositoryConsts.FHIR_REPO_BAD_RESPONSE_SIZE_LOG.getValue(), resp.size());
             throw new RestException(String.format(
