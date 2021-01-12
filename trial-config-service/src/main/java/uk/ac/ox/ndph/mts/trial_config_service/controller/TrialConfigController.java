@@ -20,7 +20,7 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsExc
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
 import java.io.IOException;
-
+import java.util.logging.Logger;
 
 
 @RestController
@@ -78,12 +78,17 @@ public class TrialConfigController {
     }
 
     protected Trial createTrialFromJsonData(String trialConfig) {
+
+
         Trial trial;
 
         try {
+
             ObjectMapper objMapper = new ObjectMapper();
             trial = objMapper.readValue(trialConfig, Trial.class);
+            Logger.getAnonymousLogger().info("object mapper worked");
         } catch (JsonProcessingException jpeEx) {
+            Logger.getAnonymousLogger().info("invalid config "+jpeEx.getMessage());
             throw new InvalidConfigException(jpeEx.getMessage());
         }
         return trial;

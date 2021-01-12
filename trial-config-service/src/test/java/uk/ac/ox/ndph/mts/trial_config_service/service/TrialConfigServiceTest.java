@@ -45,11 +45,7 @@ class TrialConfigServiceTest {
         TrialSite testTrialSite = new TrialSite(TrialSite.SiteType.CCO);
         testTrialSite.setSiteName("testTrialSiteName");
 
-        Role testRole = new Role();
-        testRole.setRoleName("testRoleName");
-
         testTrial.setTrialSites(Collections.singletonList(testTrialSite));
-        testTrial.setRoles(Collections.singletonList(testRole));
 
         when(trialRepository.save(Mockito.any(Trial.class))).thenAnswer(i -> i.getArguments()[0]);
         Trial savedTrial = trialConfigService.saveTrial(testTrial, DUMMY_OID);
@@ -64,12 +60,9 @@ class TrialConfigServiceTest {
 
         assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getUser().getAzureOid());
 
-        assertEquals(savedTrial.getRoles().size(), testTrial.getRoles().size());
-        assertEquals(savedTrial.getRoles().get(0).getRoleName(), testTrial.getRoles().get(0).getRoleName());
-
         assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
         assertEquals(savedTrial.getTrialSites().get(0).getModifiedBy(), DUMMY_OID);
-        assertEquals(savedTrial.getRoles().get(0).getModifiedBy(), DUMMY_OID);
+
     }
 
     @Test

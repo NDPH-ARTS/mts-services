@@ -4,11 +4,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +32,7 @@ public class Trial {
     @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<TrialSite> trialSites;
 
-    @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
+    @Transient
     private List<Role> roles;
 
     @Column

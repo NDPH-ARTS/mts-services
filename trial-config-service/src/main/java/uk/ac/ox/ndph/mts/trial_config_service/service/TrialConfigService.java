@@ -12,6 +12,7 @@ import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class TrialConfigService {
@@ -23,7 +24,9 @@ public class TrialConfigService {
     }
 
     public Trial saveTrial(Trial trial, String userId) throws InvalidConfigException, ResourceAlreadyExistsException {
+        
         TrialSite.SiteType rootNodeType = TrialSite.SiteType.CCO; // this is the assumption for now
+
 
         if (trialRepository.existsById(trial.getId())) {
             throw new ResourceAlreadyExistsException();
@@ -60,11 +63,7 @@ public class TrialConfigService {
             trialSite.setTrial(trial);
         }
 
-        for (Role role : trial.getRoles()) {
-            role.setModifiedTime(LocalDateTime.now());
-            role.setModifiedBy(userId);
-            role.setTrial(trial);
-        }
+
     }
 
 }
