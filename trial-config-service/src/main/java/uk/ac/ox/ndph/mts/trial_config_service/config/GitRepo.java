@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.trial_config_service.config;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -36,13 +37,13 @@ public class GitRepo {
         }
     }
 
-    private void cloneRepository() {
+    protected void cloneRepository() {
         try {
             Git.cloneRepository()
                 .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                 .setDirectory(Paths.get(GIT_LOCATION).toFile())
                 .call();
-        } catch (GitAPIException gitEx) {
+        } catch (GitAPIException | JGitInternalException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
     }
