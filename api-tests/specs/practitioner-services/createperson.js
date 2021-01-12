@@ -1,8 +1,6 @@
 const { validPerson, invalidCharacterLength, missingGivenName, missingfamilyName, missingPrefix } = require('../../data/createPerson')
 const conf = require('../../config/conf')
 
-//const request = require("supertest")
-
 beforeEach(function () {
     baseRequest = request(conf.BASE_URL)
 })
