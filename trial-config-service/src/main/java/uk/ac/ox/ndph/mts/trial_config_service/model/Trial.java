@@ -9,12 +9,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Audited
 @Entity
-public class Trial {
+public class Trial implements Serializable {
+
+    private static final long serialVersionUID = 987456231L;
 
     @Id
     @Column

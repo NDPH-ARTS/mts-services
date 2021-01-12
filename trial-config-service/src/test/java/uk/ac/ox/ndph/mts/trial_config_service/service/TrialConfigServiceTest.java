@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 class TrialConfigServiceTest {
 
     private TrialConfigService trialConfigService;
-
     @Mock
     TrialRepository trialRepository;
 
@@ -36,7 +35,6 @@ class TrialConfigServiceTest {
     }
 
     private static final String DUMMY_OID = "dummy-oid";
-
 
     @Test
     void createInitialTrial() {
