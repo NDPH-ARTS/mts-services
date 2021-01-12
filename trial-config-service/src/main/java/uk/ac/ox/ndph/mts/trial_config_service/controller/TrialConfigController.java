@@ -46,6 +46,9 @@ public class TrialConfigController {
         this.webClient = WebClient.create(baseUrl);
     }
 
+
+    //TODO(darrensmithson) - we are using a GET and POST for similar functionlaity to accomodate
+    // early testing needs, once we are closer to final developmemnt we should ensure only 1 POST is used.
     @GetMapping("/trial")
     public Trial saveTrialFromGit(
             @RequestParam
@@ -69,8 +72,6 @@ public class TrialConfigController {
             trial = objMapper.readValue(fileBytes, Trial.class);
         } catch (IOException ioException) {
             throw new InvalidConfigException(ioException.getMessage());
-        } finally {
-            gitRepo.destroy();
         }
 
         return trial;

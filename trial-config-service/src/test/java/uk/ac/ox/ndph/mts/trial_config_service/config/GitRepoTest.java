@@ -11,7 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GitRepoTest {
+
+class GitRepoTest {
 
     GitRepo gitRepo = new GitRepo();
 
@@ -23,11 +24,6 @@ public class GitRepoTest {
     @Test
     void getTrialFile() throws InvalidConfigException {
         assertNotNull(gitRepo.getTrialFile("config.json"));
-    }
-
-    @AfterAll
-    void tearDown() throws InvalidConfigException{
-        gitRepo.destroy();
     }
 
 }
