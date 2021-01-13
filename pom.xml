@@ -34,7 +34,7 @@
 
         <module>sample-service</module>
         <module>practitioner-service</module>
-		<module>site-service</module>
+        <module>site-service</module>
     </modules>
 
     <dependencies>

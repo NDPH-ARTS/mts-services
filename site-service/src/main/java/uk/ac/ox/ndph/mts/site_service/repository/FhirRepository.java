@@ -9,7 +9,7 @@ import org.hl7.fhir.r4.model.ResearchStudy;
 public interface FhirRepository {
 
     /**
-     * save a site entity to FHIR store site-service
+     * save a site entity to FHIR store
      *
      * @param organization the organization to save.
      * @return Nothing.
@@ -19,7 +19,7 @@ public interface FhirRepository {
     /**
      * Creates a new ResearchStudy resource.
      * @param researchStudy
-     * @return researchStudy
+     * @return ResearchStudy
      */
     ResearchStudy saveResearchStudy(ResearchStudy researchStudy);
 }
