@@ -4,7 +4,12 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+import javax.persistence.OneToMany;
+import javax.persistence.CascadeType;
 import java.time.LocalDateTime;
 import java.util.List;
 

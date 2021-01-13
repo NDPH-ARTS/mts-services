@@ -9,6 +9,7 @@ services:
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
     depends_on:
       - sqlserver
+      - role-service
     environment:
       SERVER_PORT: "81"
       JDBC_DRIVER: ${JDBC_DRIVER}

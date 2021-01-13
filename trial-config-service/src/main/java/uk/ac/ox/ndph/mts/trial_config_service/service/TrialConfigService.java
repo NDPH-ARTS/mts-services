@@ -1,20 +1,19 @@
 package uk.ac.ox.ndph.mts.trial_config_service.service;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientResponseException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.RoleServiceException;
-import uk.ac.ox.ndph.mts.trial_config_service.model.*;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,11 +56,12 @@ public class TrialConfigService {
     }
 
     /**
-     * minimal implementation without gateway or auth because trialconfigservice is now deprecated - role-service will be called by git workflow on deploy
+     * minimal implementation without gateway or auth because trialconfigservice is now deprecated
+     * (role-service will be called by git workflow on deploy)
      **/
     private void saveRoles(List<Role> roles) throws RoleServiceException {
 
-        String roleServiceURI = "http://localhost:82/roles";// NB: gateway
+        String roleServiceURI = "http://localhost:82/roles"; // TODO(katesan): gateway
         if (roles == null) {
             return;
         }

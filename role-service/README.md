@@ -8,8 +8,10 @@ Env vars:
 
     set GITHUB_SHA=test
     set JDBC_DRIVER=com.microsoft.sqlserver.jdbc.SQLServerDriver
-    set JDBC_URL=jdbc:sqlserver://mts-services_sqlserver_1:1433;databaseName=master;user=sa;password=SomePasswordGoesHere123
-    set SAPASSWORD=SomePasswordGoesHere123
+    set JDBC_URL=jdbc:sqlserver://mts-services_sqlserver_1:1433;databaseName=master;user=sa;password=SomePasswordGoesHere123abc
+    set SAPASSWORD=SomePasswordGoesHere123abc
+
+Visit http://localhost:82/roles?page=0&size=10 or http://localhost:82/swagger-ui/
 
 ## How to run - dev env
 
@@ -20,7 +22,7 @@ Env vars:
 
 ### 2. Run spring boot application with VM opts
 
-    -Djdbc.driver=com.microsoft.sqlserver.jdbc.SQLServerDriver -Djdbc.url=jdbc:sqlserver://localhost:1466;databaseName=master;user=sa;password=SomePasswordGoesHere123 -Dserver.port=8083
+    -Djdbc.driver=com.microsoft.sqlserver.jdbc.SQLServerDriver -Djdbc.url=jdbc:sqlserver://localhost:1466;databaseName=master;user=sa;password=SomePasswordGoesHere123abc -Dserver.port=8083
 
 
 

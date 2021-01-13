@@ -20,7 +20,6 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsExc
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 
 @RestController
