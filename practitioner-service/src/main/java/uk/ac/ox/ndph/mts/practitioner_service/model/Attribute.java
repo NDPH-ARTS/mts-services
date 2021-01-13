@@ -9,9 +9,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
  */
 public enum Attribute {
 
-    PREFIX(ModelConstants.ATTRIBUTE_NAME_PREFIX, Practitioner::getPrefix),
-    GIVEN_NAME(ModelConstants.ATTRIBUTE_NAME_GIVEN_NAME, Practitioner::getGivenName),
-    FAMILY_NAME(ModelConstants.ATTRIBUTE_NAME_FAMILY_NAME, Practitioner::getFamilyName);
+    PREFIX(AttributeNames.PREFIX.nameof(), Practitioner::getPrefix),
+    GIVEN_NAME(AttributeNames.GIVEN_NAME.nameof(), Practitioner::getGivenName),
+    FAMILY_NAME(AttributeNames.FAMILY_NAME.nameof(), Practitioner::getFamilyName);
 
     private String attributeName;
     private Function<Practitioner, String> getValue;
@@ -44,13 +44,13 @@ public enum Attribute {
      * @throws InitialisationError when string does not map to a known attribtue.
      */
     public static Attribute fromString(String input) throws InitialisationError {
-        if (ModelConstants.ATTRIBUTE_NAME_PREFIX.equals(input)) {
+        if (AttributeNames.PREFIX.nameof().equals(input)) {
             return PREFIX;
-        } else if (ModelConstants.ATTRIBUTE_NAME_GIVEN_NAME.equals(input)) {
+        } else if (AttributeNames.GIVEN_NAME.nameof().equals(input)) {
             return GIVEN_NAME;
-        } else if (ModelConstants.ATTRIBUTE_NAME_FAMILY_NAME.equals(input)) {
+        } else if (AttributeNames.FAMILY_NAME.nameof().equals(input)) {
             return FAMILY_NAME;
         }
-        throw new InitialisationError(String.format(ModelConsts.ATTRIBUTE_FROM_STRING_ERROR.getValue(), input));
+        throw new InitialisationError(String.format(Models.STRING_PARSE_ERROR.error(), input));
     }
 }

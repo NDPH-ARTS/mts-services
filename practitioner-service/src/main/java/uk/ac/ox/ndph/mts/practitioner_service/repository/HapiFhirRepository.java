@@ -37,7 +37,7 @@ public class HapiFhirRepository implements FhirRepository {
     public String savePractitioner(Practitioner practitioner) {
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(RepositoryConsts.FHIR_REPO_SAVE_PRACTITIONER_LOG.getValue(),
+            logger.info(FhirRepo.SAVE_PRACTITIONER.message(),
                 fhirContextWrapper.prettyPrint(practitioner));
         }
 
@@ -46,14 +46,14 @@ public class HapiFhirRepository implements FhirRepository {
             responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
                 bundle(practitioner, PRACTITIONER_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
-            logger.warn(RepositoryConsts.FHIR_REPO_ERROR_UPDATE_LOG.getValue(), e);
+            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
             throw new RestException(e.getMessage(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
         if (logger.isInfoEnabled()) {
-            logger.info(RepositoryConsts.FHIR_REPO_SAVE_RESPONSE_LOG.getValue(),
+            logger.info(FhirRepo.SAVE_RESPONSE.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
         }
         return practitioner.getIdElement().getValue();
@@ -62,9 +62,9 @@ public class HapiFhirRepository implements FhirRepository {
         var resp = fhirContextWrapper.toListOfResources(bundle);
         
         if (resp.size() != 1) {
-            logger.info(RepositoryConsts.FHIR_REPO_BAD_RESPONSE_SIZE_LOG.getValue(), resp.size());
+            logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
             throw new RestException(String.format(
-                RepositoryConsts.FHIR_REPO_BAD_RESPONSE_SIZE_LOG.getValue(), resp.size()));
+                FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
 
         }
         return resp.get(0);

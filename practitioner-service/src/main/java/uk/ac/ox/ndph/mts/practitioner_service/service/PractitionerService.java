@@ -39,7 +39,7 @@ public class PractitionerService implements EntityService {
         }
         this.practitionerStore = practitionerStore;
         this.entityValidation = entityValidation;
-        logger.info(ServiceConsts.PRACTITIONER_SERVICE_STARTUP_LOG.getValue());
+        logger.info(Services.STARTUP.message());
     }
 
     /**

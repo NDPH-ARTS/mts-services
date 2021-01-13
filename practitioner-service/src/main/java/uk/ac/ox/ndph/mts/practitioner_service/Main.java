@@ -16,7 +16,7 @@ public class Main {
      * @param args command line args
      */
     public static void main(String[] args) {
-        LOGGER.info(ControllerConsts.PRACTITIONER_APPLICATION_STARTUP_LOG.getValue());
+        LOGGER.info(Controllers.STARTUP.message());
         SpringApplication.run(PractitionerServiceController.class, args);
     }
 

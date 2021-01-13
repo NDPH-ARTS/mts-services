@@ -54,7 +54,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
                                 pair.getRight().getGetValue())));
 
         validateMap();
-        logger.info(ValidationConsts.VALIDATION_STARTUP_LOG.getValue(), configuration);
+        logger.info(Validations.STARTUP.message(), configuration);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
         }
         if (!validation.getRegex().matcher(value).matches()) {
             return new ValidationResponse(false,
-                    String.format(ValidationConsts.VALIDATION_ERROR_MESSAGE.getValue(), validation.getDescription()));
+                    String.format(Validations.ERROR.message(), validation.getDescription()));
         }
         return new ValidationResponse(true, "");
     }
