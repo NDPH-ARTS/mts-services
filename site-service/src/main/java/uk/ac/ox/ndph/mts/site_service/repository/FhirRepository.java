@@ -19,7 +19,7 @@ public interface FhirRepository {
     /**
      * Creates a new ResearchStudy resource.
      * @param researchStudy
-     * @return
+     * @return ResearchStudy
      */
     ResearchStudy saveResearchStudy(ResearchStudy researchStudy);
 }
