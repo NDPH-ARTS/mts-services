@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- *
+ * Practitioner Model
  */
 @Data
 @Getter

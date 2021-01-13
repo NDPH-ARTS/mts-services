@@ -1,8 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
@@ -11,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
-import ca.uhn.fhir.util.BundleUtil;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 /**
@@ -21,56 +16,55 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
  * a FHIR store.
  */
 @Component
-class AzureFhirRepository implements FhirRepository {
+public class HapiFhirRepository implements FhirRepository {
 
     private static final String PRACTITIONER_ENTITY_NAME = "Practitioner";
-    private static final String INFO_LOG_SAVE_PRACTITIONER = "request to fhir: %s";
-    private static final String INFO_LOG_RESPONSE_PRACTITIONER = "response from fhir: %s";
-    private static final String ERROR_UPDATE_FHIR = "error while updating fhir store";
-    private static final String ERROR_BAD_RESPONSE_SIZE = "bad response size from FHIR: %d";
 
-    private final FhirContext fhirContext;
-    private final Logger logger = LoggerFactory.getLogger(AzureFhirRepository.class);
+    private final FhirContextWrapper fhirContextWrapper;
+    private final Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
 
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
-    AzureFhirRepository() {
-        fhirContext = FhirContext.forR4();
+    HapiFhirRepository(FhirContextWrapper fhirContextWrapper) {
+        this.fhirContextWrapper = fhirContextWrapper;
     }
 
     /**
      * @param practitioner the practitioner to save.
-     * @return
+     * @return id of the saved practitioner
      */
     public String savePractitioner(Practitioner practitioner) {
         // Log the request
-        logger.info(String.format(INFO_LOG_SAVE_PRACTITIONER,
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(practitioner)));
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.SAVE_PRACTITIONER.message(),
+                fhirContextWrapper.prettyPrint(practitioner));
+        }
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContext.newRestfulGenericClient(fhirUri).transaction()
-                    .withBundle(bundle(practitioner, PRACTITIONER_ENTITY_NAME)).execute();
+            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
+                bundle(practitioner, PRACTITIONER_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
-            logger.warn(ERROR_UPDATE_FHIR, e);
-            throw new RestException(e.getMessage());
+            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
+            throw new RestException(e.getMessage(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        logger.info(String.format(INFO_LOG_RESPONSE_PRACTITIONER,
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement)));
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.SAVE_RESPONSE.message(),
+                    fhirContextWrapper.prettyPrint(responseElement));
+        }
         return practitioner.getIdElement().getValue();
     }
-
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
-        List<IBaseResource> resp = new ArrayList<>();
-        resp.addAll(BundleUtil.toListOfResources(fhirContext, bundle));
-
+        var resp = fhirContextWrapper.toListOfResources(bundle);
+        
         if (resp.size() != 1) {
-            logger.info(String.format(ERROR_BAD_RESPONSE_SIZE, resp.size()));
-            throw new RestException(String.format(ERROR_BAD_RESPONSE_SIZE, resp.size()));
+            logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
+            throw new RestException(String.format(
+                FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
 
         }
         return resp.get(0);
