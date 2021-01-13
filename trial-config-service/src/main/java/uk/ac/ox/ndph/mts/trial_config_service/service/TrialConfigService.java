@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.trial_config_service.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,7 +15,6 @@ import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -23,8 +23,12 @@ import java.util.Optional;
 @Service
 public class TrialConfigService {
 
+    @Value("${role.service}")
+    private String roleService;
+
     private final TrialRepository trialRepository;
     private final WebClient webClient;
+
 
     public TrialConfigService(TrialRepository trialRepository, WebClient webClient) {
         this.trialRepository = trialRepository;
@@ -61,24 +65,27 @@ public class TrialConfigService {
      **/
     private void saveRoles(List<Role> roles) throws RoleServiceException {
 
-        String roleServiceURI = "http://localhost:82/roles"; // TODO(katesan): gateway
         if (roles == null) {
             return;
         }
 
-        for (Role role : roles) {
+        try {
+            for (Role role : roles) {
 
-            webClient.post()
-                    .uri(roleServiceURI)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(Mono.just(role), Role.class)
+                webClient.post()
+                        .uri(roleService + "/roles")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .body(Mono.just(role), Role.class)
 
-                    .retrieve()// NB: auth
-                    .onStatus(HttpStatus::isError, response -> response.bodyToMono(String.class)
-                            .flatMap(error -> Mono.error(new RoleServiceException(error))))
-                    .bodyToMono(Role.class)
-                    .block();
+                        .retrieve()// NB: auth
+                        .onStatus(HttpStatus::isError, response -> response.bodyToMono(String.class)
+                                .flatMap(error -> Mono.error(new RoleServiceException(error))))
+                        .bodyToMono(Role.class)
+                        .block();
 
+            }
+        } catch (Exception e) {
+            throw new RoleServiceException("Error connecting to role service");
         }
 
 
