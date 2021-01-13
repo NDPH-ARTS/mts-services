@@ -110,17 +110,6 @@ public class SiteServiceTests {
     }
 
     @Test
-    void TestSiteService_WhenInitWithInvalidConfig_ThrowsRuntimeException() {
-        // Arrange
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", ERROR_MAP));
-
-        // Act + Assert
-        Assertions.assertThrows(RuntimeException.class, () -> new SiteService(fhirRepository, configurationProvider),
-                "Expecting incomplete configuration to throw");
-    }
-
-    @Test
     void TestSaveSite_WhenSaveSite_SaveSiteToRepository() {
         // Arrange
         String name = "name";
