@@ -2,6 +2,19 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+
+    <changeSet author="katesan - edited" id="1608062861281-0">
+        <preConditions  onFail="MARK_RAN">
+            <not><tableExists  tableName="revinfo"></tableExists></not>
+        </preConditions>
+        <createTable tableName="revinfo">
+            <column autoIncrement="true"  name="rev" type="int">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK__revinfo__C2B7CC698F69951C"/>
+            </column>
+            <column name="revtstmp" type="bigint"/>
+        </createTable>
+    </changeSet>
+
     <changeSet author="katesan (generated)" id="1608062861281-1">
         <createTable tableName="person">
             <column name="id" type="BIGINT">
@@ -89,13 +102,7 @@
         </createTable>
     </changeSet>
     <changeSet author="katesan (generated)" id="1608062861281-9">
-        <createTable tableName="revinfo">
-<!--            <column name="rev" type="INTEGER">-->
-<!--                <constraints nullable="false" primaryKey="true" primaryKeyName="revinfo_pkey"/>-->
-<!--            </column>-->
-            <column name="revtstmp" type="BIGINT"/>
-        </createTable>
-<!--        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="trial_aud" constraintName="fkcc7vlgg86eqe1dmvivbkv046v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>-->
+
         <createSequence cacheSize="1" cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
     </changeSet>
     <changeSet author="katesan (generated)" id="1608062861281-10">

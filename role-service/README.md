@@ -18,7 +18,7 @@ Visit http://localhost:82/roles?page=0&size=10 or http://localhost:82/swagger-ui
 ### 1. Database in a docker container
 
     docker pull mcr.microsoft.com/mssql/server:2019-latest
-    docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SomePasswordGoesHere123" -p 1466:1433 --name mssql1 -h mssql1 -d mcr.microsoft.com/mssql/server:2019-latest
+    docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SomePasswordGoesHere123abc" -p 1466:1433 --name mssql1 -h mssql1 -d mcr.microsoft.com/mssql/server:2019-latest
 
 ### 2. Run spring boot application with VM opts
 
