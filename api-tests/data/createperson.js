@@ -36,3 +36,11 @@ const invalidCharacterLength = {
 }
 
 module.exports.invalidCharacterLength = invalidCharacterLength;
+
+const illegalCharacters = {
+    "prefix": "M@£$S",
+    "givenName": "S£$%T@@$E",
+    "familyName": "P*(&)(*!£~D"
+}
+
+module.exports.illegalCharacters = illegalCharacters;

@@ -34,4 +34,10 @@ describe('As a user with Create Person permission, I want to have my create pers
         expect(response.text).to.contain("argument Family Name failed validation")
     });
 
+    it('When I submit an API request to create a Person with any fields holding data with special characters, Then a new Person record is not created And I receive an error notification', async () => {
+        const response = await baseRequest.post("/practitioner").send(illegalCharacters);
+        expect(response.status).to.equal(422)
+        expect(response.text).to.contain("argument Family Name failed validation")
+    });
+
 });
