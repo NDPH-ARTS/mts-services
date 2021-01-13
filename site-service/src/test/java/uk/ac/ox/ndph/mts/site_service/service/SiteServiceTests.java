@@ -88,7 +88,7 @@ public class SiteServiceTests {
     }
     
     @ParameterizedTest
-    @CsvSource({ ",", "test,test", ",test", "test,", "null,null", "null,test" })
+    @CsvSource({ ",",  ",test", "test,", "null,null", "null,test" })
     void TestSaveSite_WhenFieldsAreEmptyOrNull_ThrowsArgumentException(
             @ConvertWith(NullableConverter.class) String name,
             @ConvertWith(NullableConverter.class) String alias) {
@@ -108,17 +108,6 @@ public class SiteServiceTests {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", INCOMNPLETE_MAP));
-
-        // Act + Assert
-        Assertions.assertThrows(RuntimeException.class, () -> new SiteService(fhirRepository, configurationProvider),
-                "Expecting incomplete configuration to throw");
-    }
-
-    @Test
-    void TestSiteService_WhenInitWithInvalidConfig_ThrowsRuntimeException() {
-        // Arrange
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", ERROR_MAP));
 
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteService(fhirRepository, configurationProvider),
