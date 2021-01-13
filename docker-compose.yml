@@ -30,6 +30,23 @@ services:
       - sql
 
   sql:
+  trial-config-service:
+    build:
+          context: .
+          dockerfile: trial-config-service/Dockerfile
+          args:
+            SVC: trial-config-service
+    image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
+    depends_on:
+      - sqlserver
+    environment:
+      SERVER_PORT: "81"
+      JDBC_DRIVER: ${JDBC_DRIVER}
+      JDBC_URL: ${JDBC_URL}
+    ports:
+      - "81:81"
+
+  sqlserver:
     image: "mcr.microsoft.com/mssql/server"
     environment:
       SA_PASSWORD: ${SAPASSWORD}
