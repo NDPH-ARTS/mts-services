@@ -11,7 +11,7 @@ jobs:
     name: Build services
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service" ]
+        service_name: [ "sample-service", "practitioner-service", "site-service" ]
     env:
       GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
