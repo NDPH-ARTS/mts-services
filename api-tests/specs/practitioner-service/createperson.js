@@ -9,17 +9,19 @@ describe('As a user with Create Person permission, I want to have my create pers
 
     it('When I submit an API request to create a Person with a value for all mandatory fields and no fields exceed their specified maximum length, Then a new Person record is persisted in the system with a unique identifier And I receive a success acknowledgement', async () => {
         const response = await baseRequest.post('/practitioner').send(validPerson);
+        expect(response.text).to.contain("id")
         expect(response.status).to.equal(201)
     });
 
     it('When I submit an API request to create a Person with missing non-mandatory prefix field, Then a new Person record is persisted in the system with a unique identifier And I receive a success acknowledgement', async () => {
         const response = await baseRequest.post("/practitioner").send(missingPrefix);
-        expect(response)
+        expect(response.text).to.contain("id")
         expect(response.status).to.equal(201)
     });
 
     it('When I submit an API request to create a Person with missing non-mandatory givenName field, Then a new Person record is persisted in the system with a unique identifier And I receive a success acknowledgement', async () => {
         const response = await baseRequest.post("/practitioner").send(missingGivenName);
+        expect(response.text).to.contain("id")
         expect(response.status).to.equal(201)
     });
 
@@ -40,8 +42,8 @@ describe('As a user with Create Person permission, I want to have my create pers
         expect(response.text).to.contain("argument Prefix failed validation")
     });
 
-    // it.only('When I submit an API request to create a Person with a malformed JSON, Then a new Person record is not created And I receive an error notification', async () => {
-    //     const response = await baseRequest.post("/practitioner").send(malformedJson);
-    //     expect(response.status).to.equal(400)
-    // });
+    it('When I submit an API request to create a Person with a malformed JSON, Then a new Person record is not created And I receive an error notification', async () => {
+        const response = await baseRequest.post("/practitioner").send(malformedJson);
+        expect(response.status).to.equal(422)
+    });
 });
