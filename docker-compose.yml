@@ -14,6 +14,22 @@ services:
     ports:
       - "80:80"
 
+  trial-config-service:
+    build:
+      context: .
+      dockerfile: trial-config-service/Dockerfile
+      args:
+        SVC: trial-config-service
+    image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
+    depends_on:
+      - sqlserver
+    environment:
+      SERVER_PORT: "81"
+      JDBC_DRIVER: ${JDBC_DRIVER}
+      JDBC_URL: ${JDBC_URL}
+    ports:
+      - "81:81"
+
   fhir-api:
     image: "marrobi/r4-fhir-server"
     restart: on-failure
@@ -26,25 +42,6 @@ services:
       DataStore: "SqlServer"
     ports:
       - "8080:8080"
-    depends_on:
-      - sql
-
-  sql:
-  trial-config-service:
-    build:
-          context: .
-          dockerfile: trial-config-service/Dockerfile
-          args:
-            SVC: trial-config-service
-    image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
-    depends_on:
-      - sqlserver
-    environment:
-      SERVER_PORT: "81"
-      JDBC_DRIVER: ${JDBC_DRIVER}
-      JDBC_URL: ${JDBC_URL}
-    ports:
-      - "81:81"
 
   sqlserver:
     image: "mcr.microsoft.com/mssql/server"
