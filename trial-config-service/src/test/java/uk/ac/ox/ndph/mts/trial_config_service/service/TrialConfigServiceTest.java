@@ -1,20 +1,29 @@
 package uk.ac.ox.ndph.mts.trial_config_service.service;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
+import uk.ac.ox.ndph.mts.trial_config_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,17 +33,26 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TrialConfigServiceTest {
 
-    private TrialConfigService trialConfigService;
+    TrialConfigService trialConfigService;
 
     @Mock
     TrialRepository trialRepository;
 
-    @Mock
-    WebClient webClient;
+    MockWebServer mockBackEnd;
 
     @BeforeEach
-    void setUp() {
+    void setUpEach() throws IOException {
+        mockBackEnd = new MockWebServer();
+        mockBackEnd.start();
+        WebClient webClient = WebClient.create(String.format("http://localhost:%s",
+                mockBackEnd.getPort()));
         trialConfigService = new TrialConfigService(trialRepository, webClient);
+    }
+
+
+    @AfterEach
+    void tearDown() throws IOException {
+        mockBackEnd.shutdown();
     }
 
     private static final String DUMMY_OID = "dummy-oid";
@@ -79,4 +97,33 @@ class TrialConfigServiceTest {
         invalidConfig.setTrialSites(Collections.singletonList(new TrialSite()));
         assertThrows(InvalidConfigException.class, () -> trialConfigService.saveTrial(invalidConfig, DUMMY_OID));
     }
+
+    @Test
+    void testSendToRoleService() throws IOException{
+
+        RoleDTO testRole = new RoleDTO();
+        testRole.setRoleName("test role");
+
+
+        mockBackEnd.enqueue(new MockResponse()
+                .setBody(new ObjectMapper().writeValueAsString(testRole))
+                .addHeader("Content-Type", "application/json"));
+
+        RoleDTO returnedRole = trialConfigService.sendToRoleService(testRole);
+
+        assertNotNull(returnedRole);
+    }
+
+    @Test
+    void testSendToRoleServiceFail() {
+        RoleDTO testRole = new RoleDTO();
+        testRole.setRoleName("test role");
+
+        mockBackEnd.enqueue(new MockResponse()
+                .setResponseCode(500));
+
+        assertThrows(DependentServiceException.class, () -> trialConfigService.sendToRoleService(testRole));
+    }
+
+
 }

@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_GATEWAY)
-public class RoleServiceException extends RuntimeException {
+public class DependentServiceException extends RuntimeException {
 
-    public RoleServiceException(String message) {
+    public DependentServiceException(String message) {
         super(message);
     }
 }

@@ -2,23 +2,22 @@ package uk.ac.ox.ndph.mts.trial_config_service.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import uk.ac.ox.ndph.mts.trial_config_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
-import uk.ac.ox.ndph.mts.trial_config_service.exception.RoleServiceException;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
-import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
-import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 import uk.ac.ox.ndph.mts.trial_config_service.model.RoleDTO;
+import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
+import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class TrialConfigService {
@@ -51,7 +50,11 @@ public class TrialConfigService {
             throw new InvalidConfigException();
         }
 
-        saveRoles(trial.getRoles());
+        if (trial.getRoles() != null) {
+            for (RoleDTO role : trial.getRoles()) {
+                sendToRoleService(role);
+            }
+        }
 
         addBootstrapUser(trialSite.get(), userId);
         trial.setStatus(Trial.Status.IN_CONFIGURATION);
@@ -60,35 +63,23 @@ public class TrialConfigService {
     }
 
     /**
-     * minimal implementation without gateway or auth because trialconfigservice is now deprecated
-     * (role-service will be called by git workflow on deploy)
+     * minimal implementation - trialconfigservice is going to be  refactored in a future story
+     * to fully orchestrate these requests.  e.g. error handling if rollservice gives a 4XX or 5XX - rollback?
      **/
-    private void saveRoles(List<RoleDTO> roles) throws RoleServiceException {
+    protected RoleDTO sendToRoleService(RoleDTO role) throws DependentServiceException {
 
-        if (roles == null) {
-            return;
-        }
-
+        Logger.getAnonymousLogger().info("Sending to role service");
         try {
-            for (RoleDTO role : roles) {
-
-                webClient.post()
-                        .uri(roleService + "/roles")
-                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .body(Mono.just(role), RoleDTO.class)
-
-                        .retrieve()// NB: auth
-                        .onStatus(HttpStatus::isError, response -> response.bodyToMono(String.class)
-                                .flatMap(error -> Mono.error(new RoleServiceException(error))))
-                        .bodyToMono(RoleDTO.class)
-                        .block();
-
-            }
+            return webClient.post()
+                    .uri(roleService + "/roles")
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .body(Mono.just(role), RoleDTO.class)
+                    .retrieve()
+                    .bodyToMono(RoleDTO.class)
+                    .block();
         } catch (Exception e) {
-            throw new RoleServiceException("Error connecting to role service");
+            throw new DependentServiceException("Error connecting to role service");
         }
-
-
     }
 
     private void addBootstrapUser(TrialSite trialSite, String userId) { // this will change once we have Roles

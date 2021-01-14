@@ -1,14 +1,11 @@
 package uk.ac.ox.ndph.mts.trial_config_service.config;
 
-
 import org.eclipse.jgit.api.errors.GitAPIException;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
-
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-
 class GitRepoTest {
 
     GitRepo gitRepo = new GitRepo();
@@ -47,6 +43,5 @@ class GitRepoTest {
     void illegalStatExceptionThrown() {
         assertThrows(IllegalStateException.class, () -> gitRepo.getTrialFile("x"));
     }
-
 
 }

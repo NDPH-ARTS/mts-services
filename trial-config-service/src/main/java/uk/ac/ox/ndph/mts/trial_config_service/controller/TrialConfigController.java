@@ -93,9 +93,9 @@ public class TrialConfigController {
 
         try {
             response = webClient.get()
-                    .uri(trialConfig)
-                    .retrieve()
-                    .bodyToMono(Trial.class);
+                .uri(trialConfig)
+                .retrieve()
+                .bodyToMono(Trial.class);
         } catch (WebClientException wceEx) {
             throw new InvalidConfigException(wceEx.getMessage());
         }
