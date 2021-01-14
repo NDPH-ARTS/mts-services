@@ -1,0 +1,36 @@
+{
+    "name": "@types/lodash.flattendeep",
+    "version": "4.4.6",
+    "description": "TypeScript definitions for lodash.flattenDeep",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Brian Zengel",
+            "url": "https://github.com/bczengel",
+            "githubUsername": "bczengel"
+        },
+        {
+            "name": "Ilya Mochalov",
+            "url": "https://github.com/chrootsu",
+            "githubUsername": "chrootsu"
+        },
+        {
+            "name": "Stepan Mikhaylyuk",
+            "url": "https://github.com/stepancar",
+            "githubUsername": "stepancar"
+        }
+    ],
+    "main": "",
+    "types": "index",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/lodash.flattendeep"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/lodash": "*"
+    },
+    "typesPublisherContentHash": "9ed871b8bac3f0c420407191c0f09954dc74b3fe94313afb894efbcc43a30f32",
+    "typeScriptVersion": "2.8"
+}

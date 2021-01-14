@@ -1,0 +1,64 @@
+{
+    "name": "@types/cucumber",
+    "version": "6.0.1",
+    "description": "TypeScript definitions for cucumber-js",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Abraão Alves",
+            "url": "https://github.com/abraaoalves",
+            "githubUsername": "abraaoalves"
+        },
+        {
+            "name": "Jan Molak",
+            "url": "https://github.com/jan-molak",
+            "githubUsername": "jan-molak"
+        },
+        {
+            "name": "Isaiah Soung",
+            "url": "https://github.com/isoung",
+            "githubUsername": "isoung"
+        },
+        {
+            "name": "BendingBender",
+            "url": "https://github.com/BendingBender",
+            "githubUsername": "BendingBender"
+        },
+        {
+            "name": "ErikSchierboom",
+            "url": "https://github.com/ErikSchierboom",
+            "githubUsername": "ErikSchierboom"
+        },
+        {
+            "name": "Peter Morlion",
+            "url": "https://github.com/petermorlion",
+            "githubUsername": "petermorlion"
+        },
+        {
+            "name": "Don Jayamanne",
+            "url": "https://github.com/DonJayamanne",
+            "githubUsername": "DonJayamanne"
+        },
+        {
+            "name": "David Goss",
+            "url": "https://github.com/davidjgoss",
+            "githubUsername": "davidjgoss"
+        },
+        {
+            "name": "Alberto Silva",
+            "url": "https://github.com/albertossilva",
+            "githubUsername": "albertossilva"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/cucumber"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "629bfd5ddcd8943c38b0c0e3e3ce3417ff839c7ddfa733cc5126924fa8f07331",
+    "typeScriptVersion": "2.8"
+}
