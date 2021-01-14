@@ -20,12 +20,12 @@ page at http://checkstyle.sourceforge.net/config.html -->
         <property name="optional" value="false"/>
     </module>
 
-<!--    TODO: Add a proper license header and comment this out. -->
-<!--    <module name="Header">-->
-<!--        <property name="header"-->
-<!--                  value="// Copyright (c) Microsoft Corporation. All rights reserved.\n// Licensed under the MIT License."/>-->
-<!--        <property name="fileExtensions" value="java"/>-->
-<!--    </module>-->
+    <!--    TODO: Add a proper license header and comment this out. -->
+    <!--    <module name="Header">-->
+    <!--        <property name="header"-->
+    <!--                  value="// Copyright (c) Microsoft Corporation. All rights reserved.\n// Licensed under the MIT License."/>-->
+    <!--        <property name="fileExtensions" value="java"/>-->
+    <!--    </module>-->
 
     <module name="FileTabCharacter">
         <!-- Checks that there are no tab characters in the file. -->
@@ -286,11 +286,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
 
         <!-- Javadoc checks                                   -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
-        <module name="JavadocMethod">
-            <property name="scope" value="protected"/>
-        </module>
-        <module name="MissingJavadocMethod"/>
-        <module name="MissingJavadocType"/>
         <module name="MissingJavadocPackage"/>
 
     </module>

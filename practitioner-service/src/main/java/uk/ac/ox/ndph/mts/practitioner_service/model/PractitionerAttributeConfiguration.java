@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.practitioner_service.configuration;
+package uk.ac.ox.ndph.mts.practitioner_service.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PractitionerAttribute {
+public class PractitionerAttributeConfiguration {
     private String name;
     private String displayName;
     private String validationRegex;
