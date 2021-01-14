@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
-
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
@@ -38,11 +37,13 @@ public class GitRepo {
     }
 
     protected void cloneRepository() {
+
         try {
             Git.cloneRepository()
                 .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                 .setDirectory(Paths.get(GIT_LOCATION).toFile())
                 .call();
+
         } catch (GitAPIException | JGitInternalException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
@@ -62,6 +63,7 @@ public class GitRepo {
         byte[] fileBytes;
 
         try {
+
             Repository repo =  getRepo();
             ObjectId lastCommitId = repo.resolve(Constants.HEAD);
 

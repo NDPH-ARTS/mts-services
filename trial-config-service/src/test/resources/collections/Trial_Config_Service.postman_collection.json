@@ -1,0 +1,381 @@
+{
+	"info": {
+		"_postman_id": "4faa5790-7f49-4c60-bca1-c2fccdd05c57",
+		"name": "Trial Config Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "headerPrefix",
+							"value": "Bearer ",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "http://global-trial-config-mock:8085/trial/test_1"
+				},
+				"url": {
+					"raw": "http://trial-config-service/trial-config/trial",
+					"protocol": "http",
+					"host": [
+						"trial-config-service"
+					],
+					"path": [
+						"trial-config",
+						"trial"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unauthenticated /create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Status code is 401\"] = responseCode.code === 401;"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "headerPrefix",
+							"value": "Bearer ",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "http://global-trial-config-mock:8085/trial/test_1"
+				},
+				"url": {
+					"raw": "http://trial-config-service/trial-config/trial",
+					"protocol": "http",
+					"host": [
+						"trial-config-service"
+					],
+					"path": [
+						"trial-config",
+						"trial"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/create with invalid trial id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "headerPrefix",
+							"value": "Bearer {{accessToken}}",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "http://global-trial-config-mock:8085/trial/fail"
+				},
+				"url": {
+					"raw": "http://trial-config-service/trial-config/trial",
+					"protocol": "http",
+					"host": [
+						"trial-config-service"
+					],
+					"path": [
+						"trial-config",
+						"trial"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if (!pm.globals.get('accessToken')) {",
+					"    console.log('getting access token');",
+					"    pm.sendRequest({ ",
+					"        url: pm.environment.get(\"auth-url\"), ",
+					"        method: 'POST',",
+					"        body: { ",
+					"            mode: 'formdata',",
+					"            formdata:[  { key: 'grant_type', value:'client_credentials'},",
+					"                        { key: 'client_id', value: pm.environment.get(\"client-id\")}, ",
+					"                        { key: 'client_secret', value: pm.environment.get(\"client-secret\")},",
+					"                        { key: 'scope', value: 'api://mts-apps/.default'}",
+					"            ]",
+					"        }",
+					"    }, function (err, response) {",
+					"        pm.globals.set('accessToken', response.json().access_token);",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
