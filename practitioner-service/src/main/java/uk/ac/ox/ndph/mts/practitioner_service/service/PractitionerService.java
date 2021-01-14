@@ -30,7 +30,7 @@ public class PractitionerService implements EntityService {
      */
     @Autowired
     public PractitionerService(EntityStore<Practitioner> practitionerStore,
-            ModelEntityValidation<Practitioner> entityValidation) {
+                               ModelEntityValidation<Practitioner> entityValidation) {
         if (practitionerStore == null) {
             throw new InitialisationError("practitioner store cannot be null");
         }
@@ -53,20 +53,5 @@ public class PractitionerService implements EntityService {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
         return practitionerStore.saveEntity(practitioner);
-    }
-
-    private void validateMap() {
-        if (validationMap.get(FIELD_NAME_PREFIX) == null
-            || validationMap.get(FIELD_NAME_GIVEN_NAME) == null
-            || validationMap.get(FIELD_NAME_FAMILY_NAME) == null) {
-            throw new ServerError("Configuration field cannot be missing");
-        }
-    }
-
-    private String getRegexStringOrDefault(PractitionerAttribute attribute) {
-        if (attribute.getValidationRegex().isBlank()) {
-            return REGEX_ALL;
-        }
-        return attribute.getValidationRegex();
     }
 }
