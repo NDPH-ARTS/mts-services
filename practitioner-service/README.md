@@ -42,7 +42,7 @@ Creates a new practitioner entity.
 
 #### Error Responses
 
-**Condition** : If is input is malformed.
+**Condition** : If input is malformed.
 
 **Code** : `400 Bad Request`
 
@@ -89,6 +89,6 @@ Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir
 ### practitioner-configuration.json
 
 Sets the validation rules for practitioner's name attributes using regex.
-Note: In this iteration, the field names are hard-coded and the service will validate the existance of all three attribuets (prefix, given name and family name) in the configuration file. Adding more attributes to the json configurationfile will not dynamically add them to the validation process.
+Note: In this iteration, the field names are hard-coded and the service will validate the existance of all three attribuets (prefix, given name and family name) in the configuration file. Adding more attributes to the json configuration file will not dynamically add them to the validation process.
 Empty or null validation regex is converted to a "validate-any" expression.
-The current json file allows up to 35 charachters for any field, and specifies only "given name" as mandatory (minimum charachters = 1).
+The current json file allows up to 35 charachters for any field, and specifies only "family name" as mandatory (minimum charachters = 1).

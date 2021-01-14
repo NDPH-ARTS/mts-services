@@ -3,10 +3,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Thrown when an internal error is raised.
+ * Thrown when an error during initialisation is raised.
  */
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-public class ServerError extends RuntimeException {
+public class InitialisationError extends RuntimeException {
     /**
      *
      */
@@ -17,7 +17,7 @@ public class ServerError extends RuntimeException {
      * @param message the exception message
      * @param internal the internal exception
      */
-    public ServerError(String message, Exception internal) {
+    public InitialisationError(String message, Exception internal) {
         super(message, internal);
     }
 
@@ -25,7 +25,7 @@ public class ServerError extends RuntimeException {
      *
      * @param message the exception message
      */
-    public ServerError(String message) {
+    public InitialisationError(String message) {
         super(message);
     }
 }

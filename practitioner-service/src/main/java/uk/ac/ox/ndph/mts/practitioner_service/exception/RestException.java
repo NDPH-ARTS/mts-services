@@ -20,4 +20,13 @@ public class RestException extends RuntimeException {
     public RestException(String message) {
         super(message);
     }
+
+    /**
+     *
+     * @param message the exception message
+     * @param innterException the innter exception
+     */
+    public RestException(String message, Exception innterException) {
+        super(message, innterException);
+    }
 }
