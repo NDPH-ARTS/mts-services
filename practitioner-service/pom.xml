@@ -48,6 +48,13 @@
             <version>${hapifhir.version}</version>
         </dependency>
 
+        <!-- Parsing JSON config files with Jackson-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.11.4</version>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>

@@ -4,18 +4,22 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.Transient;
 import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
+import java.io.Serializable;
+import javax.persistence.Transient;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Audited
 @Entity
-public class Trial {
+public class Trial implements Serializable {
+
+    private static final long serialVersionUID = 987456231L;
 
     @Id
     @Column
@@ -36,6 +40,7 @@ public class Trial {
 
     @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<TrialSite> trialSites;
+
 
     @Transient
     private List<Role> roles;

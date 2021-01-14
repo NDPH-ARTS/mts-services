@@ -30,12 +30,13 @@
     </properties>
 
     <modules>
-<!--        <module>build-tools</module>-->
+        <!--        <module>build-tools</module>-->
 
         <module>sample-service</module>
         <module>practitioner-service</module>
         <module>trial-config-service</module>
         <module>role-service</module>
+
     </modules>
 
     <dependencies>
@@ -78,7 +79,9 @@
             <artifactId>applicationinsights-logging-log4j2</artifactId>
             <version>[2.0,)</version>
         </dependency>
+
     </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -124,6 +127,41 @@
                         <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <configuration>
+                    <excludes>
+                        <!-- Exclude main application class -->
+                        <!--
+                        TODO: not all services are aligned with their lean application class. fix that and uncomment
+                        -->
+                        <!--                        <exclude>**/*/*Application.class</exclude>-->
+                        <!--                        <exclude>**/*/*App.class</exclude>-->
+                        <exclude>**/trial_config_service/**/*App*.class</exclude>-->
+                        <exclude>**/practitioner_service/Main.class</exclude>-->
+                        <exclude>**/sample_service/**/Main.class</exclude>-->
+
+                        <!-- Exclude model classes -->
+                        <exclude>**/*service/model/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>

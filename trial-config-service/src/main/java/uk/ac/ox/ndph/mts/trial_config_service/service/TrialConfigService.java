@@ -106,7 +106,6 @@ public class TrialConfigService {
             trialSite.setModifiedBy(userId);
             trialSite.setTrial(trial);
         }
-
     }
 
 }

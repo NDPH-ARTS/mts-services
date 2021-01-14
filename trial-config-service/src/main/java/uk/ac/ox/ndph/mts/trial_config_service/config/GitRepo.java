@@ -1,8 +1,8 @@
 package uk.ac.ox.ndph.mts.trial_config_service.config;
 
-
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -12,12 +12,10 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
-
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +25,6 @@ import java.nio.file.Paths;
 
 @Component
 public class GitRepo {
-
 
     private final Logger logger = LoggerFactory.getLogger(GitRepo.class);
     private static final String GIT_LOCATION = "gitRepo" + File.separator + "jsonConfig";
@@ -39,13 +36,15 @@ public class GitRepo {
         }
     }
 
-    private void cloneRepository() {
+    protected void cloneRepository() {
+
         try {
             Git.cloneRepository()
                 .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                 .setDirectory(Paths.get(GIT_LOCATION).toFile())
                 .call();
-        } catch (GitAPIException gitEx) {
+
+        } catch (GitAPIException | JGitInternalException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
     }
@@ -73,7 +72,6 @@ public class GitRepo {
 
                 RevTree tree = commit.getTree();
 
-
                 try (TreeWalk treeWalk = new TreeWalk(repo)) {
                     treeWalk.addTree(tree);
                     treeWalk.setRecursive(true);
@@ -100,6 +98,5 @@ public class GitRepo {
 
         return fileBytes;
     }
-
 
 }

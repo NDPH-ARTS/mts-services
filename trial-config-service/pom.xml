@@ -111,11 +111,13 @@
       <artifactId>json-path</artifactId>
       <version>2.2.0</version>
     </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.16</version>
     </dependency>
+
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -133,16 +135,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.16</version>
-        <scope>provided</scope>
-      </dependency>
-
-
     </dependencies>
   </dependencyManagement>
   <build>

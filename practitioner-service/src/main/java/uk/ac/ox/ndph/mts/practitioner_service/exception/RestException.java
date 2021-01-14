@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- *
+ * Thrown when an outgoing REST call to a dependant service failed
  */
 @ResponseStatus(value = HttpStatus.BAD_GATEWAY)
 public class RestException extends RuntimeException {
@@ -19,5 +19,14 @@ public class RestException extends RuntimeException {
      */
     public RestException(String message) {
         super(message);
+    }
+
+    /**
+     *
+     * @param message the exception message
+     * @param innterException the innter exception
+     */
+    public RestException(String message, Exception innterException) {
+        super(message, innterException);
     }
 }

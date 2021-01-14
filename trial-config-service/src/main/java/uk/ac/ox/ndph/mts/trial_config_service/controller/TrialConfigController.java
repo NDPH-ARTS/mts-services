@@ -1,10 +1,8 @@
 package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +18,6 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsExc
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
 import java.io.IOException;
-
 
 @RestController
 @RequestMapping("/trial-config")
@@ -51,15 +48,17 @@ public class TrialConfigController {
     @GetMapping("/trial")
     public Trial saveTrialFromGit(
             @RequestParam
-                    String trialConfig) throws InvalidConfigException, ResourceAlreadyExistsException {
-        return trialConfigService.saveTrial(createTrialFromGitRepo(trialConfig), userId);
+                    String filename) throws InvalidConfigException, ResourceAlreadyExistsException {
+        return trialConfigService.saveTrial(createTrialFromGitRepo(filename), userId);
+
     }
 
     @PostMapping("/trial")
     public Trial saveTrialFromJson(
             @RequestBody
-                    String trialConfigURL) throws InvalidConfigException, ResourceAlreadyExistsException {
-        return trialConfigService.saveTrial(createTrialFromJsonData(trialConfigURL), userId);
+                    String jsonData) throws InvalidConfigException, ResourceAlreadyExistsException {
+        return trialConfigService.saveTrial(createTrialFromJsonData(jsonData), userId);
+
     }
 
     protected Trial createTrialFromGitRepo(String fileName) {
@@ -77,7 +76,6 @@ public class TrialConfigController {
     }
 
     protected Trial createTrialFromJsonData(String trialConfig) {
-
 
         Trial trial;
 

@@ -1,11 +1,44 @@
 version: "3"
 services:
+  practitioner-service:
+    build:
+      context: .
+      dockerfile: practitioner-service/Dockerfile
+      args:
+        SVC: practitioner-service
+    image: ghcr.io/ndph-arts/practitioner-service:${GITHUB_SHA}
+    depends_on:
+      - fhir-api
+    environment:
+      SERVER_PORT: "80"
+    ports:
+      - "80:80"
+
+  fhir-api:
+    image: "marrobi/r4-fhir-server"
+    restart: on-failure
+    environment:
+      FHIRServer__Security__Enabled: "false"
+      SqlServer__ConnectionString: "Server=tcp:sql,1433;Initial Catalog=FHIR;Persist Security Info=False;User ID=sa;Password=${SAPASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
+      SqlServer__AllowDatabaseCreation: "true"
+      SqlServer__SchemaOptions__AutomaticUpdatesEnabled: "true"
+      SqlServer__Initialize: "true"
+      DataStore: "SqlServer"
+    ports:
+      - "8080:8080"
+
+## This is invalid - perhaps a prevous merge went wrong? Commenting for now, to discuss with @Avishay
+#    depends_on:
+#      - sql
+#  sql:
+
+
   trial-config-service:
     build:
-          context: .
-          dockerfile: trial-config-service/Dockerfile
-          args:
-            SVC: trial-config-service
+      context: .
+      dockerfile: trial-config-service/Dockerfile
+      args:
+        SVC: trial-config-service
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
     depends_on:
       - sqlserver
@@ -41,9 +74,9 @@ services:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
-        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
-        interval: 10s
-        timeout: 10s
-        retries: 6
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
     ports:
       - "1433:1433"
