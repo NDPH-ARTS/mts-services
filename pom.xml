@@ -35,6 +35,7 @@
         <module>sample-service</module>
         <module>practitioner-service</module>
         <module>trial-config-service</module>
+        <module>role-service</module>
     </modules>
 
     <dependencies>

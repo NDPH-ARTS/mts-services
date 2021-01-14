@@ -23,10 +23,12 @@ services:
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
     depends_on:
       - sqlserver
+      - role-service
     environment:
       SERVER_PORT: "81"
       JDBC_DRIVER: ${JDBC_DRIVER}
       JDBC_URL: ${JDBC_URL}
+      ROLE_SERVICE: "http://role-service-container:82"
     ports:
       - "81:81"
 
@@ -43,15 +45,32 @@ services:
     ports:
       - "8080:8080"
 
+  role-service:
+    build:
+      context: .
+      dockerfile: role-service/Dockerfile
+      args:
+        SVC: role-service
+    image: ghcr.io/ndph-arts/role-config-service:${GITHUB_SHA}
+    container_name: "role-service-container"
+    depends_on:
+      - sqlserver
+    environment:
+      SERVER_PORT: "82"
+      JDBC_DRIVER: ${JDBC_DRIVER}
+      JDBC_URL: ${JDBC_URL}
+    ports:
+      - "82:82"
+
   sqlserver:
     image: "mcr.microsoft.com/mssql/server"
     environment:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
-        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
-        interval: 10s
-        timeout: 10s
-        retries: 6
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
     ports:
       - "1433:1433"
