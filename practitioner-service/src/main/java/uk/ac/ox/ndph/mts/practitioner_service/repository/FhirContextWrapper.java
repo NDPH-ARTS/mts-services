@@ -40,7 +40,7 @@ public class FhirContextWrapper {
      * @return the returned Bundle object from FHIR endpoint
      */
     public Bundle executeTrasaction(String uri, Bundle input) {
-        return fhirContext.newRestfulGenericClient(uri).transaction()
+        return fhirContext.newRestfulGenericClient(uri).search()
                     .withBundle(input).execute();
     }
 
