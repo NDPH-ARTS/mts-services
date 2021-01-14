@@ -1,20 +1,31 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+=======
+>>>>>>> main
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+<<<<<<< HEAD
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerAttribute;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ServerError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
+=======
+import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
+import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+>>>>>>> main
 
 /**
  * Implement an EntityService interface.
@@ -23,6 +34,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
  */
 @Service
 public class PractitionerService implements EntityService {
+<<<<<<< HEAD
     private static final String REGEX_ALL = ".*";
     private static final String FIELD_NAME_PREFIX = "prefix";
     private static final String FIELD_NAME_GIVEN_NAME = "givenName";
@@ -32,10 +44,16 @@ public class PractitionerService implements EntityService {
 
     private final FhirRepository fhirRepository;    
     private final Map<String, Pair<String, Pattern>> validationMap;
+=======
+
+    private EntityStore<Practitioner> practitionerStore;
+    private final ModelEntityValidation<Practitioner> entityValidation;
+>>>>>>> main
     private final Logger logger = LoggerFactory.getLogger(PractitionerService.class);
 
     /**
      *
+<<<<<<< HEAD
      * @param fhirRepository - FHIR repository interface
      * @param configurationProvider - provider of validation configuration
      */
@@ -54,14 +72,32 @@ public class PractitionerService implements EntityService {
                     Pattern.compile(getRegexStringOrDefault(attribute))));
         }
         validateMap();
+=======
+     * @param practitionerStore Practitioner store interface
+     * @param entityValidation Practitioner validation interface 
+     */
+    @Autowired
+    public PractitionerService(EntityStore<Practitioner> practitionerStore,
+            ModelEntityValidation<Practitioner> entityValidation) {
+        if (practitionerStore == null) {
+            throw new InitialisationError("practitioner store cannot be null");
+        }
+        if (entityValidation == null) {
+            throw new InitialisationError("entity validation cannot be null");
+        }
+        this.practitionerStore = practitionerStore;
+        this.entityValidation = entityValidation;
+        logger.info(Services.STARTUP.message());
+>>>>>>> main
     }
 
     /**
      *
      * @param practitioner the Practitioner to save.
-     * @return A new Practitioner
+     * @return The id of the new practitioner
      */
     public String savePractitioner(Practitioner practitioner) {
+<<<<<<< HEAD
 
         validateArgument(practitioner.getPrefix(), FIELD_NAME_PREFIX);
         validateArgument(practitioner.getGivenName(), FIELD_NAME_GIVEN_NAME);
@@ -77,17 +113,13 @@ public class PractitionerService implements EntityService {
         }
         if (!validation.getRight().matcher(value).matches()) {
             throw new ValidationException(String.format(ERROR_MESSAGE, validation.getLeft()));
+=======
+        var validationResponse = entityValidation.validate(practitioner);
+        if (!validationResponse.isValid()) {
+            throw new ValidationException(validationResponse.getErrorMessage());
+>>>>>>> main
         }
-    }
-
-    private org.hl7.fhir.r4.model.Practitioner toFhirPractitioner(Practitioner practitioner) {
-        org.hl7.fhir.r4.model.Practitioner fhirPractitioner = new org.hl7.fhir.r4.model.Practitioner();
-        fhirPractitioner.addName().setFamily(practitioner.getFamilyName()).addGiven(practitioner.getGivenName())
-                .addPrefix(practitioner.getPrefix());
-        fhirPractitioner.setGender(AdministrativeGender.UNKNOWN);
-        String id = UUID.randomUUID().toString();
-        fhirPractitioner.setId(id);
-        return fhirPractitioner;
+        return practitionerStore.saveEntity(practitioner);
     }
 
     private void validateMap() {

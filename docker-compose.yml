@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 version: "2"
 services:
   site-service:
@@ -9,6 +10,23 @@ services:
       SERVER_PORT: "82"
     ports:
       - "82:82"
+=======
+version: "3"
+services:
+  practitioner-service:
+    build:
+      context: .
+      dockerfile: practitioner-service/Dockerfile
+      args:
+        SVC: practitioner-service
+    image: ghcr.io/ndph-arts/practitioner-service:${GITHUB_SHA}
+    depends_on:
+      - fhir-api
+    environment:
+      SERVER_PORT: "80"
+    ports:
+      - "80:80"
+>>>>>>> main
 
   fhir-api:
     image: "marrobi/r4-fhir-server"
@@ -26,14 +44,41 @@ services:
       - sql
 
   sql:
+<<<<<<< HEAD
+=======
+  trial-config-service:
+    build:
+          context: .
+          dockerfile: trial-config-service/Dockerfile
+          args:
+            SVC: trial-config-service
+    image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
+    depends_on:
+      - sqlserver
+    environment:
+      SERVER_PORT: "81"
+      JDBC_DRIVER: ${JDBC_DRIVER}
+      JDBC_URL: ${JDBC_URL}
+    ports:
+      - "81:81"
+
+  sqlserver:
+>>>>>>> main
     image: "mcr.microsoft.com/mssql/server"
     environment:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
+<<<<<<< HEAD
       test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
       interval: 10s
       timeout: 10s
       retries: 6
+=======
+        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+        interval: 10s
+        timeout: 10s
+        retries: 6
+>>>>>>> main
     ports:
       - "1433:1433"

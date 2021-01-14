@@ -49,5 +49,10 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 **/.mvn
 
+<<<<<<< HEAD
 **/node_modules/
 
+=======
+# Test reports
+**/test-reports/
+>>>>>>> main
