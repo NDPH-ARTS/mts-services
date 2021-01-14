@@ -75,7 +75,7 @@ class RoleControllerTest {
     }
 
     @Test
-    public void whenConvertRoleEntityToDto_thenSameData() {
+    void whenConvertRoleEntityToDto_thenSameData() {
 
         RoleDTO roleDTO = new RoleDTO();
         roleDTO.setRoleName("test");

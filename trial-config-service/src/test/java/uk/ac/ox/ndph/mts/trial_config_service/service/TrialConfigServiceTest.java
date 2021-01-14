@@ -61,16 +61,16 @@ class TrialConfigServiceTest {
 
         assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getUser().getAzureOid());
 
-        assertEquals(savedTrial.getModifiedBy(), DUMMY_OID);
-        assertEquals(savedTrial.getTrialSites().get(0).getModifiedBy(), DUMMY_OID);
+        assertEquals(DUMMY_OID, savedTrial.getModifiedBy());
+        assertEquals(DUMMY_OID, savedTrial.getTrialSites().get(0).getModifiedBy());
     }
-
 
 
     @Test
     void resourceAlreadyExistsErrorThrown() {
+        Trial t = new Trial();
         when(trialRepository.existsById(any())).thenReturn(true);
-        assertThrows(ResourceAlreadyExistsException.class, () -> trialConfigService.saveTrial(new Trial(), DUMMY_OID));
+        assertThrows(ResourceAlreadyExistsException.class, () -> trialConfigService.saveTrial(t, DUMMY_OID));
     }
 
     @Test
