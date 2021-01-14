@@ -20,7 +20,7 @@ public class PersistenceConfig {
 
         @Override
         public Optional<String> getCurrentAuditor() {
-            return Optional.of("fake-id"); // TODO(katesan) Fake for now, pending auth component
+            return Optional.of("fake-id"); // Fake for now, pending auth component
         }
     }
 }
