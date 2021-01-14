@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "http-status-codes": "^2.1.4"
+    "http-status-codes": "^2.1.4",
+    "qs": ">=6.0.4"
   }
 }
