@@ -26,6 +26,7 @@ public class Person {
     @Column
     private Long id;
 
+    @Column(unique = true)
     private String azureOid;
 
     @JsonIgnore

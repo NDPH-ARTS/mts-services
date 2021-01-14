@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,10 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
+
 import java.io.IOException;
+
+
 
 @RestController
 @RequestMapping("/trial-config")
@@ -42,7 +46,6 @@ public class TrialConfigController {
         this.webClient = WebClient.create(baseUrl);
     }
 
-
     //TODO(darrensmithson) - we are using a GET and POST for similar functionlaity to accomodate
     // early testing needs, once we are closer to final developmemnt we should ensure only 1 POST is used.
     @GetMapping("/trial")
@@ -50,7 +53,6 @@ public class TrialConfigController {
             @RequestParam
                     String filename) throws InvalidConfigException, ResourceAlreadyExistsException {
         return trialConfigService.saveTrial(createTrialFromGitRepo(filename), userId);
-
     }
 
     @PostMapping("/trial")
@@ -58,7 +60,6 @@ public class TrialConfigController {
             @RequestBody
                     String jsonData) throws InvalidConfigException, ResourceAlreadyExistsException {
         return trialConfigService.saveTrial(createTrialFromJsonData(jsonData), userId);
-
     }
 
     protected Trial createTrialFromGitRepo(String fileName) {
@@ -76,11 +77,9 @@ public class TrialConfigController {
     }
 
     protected Trial createTrialFromJsonData(String trialConfig) {
-
         Trial trial;
 
         try {
-
             ObjectMapper objMapper = new ObjectMapper();
             trial = objMapper.readValue(trialConfig, Trial.class);
         } catch (JsonProcessingException jpeEx) {
@@ -94,9 +93,9 @@ public class TrialConfigController {
 
         try {
             response = webClient.get()
-                .uri(trialConfig)
-                .retrieve()
-                .bodyToMono(Trial.class);
+                    .uri(trialConfig)
+                    .retrieve()
+                    .bodyToMono(Trial.class);
         } catch (WebClientException wceEx) {
             throw new InvalidConfigException(wceEx.getMessage());
         }
