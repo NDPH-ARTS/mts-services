@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 

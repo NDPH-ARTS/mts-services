@@ -30,7 +30,7 @@ public class PractitionerService implements EntityService {
      */
     @Autowired
     public PractitionerService(EntityStore<Practitioner> practitionerStore,
-                               ModelEntityValidation<Practitioner> entityValidation) {
+            ModelEntityValidation<Practitioner> entityValidation) {
         if (practitionerStore == null) {
             throw new InitialisationError("practitioner store cannot be null");
         }
