@@ -84,10 +84,6 @@ class PractitionerServiceControllerTests {
         String error = this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
-<<<<<<< HEAD:practitioner-service/src/test/java/uk/ac/ox/ndph/mts/practitioner_service/PractitionerServiceAppTests.java
-        assertTrue(error.contains("prefix"));
-=======
         assertThat(error, containsString("prefix"));
->>>>>>> main:practitioner-service/src/test/java/uk/ac/ox/ndph/mts/practitioner_service/PractitionerServiceControllerTests.java
     }
 }

@@ -1,5 +1,20 @@
 version: "3"
 services:
+
+  site-service:
+    build:
+      context: .
+      dockerfile: site-service/Dockerfile
+      args:
+        SVC: site-service
+    image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
+    depends_on:
+      - fhir-api
+    environment:
+      SERVER_PORT: "82"
+    ports:
+      - "82:82"
+
   practitioner-service:
     build:
       context: .
@@ -27,9 +42,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - sql
+      - sqlserver
 
-  sql:
   trial-config-service:
     build:
           context: .
@@ -52,9 +66,9 @@ services:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
-        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
-        interval: 10s
-        timeout: 10s
-        retries: 6
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
     ports:
       - "1433:1433"
