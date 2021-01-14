@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-public class DataSourceConfig implements DataSourceConfigService {
+public class DataSourceConfig {
     @Value("${jdbc.driver}")
     private String driverClass;
     @Value("${jdbc.url}")
@@ -17,18 +17,9 @@ public class DataSourceConfig implements DataSourceConfigService {
     @Bean
     public DataSource getDataSource() {
         return DataSourceBuilder.create()
-                .driverClassName(getDriverClass())
+                .driverClassName(driverClass)
                 .url(url)
                 .build();
     }
 
-    @Override
-    public String getDriverClass() {
-        return driverClass;
-    }
-
-    @Override
-    public String getUrl() {
-        return url;
-    }
 }

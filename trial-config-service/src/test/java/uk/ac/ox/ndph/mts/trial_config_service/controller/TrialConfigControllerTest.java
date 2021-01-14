@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import uk.ac.ox.ndph.mts.trial_config_service.config.GitRepo;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;

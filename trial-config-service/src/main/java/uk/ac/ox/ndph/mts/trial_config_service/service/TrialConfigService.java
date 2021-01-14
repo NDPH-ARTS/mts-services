@@ -13,7 +13,7 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.RoleServiceException;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
+import uk.ac.ox.ndph.mts.trial_config_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,24 +63,24 @@ public class TrialConfigService {
      * minimal implementation without gateway or auth because trialconfigservice is now deprecated
      * (role-service will be called by git workflow on deploy)
      **/
-    private void saveRoles(List<Role> roles) throws RoleServiceException {
+    private void saveRoles(List<RoleDTO> roles) throws RoleServiceException {
 
         if (roles == null) {
             return;
         }
 
         try {
-            for (Role role : roles) {
+            for (RoleDTO role : roles) {
 
                 webClient.post()
                         .uri(roleService + "/roles")
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .body(Mono.just(role), Role.class)
+                        .body(Mono.just(role), RoleDTO.class)
 
                         .retrieve()// NB: auth
                         .onStatus(HttpStatus::isError, response -> response.bodyToMono(String.class)
                                 .flatMap(error -> Mono.error(new RoleServiceException(error))))
-                        .bodyToMono(Role.class)
+                        .bodyToMono(RoleDTO.class)
                         .block();
 
             }

@@ -43,7 +43,7 @@ public class Trial implements Serializable {
 
 
     @Transient
-    private List<Role> roles;
+    private List<RoleDTO> roles;
 
     @Column
     @CreatedDate
@@ -53,11 +53,11 @@ public class Trial implements Serializable {
     @CreatedBy
     private String modifiedBy;
 
-    public List<Role> getRoles() {
+    public List<RoleDTO> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(List<RoleDTO> roles) {
         this.roles = roles;
     }
 

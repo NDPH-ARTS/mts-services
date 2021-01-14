@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.role_service.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -10,10 +11,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
+import uk.ac.ox.ndph.mts.role_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
 import javax.ws.rs.core.MediaType;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,21 +29,24 @@ class RoleControllerTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper jsonMapper;
 
     @MockBean
-    private RoleRepository service;
+    private RoleRepository roleRepo;
+
+    @MockBean
+    private ModelMapper modelMapper;
 
 
     @Test
-    public void givenValidRole_whenPost_thenReturnJson()
+    void givenValidRole_whenPost_thenReturnJson()
             throws Exception {
 
         String dummyName = "Dummy role name";
-        Role role = new Role();
+        RoleDTO role = new RoleDTO();
         role.setRoleName(dummyName);
 
-        String jsonRole = mapper.writeValueAsString(role);
+        String jsonRole = jsonMapper.writeValueAsString(role);
 
         mvc.perform(post("/roles/")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -52,19 +58,32 @@ class RoleControllerTest {
     }
 
     @Test
-    public void givenInvalidRole_whenPost_thenReturn400()
+    void givenInvalidRole_whenPost_thenReturn400()
             throws Exception {
 
 
-        Role role = new Role(); // no name
+        RoleDTO role = new RoleDTO(); // no name
 
-        String jsonRole = mapper.writeValueAsString(role);
+        String jsonRole = jsonMapper.writeValueAsString(role);
 
         mvc.perform(post("/roles/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonRole)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
+
+    }
+
+    @Test
+    public void whenConvertRoleEntityToDto_thenSameData() {
+
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setRoleName("test");
+
+        RoleController c = new RoleController(roleRepo, new ModelMapper());
+        Role roleEntity = c.convertDtoToEntity(roleDTO);
+
+        assertEquals(roleEntity.getRoleName(), roleDTO.getRoleName());
 
     }
 
