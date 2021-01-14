@@ -16,10 +16,12 @@ import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
 import javax.ws.rs.core.MediaType;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(RoleController.class)
@@ -86,6 +88,14 @@ class RoleControllerTest {
         assertEquals(roleEntity.getRoleName(), roleDTO.getRoleName());
 
     }
+
+    @Test
+    void whenGet_thenReceiveSuccess()
+            throws Exception {
+
+        mvc.perform(get("/roles?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
+    }
+
 
 
 }

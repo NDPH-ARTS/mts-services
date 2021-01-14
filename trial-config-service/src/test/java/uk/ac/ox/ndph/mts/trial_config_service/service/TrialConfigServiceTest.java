@@ -115,14 +115,15 @@ class TrialConfigServiceTest {
     }
 
     @Test
-    void testSendToRoleServiceFail() {
+    void whenDependentServiceFails_CorrectException() {
         RoleDTO testRole = new RoleDTO();
         testRole.setRoleName("test role");
 
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(500));
 
-        assertThrows(DependentServiceException.class, () -> trialConfigService.sendToRoleService(testRole));
+        List<RoleDTO> roles = Collections.singletonList(testRole);
+        assertThrows(DependentServiceException.class, () -> trialConfigService.sendToRoleService(roles));
     }
 
 

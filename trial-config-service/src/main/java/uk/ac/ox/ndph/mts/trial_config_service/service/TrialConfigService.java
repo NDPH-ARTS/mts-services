@@ -65,8 +65,7 @@ public class TrialConfigService {
      * to fully orchestrate these requests.  e.g. error handling if rollservice gives a 4XX or 5XX - rollback?
      **/
     protected RoleDTO sendToRoleService(RoleDTO role) throws DependentServiceException {
-
-        Logger.getAnonymousLogger().info("Sending to role service");
+        
         try {
             return webClient.post()
                     .uri(roleService + "/roles")
@@ -80,7 +79,7 @@ public class TrialConfigService {
         }
     }
 
-    private void sendToRoleService(List<RoleDTO> roles) throws DependentServiceException {
+    protected void sendToRoleService(List<RoleDTO> roles) throws DependentServiceException {
         if (roles != null) {
             for (RoleDTO role : roles) {
                 sendToRoleService(role);
