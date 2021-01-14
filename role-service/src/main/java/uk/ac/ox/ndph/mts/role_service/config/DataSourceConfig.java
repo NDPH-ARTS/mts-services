@@ -16,10 +16,7 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource getDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName(driverClass)
-                .url(url)
-                .build();
+        return DataSourceBuilder.create().driverClassName(driverClass).url(url).build();
     }
 
 }

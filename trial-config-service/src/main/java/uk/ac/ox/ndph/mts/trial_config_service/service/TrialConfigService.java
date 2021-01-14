@@ -15,6 +15,7 @@ import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialRepository;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Person;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -50,11 +51,8 @@ public class TrialConfigService {
             throw new InvalidConfigException();
         }
 
-        if (trial.getRoles() != null) {
-            for (RoleDTO role : trial.getRoles()) {
-                sendToRoleService(role);
-            }
-        }
+        sendToRoleService(trial.getRoles());
+
 
         addBootstrapUser(trialSite.get(), userId);
         trial.setStatus(Trial.Status.IN_CONFIGURATION);
@@ -79,6 +77,14 @@ public class TrialConfigService {
                     .block();
         } catch (Exception e) {
             throw new DependentServiceException("Error connecting to role service");
+        }
+    }
+
+    private void sendToRoleService(List<RoleDTO> roles) throws DependentServiceException {
+        if (roles != null) {
+            for (RoleDTO role : roles) {
+                sendToRoleService(role);
+            }
         }
     }
 
