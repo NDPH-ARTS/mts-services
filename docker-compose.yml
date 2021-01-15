@@ -24,11 +24,11 @@ services:
     environment:
       SERVER_PORT: "81"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      JDBC_URL: jdbc:sqlserver://sql-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
+      JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
     ports:
       - "81:81"
     depends_on:
-      - sql-data
+      - sql-mts-data
 
   fhir-api:
     image: "marrobi/r4-fhir-server"
@@ -58,13 +58,13 @@ services:
     ports:
       - "1433:1433"
 
-  sql-data:
+  sql-mts-data:
     image: "mcr.microsoft.com/mssql/server"
     environment:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
-        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-S sql-data,1434 -U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-S sql-mts-data,1434 -U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
         interval: 10s
         timeout: 10s
         retries: 6
