@@ -137,8 +137,6 @@
                     <excludes>
                         <!-- Exclude main application class -->
                         <exclude>**/*/*Application.class</exclude>
-                        <exclude>**/trial_config_service/**/*App*.class</exclude>-->
-                        <exclude>**/sample_service/**/Main.class</exclude>-->
 
                         <!-- Exclude model classes -->
                         <exclude>**/*service/model/**</exclude>
