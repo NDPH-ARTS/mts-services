@@ -17,7 +17,7 @@ RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
 
 FROM scratch AS export
 ARG SVC
-COPY --from=builder ${SVC}/target/surefire-reports/*.xml ./
+COPY --from=builder ${SVC}/target/surefire-reports/*.xml /out/
 
 FROM openjdk:11.0.9.1-jre-buster
 ARG SVC

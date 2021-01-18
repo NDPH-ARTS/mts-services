@@ -9,21 +9,27 @@ on:
 
 jobs:
   build:
-    name: Build services
-    strategy:
-      matrix:
-        service_name: [ "sample-service", "practitioner-service", "trial-config-service" ]
-    env:
-      GHCR: ghcr.io/ndph-arts
+    name: Build and Test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build & test
+      - name: Build images
         run: |
-          export DOCKER_BUILDKIT=1
-          docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 BUILD_TARGET=export docker-compose build --parallel -m 2GB
+      - name: Copy out test results
+        run: |
+          docker create -ti --name practitioner-service-export ghcr.io/ndph-arts/practitioner-service:${{ github.sha }} bash
+          docker cp practitioner-service-export:/out/ .
+
+          docker create -ti --name trial-config-service-export ghcr.io/ndph-arts/trial-config-service:${{ github.sha }} bash
+          docker cp trial-config-service-export:/out/ .
+          
+          ls ./out/
+
+          docker rm -fv practitioner-service-export trial-config-service-export
       - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
@@ -31,27 +37,19 @@ jobs:
           fail_on_test_failures: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: "**/out/TEST*.xml"
+      - name: Start services using Docker Compose
+        timeout-minutes: 2
+        run: |
+          export SAPASSWORD=$(openssl rand -base64 12)
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build -d
+          ./.ci/docker/check-docker-compose-services.sh
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
-      - name: Build & publish runtime image
+      - name: Publish runtime image
         run: |
-          docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
-          docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build images
-        run: |
-          docker-compose build
-      - name: Start services using Docker Compose
-        timeout-minutes: 2
-        run: |
-          export SAPASSWORD=$(openssl rand -base64 12)
-          ./.ci/docker/check-docker-compose-services.sh
+          docker push $GHCR/trial-config-service:${{ github.sha }}
+          docker push $GHCR/practitioner-service:${{ github.sha }}

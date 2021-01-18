@@ -1,9 +1,10 @@
-version: "3"
+version: "3.7"
 services:
   practitioner-service:
     build:
       context: .
       dockerfile: practitioner-service/Dockerfile
+      target: ${BUILD_TARGET}
       args:
         SVC: practitioner-service
     image: ghcr.io/ndph-arts/practitioner-service:${GITHUB_SHA}
@@ -24,6 +25,7 @@ services:
     build:
       context: .
       dockerfile: trial-config-service/Dockerfile
+      target: ${BUILD_TARGET}
       args:
         SVC: trial-config-service
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}

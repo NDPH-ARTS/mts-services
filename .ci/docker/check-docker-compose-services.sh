@@ -1,4 +1,3 @@
-docker-compose up -d
 echo "Waiting for docker compose services..."
 
 is_healthy() {
