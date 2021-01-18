@@ -7,6 +7,7 @@ services:
       args:
         SVC: practitioner-service
     image: ghcr.io/ndph-arts/practitioner-service:${GITHUB_SHA}
+    restart: on-failure
     depends_on:
       - fhir-api
     environment:
@@ -21,6 +22,7 @@ services:
       args:
         SVC: trial-config-service
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
+    restart: on-failure
     environment:
       SERVER_PORT: "81"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
