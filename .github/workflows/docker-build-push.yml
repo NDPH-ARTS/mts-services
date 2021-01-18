@@ -50,4 +50,4 @@ jobs:
       - name: Start services using Docker Compose
         run: |
           chmod +x ./build-tools/docker/check-docker-compose-services.sh
-          ./build-tools/docker/check-docker-compose-services.sh      
+          ./ci/docker/check-docker-compose-services.sh
