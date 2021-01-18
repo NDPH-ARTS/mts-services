@@ -41,3 +41,13 @@ jobs:
         run: |
           docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
           docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Start services using Docker Compose
+        run: |
+          chmod +x ./build-tools/docker/check-docker-compose-services.sh
+          ./build-tools/docker/check-docker-compose-services.sh      
