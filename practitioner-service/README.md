@@ -28,7 +28,7 @@ Creates a new practitioner entity.
 
 #### Success Response
 
-**Condition** : If practitioner was created succesfully in the FHIR store.
+**Condition** : If practitioner was created successfully in the FHIR store.
 
 **Code** : `201 CREATED`
 
@@ -36,7 +36,7 @@ Creates a new practitioner entity.
 
 ```json
 {
-    "id": "787485bc-7c4e-4d2d-bf42-f9db010e5fb5",
+    "id": "787485bc-7c4e-4d2d-bf42-f9db010e5fb5"
 }
 ```
 
@@ -76,11 +76,11 @@ Creates a new practitioner entity.
 ```
 ___
 
-## Service Dependecies
+## Service Dependencies
 
 ### FHIR Store and HL7 Model
 Practitioner service is backed up by a FHIR store which is accessible as an HTTP/S endpoint and configurable by the "fhir.uri" application property.
-Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir/docs/client/examples.html) to handle the model and trasactions with FHIR store.
+Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir/docs/client/examples.html) to handle the model and transactions with FHIR store.
 
 
 ## Validation Configuration
@@ -89,6 +89,6 @@ Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir
 ### practitioner-configuration.json
 
 Sets the validation rules for practitioner's name attributes using regex.
-Note: In this iteration, the field names are hard-coded and the service will validate the existance of all three attribuets (prefix, given name and family name) in the configuration file. Adding more attributes to the json configuration file will not dynamically add them to the validation process.
+Note: In this iteration, the field names are hard-coded, and the service will validate the existence of all three attributes (prefix, given name and family name) in the configuration file. Adding more attributes to the json configuration file will not dynamically add them to the validation process.
 Empty or null validation regex is converted to a "validate-any" expression.
-The current json file allows up to 35 charachters for any field, and specifies only "family name" as mandatory (minimum charachters = 1).
+The current json file allows up to 35 characters for any field, and specifies only "family name" as mandatory (minimum characters = 1).

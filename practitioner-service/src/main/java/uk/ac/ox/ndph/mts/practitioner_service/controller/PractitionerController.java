@@ -1,7 +1,6 @@
-package uk.ac.ox.ndph.mts.practitioner_service;
+package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +14,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
-@SpringBootApplication
-public class PractitionerServiceController {
+public class PractitionerController {
 
     private static final String ENDPOINT_PATH = "/practitioner";
     private static final String APPLICATION_JSON = "application/json";
@@ -28,7 +26,7 @@ public class PractitionerServiceController {
      * @param entityService validate and save the practitioner
      */
     @Autowired
-    public PractitionerServiceController(EntityService entityService) {
+    public PractitionerController(EntityService entityService) {
         this.entityService = entityService;
     }
 
