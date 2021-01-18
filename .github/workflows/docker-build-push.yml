@@ -51,7 +51,7 @@ jobs:
         run: |
           docker-compose build
       - name: Start services using Docker Compose
-        timeout-minutes: 1
+        timeout-minutes: 2
         run: |
           export SAPASSWORD=$(openssl rand -base64 12)
           ./.ci/docker/check-docker-compose-services.sh
