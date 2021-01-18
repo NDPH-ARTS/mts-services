@@ -33,7 +33,7 @@ services:
       - sql-mts-data
 
   fhir-api:
-    image: "marrobi/r4-fhir-server"
+    image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
     restart: on-failure
     environment:
       FHIRServer__Security__Enabled: "false"
