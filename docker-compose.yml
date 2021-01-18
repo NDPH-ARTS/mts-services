@@ -1,19 +1,5 @@
-version: "2"
+version: "3"
 services:
-  site-service:
-    build:
-      context: .
-      dockerfile: site-service/Dockerfile
-      args:
-        SVC: site-service
-    image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
-    depends_on:
-      - fhir-api
-    environment:
-      SERVER_PORT: "82"
-    ports:
-      - "82:82"
-
   practitioner-service:
     build:
       context: .
@@ -30,26 +16,26 @@ services:
 
   trial-config-service:
     build:
-          context: .
-          dockerfile: trial-config-service/Dockerfile
-          args:
-            SVC: trial-config-service
+      context: .
+      dockerfile: trial-config-service/Dockerfile
+      args:
+        SVC: trial-config-service
     image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
-    depends_on:
-      - sqlserver
     environment:
       SERVER_PORT: "81"
-      JDBC_DRIVER: "jdbc:sqlserver://sqlserver:1433;databaseName=master;user=sa;password=${SAPASSWORD}"
-      JDBC_URL: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+      JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
     ports:
       - "81:81"
-      
+    depends_on:
+      - sql-mts-data
+
   fhir-api:
     image: "marrobi/r4-fhir-server"
     restart: on-failure
     environment:
       FHIRServer__Security__Enabled: "false"
-      SqlServer__ConnectionString: "Server=tcp:sql,1433;Initial Catalog=FHIR;Persist Security Info=False;User ID=sa;Password=${SAPASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
+      SqlServer__ConnectionString: "Server=tcp:sql-fhir,1433;Initial Catalog=FHIR;Persist Security Info=False;User ID=sa;Password=${SAPASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
       SqlServer__AllowDatabaseCreation: "true"
       SqlServer__SchemaOptions__AutomaticUpdatesEnabled: "true"
       SqlServer__Initialize: "true"
@@ -57,17 +43,30 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - sqlserver
+          - sql-fhir
 
-  sqlserver:
+  sql-fhir:
     image: "mcr.microsoft.com/mssql/server"
     environment:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
-      interval: 10s
-      timeout: 10s
-      retries: 6
+        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+        interval: 10s
+        timeout: 10s
+        retries: 6
     ports:
       - "1433:1433"
+
+  sql-mts-data:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: ${SAPASSWORD}
+      ACCEPT_EULA: "Y"
+    healthcheck:
+        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+        interval: 10s
+        timeout: 10s
+        retries: 6
+    ports:
+      - "1434:1433"
