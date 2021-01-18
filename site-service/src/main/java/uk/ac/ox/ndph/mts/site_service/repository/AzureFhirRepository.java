@@ -1,8 +1,5 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Bundle;
@@ -14,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
-import ca.uhn.fhir.util.BundleUtil;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
 /**
@@ -22,7 +18,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.RestException;
  * a FHIR store.
  */
 @Component
-class AzureFhirRepository implements FhirRepository {
+public class AzureFhirRepository implements FhirRepository {
 
     private static final String ORGANIZATION_ENTITY_NAME = "Organization";
     private static final String RESEARCHSTUDY_ENTITY_NAME = "ResearchStudy";
@@ -32,43 +28,49 @@ class AzureFhirRepository implements FhirRepository {
     private static final String ERROR_BAD_RESPONSE_SIZE = "bad response size from FHIR: %d";
 
     private final FhirContext fhirContext;
+    private final FhirContextWrapper fhirContextWrapper;
     private final Logger logger = LoggerFactory.getLogger(AzureFhirRepository.class);
 
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
-    AzureFhirRepository() {
+    AzureFhirRepository(FhirContextWrapper fhirContextWrapper) {
+        this.fhirContextWrapper = fhirContextWrapper;
         fhirContext = FhirContext.forR4();
     }
 
     /**
      * @param organization the organization to save.
-     * @return
+     * @return id of the saved organization
      */
     public String saveOrganization(Organization organization) {
         // Log the request
-        logger.info(String.format(INFO_LOG_REQUEST_TO_FHIR,
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(organization)));
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.SAVE_ORGANIZATION.message(),
+                fhirContextWrapper.prettyPrint(organization));
+        }
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContext.newRestfulGenericClient(fhirUri).transaction()
-                    .withBundle(bundle(organization, ORGANIZATION_ENTITY_NAME)).execute();
+            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri,
+                bundle(organization, ORGANIZATION_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
-            logger.warn(ERROR_UPDATE_FHIR, e);
-            throw new RestException(e.getMessage());
+            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
+            throw new RestException(e.getMessage(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        logger.info(String.format(INFO_LOG_RESPONSE_FROM_FHIR,
-                fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(responseElement)));
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.SAVE_RESPONSE.message(),
+                    fhirContextWrapper.prettyPrint(responseElement));
+        }
         return organization.getIdElement().getValue();
     }
 
     /**
      * @param researchStudy the researchStudy to save.
-     * @return
+     * @return ResearchStudy
      */
     public ResearchStudy saveResearchStudy(ResearchStudy researchStudy) {
         // Log the request
@@ -92,12 +94,12 @@ class AzureFhirRepository implements FhirRepository {
     }
 
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
-        List<IBaseResource> resp = new ArrayList<>();
-        resp.addAll(BundleUtil.toListOfResources(fhirContext, bundle));
+        var resp = fhirContextWrapper.toListOfResources(bundle);
 
         if (resp.size() != 1) {
-            logger.info(String.format(ERROR_BAD_RESPONSE_SIZE, resp.size()));
-            throw new RestException(String.format(ERROR_BAD_RESPONSE_SIZE, resp.size()));
+            logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
+            throw new RestException(String.format(
+                FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
 
         }
         return resp.get(0);
