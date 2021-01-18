@@ -49,8 +49,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Build images
         run: |
-          docker-compose build --parallel
+          docker-compose build
       - name: Start services using Docker Compose
         timeout-minutes: 1
         run: |
+          export SAPASSWORD=$(openssl rand -base64 12)
           ./.ci/docker/check-docker-compose-services.sh
