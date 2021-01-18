@@ -1,7 +1,6 @@
 version: "3"
 services:
   practitioner-service:
-    timeout-minutes: 1
     build:
       context: .
       dockerfile: practitioner-service/Dockerfile
@@ -22,7 +21,6 @@ services:
       - "80:80"
 
   trial-config-service:
-    timeout-minutes: 1
     build:
       context: .
       dockerfile: trial-config-service/Dockerfile
