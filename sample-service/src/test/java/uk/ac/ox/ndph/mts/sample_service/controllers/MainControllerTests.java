@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service;
+package uk.ac.ox.ndph.mts.sample_service.controllers;
 
 import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class DemoAppTests {
+class MainControllerTests {
 
     @Test
     void contextLoads() {

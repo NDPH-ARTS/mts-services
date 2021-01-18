@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.practitioner_service;
+package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 
 @SpringBootTest(properties = { "server.error.include-message=always" })
 @AutoConfigureMockMvc
-class PractitionerServiceControllerTests {
+class PractitionerControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
