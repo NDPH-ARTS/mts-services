@@ -25,7 +25,7 @@ services:
       SERVER_PORT: "81"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
-      ROLE_SERVICE: "http://role-service-container:82"
+      ROLE_SERVICE: "http://role-service:82"
     ports:
       - "81:81"
     depends_on:
@@ -55,7 +55,7 @@ services:
       args:
         SVC: role-service
     image: ghcr.io/ndph-arts/role-config-service:${GITHUB_SHA}
-    container_name: "role-service-container"
+    container_name: "role-service"
     depends_on:
       - sql-mts-data
     environment:
