@@ -48,6 +48,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Start services using Docker Compose
-        timeout-minutes: 1
+        timeout-minutes: 2
         run: |
           ./.ci/docker/check-docker-compose-services.sh
