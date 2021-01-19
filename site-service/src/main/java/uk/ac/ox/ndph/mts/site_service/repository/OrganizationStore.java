@@ -1,5 +1,9 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.ResearchStudy;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +32,28 @@ public class OrganizationStore implements EntityStore<Site> {
         this.converter = converter;
     }
 
+    /**
+     *
+     * @param entity - The Site entity
+     * @return String
+     */
     @Override
     public String saveEntity(Site entity) {
-        return repository.saveOrganization(converter.convert(entity));
+
+        // TODO: Add research study only when needed.
+        ResearchStudy researchStudyId = createResearchStudy();
+        Organization org = converter.convert(entity);
+
+        org.setPartOf(new Reference(researchStudyId));
+
+        // TODO: Check if the Organization already exists.
+
+        return repository.saveOrganization(org);
+    }
+
+    private ResearchStudy createResearchStudy() {
+        ResearchStudy rs = new ResearchStudy();
+        rs.setStatus(ResearchStudy.ResearchStudyStatus.ACTIVE);
+        return repository.saveResearchStudy(rs);
     }
 }
