@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import uk.ac.ox.ndph.mts.role_service.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
@@ -17,8 +18,11 @@ import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.ws.rs.core.MediaType;
 
+import java.util.Collections;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -99,6 +103,21 @@ class RoleControllerTest {
         mvc.perform(get("/roles?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
 
+    @Test
+    void whenConvertRoleEntityToDto_thenPermissionsAreConvertedToo() {
 
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId("test-role");
+        PermissionDTO permDTO = new PermissionDTO();
+        String permId = "test-perm";
+        permDTO.setId(permId);
+        roleDTO.setPermissions(Collections.singletonList(permDTO));
+
+        RoleController c = new RoleController(roleRepo, roleService, new ModelMapper());
+        Role roleEntity = c.convertDtoToEntity(roleDTO);
+
+        assertTrue(roleEntity.getPermissions().stream().anyMatch(permEntity -> permEntity.getId().equals(permId)));
+
+    }
 
 }
