@@ -25,7 +25,6 @@ public class AzureFhirRepository implements FhirRepository {
     private static final String INFO_LOG_REQUEST_TO_FHIR = "request to fhir: %s";
     private static final String INFO_LOG_RESPONSE_FROM_FHIR = "response from fhir: %s";
     private static final String ERROR_UPDATE_FHIR = "error while updating fhir store";
-    private static final String ERROR_BAD_RESPONSE_SIZE = "bad response size from FHIR: %d";
 
     private final FhirContext fhirContext;
     private final FhirContextWrapper fhirContextWrapper;
