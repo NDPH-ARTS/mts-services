@@ -7,8 +7,6 @@
 Env vars:
 
     set GITHUB_SHA=test
-    set JDBC_DRIVER=com.microsoft.sqlserver.jdbc.SQLServerDriver
-    set JDBC_URL=jdbc:sqlserver://mts-services_sqlserver_1:1433;databaseName=master;user=sa;password=SomePasswordGoesHere123abc
     set SAPASSWORD=SomePasswordGoesHere123abc
 
 Visit http://localhost:82/roles?page=0&size=10 or http://localhost:82/swagger-ui/
