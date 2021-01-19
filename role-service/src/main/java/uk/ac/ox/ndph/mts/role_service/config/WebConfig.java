@@ -1,5 +1,6 @@
-package uk.ac.ox.ndph.mts.trial_config_service.config;
+package uk.ac.ox.ndph.mts.role_service.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -19,20 +20,13 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select().apis(
-                RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.mts.trial_config_service.controller"))
+                RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.mts.role_service.controller"))
                 .paths(PathSelectors.any()).build();
     }
 
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/trial-config/**", getConfiguration());
-
-        return new CorsFilter(source);
-    }
-
-    protected CorsConfiguration getConfiguration() {
 
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
@@ -42,13 +36,19 @@ public class WebConfig implements WebMvcConfigurer {
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
+        source.registerCorsConfiguration("/role-service/**", config);
 
-        return config;
+        return new CorsFilter(source);
     }
 
     @Bean
     public WebClient webClient() {
         return WebClient.create();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
 }
