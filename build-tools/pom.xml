@@ -7,10 +7,12 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>build-tools</artifactId>
     <version>1.0</version>
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+    <parent>
+        <groupId>uk.ac.ox.ndph.mts</groupId>
+        <artifactId>mts-services-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
     <dependencies>
         <dependency>
             <groupId>com.kjetland</groupId>
