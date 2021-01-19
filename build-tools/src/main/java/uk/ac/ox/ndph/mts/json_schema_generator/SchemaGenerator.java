@@ -16,6 +16,8 @@ public class SchemaGenerator {
 
     private JsonNode generateJsonSchema(final Class trailConfigFile) {
         ObjectMapper objectMapper = new ObjectMapper();
+
+        // The default json schema version of this library is DRAFT-04, which our validation action does not support. Hence, replaced with DRAFT-07.
         JsonSchemaConfig config = JsonSchemaConfig.vanillaJsonSchemaDraft4()
                 .withJsonSchemaDraft(JsonSchemaDraft.DRAFT_07);
         JsonSchemaGenerator jsonSchemaGenerator =

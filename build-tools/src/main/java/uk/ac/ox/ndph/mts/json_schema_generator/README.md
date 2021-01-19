@@ -7,9 +7,9 @@
 
 ### Running the jsonSchema tool
 - Run the attached jar: `java -jar json-schema-generator.jar`
-- Alternatively,import the tool as a maven project and run the Main class.
+- Alternatively, import the tool as a maven project and run the Main class.
+- When compiling the project the jar file is created under 'target'.
 
 ## Modify the json schema
 - Under 'model' are the different POJOs that represent the trial config file definitions.
 - The main config file is **Model/TrialConfigFile**; When adding a new field to the configuration, add the POJO as a field in this class with the right json annotation.
-
