@@ -43,7 +43,7 @@ class SiteControllerTests {
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(entityService.saveSite(Mockito.any(Site.class))).thenReturn("123");
-        String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -54,7 +54,7 @@ class SiteControllerTests {
     void TestPostSite_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
         when(entityService.saveSite(Mockito.any(Site.class))).thenReturn("123");
-        String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -65,7 +65,7 @@ class SiteControllerTests {
     void TestPostSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
         when(entityService.saveSite(Mockito.any(Site.class))).thenThrow(RestException.class);
-        String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
 
         // Act + Assert
         this.mockMvc
@@ -76,13 +76,13 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenArgumentException_Returns400() throws Exception {
         // Arrange
-        when(entityService.saveSite(Mockito.any(Site.class))).thenThrow(new ValidationException("givenName"));
-        String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
+        when(entityService.saveSite(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
 
         // Act + Assert
         String error = this.mockMvc
                 .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
-        assertThat(error, containsString("givenName"));
+        assertThat(error, containsString("name"));
     }
 }

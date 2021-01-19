@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.validation;
 
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -25,40 +26,40 @@ class SiteValidationTests {
     private SiteConfigurationProvider configurationProvider;
 
     private static List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
-        new SiteAttributeConfiguration("givenName", "Given Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("familyName", "Family Name", "^[a-zA-Z]{1,35}$"));
+        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
+        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
     
     private static List<SiteAttributeConfiguration> PREFIX_NOT_REQUIRED_REGEX_MAP = List.of(
-        new SiteAttributeConfiguration("givenName", "Given Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("familyName", "Family Name", "^[a-zA-Z]{1,35}$"));
+        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
+        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
     
     private static List<SiteAttributeConfiguration> PREFIX_EMPTY_REGEX_MAP  = List.of(
-        new SiteAttributeConfiguration("givenName", "Given Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("familyName", "Family Name", "^[a-zA-Z]{1,35}$"));
+        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
+        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
     
     
     private static List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
-        new SiteAttributeConfiguration("givenName", "Given Name", ""),
-        new SiteAttributeConfiguration("familyName", "Family Name", ""));
+        new SiteAttributeConfiguration("name", "Name", ""),
+        new SiteAttributeConfiguration("alias", "Alias", ""));
 
     private static List<SiteAttributeConfiguration> INCOMNPLETE_MAP = List.of(
-                new SiteAttributeConfiguration("givenName", "Given Name", ""));
+                new SiteAttributeConfiguration("name", "Name", ""));
 
     private static List<SiteAttributeConfiguration> ERROR_MAP = List.of(
-        new SiteAttributeConfiguration("givenName", "Given Name",""),
-        new SiteAttributeConfiguration("familyName", "Family Name",""));
+        new SiteAttributeConfiguration("wrongname", "WrongName",""),
+        new SiteAttributeConfiguration("alias", "Alias",""));
     
     
     @ParameterizedTest
-    @CsvSource({ ",,,Prefix", ",test,test,Prefix", "test,,test,Given Name", ",test,,Prefix", "null,null,null,Prefix", "test,null,test,Given Name" })
+    @CsvSource({ ",,Name", ",test,Name", "test,,Alias", "test,null,Alias", "null,null,Name", "null,test,Name" })
     void TestValidate_WhenFieldsAreEmptyOrNull_ThrowsValidationException(
-            @ConvertWith(NullableConverter.class) String givenName,
-            @ConvertWith(NullableConverter.class) String familyName, 
+            @ConvertWith(NullableConverter.class) String name,
+            @ConvertWith(NullableConverter.class) String alias,
 			@ConvertWith(NullableConverter.class) String expectedField) {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", ALL_REQUIRED_UNDER_35_MAP));
-        Site site = new Site(givenName, familyName);
+        Site site = new Site(name, alias);
         var siteValidation = new SiteValidation(configurationProvider); 
 
         // Act + Assert
@@ -92,12 +93,12 @@ class SiteValidationTests {
     @Test
     void TestValidate_WhenValidSite_ReturnsValidReponse() {
         // Arrange
-        String givenName = "givenName";
-        String familyName = "familyName";
+        String name = "name";
+        String alias = "alias";
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", ALL_REQUIRED_UNDER_35_MAP));
         var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(givenName, familyName);
+        Site site = new Site(name, alias);
 
         // Act
         var result = siteValidation.validate(site);
@@ -109,12 +110,12 @@ class SiteValidationTests {
     void TestValidate_WhenSiteWithEmtpyPrefix_ReturnsValidReponse() {
         // Arrange
         String prefix = "";
-        String givenName = "givenName";
-        String familyName = "familyName";
+        String name = "name";
+        String alias = "alias";
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
         "Site", PREFIX_NOT_REQUIRED_REGEX_MAP));
         var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(givenName, familyName);
+        Site site = new Site(name, alias);
 
         // Act
         var result = siteValidation.validate(site);
@@ -126,12 +127,12 @@ class SiteValidationTests {
     void TestValidate_WhenSiteWithEmtpyPrefixAndNullRegex_ReturnsValidReponse() {
         // Arrange
         String prefix = "";
-        String givenName = "givenName";
-        String familyName = "familyName";
+        String name = "name";
+        String alias = "alias";
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", PREFIX_EMPTY_REGEX_MAP));
         var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(givenName, familyName);
+        Site site = new Site(name, alias);
 
         // Act
         var result = siteValidation.validate(site);
@@ -143,12 +144,12 @@ class SiteValidationTests {
     void TestValidate_WhenSiteWithEmtpyPrefixAndAllNullRegex_ReturnsValidReponse() {
         // Arrange
         String prefix = "";
-        String givenName = "givenName";
-        String familyName = "familyName";
+        String name = "name";
+        String alias = "alias";
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site", "Site",
             ALL_EMPTY_REGEX_MAP));
         var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(givenName, familyName);
+        Site site = new Site(name, alias);
 
         // Act
         var result = siteValidation.validate(site);
@@ -159,13 +160,12 @@ class SiteValidationTests {
     @Test
     void TestValidate_WhenSiteWithNullPrefix_ReturnsValidReponse() {
         // Arrange
-        String prefix = null;
-        String givenName = "givenName";
-        String familyName = "familyName";
+        String name = "name";
+        String alias = "alias";
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
         "Site", PREFIX_NOT_REQUIRED_REGEX_MAP));
         var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(givenName, familyName);
+        Site site = new Site(name, alias);
 
         // Act
         var result = siteValidation.validate(site);
