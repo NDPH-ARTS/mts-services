@@ -3,14 +3,14 @@ package uk.ac.ox.ndph.mts.trial_config_service.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
@@ -102,7 +102,7 @@ class TrialConfigServiceTest {
     void testSendToRoleService() throws IOException{
 
         RoleDTO testRole = new RoleDTO();
-        testRole.setRoleName("test role");
+        testRole.setId("test role");
 
 
         mockBackEnd.enqueue(new MockResponse()
@@ -117,7 +117,7 @@ class TrialConfigServiceTest {
     @Test
     void whenDependentServiceFails_CorrectException() {
         RoleDTO testRole = new RoleDTO();
-        testRole.setRoleName("test role");
+        testRole.setId("test role");
 
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(500));

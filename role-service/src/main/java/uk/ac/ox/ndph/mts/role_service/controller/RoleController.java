@@ -5,15 +5,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
+import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.validation.Valid;
 
@@ -23,12 +24,14 @@ import javax.validation.Valid;
 public class RoleController {
 
     private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public RoleController(RoleRepository roleRepository, ModelMapper modelMapper) {
+    public RoleController(RoleRepository roleRepository, RoleService roleService, ModelMapper modelMapper) {
         this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
+        this.roleService = roleService;
     }
 
 
@@ -42,8 +45,9 @@ public class RoleController {
 
     @PostMapping
     public Role create(@Valid @RequestBody RoleDTO roleDto) {
+
         Role roleEntity = convertDtoToEntity(roleDto);
-        return roleRepository.save(roleEntity);
+        return roleService.saveRole(roleEntity);
     }
 
     protected Role convertDtoToEntity(RoleDTO roleDto) {

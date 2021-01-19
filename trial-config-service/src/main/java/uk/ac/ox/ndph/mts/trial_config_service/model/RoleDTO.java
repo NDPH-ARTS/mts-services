@@ -11,6 +11,6 @@ public class RoleDTO implements Serializable {
     private static final long serialVersionUID = 987456231L;
 
     @Getter @Setter
-    String roleName;
+    String id;
 
 }

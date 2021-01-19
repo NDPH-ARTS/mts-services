@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
+import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.ws.rs.core.MediaType;
 
@@ -37,6 +38,9 @@ class RoleControllerTest {
     private RoleRepository roleRepo;
 
     @MockBean
+    private RoleService roleService;
+
+    @MockBean
     private ModelMapper modelMapper;
 
 
@@ -46,7 +50,7 @@ class RoleControllerTest {
 
         String dummyName = "Dummy role name";
         RoleDTO role = new RoleDTO();
-        role.setRoleName(dummyName);
+        role.setId(dummyName);
 
         String jsonRole = jsonMapper.writeValueAsString(role);
 
@@ -62,7 +66,6 @@ class RoleControllerTest {
     @Test
     void givenInvalidRole_whenPost_thenReturn400()
             throws Exception {
-
 
         RoleDTO role = new RoleDTO(); // no name
 
@@ -80,12 +83,12 @@ class RoleControllerTest {
     void whenConvertRoleEntityToDto_thenSameData() {
 
         RoleDTO roleDTO = new RoleDTO();
-        roleDTO.setRoleName("test");
+        roleDTO.setId("test");
 
-        RoleController c = new RoleController(roleRepo, new ModelMapper());
+        RoleController c = new RoleController(roleRepo, roleService, new ModelMapper());
         Role roleEntity = c.convertDtoToEntity(roleDTO);
 
-        assertEquals(roleEntity.getRoleName(), roleDTO.getRoleName());
+        assertEquals(roleEntity.getId(), roleDTO.getId());
 
     }
 

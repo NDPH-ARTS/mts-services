@@ -25,8 +25,8 @@
 
     <changeSet author="katesan (generated)" id="1610107972267-1">
         <createTable tableName="role_aud">
-            <column computed="false" name="id" type="int">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK__role_aud__BE3894F935626579"/>
+            <column computed="false" name="id" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK__role_aud"/>
             </column>
             <column computed="false" name="rev" type="int">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK__role_aud__BE3894F935626579"/>
@@ -36,25 +36,20 @@
             <column computed="false" name="created_date_time" type="datetime2"/>
             <column computed="false" name="modified_by" type="varchar(255)"/>
             <column computed="false" name="modified_date_time" type="datetime2"/>
-            <column computed="false" name="role_name" type="varchar(255)"/>
         </createTable>
     </changeSet>
 
     <changeSet author="katesan (generated)" id="1610107972267-3">
         <createTable tableName="role">
-            <column computed="false" name="id" type="int">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK__role__3213E83FB3A116E3"/>
+            <column computed="false" name="id" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK__role"/>
             </column>
             <column computed="false" name="created_by" type="varchar(255)"/>
             <column computed="false" name="created_date_time" type="datetime2"/>
             <column computed="false" name="modified_by" type="varchar(255)"/>
             <column computed="false" name="modified_date_time" type="datetime2"/>
-            <column computed="false" name="role_name" type="varchar(255)"/>
         </createTable>
     </changeSet>
 
-    <changeSet author="katesan (generated)" id="1610107972267-5">
-        <createSequence cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="-9223372036854775808"
-                        sequenceName="role_sequence" startValue="1"/>
-    </changeSet>
+
 </databaseChangeLog>
