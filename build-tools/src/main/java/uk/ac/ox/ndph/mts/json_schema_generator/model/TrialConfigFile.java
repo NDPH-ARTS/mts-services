@@ -2,7 +2,7 @@ package uk.ac.ox.ndph.mts.json_schema_generator.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TrialConfigJsonSchema {
+public class TrialConfigFile {
     @JsonProperty(required = true)
     private String name;
 
@@ -31,5 +31,5 @@ public class TrialConfigJsonSchema {
     private Service configServerService;
 
     @JsonProperty(value = "spring_cloud", required = true)
-    private SpringCloud springCloud;
+    private SpringCloudService springCloud;
 }
