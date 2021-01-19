@@ -136,14 +136,7 @@
                 <configuration>
                     <excludes>
                         <!-- Exclude main application class -->
-                        <!--
-                        TODO: not all services are aligned with their lean application class. fix that and uncomment
-                        -->
-                        <!--                        <exclude>**/*/*Application.class</exclude>-->
-                        <!--                        <exclude>**/*/*App.class</exclude>-->
-                        <exclude>**/trial_config_service/**/*App*.class</exclude>-->
-                        <exclude>**/practitioner_service/Main.class</exclude>-->
-                        <exclude>**/sample_service/**/Main.class</exclude>-->
+                        <exclude>**/*/*Application.class</exclude>
 
                         <!-- Exclude model classes -->
                         <exclude>**/*service/model/**</exclude>
