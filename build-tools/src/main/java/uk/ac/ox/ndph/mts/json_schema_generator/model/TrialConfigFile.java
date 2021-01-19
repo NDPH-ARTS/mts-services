@@ -31,5 +31,5 @@ public class TrialConfigFile {
     private Service configServerService;
 
     @JsonProperty(value = "spring_cloud", required = true)
-    private SpringCloudService springCloud;
+    private SpringCloudService springCloudService;
 }
