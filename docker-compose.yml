@@ -30,6 +30,20 @@ services:
     depends_on:
       - sql-mts-data
 
+  site-service:
+    build:
+      context: .
+      dockerfile: site-service/Dockerfile
+      args:
+        SVC: site-service
+    image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
+    depends_on:
+      - fhir-api
+    environment:
+      SERVER_PORT: "82"
+    ports:
+      - "82:82"
+
   fhir-api:
     image: "marrobi/r4-fhir-server"
     restart: on-failure
