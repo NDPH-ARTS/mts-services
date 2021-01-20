@@ -72,4 +72,17 @@ class SiteServiceIntegrationTests {
                 .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("test error"));
     }
+
+    @Test
+    void TestPostSite_WhenValidParentInput_Returns201AndId() throws Exception {
+        // Arrange
+        when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
+        when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn(any(ResearchStudy.class));
+
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentFhirId\": \"parentFhirId\"}";
+        // Act + Assert
+        this.mockMvc
+                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+    }
 }
