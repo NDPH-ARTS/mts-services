@@ -55,9 +55,9 @@ services:
     depends_on:
       - fhir-api
     environment:
-      SERVER_PORT: "82"
+      SERVER_PORT: "83"
     ports:
-      - "82:82"
+      - "83:83"
 
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
