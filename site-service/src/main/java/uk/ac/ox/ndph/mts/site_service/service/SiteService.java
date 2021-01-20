@@ -39,7 +39,9 @@ public class SiteService implements EntityService {
         }
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
-        logger.info(Services.STARTUP.message());
+        if (logger.isInfoEnabled()) {
+            logger.info(Services.STARTUP.message());
+        }
     }
 
     /**

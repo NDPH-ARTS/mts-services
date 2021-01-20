@@ -24,7 +24,7 @@ public class TestSiteConfigurationProvider {
     @Primary
     public SiteConfigurationProvider siteConfigurationProvider() {
         var mock = Mockito.mock(SiteConfigurationProvider.class);
-        when(mock.getConfiguration()).thenReturn(new SiteConfiguration("person",
+        when(mock.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", ALL_REQUIRED_UNDER_35_MAP)); 
         return mock;
     }
