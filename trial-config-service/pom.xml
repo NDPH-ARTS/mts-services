@@ -8,7 +8,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>uk.ac.ox.ndph.mts</groupId>
   <artifactId>trial-config-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>  
   <name>trial-config-service</name>
@@ -85,17 +84,6 @@
       <artifactId>mssql-jdbc</artifactId>
       <version>8.4.1.jre11</version>
     </dependency>
-    <dependency> 
-      <groupId>org.springframework.boot</groupId>  
-      <artifactId>spring-boot-starter-test</artifactId>  
-      <scope>test</scope>  
-      <exclusions> 
-        <exclusion> 
-          <groupId>org.junit.vintage</groupId>  
-          <artifactId>junit-vintage-engine</artifactId> 
-        </exclusion> 
-      </exclusions> 
-    </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -112,6 +100,7 @@
       <version>2.2.0</version>
     </dependency>
   </dependencies>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -130,6 +119,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <build>
     <plugins>
       <plugin>

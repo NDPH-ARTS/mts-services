@@ -39,10 +39,11 @@ public class GitRepo {
 
     protected void cloneRepository() {
         try {
-            Git.cloneRepository()
+            Git git = Git.cloneRepository()
                 .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                 .setDirectory(Paths.get(GIT_LOCATION).toFile())
                 .call();
+            System.out.println(git.toString());
         } catch (GitAPIException | JGitInternalException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
