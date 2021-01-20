@@ -2,10 +2,6 @@ const validRole = {
     "id": makeid(7),
 }
 
-const duplicateRole = {
-    "id": "Sameera",
-}
-
 const emptyString = {
     "id": "",
 }
@@ -52,7 +48,6 @@ function makeid(length) {
 
 module.exports = {
     validRole,
-    duplicateRole,
     emptyString,
     tooLongId,
     trialConfigPost,
