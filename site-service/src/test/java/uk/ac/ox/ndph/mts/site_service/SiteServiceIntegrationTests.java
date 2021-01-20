@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service;
 
 import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.ResearchStudy;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,7 +37,7 @@ class SiteServiceIntegrationTests {
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
-        
+        when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn(any(ResearchStudy.class));
         
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
@@ -49,8 +50,7 @@ class SiteServiceIntegrationTests {
     void TestPostSite_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
-        
-        
+
         String jsonString = "{\"name\": \"\", \"alias\": \"alias\"}";
         // Act + Assert
         var error = this.mockMvc
