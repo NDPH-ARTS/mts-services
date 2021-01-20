@@ -1,7 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
 /**
- * practitioner Attribute Names
+ * site Attribute Names
  */
 public enum AttributeNames {
     NAME("name"),

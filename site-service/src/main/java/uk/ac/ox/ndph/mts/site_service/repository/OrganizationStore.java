@@ -11,7 +11,7 @@ import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 /**
- * Implement an EntityStore for Practitioner.
+ * Implement an EntityStore for Site.
  */
 @Component
 public class OrganizationStore implements EntityStore<Site> {

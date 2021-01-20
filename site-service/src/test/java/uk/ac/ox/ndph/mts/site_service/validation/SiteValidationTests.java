@@ -28,16 +28,7 @@ class SiteValidationTests {
     private static List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
         new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
-    
-    private static List<SiteAttributeConfiguration> PREFIX_NOT_REQUIRED_REGEX_MAP = List.of(
-        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
-    
-    private static List<SiteAttributeConfiguration> PREFIX_EMPTY_REGEX_MAP  = List.of(
-        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
-    
-    
+
     private static List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", ""),
         new SiteAttributeConfiguration("alias", "Alias", ""));
@@ -107,43 +98,8 @@ class SiteValidationTests {
     }
 
     @Test
-    void TestValidate_WhenSiteWithEmtpyPrefix_ReturnsValidReponse() {
+    void TestValidate_WhenSiteWithAllNullRegex_ReturnsValidReponse() {
         // Arrange
-        String prefix = "";
-        String name = "name";
-        String alias = "alias";
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-        "Site", PREFIX_NOT_REQUIRED_REGEX_MAP));
-        var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(name, alias);
-
-        // Act
-        var result = siteValidation.validate(site);
-        // Assert
-        assertThat(result.isValid(), is(true));
-    }
-
-    @Test
-    void TestValidate_WhenSiteWithEmtpyPrefixAndNullRegex_ReturnsValidReponse() {
-        // Arrange
-        String prefix = "";
-        String name = "name";
-        String alias = "alias";
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", PREFIX_EMPTY_REGEX_MAP));
-        var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(name, alias);
-
-        // Act
-        var result = siteValidation.validate(site);
-        // Assert
-        assertThat(result.isValid(), is(true));
-    }
-
-    @Test
-    void TestValidate_WhenSiteWithEmtpyPrefixAndAllNullRegex_ReturnsValidReponse() {
-        // Arrange
-        String prefix = "";
         String name = "name";
         String alias = "alias";
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site", "Site",
@@ -157,19 +113,4 @@ class SiteValidationTests {
         assertThat(result.isValid(), is(true));
     }
 
-    @Test
-    void TestValidate_WhenSiteWithNullPrefix_ReturnsValidReponse() {
-        // Arrange
-        String name = "name";
-        String alias = "alias";
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-        "Site", PREFIX_NOT_REQUIRED_REGEX_MAP));
-        var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(name, alias);
-
-        // Act
-        var result = siteValidation.validate(site);
-        // Assert
-        assertThat(result.isValid(), is(true));
-    }
 }

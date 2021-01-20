@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A response from practitioner service
+ * A response from site service
  */
 @Component
 @Getter

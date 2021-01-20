@@ -108,7 +108,7 @@ public class HapiFhirRepository implements FhirRepository {
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION);
 
-        // Add the practitioner as an entry.
+        // Add the site as an entry.
         bundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource).getRequest()
                 .setUrl(resourceName).setMethod(Bundle.HTTPVerb.POST);
         return bundle;
