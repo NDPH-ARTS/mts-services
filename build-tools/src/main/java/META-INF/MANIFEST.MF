@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: uk.ac.ox.ndph.mts.json_schema_generator.Main
+
