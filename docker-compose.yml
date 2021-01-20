@@ -56,8 +56,14 @@ services:
       - fhir-api
     environment:
       SERVER_PORT: "83"
+    healthcheck:
+      test: curl http://localhost/
+      interval: 10s
+      timeout: 10s
+      retries: 6
     ports:
       - "83:83"
+
 
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
