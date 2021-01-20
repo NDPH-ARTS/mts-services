@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
-import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 @ExtendWith(MockitoExtension.class)
 class HapiFhirRepositoryTests {
