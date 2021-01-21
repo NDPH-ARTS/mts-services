@@ -52,6 +52,8 @@ buildNumber.properties
 
 # Test reports
 **/test-reports/
+api-tests/test-results.xml
+out/
 
 # all logs folders
 **/logs

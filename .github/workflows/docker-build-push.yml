@@ -12,7 +12,7 @@ jobs:
     name: Build services
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service", "trial-config-service" ]
+        service_name: [ "practitioner-service"]
     env:
       GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
@@ -24,23 +24,23 @@ jobs:
         run: |
           export DOCKER_BUILDKIT=1
           docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
-      - name: Publish Test Report
-        if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1
-        with:
-          fail_on_test_failures: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: "**/out/TEST*.xml"
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_LOGIN }}
-      - name: Build & publish runtime image
-        run: |
-          docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
-          docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
+      # - name: Publish Unit Test Report
+      #   if: ${{ always() }}
+      #   uses: scacap/action-surefire-report@v1
+      #   with:
+      #     fail_on_test_failures: true
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     report_paths: "out/TEST*.xml"
+      # # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.repository_owner }}
+      #     password: ${{ secrets.GHCR_LOGIN }}
+      # - name: Build & publish runtime image
+      #   run: |
+      #     docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
+      #     docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -54,4 +54,14 @@ jobs:
         timeout-minutes: 2
         run: |
           export SAPASSWORD=$(openssl rand -base64 12)
+          export BASE_URL=localhost
           ./.ci/docker/check-docker-compose-services.sh
+          cd api-tests && npm run api-test-ci
+          docker-compose down
+      - name: Publish API Test Report
+        if: ${{ always() }}
+        uses: scacap/action-surefire-report@v1
+        with:
+          fail_on_test_failures: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: "api-tests/*-results.xml"
