@@ -14,7 +14,7 @@ COPY ./role-service/pom.xml ./role-service/pom.xml
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
 
-RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
+RUN mvn package --projects ${SVC} -Dmaven.test.failure.ignore=true
 
 FROM scratch AS export
 ARG SVC
