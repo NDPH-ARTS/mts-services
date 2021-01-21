@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>uk.ac.ox.ndph.mts</groupId>
+        <artifactId>mts-services-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>uk.ac.ox.ndph.mts</groupId>
     <artifactId>sc-config-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>sc-config-server</name>
-    <description>Spring Config Server</description>
+    <description>Spring Cloud configuration server.
+    </description>
     <properties>
-        <java.version>15</java.version>
-        <spring-cloud.version>2020.0.0</spring-cloud.version>
+        <azure.version>2.3.5</azure.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

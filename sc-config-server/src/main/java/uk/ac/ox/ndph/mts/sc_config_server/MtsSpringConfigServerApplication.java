@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.springconfigserver;
+package uk.ac.ox.ndph.mts.sc_config_server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
