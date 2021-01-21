@@ -17,37 +17,12 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class Role {
+public class Role extends AuditedEntity {
     @Id
     @Column
     @Getter
     @Setter
-    String id;
-
-
-    @Column
-    @CreatedDate
-    @Getter
-    @Setter
-    private LocalDateTime createdDateTime;
-
-    @Column
-    @CreatedBy
-    @Getter
-    @Setter
-    private String createdBy;
-
-    @Column
-    @LastModifiedDate
-    @Getter
-    @Setter
-    private LocalDateTime modifiedDateTime;
-
-    @Column
-    @LastModifiedBy
-    @Getter
-    @Setter
-    private String modifiedBy;
+    private String id;
 
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

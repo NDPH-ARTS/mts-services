@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
-import uk.ac.ox.ndph.mts.role_service.model.RoleDTO;
+import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
@@ -91,7 +91,7 @@ class RoleControllerTest {
         roleDTO.setId("test");
 
         RoleController c = new RoleController(roleRepo, roleService, new ModelMapper());
-        Role roleEntity = c.convertDtoToEntity(roleDTO);
+        Role roleEntity = (Role)c.convertDtoToEntity(roleDTO);
 
         assertEquals(roleEntity.getId(), roleDTO.getId());
 

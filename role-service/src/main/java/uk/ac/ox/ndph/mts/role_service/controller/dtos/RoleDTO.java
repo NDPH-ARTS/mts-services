@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.role_service.model;
+package uk.ac.ox.ndph.mts.role_service.controller.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +14,5 @@ public class RoleDTO {
     @NotBlank (message = "Role ID cannot be empty")
     @Size(max = 255, message = "Role ID is too long")
     String id;
-
 
 }
