@@ -11,12 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
@@ -127,5 +129,24 @@ class RoleControllerTest {
 
     }
 
+    @Test
+    void whenGetRole_thenAlsoReceivePermissionsForRole()
+            throws Exception {
+
+        Role dummyRole = new Role();
+        String dummyRoleId="dummy-role";
+        dummyRole.setId(dummyRoleId);
+        Permission dummyPermission = new Permission();
+        String dummyPermissionId="dummy-permission";
+        dummyPermission.setId("dummy-permission");
+        dummyRole.setPermissions(Collections.singletonList(dummyPermission));
+
+        when(roleRepo.findById(dummyRoleId)).thenReturn(Optional.of(dummyRole));
+        mvc.perform(get("/roles/"+dummyRoleId))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(dummyRoleId)))
+                .andExpect(content().string(containsString(dummyPermissionId)));
+    }
 
 }
