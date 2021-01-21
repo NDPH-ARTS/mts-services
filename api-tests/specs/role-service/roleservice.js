@@ -1,6 +1,5 @@
 const requests = require('../../data/role-service/roleservice')
 const conf = require('../../config/conf')
-const trialConfigService = request("http://localhost:81")
 
 beforeEach(function () {
     baseRequest = request(conf.BASE_URL)
@@ -35,18 +34,6 @@ describe('As a user I want to create roles so that they can be assigned to perso
 
     it('User is able to view the created roles', async () => {
         const response = await baseRequest.get('/roles?page=1&size=2');
-        expect(response.status).to.equal(HttpStatus.OK)
-        expect(response.text).to.contain("id");
-    });
-
-    it('User is able to create one or more roles via the trial config service', async () => {
-        const response = await trialConfigService.post('/trial-config/trial?filename=1').send(requests.trialConfigPost);
-        expect(response.status).to.equal(HttpStatus.OK)
-        expect(response.text).to.contain("id");
-    });
-
-    it('User is able to GET the roles created via the trial config service', async () => {
-        const response = await trialConfigService.get('/trial-config/trial?filename=1');
         expect(response.status).to.equal(HttpStatus.OK)
         expect(response.text).to.contain("id");
     });
