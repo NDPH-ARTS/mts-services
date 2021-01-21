@@ -5,18 +5,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.validation.Valid;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 
 @RestController
@@ -40,15 +39,28 @@ public class RoleController {
                                 int page,
                                @RequestParam
                                 int size) {
+        Logger.getAnonymousLogger().info("get paged");
         return roleRepository.findAll(PageRequest.of(page, size));
     }
 
-    @PostMapping
-    public Role create(@Valid @RequestBody RoleDTO roleDto) {
+    @GetMapping("/{id}")
+    public Role getOneRole(@PathVariable String id) {
+        Logger.getAnonymousLogger().info("get role id: "+id);
+        Optional<Role> retrievedRole = roleRepository.findById(id);
+        if(retrievedRole.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found");
+        }
+        return retrievedRole.get();
+    }
+
+    @PostMapping("")
+    public Role createRole(@Valid @RequestBody RoleDTO roleDto) {
 
         Role roleEntity = convertDtoToEntity(roleDto);
         return roleService.saveRole(roleEntity);
     }
+
+
 
     protected Role convertDtoToEntity(RoleDTO roleDto) {
         return modelMapper.map(roleDto, Role.class);

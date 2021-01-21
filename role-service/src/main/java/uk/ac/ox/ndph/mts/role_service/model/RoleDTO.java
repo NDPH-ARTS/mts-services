@@ -5,8 +5,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class RoleDTO {
@@ -17,8 +15,5 @@ public class RoleDTO {
     @Size(max = 255, message = "Role ID is too long")
     String id;
 
-    @Getter
-    @Setter
-    List<PermissionDTO> permissions = new ArrayList<>();
 
 }
