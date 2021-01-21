@@ -16,19 +16,19 @@ describe('As a user I want to create roles so that they can be assigned to perso
         const roleName = requests.validRole
         let response = await baseRequest.post('/roles').send(roleName);
         response = await baseRequest.post('/roles').send(roleName);
-        expect(response.status).to.equal(409)
+        expect(response.status).to.equal(HttpStatus.CONFLICT)
         expect(response.text).to.contain("Duplicate role ID")
     });
 
     it('User is shown a bad request error when the role name field is left empty', async () => {
         const response = await baseRequest.post('/roles').send(requests.emptyString);
-        expect(response.status).to.equal(400);
+        expect(response.status).to.equal(HttpStatus.BAD_REQUEST);
         expect(response.text).to.contain("Role ID cannot be empty")
     });
 
     it('User is shown a bad request error when the role name field exceeds the expected string length', async () => {
         const response = await baseRequest.post('/roles').send(requests.tooLongId);
-        expect(response.status).to.equal(400);
+        expect(response.status).to.equal(HttpStatus.BAD_REQUEST);
         expect(response.text).to.contain("Role ID is too long")
     });
 

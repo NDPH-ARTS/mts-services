@@ -1,5 +1,5 @@
 const validRole = {
-    "id": makeid(7),
+    "id": getRandomString(7),
 }
 
 const emptyString = {
@@ -7,11 +7,10 @@ const emptyString = {
 }
 
 const tooLongId = {
-    "id": makeid(256),
+    "id": getRandomString(256),
 }
 
-
-function makeid(length) {
+function getRandomString(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
