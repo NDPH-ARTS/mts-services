@@ -65,7 +65,7 @@ class RoleServiceTest {
     }
 
     @Test
-    void whenUpdatePermissions_givenNonRegisteredPermission_thenThrowsBadRequestExcep() {
+    void whenUpdatePermissions_givenAnyBadPermission_thenThrowsBadRequestExcep() {
         String goodRoleId = "foo";
         Role goodRole = new Role();
         goodRole.setId(goodRoleId);
@@ -74,13 +74,38 @@ class RoleServiceTest {
         Permission badPermission = new Permission();
         badPermission.setId(badPermissionName);
 
+        String goodPermissionName = "baz";
+        Permission goodPermission = new Permission();
+        goodPermission.setId(goodPermissionName);
+
         when(roleRepository.findById(goodRoleId)).thenReturn(Optional.of(goodRole));
+        when(permissionRepository.existsById(goodPermissionName)).thenReturn(true);
         when(permissionRepository.existsById(badPermissionName)).thenReturn(false);
 
+        List<Permission> permissionList = List.of(goodPermission,badPermission);
+
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
-        List<Permission> badPermissionList = Collections.singletonList(badPermission);
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(goodRoleId, badPermissionList));
+
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(goodRoleId, permissionList));
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    @Test
+    void whenUpdatePermissions_givenValidRoleAndValidPerm_thenSuccess() {
+        String roleName = "foo";
+        Role existingRole = new Role();
+        existingRole.setId(roleName);
+
+        String permName = "bar";
+        Permission newPermissionForRole = new Permission();
+        newPermissionForRole.setId(permName);
+
+        when(roleRepository.findById(roleName)).thenReturn(Optional.of(existingRole));
+        when(permissionRepository.existsById(permName)).thenReturn(true);
+        when(roleRepository.save(existingRole)).thenReturn(existingRole);
+
+        RoleService roleService = new RoleService(roleRepository, permissionRepository);
+        assertNotNull(roleService.updatePermissionsForRole(roleName, Collections.singletonList(newPermissionForRole)));
     }
 
 
