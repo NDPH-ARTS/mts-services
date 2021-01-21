@@ -55,11 +55,7 @@ public class RoleController {
     }
 
     @GetMapping("")
-    public Page<Role> getPaged(@RequestParam
-                                       int page,
-                               @RequestParam
-                                       int size) {
-        Logger.getAnonymousLogger().info("get paged");
+    public Page<Role> getPaged(@RequestParam int page, @RequestParam int size) {
         return roleRepository.findAll(PageRequest.of(page, size));
     }
 
