@@ -33,7 +33,7 @@ describe('As a user I want to create roles so that they can be assigned to perso
     });
 
     it('User is able to view the created roles', async () => {
-        const response = await baseRequest.get('/roles?page=1&size=2');
+        const response = await baseRequest.get('/roles?page=0&size=2');
         expect(response.status).to.equal(HttpStatus.OK)
         expect(response.text).to.contain("id");
     });
