@@ -24,13 +24,6 @@ jobs:
         run: |
           export DOCKER_BUILDKIT=1
           docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
-      - name: Publish Unit Test Report
-        if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1
-        with:
-          fail_on_test_failures: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: "out/TEST*.xml"
       # # - name: Login to GitHub Container Registry
       #   uses: docker/login-action@v1
       #   with:
@@ -42,6 +35,7 @@ jobs:
       #     docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
       #     docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
   test:
+    needs: build
     name: Test
     runs-on: ubuntu-latest
     steps:
@@ -56,12 +50,19 @@ jobs:
           export SAPASSWORD=$(openssl rand -base64 12)
           export BASE_URL=localhost
           ./.ci/docker/check-docker-compose-services.sh
-          cd api-tests && npm run api-test-ci
+          cd api-tests
+          npm run api-test-ci
+          cd ..
           docker-compose down
+  publish-test-result:
+    name: Publish
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
       - name: Publish API Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
         with:
           fail_on_test_failures: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: "api-tests/*-results.xml"
+          report_paths: "out/*.xml"

@@ -10,7 +10,7 @@ describe('As a user with Create Person permission, I want to have my create pers
     it('When I submit an API request to create a Person with a value for all mandatory fields and no fields exceed their specified maximum length, Then a new Person record is persisted in the system with a unique identifier And I receive a success acknowledgement', async () => {
         const response = await baseRequest.post('/practitioner').send(validPerson);
         expect(response.text).to.contain("id")
-        expect(response.status).to.equal(201)
+        expect(response.status).to.equal(555)
     });
 
     it('When I submit an API request to create a Person with missing non-mandatory prefix field, Then a new Person record is persisted in the system with a unique identifier And I receive a success acknowledgement', async () => {
