@@ -110,12 +110,10 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+        <!-- This dependency is the spring cloud config client, which should be duplicated into every service -->
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <artifactId>spring-cloud-starter-config</artifactId>
       </dependency>
     </dependencies>
   </dependencyManagement>
