@@ -5,7 +5,7 @@ Site service validates the input site details and adds it as a FHIR site entity 
 ### Create Site
 Creates a new site entity.
 
-**URL** : `/site`
+**URL** : `/sites`
 
 **Payload** :
 

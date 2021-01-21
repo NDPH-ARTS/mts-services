@@ -35,7 +35,7 @@ class SiteControllerTests {
     void TestPostSite_WhenNoInput_Returns400() throws Exception {
 
         // Act + Assert
-        this.mockMvc.perform(post("/site").contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/sites").contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
@@ -46,7 +46,7 @@ class SiteControllerTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -57,7 +57,7 @@ class SiteControllerTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -69,7 +69,7 @@ class SiteControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway());
     }
 
@@ -81,7 +81,7 @@ class SiteControllerTests {
 
         // Act + Assert
         String error = this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("name"));
     }

@@ -42,7 +42,7 @@ class SiteServiceIntegrationTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -54,7 +54,7 @@ class SiteServiceIntegrationTests {
         String jsonString = "{\"name\": \"\", \"alias\": \"alias\"}";
         // Act + Assert
         var error = this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("Name"));
     }
@@ -67,7 +67,7 @@ class SiteServiceIntegrationTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         var error = this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("test error"));
     }
@@ -81,7 +81,7 @@ class SiteServiceIntegrationTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 }
