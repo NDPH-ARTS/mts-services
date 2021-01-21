@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.role_service.service;
 
-import org.apache.http.HttpStatus;
+
+import org.springframework.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,7 +15,7 @@ import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.logging.Logger;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -60,16 +61,16 @@ class RoleServiceTest {
     }
 
     @Test
-    void whenUpdatePermissions_givenNonExistentRole_thenThrowsAppropriateExcep() {
+    void whenUpdatePermissions_givenNonExistentRole_thenThrowsNotFoundExcep() {
         String badRoleId = "foo";
         when(roleRepository.findById(badRoleId)).thenReturn(Optional.empty());
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
         ResponseStatusException thrown =  assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(badRoleId, Collections.singletonList(new Permission())));
-        assertEquals(thrown.getStatus().value(), HttpStatus.SC_BAD_REQUEST);
+        assertEquals(thrown.getStatus(), HttpStatus.NOT_FOUND);
     }
 
     @Test
-    void whenUpdatePermissions_givenNonExistentPermission_thenThrowsAppropriateExcep() {
+    void whenUpdatePermissions_givenNonRegisteredPermission_thenThrowsBadRequestExcep() {
         String goodRoleId = "foo";
         Role goodRole = new Role();
         goodRole.setId(goodRoleId);
@@ -84,7 +85,7 @@ class RoleServiceTest {
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
 
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(goodRoleId, Collections.singletonList(badPermission)));
-        assertEquals(thrown.getStatus().value(), HttpStatus.SC_BAD_REQUEST);
+        assertEquals(thrown.getStatus(), HttpStatus.BAD_REQUEST);
     }
 
 
