@@ -16,7 +16,7 @@ public class Role extends AuditedEntity {
     private String id;
 
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)// NO cascade - we don't want updates to role to create arbitrary new permissions
     @JoinTable(
             name = "roles_permissions",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),

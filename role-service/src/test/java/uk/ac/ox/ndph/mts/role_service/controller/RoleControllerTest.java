@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
+import uk.ac.ox.ndph.mts.role_service.model.PermissionRepository;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
@@ -43,6 +45,9 @@ class RoleControllerTest {
     private RoleRepository roleRepo;
 
     @MockBean
+    private PermissionRepository permissionRepo;
+
+    @MockBean
     private RoleService roleService;
 
     @MockBean
@@ -50,7 +55,7 @@ class RoleControllerTest {
 
 
     @Test
-    void givenValidRole_whenPost_thenReturnJson()
+    void whenPostValidRole_thenReturnSuccess()
             throws Exception {
 
         String dummyName = "Dummy role name";
@@ -69,7 +74,7 @@ class RoleControllerTest {
     }
 
     @Test
-    void givenInvalidRole_whenPost_thenReturn400()
+    void whenPostInvalidRole_thenReturn400()
             throws Exception {
 
         RoleDTO role = new RoleDTO(); // no name
@@ -91,14 +96,14 @@ class RoleControllerTest {
         roleDTO.setId("test");
 
         RoleController c = new RoleController(roleRepo, roleService, new ModelMapper());
-        Role roleEntity = (Role)c.convertDtoToEntity(roleDTO);
+        Role roleEntity = c.convertDtoToEntity(roleDTO, Role.class);
 
         assertEquals(roleEntity.getId(), roleDTO.getId());
 
     }
 
     @Test
-    void whenGetPaged_thenReceiveSuccess()
+    void whenGetRolesPaged_thenReceiveSuccess()
             throws Exception {
 
         mvc.perform(get("/roles?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
@@ -120,7 +125,7 @@ class RoleControllerTest {
     }
 
     @Test
-    void whenNonExistentRole_thenReceive404()
+    void whenGetNonExistentRole_thenReceive404()
             throws Exception {
 
         mvc.perform(get("/roles/nonexistentrole"))
@@ -147,6 +152,27 @@ class RoleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(dummyRoleId)))
                 .andExpect(content().string(containsString(dummyPermissionId)));
+    }
+
+    @Test
+    void whenPostValidPermissionForRole_thenReceiveSuccess()
+            throws Exception {
+
+
+        String dummyRoleId="dummy-role";
+        String dummyPermissionId="dummy-permission";
+
+        PermissionDTO permDTO = new PermissionDTO();
+        permDTO.setId(dummyPermissionId);
+        String jsonPermDTO = jsonMapper.writeValueAsString(Collections.singletonList(permDTO));
+
+        mvc.perform(post("/roles/"+dummyRoleId+"/permissions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPermDTO)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk());
+
     }
 
 }

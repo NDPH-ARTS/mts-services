@@ -8,14 +8,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
+import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -33,7 +38,6 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-
     @GetMapping("")
     public Page<Role> getPaged(@RequestParam
                                 int page,
@@ -44,7 +48,7 @@ public class RoleController {
     }
 
     @GetMapping("/{id}")
-    public Role getOneRole(@PathVariable String id) {
+    public Role getOneRole(@PathVariable String id) throws ResponseStatusException{
         Logger.getAnonymousLogger().info("get role id: "+id);
         Optional<Role> retrievedRole = roleRepository.findById(id);
         if(retrievedRole.isEmpty()){
@@ -56,16 +60,26 @@ public class RoleController {
     @PostMapping("")
     public Role createRole(@Valid @RequestBody RoleDTO roleDto) {
 
-        Role roleEntity = convertDtoToEntity(roleDto);
+        Role roleEntity = convertDtoToEntity(roleDto, Role.class);
         return roleService.saveRole(roleEntity);
     }
 
+    @PostMapping("/{id}/permissions")
+    public Role updatePermissionsForRole(@PathVariable String id, @Valid @RequestBody List<PermissionDTO> permissionsDTOs) {
+
+        List<Permission> permissionEntities = convertListOfDtosToEntities(permissionsDTOs, Permission.class);
+        return roleService.updatePermissionsForRole(id, permissionEntities);
+    }
 
 
+    protected <D, T> D convertDtoToEntity(final T inputInstance, Class<D> outputClass) {
+        return modelMapper.map(inputInstance, outputClass);
+    }
 
-
-    protected Role convertDtoToEntity(RoleDTO roleDto) {
-        return modelMapper.map(roleDto, Role.class);
+    protected <D, T> List<D> convertListOfDtosToEntities(final Collection<T> inputInstanceList, Class<D> outputCLass) {
+        return inputInstanceList.stream()
+                .map(inputInstance -> convertDtoToEntity(inputInstance, outputCLass))
+                .collect(Collectors.toList());
     }
 
 }
