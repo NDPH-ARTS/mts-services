@@ -1,15 +1,12 @@
 package uk.ac.ox.ndph.mts.role_service.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 
@@ -19,27 +16,49 @@ public abstract class AuditedEntity {
 
     @Column
     @CreatedDate
-    @Getter
-    @Setter
     private LocalDateTime createdDateTime;
 
     @Column
     @CreatedBy
-    @Getter
-    @Setter
     private String createdBy;
 
     @Column
     @LastModifiedDate
-    @Getter
-    @Setter
     private LocalDateTime modifiedDateTime;
 
     @Column
     @LastModifiedBy
-    @Getter
-    @Setter
     private String modifiedBy;
 
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
 
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getModifiedDateTime() {
+        return modifiedDateTime;
+    }
+
+    public void setModifiedDateTime(LocalDateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
 }

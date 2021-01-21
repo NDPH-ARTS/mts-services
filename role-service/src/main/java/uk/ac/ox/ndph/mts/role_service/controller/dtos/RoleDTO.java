@@ -1,7 +1,6 @@
 package uk.ac.ox.ndph.mts.role_service.controller.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
+
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -9,10 +8,15 @@ import javax.validation.constraints.Size;
 
 public class RoleDTO {
 
-    @Getter
-    @Setter
     @NotBlank (message = "Role ID cannot be empty")
     @Size(max = 255, message = "Role ID is too long")
-    String id;
+    private String id;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

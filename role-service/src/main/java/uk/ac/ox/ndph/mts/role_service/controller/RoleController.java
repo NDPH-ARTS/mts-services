@@ -8,14 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
-import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
+import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
