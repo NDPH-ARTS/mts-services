@@ -34,11 +34,7 @@ jobs:
       #   run: |
       #     docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
       #     docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
-  test:
-    needs: build
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build images
@@ -54,11 +50,6 @@ jobs:
           npm run api-test-ci
           cd ..
           docker-compose down
-  publish-test-result:
-    name: Publish
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
       - name: Publish API Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
