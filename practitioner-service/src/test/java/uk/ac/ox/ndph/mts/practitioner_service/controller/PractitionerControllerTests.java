@@ -35,8 +35,8 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenNoInput_Returns400() throws Exception {
 
         // Act + Assert
-        this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest());
+        this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -45,8 +45,7 @@ class PractitionerControllerTests {
         when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenReturn("123");
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
-        this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+        this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -56,8 +55,7 @@ class PractitionerControllerTests {
         when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenReturn("123");
         String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
-        this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+        this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -68,21 +66,22 @@ class PractitionerControllerTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
-        this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+        this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway());
     }
 
     @Test
     void TestPostPractitioner_WhenArgumentException_Returns400() throws Exception {
         // Arrange
-        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenThrow(new ValidationException("prefix"));
+        when(entityService.savePractitioner(Mockito.any(Practitioner.class)))
+                .thenThrow(new ValidationException("prefix"));
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
         String error = this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
+                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException()
+                .getMessage();
         assertThat(error, containsString("prefix"));
     }
 }
