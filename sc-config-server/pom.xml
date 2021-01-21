@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>uk.ac.ox.ndph.mts</groupId>
-    <artifactId>mts-spring-config-server</artifactId>
+    <artifactId>sc-config-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mts-spring-config-server</name>
+    <name>sc-config-server</name>
     <description>Spring Config Server</description>
     <properties>
         <java.version>15</java.version>
