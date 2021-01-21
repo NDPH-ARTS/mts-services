@@ -44,14 +44,14 @@ jobs:
         run: |
           docker-compose build
       - name: Start services using Docker Compose
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           export SAPASSWORD=$(openssl rand -base64 12)
           export BASE_URL=localhost
           ./.ci/docker/check-docker-compose-services.sh
           cd api-tests
           npm run api-test-ci
-          cd .. &&docker-compose down
+          cd .. && docker-compose down
   publish-test-result:
     name: Publish
     runs-on: ubuntu-latest
