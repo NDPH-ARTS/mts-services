@@ -2,17 +2,34 @@ package uk.ac.ox.ndph.mts.site_service.model;
 
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 /**
  * A response from site service
  */
 @Component
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Response {
     private String id;
+
+    /**
+     * Response default Constructor with no parameters
+     *
+     */
+    public Response() {
+    }
+
+    /**
+     * Response Constructor with one parameter
+     *
+     * @param id the Response id
+     */
+    public Response(String id) {
+        this.id = id;
+    }
+
+    /**
+     * Returns the id associated with the Response.
+     * @return id the Response id
+     */
+    public String getId() {
+        return id;
+    }
 }

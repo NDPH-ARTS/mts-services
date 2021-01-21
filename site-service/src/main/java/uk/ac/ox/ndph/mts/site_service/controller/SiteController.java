@@ -16,7 +16,7 @@ import uk.ac.ox.ndph.mts.site_service.service.EntityService;
 @RestController
 public class SiteController {
 
-    private static final String ENDPOINT_PATH = "/site";
+    private static final String ENDPOINT_PATH = "/sites";
     private static final String APPLICATION_JSON = "application/json";
 
     private final EntityService entityService;

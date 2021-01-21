@@ -35,13 +35,13 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
     }
 
     private void setParentOrganization(Site site, Organization fhirOrganization) {
-        Optional<String> optParentFhirId = Optional.ofNullable(site.getParentFhirId());
-        if (optParentFhirId.isPresent()) {
-            String parentFhirId = optParentFhirId.get();
+        Optional<String> optParentSiteId = Optional.ofNullable(site.getParentSiteId());
+        if (optParentSiteId.isPresent()) {
+            String parentSiteId = optParentSiteId.get();
 
             // Create Identifier
             Identifier identifierParentOrg = new Identifier();
-            identifierParentOrg.setValue(parentFhirId);
+            identifierParentOrg.setValue(parentSiteId);
 
             // Create Reference
             Reference fhirReferenceOrg = new Reference();

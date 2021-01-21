@@ -64,7 +64,6 @@ class SiteServiceIntegrationTests {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenThrow(new RestException("test error"));
         
-        
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         var error = this.mockMvc
@@ -79,7 +78,7 @@ class SiteServiceIntegrationTests {
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn(any(ResearchStudy.class));
 
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentFhirId\": \"parentFhirId\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post("/site").contentType(MediaType.APPLICATION_JSON).content(jsonString))

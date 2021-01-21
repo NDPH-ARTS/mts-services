@@ -1,20 +1,16 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 /**
  * Site Model
  */
-@Data
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Site {
+
+    /**
+     * Site No Args Constructor
+     *
+     */
+    public Site() {
+    }
 
     /**
      * Site Constructor with two parameters
@@ -27,8 +23,74 @@ public class Site {
         this.alias = alias;
     }
 
+    /**
+     * Site Constructor with two parameters
+     *
+     * @param name the Site name
+     * @param alias the Site alias
+     * @param parentSiteId the Site parentSiteId
+     *
+     */
+    public Site(String name, String alias, String parentSiteId) {
+        this.name = name;
+        this.alias = alias;
+        this.parentSiteId = parentSiteId;
+    }
+
     private String name;
     private String alias;
-    private String parentFhirId;
+    private String parentSiteId;
 
+    /**
+     * Returns the name associated with the Site.
+     * @return name the Site name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name of the Site.
+     * @param name the Site name
+     *
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the alias associated with the Site.
+     * @return alias the Site alias.
+     *
+     */
+    public String getAlias() {
+        return alias;
+    }
+
+    /**
+     * Sets the alias of the Site.
+     * @param alias the Site alias
+     *
+     */
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    /**
+     * Returns the parentSiteId associated with the Site.
+     * @return parentSiteId the Site parentSiteId.
+     *
+     */
+    public String getParentSiteId() {
+        return parentSiteId;
+    }
+
+    /**
+     * Sets the parentSiteId of the Site.
+     * @param parentSiteId the Site parentSiteId
+     *
+     */
+    public void setParentSiteId(String parentSiteId) {
+        this.parentSiteId = parentSiteId;
+    }
 }

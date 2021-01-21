@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Site Service ApplicationString
+ * Site Service Application
  */
 @SpringBootApplication
 public class SiteServiceApplication {
