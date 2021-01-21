@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.role_service.service;
 
-
 import org.springframework.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
 import java.util.Collections;
 import java.util.Optional;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;

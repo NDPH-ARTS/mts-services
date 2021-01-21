@@ -6,7 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
@@ -38,24 +44,25 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @GetMapping("")
-    public Page<Role> getPaged(@RequestParam
-                                int page,
-                               @RequestParam
-                                int size) {
-        Logger.getAnonymousLogger().info("get paged");
-        return roleRepository.findAll(PageRequest.of(page, size));
-    }
-
     @GetMapping("/{id}")
-    public Role getOneRole(@PathVariable String id) throws ResponseStatusException{
-        Logger.getAnonymousLogger().info("get role id: "+id);
+    public Role getOne(@PathVariable String id) throws ResponseStatusException {
+        Logger.getAnonymousLogger().info("get role id: " + id);
         Optional<Role> retrievedRole = roleRepository.findById(id);
-        if(retrievedRole.isEmpty()){
+        if (retrievedRole.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found");
         }
         return retrievedRole.get();
     }
+
+    @GetMapping("")
+    public Page<Role> getPaged(@RequestParam
+                                       int page,
+                               @RequestParam
+                                       int size) {
+        Logger.getAnonymousLogger().info("get paged");
+        return roleRepository.findAll(PageRequest.of(page, size));
+    }
+
 
     @PostMapping("")
     public Role createRole(@Valid @RequestBody RoleDTO roleDto) {
@@ -65,7 +72,9 @@ public class RoleController {
     }
 
     @PostMapping("/{id}/permissions")
-    public Role updatePermissionsForRole(@PathVariable String id, @Valid @RequestBody List<PermissionDTO> permissionsDTOs) {
+    public Role updatePermissionsForRole(
+            @PathVariable String id,
+            @Valid @RequestBody List<PermissionDTO> permissionsDTOs) {
 
         List<Permission> permissionEntities = convertListOfDtosToEntities(permissionsDTOs, Permission.class);
         return roleService.updatePermissionsForRole(id, permissionEntities);

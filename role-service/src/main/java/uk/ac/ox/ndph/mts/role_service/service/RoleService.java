@@ -32,16 +32,19 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
-    public Role updatePermissionsForRole(String roleId, List<Permission> newPermissions) throws ResponseStatusException {
+    public Role updatePermissionsForRole(String roleId, List<Permission> newPermissions)
+            throws ResponseStatusException {
 
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (roleOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role \"" + roleId + "\" not found.");
         }
 
-        for(Permission newPermission : newPermissions){
-            if(!permissionRepository.existsById(newPermission.getId())){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update role \"" + roleId + " because permission \" to permission \" is unknown.");
+        for (Permission newPermission : newPermissions) {
+            if (!permissionRepository.existsById(newPermission.getId())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Cannot update role \"" + roleId + " because permission \" to permission \" is unknown.");
             }
         }
 

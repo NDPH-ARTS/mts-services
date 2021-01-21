@@ -3,7 +3,14 @@ package uk.ac.ox.ndph.mts.role_service.model;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +23,7 @@ public class Role extends AuditedEntity {
     private String id;
 
 
-    @ManyToMany(fetch = FetchType.EAGER)// NO cascade - we don't want updates to role to create arbitrary new permissions
+    @ManyToMany(fetch = FetchType.EAGER)// NO cascade - we don't want arbitrary new permissions
     @JoinTable(
             name = "roles_permissions",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
