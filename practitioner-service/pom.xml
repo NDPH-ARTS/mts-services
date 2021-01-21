@@ -61,7 +61,7 @@
             <version>5.6.3</version>
             <scope>test</scope>
         </dependency>
-
+        <!-- This dependency is the spring cloud config client, which should be duplicated into every service -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
