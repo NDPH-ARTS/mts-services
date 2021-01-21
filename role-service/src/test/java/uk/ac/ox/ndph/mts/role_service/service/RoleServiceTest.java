@@ -33,13 +33,24 @@ class RoleServiceTest {
 
 
     @Test
-    void whenAttemptToAddDuplicateRole_AppropriateErrorThrown() {
+    void whenAttemptToSaveDuplicateRole_thenAppropriateErrorThrown() {
         String duplicateRoleName = "foo";
         when(roleRepository.existsById(duplicateRoleName)).thenReturn(true);
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
         Role r = new Role();
         r.setId(duplicateRoleName);
         assertThrows(DuplicateRoleException.class, () -> roleService.saveRole(r));
+    }
+
+    @Test
+    void whenSaveNewRole_thenSuccess() {
+        String newRoleName = "foo";
+        Role r = new Role();
+        r.setId(newRoleName);
+        when(roleRepository.existsById(newRoleName)).thenReturn(false);
+        when(roleRepository.save(r)).thenReturn(r);
+        RoleService roleService = new RoleService(roleRepository, permissionRepository);
+        assertNotNull(roleService.saveRole(r));
     }
 
 
