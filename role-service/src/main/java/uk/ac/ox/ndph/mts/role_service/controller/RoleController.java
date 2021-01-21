@@ -46,7 +46,6 @@ public class RoleController {
 
     @GetMapping("/{id}")
     public Role getOne(@PathVariable String id) throws ResponseStatusException {
-        Logger.getAnonymousLogger().info("get role id: " + id);
         Optional<Role> retrievedRole = roleRepository.findById(id);
         if (retrievedRole.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found");

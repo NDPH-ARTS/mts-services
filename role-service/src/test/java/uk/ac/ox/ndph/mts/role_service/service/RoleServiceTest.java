@@ -13,6 +13,7 @@ import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,30 +42,15 @@ class RoleServiceTest {
         assertThrows(DuplicateRoleException.class, () -> roleService.saveRole(r));
     }
 
-    @Test
-    void whenUpdatePermissions_givenValidRoleAndValidPerm_thenSuccess() {
-        String roleName = "foo";
-        Role existingRole = new Role();
-        existingRole.setId(roleName);
-
-        String permName = "bar";
-        Permission newPermissionForRole = new Permission();
-        newPermissionForRole.setId(permName);
-
-        when(roleRepository.findById(roleName)).thenReturn(Optional.of(existingRole));
-        when(permissionRepository.existsById(permName)).thenReturn(true);
-
-        RoleService roleService = new RoleService(roleRepository, permissionRepository);
-        roleService.updatePermissionsForRole(roleName, Collections.singletonList(newPermissionForRole));
-    }
 
     @Test
     void whenUpdatePermissions_givenNonExistentRole_thenThrowsNotFoundExcep() {
         String badRoleId = "foo";
         when(roleRepository.findById(badRoleId)).thenReturn(Optional.empty());
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
-        ResponseStatusException thrown =  assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(badRoleId, Collections.singletonList(new Permission())));
-        assertEquals(thrown.getStatus(), HttpStatus.NOT_FOUND);
+        List<Permission> dummyPermissionList = Collections.singletonList(new Permission());
+        ResponseStatusException thrown =  assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(badRoleId, dummyPermissionList));
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     @Test
@@ -81,9 +67,9 @@ class RoleServiceTest {
         when(permissionRepository.existsById(badPermissionName)).thenReturn(false);
 
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
-
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(goodRoleId, Collections.singletonList(badPermission)));
-        assertEquals(thrown.getStatus(), HttpStatus.BAD_REQUEST);
+        List<Permission> badPermissionList = Collections.singletonList(badPermission);
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(goodRoleId, badPermissionList));
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
 
