@@ -32,6 +32,25 @@ class SiteServiceTests {
     @Captor
     ArgumentCaptor<Site> siteCaptor;
 
+    @Test
+    void TestSaveSiteParent_WithSiteParent_ValidatesSiteParent() {
+        // Arrange
+        String name = "name";
+        String alias = "alias";
+        String parent = "parent";
+
+        Site siteWithParent = new Site(name, alias, parent);
+        var siteService = new SiteService(siteStore, siteValidation);
+        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+        //Act
+        siteService.saveSite(siteWithParent);
+
+        //Assert
+        Mockito.verify(siteValidation).validate(siteCaptor.capture());
+        var value = siteCaptor.getValue();
+        assertThat(siteWithParent, equalTo(value));
+    }
 
     @Test
     void TestSaveSite_WithSite_ValidatesSite() {
