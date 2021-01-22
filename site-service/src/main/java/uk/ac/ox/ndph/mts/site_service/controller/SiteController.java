@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.Response;
-import uk.ac.ox.ndph.mts.site_service.service.EntityService;
+import uk.ac.ox.ndph.mts.site_service.service.SiteServiceInterface;
 
 /**
  * Controller for site endpoint of site-service
@@ -19,15 +19,15 @@ public class SiteController {
     private static final String ENDPOINT_PATH = "/sites";
     private static final String APPLICATION_JSON = "application/json";
 
-    private final EntityService entityService;
+    private final SiteServiceInterface siteServiceIntf;
 
     /**
      *
-     * @param entityService validate and save the site
+     * @param siteServiceIntf validate and save the site
      */
     @Autowired
-    public SiteController(EntityService entityService) {
-        this.entityService = entityService;
+    public SiteController(SiteServiceInterface siteServiceIntf) {
+        this.siteServiceIntf = siteServiceIntf;
     }
 
     /**
@@ -37,7 +37,7 @@ public class SiteController {
      */
     @PostMapping(path = ENDPOINT_PATH, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     public ResponseEntity<Response> site(@RequestBody Site site) {
-        String siteId = entityService.saveSite(site);
+        String siteId = siteServiceIntf.saveSite(site);
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 }

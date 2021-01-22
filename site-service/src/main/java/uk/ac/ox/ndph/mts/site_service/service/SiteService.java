@@ -12,12 +12,12 @@ import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 /**
- * Implement an EntityService interface.
+ * Implement an SiteServiceInterface interface.
  * Validation of site based on the input configuration regex fields before
  * sending the entity to store in the fhir repository.
  */
 @Service
-public class SiteService implements EntityService {
+public class SiteService implements SiteServiceInterface {
 
     private EntityStore<Site> siteStore;
     private final ModelEntityValidation<Site> entityValidation;

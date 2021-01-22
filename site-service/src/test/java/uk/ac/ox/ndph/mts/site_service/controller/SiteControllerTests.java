@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
-import uk.ac.ox.ndph.mts.site_service.service.EntityService;
+import uk.ac.ox.ndph.mts.site_service.service.SiteServiceInterface;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 
@@ -29,7 +29,7 @@ class SiteControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private EntityService entityService;
+    private SiteServiceInterface siteServiceIntf;
 
     @Test
     void TestPostSite_WhenNoInput_Returns400() throws Exception {
@@ -42,7 +42,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
-        when(entityService.saveSite(Mockito.any(Site.class))).thenReturn("123");
+        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenReturn("123");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
@@ -53,7 +53,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
-        when(entityService.saveSite(Mockito.any(Site.class))).thenReturn("123");
+        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenReturn("123");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
@@ -64,7 +64,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
-        when(entityService.saveSite(Mockito.any(Site.class))).thenThrow(RestException.class);
+        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenThrow(RestException.class);
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
 
         // Act + Assert
@@ -76,7 +76,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenArgumentException_Returns400() throws Exception {
         // Arrange
-        when(entityService.saveSite(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
+        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
 
         // Act + Assert
