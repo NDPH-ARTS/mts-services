@@ -14,4 +14,6 @@ public interface EntityService {
      * @return the id of the created entity.
      */
     String savePractitioner(Practitioner practitioner);
+
+    void linkPractitioner(String userAccountId, String practitionerId);
 }

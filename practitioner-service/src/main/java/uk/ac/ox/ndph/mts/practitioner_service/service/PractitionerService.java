@@ -54,4 +54,9 @@ public class PractitionerService implements EntityService {
         }
         return practitionerStore.saveEntity(practitioner);
     }
+
+    @Override
+    public void linkPractitioner(final String userAccountId, final String practitionerId) {
+
+    }
 }

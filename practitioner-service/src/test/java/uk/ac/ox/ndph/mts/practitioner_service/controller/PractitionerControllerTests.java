@@ -7,11 +7,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.Mockito;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,7 +45,7 @@ class PractitionerControllerTests {
     @Test
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
-        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenReturn("123");
+        when(entityService.savePractitioner(any(Practitioner.class))).thenReturn("123");
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
@@ -53,7 +56,7 @@ class PractitionerControllerTests {
     @Test
     void TestPostPractitioner_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
-        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenReturn("123");
+        when(entityService.savePractitioner(any(Practitioner.class))).thenReturn("123");
         String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
@@ -64,7 +67,7 @@ class PractitionerControllerTests {
     @Test
     void TestPostPractitioner_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
-        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenThrow(RestException.class);
+        when(entityService.savePractitioner(any(Practitioner.class))).thenThrow(RestException.class);
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
@@ -76,7 +79,7 @@ class PractitionerControllerTests {
     @Test
     void TestPostPractitioner_WhenArgumentException_Returns400() throws Exception {
         // Arrange
-        when(entityService.savePractitioner(Mockito.any(Practitioner.class))).thenThrow(new ValidationException("prefix"));
+        when(entityService.savePractitioner(any(Practitioner.class))).thenThrow(new ValidationException("prefix"));
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
@@ -84,5 +87,23 @@ class PractitionerControllerTests {
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("prefix"));
+    }
+
+    @Test
+    void testLinkPractitioner_whenValidInput_callsEntityService() throws Exception {
+        // Arrange
+        doNothing().when(entityService).linkPractitioner(any(String.class), any(String.class));
+
+        // Act
+        final String USER_ACCOUNT = "userAccount";
+        final String PRACTITIONER = "practitioner";
+        this.mockMvc
+                .perform(post("/practitioner/link")
+                                 .param("userAccountId", USER_ACCOUNT)
+                                 .param("practitionerId", PRACTITIONER)
+                                 .contentType(MediaType.APPLICATION_JSON)).andDo(print());
+
+        // Assert
+        verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT, PRACTITIONER);
     }
 }
