@@ -24,16 +24,6 @@ jobs:
         run: |
           export DOCKER_BUILDKIT=1
           docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output ${{matrix.service_name}}-out -f "${{ matrix.service_name }}"/Dockerfile .
-      # # - name: Login to GitHub Container Registry
-      #   uses: docker/login-action@v1
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.repository_owner }}
-      #     password: ${{ secrets.GHCR_LOGIN }}
-      # - name: Build & publish runtime image
-      #   run: |
-      #     docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
-      #     docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -52,15 +42,3 @@ jobs:
           cd api-tests
           npm run api-test-ci
           cd .. && docker-compose down
-  publish-test-result:
-    name: Publish
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Publish API Test Report
-        if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1
-        with:
-          fail_on_test_failures: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: "*-out/*.xml"
