@@ -5,7 +5,7 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 /**
  * Interface for validating and saving an entity
  */
-public interface EntityService {
+public interface SiteServiceInterface {
 
     /**
      * Validate and save a site entity
