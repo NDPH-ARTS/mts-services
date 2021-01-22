@@ -3,13 +3,11 @@ package uk.ac.ox.ndph.mts.site_service.converter;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
-
-import uk.ac.ox.ndph.mts.site_service.helper.FHIRClientHelper;
+import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.stereotype.Component;
 
 /**
  * Implement an EntityConverter for Site
