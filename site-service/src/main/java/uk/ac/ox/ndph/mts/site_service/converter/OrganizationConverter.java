@@ -4,6 +4,7 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
 
+import uk.ac.ox.ndph.mts.site_service.helper.FHIRClientHelper;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 import java.util.Optional;
