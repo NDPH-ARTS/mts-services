@@ -58,11 +58,11 @@ public class PractitionerService implements EntityService {
     @Override
     public void linkPractitioner(final String userAccountId, final String practitionerId) {
         if (StringUtils.isBlank(userAccountId)) {
-            throw new BadRequestException("userAccountId must not be blank");
+            throw new BadRequestException("User Account ID must not be blank");
         }
         if (StringUtils.isBlank(practitionerId)) {
-            throw new BadRequestException("practitionerId must not be blank");
+            throw new BadRequestException("Practitioner ID must not be blank");
         }
-        // TODO more to implement here
+        // TODO (archiem) more to implement here
     }
 }

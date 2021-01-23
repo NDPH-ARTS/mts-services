@@ -7,6 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -20,6 +23,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -123,47 +129,28 @@ class PractitionerServiceTests {
     }
 
     @ParameterizedTest
-    @CsvSource({"null", "''", "'  '"})
+    @MethodSource("getBlankStrings")
     void linkPractitioner_whenBlankUserIdProvided_throwClientError(
             @ConvertWith(NullableConverter.class) String userAccountId) {
         // Act + Assert
-        BadRequestException ex = assertThrows(
-                BadRequestException.class,
-                () -> practitionerService.linkPractitioner(userAccountId, PRACTITIONER_ID),
-                "Blank userAccountId should throw");
-        assertTrue(ex.getMessage().toLowerCase().contains("user"), "Exception should mention 'user'");
-        assertTrue(ex.getMessage().toLowerCase().contains("blank"), "Exception should mention 'blank'");
-    }
-
-    @ParameterizedTest
-    @CsvSource({"null", "''", "'  '"})
-    void linkPractitioner_whenBlankUserIdProvided_throwClientError_assertj(
-            @ConvertWith(NullableConverter.class) String userAccountId) {
-        // Act + Assert
-        // TODO this method exists just to demonstrate a couple of ways that AssertJ does exception assertion
-        assertThatThrownBy(
-                () -> practitionerService.linkPractitioner(userAccountId, PRACTITIONER_ID))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContainingAll("user", "blank");
-
         assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(
                         () -> practitionerService.linkPractitioner(userAccountId, PRACTITIONER_ID))
-                .withMessageContainingAll("user", "blank");
+                .withMessageContainingAll("User", "blank");
     }
 
     @ParameterizedTest
-    @CsvSource({"null", "''", "'  '"})
+    @MethodSource("getBlankStrings")
     void linkPractitioner_whenBlankPractitionerIdProvided_throwClientError(
             @ConvertWith(NullableConverter.class) String practitionerId) {
         // Act + Assert
-        BadRequestException ex = assertThrows(
-                BadRequestException.class,
-                () -> practitionerService.linkPractitioner(USER_ACCOUNT_ID, practitionerId),
-                "Blank practitionerId should throw");
-        assertTrue(ex.getMessage().toLowerCase().contains("practitioner"), "Exception should mention 'practitioner'");
-        assertTrue(ex.getMessage().toLowerCase().contains("blank"), "Exception should mention 'blank'");
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(
+                        () -> practitionerService.linkPractitioner(USER_ACCOUNT_ID, practitionerId))
+                .withMessageContainingAll("Practitioner", "blank");
     }
 
-
+    private static Stream<String> getBlankStrings() {
+        return Stream.of(null, "", "  ", "\t", "\n");
+    }
 }
