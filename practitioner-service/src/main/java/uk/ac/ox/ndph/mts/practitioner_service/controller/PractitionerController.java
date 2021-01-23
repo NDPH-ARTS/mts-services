@@ -17,6 +17,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 @RestController
 public class PractitionerController {
 
+    public static final String PARAM_USER_ACCOUNT_ID = "userAccountId";
+    public static final String PARAM_PRACTITIONER_ID = "practitionerId";
     private static final String APPLICATION_JSON = "application/json";
 
     private final EntityService entityService;
@@ -42,8 +44,8 @@ public class PractitionerController {
     }
 
     @PostMapping(path = "/practitioner/link", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
-    public ResponseEntity<Response> practitionerLink(@RequestParam String userAccountId,
-                                                     @RequestParam String practitionerId) {
+    public ResponseEntity<Response> practitionerLink(@RequestParam(name = PARAM_USER_ACCOUNT_ID) String userAccountId,
+                                                     @RequestParam(name = PARAM_PRACTITIONER_ID) String practitionerId) {
         entityService.linkPractitioner(userAccountId, practitionerId);
         // TODO (archiem) implement return value
 //        return ResponseEntity.status(HttpStatus.CREATED).body(new Response(practitionerId));

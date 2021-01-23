@@ -90,18 +90,19 @@ class PractitionerControllerTests {
     }
 
     @Test
-    void testLinkPractitioner_whenValidInput_callsEntityService() throws Exception {
+    void testLinkPractitioner_whenParamsPresent_callsEntityService() throws Exception {
         // Arrange
         doNothing().when(entityService).linkPractitioner(any(String.class), any(String.class));
 
         // Act
         final String USER_ACCOUNT = "userAccount";
         final String PRACTITIONER = "practitioner";
+
         this.mockMvc
                 .perform(post("/practitioner/link")
-                                 .param("userAccountId", USER_ACCOUNT)
-                                 .param("practitionerId", PRACTITIONER)
-                                 .contentType(MediaType.APPLICATION_JSON)).andDo(print());
+                        .param(PractitionerController.PARAM_USER_ACCOUNT_ID, USER_ACCOUNT)
+                        .param(PractitionerController.PARAM_PRACTITIONER_ID, PRACTITIONER)
+                        .contentType(MediaType.APPLICATION_JSON));
 
         // Assert
         verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT, PRACTITIONER);
