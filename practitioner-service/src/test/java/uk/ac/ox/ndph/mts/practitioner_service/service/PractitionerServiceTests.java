@@ -1,11 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,8 +11,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.springframework.web.client.HttpClientErrorException;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.BadRequestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
@@ -27,9 +20,16 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTests {
-    
+
+    // TODO check if Mocks get recreated for each test (i.e. practitionerStore, etc)
     @Mock
     private EntityStore<Practitioner> practitionerStore;
 
@@ -39,8 +39,14 @@ class PractitionerServiceTests {
     @Captor
     ArgumentCaptor<Practitioner> practitionerCaptor;
 
-    // TODO @BeforeEach to set up PractitionerService for each test
-    // TODO check if Mocks get recreated for each test (i.e. practitionerStore, etc)
+    PractitionerService practitionerService;
+    final String PRACTITIONER_ID = "practitionerId";
+    final String USER_ACCOUNT_ID = "userAccountId";
+
+    @BeforeEach
+    public void setUp() {
+        practitionerService = new PractitionerService(practitionerStore, practitionerValidation);
+    }
 
     @Test
     void TestSavePractitioner_WithPractitioner_ValidatesPractitioner() {
@@ -49,7 +55,6 @@ class PractitionerServiceTests {
         String givenName = "givenName";
         String familyName = "familyName";
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
-        var practitionerService = new PractitionerService(practitionerStore, practitionerValidation);
         when(practitionerValidation.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
         //Act
@@ -68,7 +73,6 @@ class PractitionerServiceTests {
         String givenName = "givenName";
         String familyName = "familyName";
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
-        var practitionerService = new PractitionerService(practitionerStore, practitionerValidation);
         when(practitionerValidation.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
         //Act
@@ -87,7 +91,6 @@ class PractitionerServiceTests {
         String givenName = "givenName";
         String familyName = "familyName";
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
-        var practitionerService = new PractitionerService(practitionerStore, practitionerValidation);
         when(practitionerValidation.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         assertThrows(ValidationException.class, () -> practitionerService.savePractitioner(practitioner),
@@ -101,7 +104,6 @@ class PractitionerServiceTests {
         String givenName = "givenName";
         String familyName = "familyName";
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
-        var practitionerService = new PractitionerService(practitionerStore, practitionerValidation);
         when(practitionerValidation.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         assertThrows(ValidationException.class, () -> practitionerService.savePractitioner(practitioner),
@@ -119,16 +121,21 @@ class PractitionerServiceTests {
     }
 
     @ParameterizedTest
-    @CsvSource({"null, null", "null, practitioner", "user, null", " , ", ",practitioner", "user,"})
-    void linkPractitioner_whenBlankIdsProvided_throwClientError(
-            @ConvertWith(NullableConverter.class) String userAccountId,
-            @ConvertWith(NullableConverter.class) String practitionerId) {
-        // Arrange
-        PractitionerService service = new PractitionerService(practitionerStore, practitionerValidation);
-
+    @CsvSource({"null", "''", "'  '"})
+    void linkPractitioner_whenBlankUserIdProvided_throwClientError(
+            @ConvertWith(NullableConverter.class) String userAccountId) {
         // Act + Assert
-        assertThrows(BadRequestException.class, () -> {
-            service.linkPractitioner(userAccountId, practitionerId);
-        });
+        assertThrows(BadRequestException.class, () ->
+                practitionerService.linkPractitioner(userAccountId, PRACTITIONER_ID));
     }
+
+    @ParameterizedTest
+    @CsvSource({"null", "''", "'  '"})
+    void linkPractitioner_whenBlankPractitionerIdProvided_throwClientError(
+            @ConvertWith(NullableConverter.class) String practitionerId) {
+        // Act + Assert
+        assertThrows(BadRequestException.class, () ->
+                practitionerService.linkPractitioner(USER_ACCOUNT_ID, practitionerId));
+    }
+
 }

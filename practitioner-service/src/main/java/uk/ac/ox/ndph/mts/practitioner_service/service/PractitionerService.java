@@ -1,10 +1,12 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import uk.ac.ox.ndph.mts.practitioner_service.exception.BadRequestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
@@ -24,13 +26,12 @@ public class PractitionerService implements EntityService {
     private final Logger logger = LoggerFactory.getLogger(PractitionerService.class);
 
     /**
-     *
      * @param practitionerStore Practitioner store interface
-     * @param entityValidation Practitioner validation interface 
+     * @param entityValidation  Practitioner validation interface
      */
     @Autowired
     public PractitionerService(EntityStore<Practitioner> practitionerStore,
-            ModelEntityValidation<Practitioner> entityValidation) {
+                               ModelEntityValidation<Practitioner> entityValidation) {
         if (practitionerStore == null) {
             throw new InitialisationError("practitioner store cannot be null");
         }
@@ -43,7 +44,6 @@ public class PractitionerService implements EntityService {
     }
 
     /**
-     *
      * @param practitioner the Practitioner to save.
      * @return The id of the new practitioner
      */
@@ -57,6 +57,11 @@ public class PractitionerService implements EntityService {
 
     @Override
     public void linkPractitioner(final String userAccountId, final String practitionerId) {
-
+        if (StringUtils.isBlank(userAccountId)) {
+            throw new BadRequestException();
+        }
+        if (StringUtils.isBlank(practitionerId)) {
+            throw new BadRequestException();
+        }
     }
 }

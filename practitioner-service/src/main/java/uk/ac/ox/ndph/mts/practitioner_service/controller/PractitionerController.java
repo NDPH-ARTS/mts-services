@@ -1,13 +1,12 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
@@ -43,8 +42,10 @@ public class PractitionerController {
     }
 
     @PostMapping(path = "/practitioner/link", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
-    public ResponseEntity<Response> practitionerLink(@RequestParam String userAccountId, @RequestParam String practitionerId) {
+    public ResponseEntity<Response> practitionerLink(@RequestParam String userAccountId,
+                                                     @RequestParam String practitionerId) {
         entityService.linkPractitioner(userAccountId, practitionerId);
+        // TODO (archiem) implement return value
 //        return ResponseEntity.status(HttpStatus.CREATED).body(new Response(practitionerId));
         return null;
     }
