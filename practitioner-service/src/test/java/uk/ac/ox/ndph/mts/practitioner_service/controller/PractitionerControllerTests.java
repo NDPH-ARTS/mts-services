@@ -32,11 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {"server.error.include-message=always"})
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private EntityService entityService;
+
+    private static final String PARAM_PRACTITIONER = "practitionerId";
+    private static final String PARAM_USER = "userAccountId";
 
     @Test
     void TestPostPractitioner_WhenNoInput_Returns400() throws Exception {
@@ -111,8 +115,8 @@ class PractitionerControllerTests {
 
     private static Stream<Arguments> atLeastOneParamNotPresent() {
         return Stream.of(
-                Arguments.of("wrongUserParamName", PractitionerController.PARAM_PRACTITIONER_ID),
-                Arguments.of(PractitionerController.PARAM_USER_ACCOUNT_ID, "wrongPractitionerParam"),
+                Arguments.of("wrongUserParamName", PARAM_PRACTITIONER),
+                Arguments.of(PARAM_USER, "wrongPractitionerParam"),
                 Arguments.of("wrongUserParamName", "wrongPractitionerParam"));
     }
 
@@ -125,8 +129,8 @@ class PractitionerControllerTests {
         // Act
         this.mockMvc
                 .perform(post("/practitioner/link")
-                        .param(PractitionerController.PARAM_USER_ACCOUNT_ID, USER_ACCOUNT)
-                        .param(PractitionerController.PARAM_PRACTITIONER_ID, PRACTITIONER)
+                        .param(PARAM_USER, USER_ACCOUNT)
+                        .param(PARAM_PRACTITIONER, PRACTITIONER)
                         .contentType(MediaType.APPLICATION_JSON));
         // Assert
         verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT, PRACTITIONER);
