@@ -91,9 +91,11 @@ class PractitionerControllerTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
-        String error = this.mockMvc
+        Exception ex = this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
+                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException();
+        assert ex != null;
+        String error = ex.getMessage();
         assertThat(error, containsString("prefix"));
     }
 
