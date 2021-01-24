@@ -43,7 +43,6 @@ services:
       - "81:80"
     depends_on:
       - sql-mts-data
-      - role-service
 
   sc-config-service:
     build:
