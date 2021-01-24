@@ -36,7 +36,7 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
         return new ValidationResponse(true, "");
     }
 
-    private Boolean isNullOrBlank(String str) {
+    private boolean isNullOrBlank(String str) {
         return str == null || str.isBlank();
     }
 
