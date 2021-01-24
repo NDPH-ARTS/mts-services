@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
 /**
  * Interface for validating and saving an entity
@@ -14,4 +15,6 @@ public interface EntityService {
      * @return the id of the created entity.
      */
     String savePractitioner(Practitioner practitioner);
+
+    String saveRoleAssignment(RoleAssignment roleAssignment);
 }
