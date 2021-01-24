@@ -8,8 +8,4 @@
     <!--Example: -->
     <!--    <suppress checks="Indentation" files=".*\.java"/>-->
 
-    <!-- TODO: complete docs on the trial-config-service -->
-    <suppress checks="MissingJavadocMethod" files="trial-config-service.*\.java"/>
-    <suppress checks="MissingJavadocType" files="trial-config-service.*\.java"/>
-
 </suppressions>
