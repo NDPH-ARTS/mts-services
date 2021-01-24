@@ -50,7 +50,6 @@ services:
         SVC: sc-config-server
     image: ghcr.io/ndph-arts/sc-config-server:${GITHUB_SHA}
     restart: on-failure
-    environment:
     ports:
       - "8888:8888"
 
