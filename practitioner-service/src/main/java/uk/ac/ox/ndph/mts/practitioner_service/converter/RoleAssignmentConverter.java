@@ -12,7 +12,7 @@ public class RoleAssignmentConverter implements EntityConverter<RoleAssignment,
         org.hl7.fhir.r4.model.PractitionerRole> {
 
     /**
-     * Convert an MTS PractitionerRole to an hl7 model PractitionerRole.
+     * Convert a RoleAssignment to an hl7 model PractitionerRole.
      *
      * @param input the MTS PractitionerRole to convert.
      * @return org.hl7.fhir.r4.model.PractitionerRole
