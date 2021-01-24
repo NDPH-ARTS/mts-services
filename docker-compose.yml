@@ -42,6 +42,18 @@ services:
     depends_on:
       - sql-mts-data
 
+  sc-config-service:
+    build:
+      context: .
+      dockerfile: sc-config-server/Dockerfile
+      args:
+        SVC: sc-config-server
+    image: ghcr.io/ndph-arts/sc-config-server:${GITHUB_SHA}
+    restart: on-failure
+    environment:
+    ports:
+      - "8888:8888"
+
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
     restart: on-failure
