@@ -3,7 +3,6 @@ const validPerson = {
     "givenName": "Cookie",
     "familyName": "Cookie"
 }
-module.exports.validPerson = validPerson;
 
 const missingPrefix = {
     "prefix": "",
@@ -11,15 +10,11 @@ const missingPrefix = {
     "familyName": "familyName"
 }
 
-module.exports.missingPrefix = missingPrefix;
-
 const missingGivenName = {
     "prefix": "prefix",
     "givenName": "",
     "familyName": "familyName"
 }
-
-module.exports.missingGivenName = missingGivenName;
 
 const missingfamilyName = {
     "prefix": "prefix",
@@ -27,23 +22,17 @@ const missingfamilyName = {
     "familyName": ""
 }
 
-module.exports.missingfamilyName = missingfamilyName;
-
 const invalidCharacterLength = {
     "prefix": "qwertyuioplkjhgfdsazxcvbnmqwertyuiw",
     "givenName": "qwertyuioplkjhgfdsazxcvbnmqwertyuiw",
     "familyName": "ghfghdfgdhfgdhgfdhfgdhgfhdgfhdgfhdgfdhgfhdgfhdgfhdgfhfgdhfgdhf"
 }
 
-module.exports.invalidCharacterLength = invalidCharacterLength;
-
 const illegalCharacters = {
     "prefix": "M@£$S",
     "givenName": "S£$%T@@$E",
     "familyName": "P*(&)(*!£~D"
 }
-
-module.exports.illegalCharacters = illegalCharacters;
 
 const malformedJson = {
     "\prefix": "\M@£$S",
@@ -52,4 +41,12 @@ const malformedJson = {
 }
 
 
-module.exports.malformedJson = malformedJson;   
+module.exports = {
+    validPerson,
+    missingPrefix,
+    missingGivenName,
+    missingfamilyName,
+    invalidCharacterLength,
+    illegalCharacters,
+    malformedJson
+};   

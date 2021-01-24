@@ -33,6 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     protected CorsConfiguration getConfiguration() {
+
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedHeader("*");
@@ -44,7 +45,6 @@ public class WebConfig implements WebMvcConfigurer {
 
         return config;
     }
-
 
     @Bean
     public WebClient webClient() {
