@@ -4,7 +4,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
  * String constants
  */
 public enum FhirRepo {
-    SAVE_PRACTITIONER("request to fhir: %s"),
+    SAVE_REQUEST("request to fhir: %s"),
     SAVE_RESPONSE("response from fhir: %s"),
     UPDATE_ERROR("error while updating fhir store"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d");

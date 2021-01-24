@@ -38,6 +38,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
     private static final String REGEX_ALL = ".*";
 
     private final Map<Attribute, AttributeData> validationMap;
+    @SuppressWarnings("FieldCanBeLocal")
     private final Logger logger = LoggerFactory.getLogger(PractitionerValidation.class);
 
     /**
@@ -54,7 +55,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
                                 pair.getRight().getGetValue())));
 
         validateMap();
-        logger.info(Validations.STARTUP.message(), configuration);
+        logger.info(Validations.STARTUP.message(), "Practitioner", configuration);
     }
 
     @Override
