@@ -45,7 +45,7 @@ services:
       - sql-mts-data
       - role-service
 
-  sc-config-service:
+  sc-config-server:
     build:
       context: .
       dockerfile: sc-config-server/Dockerfile
