@@ -1,7 +1,7 @@
 FROM maven:3-openjdk-11 as builder
 ARG SVC
 
-# copy common things
+# copy common thingsd
 COPY ./build-tools ./build-tools
 COPY ./pom.xml pom.xml
 
