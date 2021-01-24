@@ -28,10 +28,10 @@ class GitRepoTest {
         gitRepo.init();
     }
 
-    @Test
-    void getTrialFile() throws InvalidConfigException {
-        assertNotNull(gitRepo.getTrialFile("config.json"));
-    }
+//    @Test
+//    void getTrialFile() throws InvalidConfigException {
+//        assertNotNull(gitRepo.getTrialFile("config.json"));
+//    }
 
 //    @Test
 //    void invalidConfigExceptionTest(){
