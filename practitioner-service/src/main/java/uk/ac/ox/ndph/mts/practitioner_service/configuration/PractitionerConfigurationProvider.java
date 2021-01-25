@@ -38,20 +38,20 @@ public class PractitionerConfigurationProvider {
 
         try {
             practitionerConfiguration = WebClient.create().get()
-                .uri(repoURL() + File.separator + "practitioner-configuration.json")
+                .uri(getRepoURL() + File.separator + "practitioner-configuration.json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(PractitionerConfiguration.class)
                 .block();
-        } catch (WebClientException wceEx) {
-            throw new RestException(wceEx.getMessage());
+        } catch (WebClientException wce) {
+            throw new RestException(wce.getMessage());
         }
 
         return practitionerConfiguration;
 
     }
 
-    private String repoURL() {
+    private String getRepoURL() {
         return configURI + File.separator + applicationName + File.separator + profile + File.separator + label;
     }
 

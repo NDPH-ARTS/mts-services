@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>uk.ac.ox.ndph.mts</groupId>
-    <artifactId>mts-config-server</artifactId>
+    <artifactId>config-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mts-config-server</name>
-    <description>MTS Config Server</description>
+    <name>config-server</name>
+    <description>Spring Cloud Configuration Server</description>
     <properties>
         <java.version>15</java.version>
         <spring-cloud.version>2020.0.0</spring-cloud.version>
