@@ -12,7 +12,8 @@ Creates a new site entity.
 ```json
 {
     "name": "CCO",
-    "alias": "CCO"
+    "alias": "CCO",
+    "parentSiteId": "01ced0b1-a6e6-4408-9701-0ced2fff9a26"
 }
 ```
 
@@ -20,7 +21,7 @@ Creates a new site entity.
 |:---------:|:------------------:|:----------------------------------------------------------------------------------------------------------------------:|
 |     name    |       string       | Name |
 |     alias    |       string       | Description |
-
+|     parentSiteId    |       string       | Description |
 
 **Method** : `POST`
 
