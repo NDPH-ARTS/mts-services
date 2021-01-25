@@ -9,23 +9,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
 
+
 import java.io.IOException;
 import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class TrialConfigControllerTest {
 
     private static final String TEST_CONFIG_ENDPOINT = "anyurlasitsmocked";
+
     private TrialConfigController trialConfigController;
     public static MockWebServer mockBackEnd;
+
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock
@@ -80,17 +79,12 @@ class TrialConfigControllerTest {
         trialSite.setUser(null);
 
 
-        Role role = new Role();
-        role.setModifiedBy("me");
-        role.setRoleName("roleName");
-
         trialSite.setSiteName("mockYTrialSiteName");
         trialSite.setSiteType(TrialSite.SiteType.CCO);
         trial.setId("trialMockId");
         trial.setTrialName("trialMockId");
         trial.setTrialSites(Collections.singletonList(trialSite));
         trial.setModifiedBy("me");
-        trial.setRoles(Collections.singletonList(role));
         trial.setFhirOrganizationId("fhirID");
 
         return trial;
