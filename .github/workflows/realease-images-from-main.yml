@@ -1,0 +1,42 @@
+name: Release named images
+# This action is meant to run on the main branch after a merge to release a named version of the image released
+# before with a hash as a tag.
+
+on:
+  push:
+    # ONLY main branch should be listed below!
+    branches: [ main ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '1 1 * * *'
+
+jobs:
+  retag:
+    name: Retag image & push
+    strategy:
+      matrix:
+        service_name: [ "sample-service", "practitioner-service", "trial-config-service", "role-service" ]
+    env:
+      GHCR: ghcr.io/ndph-arts
+      # We use 2 tags: main-latest (every PR merge to main) and main-nightly (main branch images every night)
+      TAG: ${{ github.event_name == 'schedule' && 'main-nightly' || 'main-latest' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_LOGIN }}
+      - name: Build & publish runtime image
+        run: |
+          set -o errexit
+          set -o nounset
+
+          FROM_TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
+          TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
+
+          docker pull $FROM_TAG
+          docker tag $FROM_TAG -t $TO_TAG
+          docker push $TO_TAG
