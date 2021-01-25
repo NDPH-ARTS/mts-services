@@ -18,8 +18,8 @@ jobs:
         service_name: [ "sample-service", "practitioner-service", "trial-config-service", "role-service" ]
     env:
       GHCR: ghcr.io/ndph-arts
-      # We use 2 tags: latest (every PR merge to main) and nightly (main branch images every night)
-      TAG: ${{ github.event_name == 'schedule' && 'nightly' || 'latest' }}
+      # We use 2 tags: main-latest (every PR merge to main) and main-nightly (main branch images every night)
+      TAG: ${{ github.event_name == 'schedule' && 'main-nightly' || 'main-latest' }}
     runs-on: ubuntu-latest
 
     steps:
