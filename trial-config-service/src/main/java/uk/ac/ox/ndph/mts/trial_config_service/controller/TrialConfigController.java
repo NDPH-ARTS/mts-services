@@ -56,7 +56,7 @@ public class TrialConfigController {
             @RequestParam
                     String filename)
         throws InvalidConfigException, ResourceAlreadyExistsException {
-        return trialConfigService.saveTrial(createTrial(filename, repoURL()), userId);
+        return trialConfigService.saveTrial(createTrial(filename, getRepoURL()), userId);
     }
 
     @PostMapping("/trial")
@@ -95,7 +95,7 @@ public class TrialConfigController {
         return trial;
     }
 
-    private String repoURL() {
+    private String getRepoURL() {
         return configURI + File.separator + applicationName + File.separator + profile + File.separator + label;
     }
 
