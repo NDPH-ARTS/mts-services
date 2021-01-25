@@ -15,7 +15,7 @@ jobs:
     name: Retag image & push
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service", "trial-config-service" ]
+        service_name: [ "sample-service", "practitioner-service", "trial-config-service", "role-service" ]
     env:
       GHCR: ghcr.io/ndph-arts
       # We use 2 tags: latest (every PR merge to main) and nightly (main branch images every night)
