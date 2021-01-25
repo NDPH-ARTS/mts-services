@@ -55,7 +55,7 @@ public class HapiFhirRepository implements FhirRepository {
         logger.info(FhirRepo.SAVE_RESPONSE.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
 
-        return organization.getIdElement().getValue();
+        return responseElement.getIdElement().getIdPart();
     }
 
     /**

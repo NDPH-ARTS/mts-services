@@ -56,8 +56,10 @@ public class HapiFhirRepository implements FhirRepository {
             logger.info(FhirRepo.SAVE_RESPONSE.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
         }
-        return practitioner.getIdElement().getValue();
+        //return practitioner.getIdElement().getValue();
+        return responseElement.getIdElement().getIdPart();
     }
+
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
         var resp = fhirContextWrapper.toListOfResources(bundle);
         

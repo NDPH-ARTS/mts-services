@@ -73,23 +73,6 @@ class HapiFhirRepositoryTests {
         var type = value.getType();
         assertThat(type, equalTo(Bundle.BundleType.TRANSACTION));
     }
-
-    @Test
-    void TestHapiRepository_WhenSaveSite_ReturnsCorrectId(){
-        // Arrange
-        var responseBundle = new Bundle();
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
-        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Organization()));
-        var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
-        var organization = new Organization();
-        organization.setId("123");
-        
-        // Act
-        var value = fhirRepository.saveOrganization(organization);
-
-        // Assert
-        assertThat(value, equalTo("123"));
-    }
     
     @Test
     void TestHapiRepository_WhenContextWrapperThrowsExpected_ThrowsRestException(){
