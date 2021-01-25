@@ -2,18 +2,13 @@ package uk.ac.ox.ndph.mts.trial_config_service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import uk.ac.ox.ndph.mts.trial_config_service.config.GitRepo;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Role;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.model.TrialSite;
@@ -24,7 +19,6 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrialConfigControllerTest {
@@ -36,8 +30,7 @@ class TrialConfigControllerTest {
 
     @Mock
     private TrialConfigService trialConfigService;
-    @Mock
-    private GitRepo gitRepo;
+
     @BeforeAll
     static void setUp() throws IOException {
         mockBackEnd = new MockWebServer();
@@ -51,41 +44,6 @@ class TrialConfigControllerTest {
     @AfterAll
     static void tearDown() throws IOException {
         mockBackEnd.shutdown();
-    }
-
-    @Test
-    void createTrialFromGitRepo() {
-        trialConfigController = new TrialConfigController(trialConfigService, null, gitRepo);
-        byte[] trialBytes = getTrialBytes();
-        when(gitRepo.getTrialFile(any())).thenReturn(trialBytes);
-        assertEquals(mockedTrial().getTrialName(), trialConfigController.createTrialFromGitRepo("any").getTrialName());
-    }
-
-    @Test
-    void createTrialFromJsonData() {
-        trialConfigController = new TrialConfigController(trialConfigService, "url");
-        String jsonData = getTrialAsJsonData();
-        assertEquals(mockedTrial().getTrialName(), trialConfigController.createTrialFromJsonData(jsonData).getTrialName());
-    }
-
-    @Test
-    void createTrialFromJsonFile() throws Exception {
-        String baseUrl = String.format("http://localhost:%s",
-            mockBackEnd.getPort());
-        trialConfigController = new TrialConfigController(trialConfigService, baseUrl);
-
-        Trial mockTrial = mockedTrial();
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(objectMapper.writeValueAsString(mockTrial))
-                .addHeader("Content-Type", "application/json"));
-        Mono<Trial> mockResponseTrial = trialConfigController.createTrialFromURL(TEST_CONFIG_ENDPOINT);
-
-        StepVerifier.create(mockResponseTrial)
-                .expectNextMatches(trial -> trial.getId().equals(mockTrial.getId()) &&
-                        trial.getTrialName().equals(mockTrial.getTrialName()) &&
-                        trial.getTrialSites().get(0).getSiteType().equals(mockTrial.getTrialSites().get(0).getSiteType()))
-                .verifyComplete();
-
     }
 
     private byte[] getTrialBytes() {
