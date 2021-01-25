@@ -35,15 +35,13 @@ public class HapiFhirRepository implements FhirRepository {
      * @return id of the saved practitioner
      */
     public String savePractitioner(Practitioner practitioner) {
-        // Log the request
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_PRACTITIONER.message(),
-                fhirContextWrapper.prettyPrint(practitioner));
-        }
+        logger.info(String.format(
+                FhirRepo.SAVE_PRACTITIONER.message(),
+                fhirContextWrapper.prettyPrint(practitioner)));
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
+            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri,
                 bundle(practitioner, PRACTITIONER_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
@@ -51,21 +49,19 @@ public class HapiFhirRepository implements FhirRepository {
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
-        // Log the response
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_RESPONSE.message(),
-                    fhirContextWrapper.prettyPrint(responseElement));
-        }
+        logger.info(String.format(
+                FhirRepo.SAVE_RESPONSE.message(),
+                fhirContextWrapper.prettyPrint(responseElement)));
         return practitioner.getIdElement().getValue();
     }
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
         var resp = fhirContextWrapper.toListOfResources(bundle);
         
         if (resp.size() != 1) {
-            logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
+            logger.info(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
             throw new RestException(String.format(
-                FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
-
+                FhirRepo.BAD_RESPONSE_SIZE.message(),
+                resp.size()));
         }
         return resp.get(0);
     }

@@ -8,13 +8,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
@@ -36,7 +34,7 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -47,7 +45,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -58,7 +56,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -70,7 +68,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isBadGateway());
+                .andExpect(status().isBadGateway());
     }
 
     @Test
@@ -82,7 +80,7 @@ class PractitionerControllerTests {
         // Act + Assert
         String error = this.mockMvc
                 .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
+                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("prefix"));
     }
 }
