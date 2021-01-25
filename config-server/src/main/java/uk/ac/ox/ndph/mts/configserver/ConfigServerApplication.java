@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sc_config_server;
+package uk.ac.ox.ndph.mts.configserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 
 @EnableConfigServer
 @SpringBootApplication
-public class MtsSpringConfigServerApplication {
+public class ConfigServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MtsSpringConfigServerApplication.class, args);
+        SpringApplication.run(ConfigServerApplication.class, args);
     }
 
 }
