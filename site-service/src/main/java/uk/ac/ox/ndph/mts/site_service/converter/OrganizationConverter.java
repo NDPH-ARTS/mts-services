@@ -4,6 +4,7 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
+import uk.ac.ox.ndph.mts.site_service.helper.FHIRClientHelper;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 import java.util.Optional;
@@ -14,6 +15,8 @@ import java.util.UUID;
  */
 @Component
 public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir.r4.model.Organization> {
+
+    private FHIRClientHelper fhirClientHelper;
 
     /**
      * Convert a Site to an hl7 model Organization with a random UUID.
@@ -28,26 +31,43 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
 
         setParentOrganization(input, fhirOrganization);
 
-        String id = UUID.randomUUID().toString();
-        fhirOrganization.setId(id);
+        //String id = UUID.randomUUID().toString();
+
+        //Identifier identifier = new Identifier();
+        //identifier.setValue(id);
+        //fhirOrganization.addIdentifier(identifier);
+
+        //fhirOrganization.setId(id);
+        //fhirOrganization.addIdentifier().setSystem("http://localhost:8080").setValue(id);
+
         return fhirOrganization;
     }
 
     private void setParentOrganization(Site site, Organization fhirOrganization) {
         Optional<String> optParentSiteId = Optional.ofNullable(site.getParentSiteId());
         if (optParentSiteId.isPresent()) {
-            String parentSiteId = optParentSiteId.get();
+            try {
+                fhirClientHelper = new FHIRClientHelper("http://localhost:8080");
 
-            // Create Identifier
-            Identifier identifierParentOrg = new Identifier();
-            identifierParentOrg.setValue(parentSiteId);
+                String parentSiteId = optParentSiteId.get();
 
-            // Create Reference
-            Reference fhirReferenceOrg = new Reference();
-            fhirReferenceOrg.setIdentifier(identifierParentOrg);
+                Organization orgFound = fhirClientHelper.findOrganizationByID(parentSiteId);
 
-            // Set the Parent Organization
-            fhirOrganization.setPartOf(fhirReferenceOrg);
+                Reference fhirReferenceOrgFound = orgFound.getPartOf();
+
+                // Create Identifier
+                Identifier identifierParentOrg = new Identifier();
+                identifierParentOrg.setValue(parentSiteId);
+
+                // Create Reference
+                Reference fhirReferenceOrg = new Reference();
+                fhirReferenceOrg.setIdentifier(identifierParentOrg);
+
+                // Set the Parent Organization
+                fhirOrganization.setPartOf(fhirReferenceOrg);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
