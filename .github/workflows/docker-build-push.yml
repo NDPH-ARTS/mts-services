@@ -80,7 +80,6 @@ jobs:
           cd api-tests
           npm run api-test-ci
           cd .. && docker-compose down
-          hostname -i | awk '{print $3}'
       - name: Publish Test Report
         if: always()
         uses: scacap/action-surefire-report@v1
