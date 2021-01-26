@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PageableResult;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleDTO;
@@ -57,29 +59,27 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
     }
 
     private boolean isRole(final String roleId) {
-        try {
-            return roleId != null && getRoles().anyMatch(r -> r != null && r.getId() != null && r.getId().equals(roleId));
-        } catch (Exception ex) {
-            // log, throw, or just return false?
-            logger.warn("Web client exception looking up role ID: " + roleId + " in " + roleService, ex);
-            return false;   // fail safe
-        }
+        return roleId != null && getRoles().anyMatch(r -> r.getId().equals(roleId));
     }
 
     // dependency on RoleService
     // service discovery?
     private Stream<RoleDTO> getRoles() {
         return webClient.get()
-            .uri(UriComponentsBuilder.fromHttpUrl(this.roleService)
-                .path("/roles")
-                .queryParam("page", 0)
-                .queryParam("size", Integer.MAX_VALUE)
-                .build()
-                .toUri())
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono(new ParameterizedTypeReference<PageableResult<RoleDTO>>() {})
-                .blockOptional().orElseGet(PageableResult::empty).stream();
+                .uri(UriComponentsBuilder.fromHttpUrl(this.roleService)
+                        .path("/roles")
+                        .queryParam("page", 0)
+                        .queryParam("size", Integer.MAX_VALUE)
+                        .build()
+                        .toUri())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<PageableResult<RoleDTO>>() {})
+                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+                .blockOptional()
+                .orElseGet(PageableResult::empty)
+                .stream()
+                .filter(r -> r != null && r.getId() != null);
     }
 
 }

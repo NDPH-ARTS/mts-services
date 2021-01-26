@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -14,16 +14,18 @@ import java.util.stream.Stream;
  */
 public class PageableResult<T> implements Iterable<T> {
 
-    private final List<T> content;
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
-    private final PageableResultRequest request;
+    private final Collection<T> content;
+
+    private final PageableResultRequest pageable;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public PageableResult(@JsonProperty("content") final List<T> content, @JsonProperty("pageable") PageableResultRequest request) {
+    public PageableResult(@JsonProperty("content") final Collection<T> content, @JsonProperty("pageable") PageableResultRequest pageable) {
         Objects.requireNonNull(content, "content cannot be null");
-        Objects.requireNonNull(request, "request cannot be null");
+        Objects.requireNonNull(pageable, "pageable cannot be null");
         this.content = content;
-        this.request = request;
+        this.pageable = pageable;
     }
 
     @Override
@@ -31,20 +33,30 @@ public class PageableResult<T> implements Iterable<T> {
         return this.content.iterator();
     }
 
-    public List<T> getContent() {
-        return Collections.unmodifiableList(this.content);
+    @JsonProperty("content")
+    public Collection<T> getContent() {
+        return Collections.unmodifiableCollection(this.content);
     }
 
     public Stream<T> stream() {
         return this.content.stream();
     }
 
-    public PageableResultRequest geRequest() {
-        return this.request;
+    @JsonProperty("pageable")
+    public PageableResultRequest getPageable() {
+        return this.pageable;
     }
 
     public static <T> PageableResult<T> empty() {
-        return new PageableResult<>(Collections.emptyList(), new PageableResultRequest(0, 10));
+        return new PageableResult<>(Collections.emptyList(), new PageableResultRequest(0, DEFAULT_PAGE_SIZE));
+    }
+
+    public static <T> PageableResult<T> singleton(final T t) {
+        return new PageableResult<>(Collections.singletonList(t), new PageableResultRequest(0, DEFAULT_PAGE_SIZE));
+    }
+
+    public static <T> PageableResult<T> from(final Collection<T> t) {
+        return new PageableResult<>(t, new PageableResultRequest(0, t.size()));
     }
 
     public static final class PageableResultRequest {

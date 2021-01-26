@@ -1,5 +1,9 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,26 +11,39 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PageableResult;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleDTO;
+
+import java.util.Collections;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class RoleAssignmentValidationTests {
 
+    private WebClient webClient;
+
+    private MockWebServer mockBackEnd;
+
     private RoleAssignmentValidation validator;
 
-    private static final String ROLE_SERVICE_URLBASE = "http://localhost:82";
-
-    private WebClient webClient() {
-        return WebClient.create();
-    }
-
-    @BeforeEach void init() {
-        this.validator = new RoleAssignmentValidation(webClient(), ROLE_SERVICE_URLBASE);
+    @BeforeEach void initEach() throws Exception {
+        this.mockBackEnd = new MockWebServer();
+        this.mockBackEnd.start();
+        this.webClient = WebClient.create();
+        this.validator = new RoleAssignmentValidation(this.webClient, String.format("http://localhost:%s", mockBackEnd.getPort()));
     }
 
     @ParameterizedTest
@@ -49,25 +66,63 @@ class RoleAssignmentValidationTests {
         assertThat(result.getErrorMessage(), containsString(expectedField));
     }
 
+    private void queueRoleResponse(final String roleId) throws Exception {
+        final var roleObj = new RoleDTO();
+        roleObj.setId(roleId);
+        final var response =  PageableResult.singleton(roleObj);
+        mockBackEnd.enqueue(new MockResponse()
+                .setBody(new ObjectMapper().writeValueAsString(response))
+                .addHeader("Content-Type", "application/json"));
+    }
+
     @Test
-    void TestRoleAssignmentValidation_WhenValidPractitioner_ReturnsValidResponse() {
+    void TestRoleAssignmentValidation_WhenValidRole_ReturnsValidResponse() throws Exception {
+        /*
+        RoleDTO testRole = new RoleDTO();
+        testRole.setId("test role");
+
+
+        mockBackEnd.enqueue(new MockResponse()
+                .setBody(new ObjectMapper().writeValueAsString(testRole))
+                .addHeader("Content-Type", "application/json"));
+
+        RoleDTO returnedRole = trialConfigService.sendToRoleService(testRole);
+
+        assertNotNull(returnedRole);*/
         // Arrange
-        final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", "testRoleId");
+        final var roleId = "testRoleId";
+        queueRoleResponse(roleId);
+        final var roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
-        var result = validator.validate(roleAssignment);
+        final var result = validator.validate(roleAssignment);
         // Assert
         assertThat(result.isValid(), is(true));
     }
 
     @Test
-    void TestRoleAssignmentValidation_WhenInvalidRoler_ThrowsValidationException() {
+    void TestRoleAssignmentValidation_WhenInvalidRole_ReturnsInvalidResponse() throws Exception {
         // Arrange
-        final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", "missingRoleId");
+        var roleId = "missingRoleId";
+        queueRoleResponse("not" + roleId);
+        final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         var result = validator.validate(roleAssignment);
         // Assert
         assertThat(result.isValid(), is(false));
         assertThat(result.getErrorMessage(), containsString("roleId"));
+    }
+
+    @Test
+    void TestRoleAssignmentValidation_WhenServiceFails_ThrowsException() {
+        // Arrange
+        var roleId = "testRoleId";
+        mockBackEnd.enqueue(new MockResponse()
+                .setResponseCode(500));
+        final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
+        // Act
+        // Assert
+        assertThrows(RestException.class, () -> validator.validate(roleAssignment));
+
     }
 
 }
