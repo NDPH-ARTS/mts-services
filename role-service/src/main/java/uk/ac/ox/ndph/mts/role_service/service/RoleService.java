@@ -40,7 +40,7 @@ public class RoleService {
 
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (roleOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role '" + roleId + "' not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(ResponseMessages.ROLE_NOT_FOUND.message(), roleId));
         }
         validatePermissions(newPermissions);
 
@@ -50,15 +50,14 @@ public class RoleService {
     }
 
 
-    private void validatePermissions(List<Permission> newPermissions){
+    private void validatePermissions(List<Permission> newPermissions) throws ResponseStatusException {
         if (newPermissions == null){
             return;
         }
         for (Permission newPermission : newPermissions) {
             if (!permissionRepository.existsById(newPermission.getId())) {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Permission '"+newPermission.getId()+ "' is unknown.");
+                        HttpStatus.BAD_REQUEST, String.format(ResponseMessages.PERMISSION_NOT_FOUND.message(), newPermission.getId()));
             }
         }
     }
