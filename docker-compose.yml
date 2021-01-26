@@ -122,4 +122,3 @@ services:
       depends_on:
         - practitioner-service
         - role-service
-        - site-service
