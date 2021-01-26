@@ -106,7 +106,7 @@ services:
     ports:
       - "1434:1433"
 
-init-service:
+  init-service:
       build:
         context: .
         dockerfile: init-service/Dockerfile
