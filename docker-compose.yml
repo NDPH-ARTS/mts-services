@@ -105,3 +105,21 @@ services:
         retries: 6
     ports:
       - "1434:1433"
+
+init-orchestrator-console:
+      build:
+        context: .
+        dockerfile: init-orchestrator-console/Dockerfile
+        args:
+          SVC: init-orchestrator-console
+      image: ghcr.io/ndph-arts/init-orchestrator-console:${GITHUB_SHA}
+      restart: on-failure
+      environment:
+        ROLE_SERVICE: "http://role-service:82"
+        SITE_SERVICE: "http://site-service:83"
+        PRACTITIONER_SERVICE: "http://practitioner-service:80"
+        CONFIG_JSON: config-init.json
+      depends_on:
+        - practitioner-service
+        - role-service
+        - site-service
