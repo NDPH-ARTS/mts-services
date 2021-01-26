@@ -14,18 +14,15 @@ COPY ./role-service/pom.xml ./role-service/pom.xml
 
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
-ENV SPRING_CLOUD_CONFIG_ENABLED=false
 
 RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
 
 FROM scratch AS export
 ARG SVC
-ENV SPRING_CLOUD_CONFIG_ENABLED=false
 COPY --from=builder ${SVC}/target/surefire-reports/TEST*.xml ./
 
 FROM openjdk:11.0.9.1-jre-buster
 ARG SVC
-ENV SPRING_CLOUD_CONFIG_ENABLED=false
 ARG JAR_FILE=${SVC}/target/*.jar
 COPY --from=builder ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]

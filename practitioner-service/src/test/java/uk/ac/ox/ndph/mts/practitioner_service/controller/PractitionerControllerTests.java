@@ -27,19 +27,10 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerAttributeConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
-//@ActiveProfiles("test")
-@SpringBootTest(properties = "spring.cloud.config.enabled=false" )
+@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+@ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
-
-    @MockBean
-    private PractitionerConfigurationProvider configurationProvider;
-
-    private static List<PractitionerAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
-        new PractitionerAttributeConfiguration("givenName", "Given Name", "^[a-zA-Z]{1,35}$"),
-        new PractitionerAttributeConfiguration("familyName", "Family Name", "^[a-zA-Z]{1,35}$"),
-        new PractitionerAttributeConfiguration("prefix", "Prefix", "^[a-zA-Z]{1,35}$"));
-
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,8 +41,6 @@ class PractitionerControllerTests {
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
-        when(configurationProvider.getConfiguration()).thenReturn(new PractitionerConfiguration("person",
-            "Practitioner", ALL_REQUIRED_UNDER_35_MAP));
 
         this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
