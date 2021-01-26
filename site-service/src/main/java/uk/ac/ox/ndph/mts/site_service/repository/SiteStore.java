@@ -40,12 +40,15 @@ public class SiteStore implements EntityStore<Site> {
     @Override
     public String saveEntity(Site entity) {
 
+        // TODO: Check if the Organization already exists.
+
+
         Organization org = converter.convert(entity);
         String orgId = repository.saveOrganization(org);
         org.setId(orgId);
         logger.info(FhirRepo.SAVE_REQUEST.message(), orgId);
 
-        // TODO: Check if the Organization already exists.
+
 
 
         // TODO: Add research study only when needed.

@@ -39,25 +39,25 @@ class SiteControllerTests {
     }
 
     @Test
-    void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
+    void TestPostSite_WhenValidInput_Returns200AndId() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("123")));
     }
 
     @Test
-    void TestPostSite_WhenPartialInput_Returns201AndId() throws Exception {
+    void TestPostSite_WhenPartialInput_Returns200AndId() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("123")));
     }
 
     @Test
