@@ -1,23 +1,26 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-/**
- * response from validation
- */
-@Component
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class ValidationResponse {
-    private boolean isValid;
-    private String errorMessage;
+
+    private final boolean isValid;
+    private final String errorMessage;
+
+    public ValidationResponse(final boolean isValid, final String errorMessage) {
+        this.isValid = isValid;
+        this.errorMessage = errorMessage;
+    }
+
+    @Override
+    public String toString() {
+        // TODO(archiem) throwing exception to find out where this is used (part of Lombok-removal)
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 }
