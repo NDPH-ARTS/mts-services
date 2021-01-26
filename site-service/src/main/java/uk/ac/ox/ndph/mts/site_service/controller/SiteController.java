@@ -13,11 +13,10 @@ import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 /**
  * Controller for site endpoint of site-service
  */
-@RestController
+@RestController()
 public class SiteController {
 
     private static final String ENDPOINT_PATH = "/sites";
-    private static final String APPLICATION_JSON = "application/json";
 
     private final SiteService siteService;
 
@@ -35,7 +34,7 @@ public class SiteController {
      * @param site
      * @return ResponseEntity
      */
-    @PostMapping(path = ENDPOINT_PATH, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+    @PostMapping(path = ENDPOINT_PATH)
     public ResponseEntity<Response> site(@RequestBody Site site) {
         String siteId = siteService.save(site);
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
