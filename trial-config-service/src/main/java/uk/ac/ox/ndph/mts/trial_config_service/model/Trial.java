@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
+import javax.persistence.Transient;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,8 +41,9 @@ public class Trial implements Serializable {
     @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
     private List<TrialSite> trialSites;
 
-    @OneToMany(mappedBy = "trial", cascade = CascadeType.ALL)
-    private List<Role> roles;
+
+    @Transient
+    private List<RoleDTO> roles;
 
     @Column
     @CreatedDate
@@ -50,11 +53,11 @@ public class Trial implements Serializable {
     @CreatedBy
     private String modifiedBy;
 
-    public List<Role> getRoles() {
+    public List<RoleDTO> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(List<RoleDTO> roles) {
         this.roles = roles;
     }
 
