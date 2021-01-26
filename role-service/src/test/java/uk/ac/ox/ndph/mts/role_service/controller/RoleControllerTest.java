@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @WebMvcTest(RoleController.class)
 class RoleControllerTest {
 
-
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -43,10 +42,8 @@ class RoleControllerTest {
     @MockBean
     private ModelMapper modelMapper;
 
-
     @Test
-    void givenValidRole_whenPost_thenReturnJson()
-            throws Exception {
+    void givenValidRole_whenPost_thenReturnJson() throws Exception {
 
         String dummyName = "Dummy role name";
         RoleDTO role = new RoleDTO();
@@ -54,28 +51,20 @@ class RoleControllerTest {
 
         String jsonRole = jsonMapper.writeValueAsString(role);
 
-        mvc.perform(post("/roles/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonRole)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk());
+        mvc.perform(post("/roles/").contentType(MediaType.APPLICATION_JSON).content(jsonRole)
+                .accept(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
 
     }
 
     @Test
-    void givenInvalidRole_whenPost_thenReturn400()
-            throws Exception {
+    void givenInvalidRole_whenPost_thenReturn400() throws Exception {
 
         RoleDTO role = new RoleDTO(); // no name
 
         String jsonRole = jsonMapper.writeValueAsString(role);
 
-        mvc.perform(post("/roles/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonRole)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is4xxClientError());
+        mvc.perform(post("/roles/").contentType(MediaType.APPLICATION_JSON).content(jsonRole)
+                .accept(MediaType.APPLICATION_JSON)).andExpect(status().is4xxClientError());
 
     }
 
@@ -93,12 +82,9 @@ class RoleControllerTest {
     }
 
     @Test
-    void whenGet_thenReceiveSuccess()
-            throws Exception {
+    void whenGet_thenReceiveSuccess() throws Exception {
 
         mvc.perform(get("/roles?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
-
-
 
 }

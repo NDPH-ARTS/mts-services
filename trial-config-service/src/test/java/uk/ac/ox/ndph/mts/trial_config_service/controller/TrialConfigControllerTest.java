@@ -66,29 +66,26 @@ class TrialConfigControllerTest {
     void createTrialFromJsonData() {
         trialConfigController = new TrialConfigController(trialConfigService, "url");
         String jsonData = getTrialAsJsonData();
-        assertEquals(mockedTrial().getTrialName(), trialConfigController.createTrialFromJsonData(jsonData).getTrialName());
+        assertEquals(mockedTrial().getTrialName(),
+                trialConfigController.createTrialFromJsonData(jsonData).getTrialName());
     }
 
     @Test
     void createTrialFromJsonFile() throws Exception {
-        String baseUrl = String.format("http://localhost:%s",
-            mockBackEnd.getPort());
+        String baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
         trialConfigController = new TrialConfigController(trialConfigService, baseUrl);
 
         Trial mockTrial = mockedTrial();
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(objectMapper.writeValueAsString(mockTrial))
+        mockBackEnd.enqueue(new MockResponse().setBody(objectMapper.writeValueAsString(mockTrial))
                 .addHeader("Content-Type", "application/json"));
         Mono<Trial> mockResponseTrial = trialConfigController.createTrialFromURL(TEST_CONFIG_ENDPOINT);
 
-        StepVerifier.create(mockResponseTrial)
-                .expectNextMatches(trial -> trial.getId().equals(mockTrial.getId()) &&
-                        trial.getTrialName().equals(mockTrial.getTrialName()) &&
-                        trial.getTrialSites().get(0).getSiteType().equals(mockTrial.getTrialSites().get(0).getSiteType()))
+        StepVerifier.create(mockResponseTrial).expectNextMatches(trial -> trial.getId().equals(mockTrial.getId())
+                && trial.getTrialName().equals(mockTrial.getTrialName())
+                && trial.getTrialSites().get(0).getSiteType().equals(mockTrial.getTrialSites().get(0).getSiteType()))
                 .verifyComplete();
 
     }
-
 
     private byte[] getTrialBytes() {
 
@@ -113,8 +110,6 @@ class TrialConfigControllerTest {
         return jsonTrial;
     }
 
-
-
     Trial mockedTrial() {
         Trial trial = new Trial();
         TrialSite trialSite = new TrialSite();
@@ -132,9 +127,7 @@ class TrialConfigControllerTest {
         trial.setModifiedBy("me");
         trial.setFhirOrganizationId("fhirID");
 
-
         return trial;
     }
-
 
 }
