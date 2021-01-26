@@ -21,7 +21,7 @@ public class SiteServiceImpl implements SiteService {
 
     private EntityStore<Site> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
-    private final Logger logger = LoggerFactory.getLogger(SiteService.class);
+    private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
      *

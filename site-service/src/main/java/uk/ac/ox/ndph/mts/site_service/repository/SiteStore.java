@@ -3,6 +3,8 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResearchStudy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
@@ -16,6 +18,7 @@ public class SiteStore implements EntityStore<Site> {
 
     private final FhirRepository repository;
     private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> converter;
+    private final Logger logger = LoggerFactory.getLogger(SiteStore.class);
 
     /**
      *
@@ -40,12 +43,14 @@ public class SiteStore implements EntityStore<Site> {
         Organization org = converter.convert(entity);
         String orgId = repository.saveOrganization(org);
         org.setId(orgId);
+        logger.info(FhirRepo.SAVE_REQUEST.message(), orgId);
 
         // TODO: Check if the Organization already exists.
 
 
         // TODO: Add research study only when needed.
         String researchStudyId = createResearchStudy(org);
+        logger.info(FhirRepo.SAVE_REQUEST.message(), researchStudyId);
 
         return orgId;
     }
