@@ -43,8 +43,10 @@ class SiteServiceImplTests {
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+
         //Act
-        siteService.save(siteWithParent);
+        String result = siteService.save(siteWithParent);
+        assertThat(result, equalTo("123"));
 
         //Assert
         Mockito.verify(siteValidation).validate(siteCaptor.capture());
@@ -61,8 +63,10 @@ class SiteServiceImplTests {
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+
         //Act
-        siteService.save(site);
+        String result = siteService.save(site);
+        assertThat(result, equalTo("123"));
 
         //Assert
         Mockito.verify(siteValidation).validate(siteCaptor.capture());
@@ -89,20 +93,7 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestSaveSite_WhenInvalidSite_ThrowsValidationException(){
-        // Arrange
-        String name = "name";
-        String alias = "alias";
-        Site site = new Site(name, alias);
-        var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(false, "name"));
-        //Act + Assert
-        Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
-                "Expecting save to throw validation exception");
-    }
-
-    @Test
-    void TestSaveSite_WhenInvalidSite_DoesntSavesToStore(){
+    void TestSaveSite_WhenInvalidSite_ThrowsValidationException_DoesntSavesToStore(){
         // Arrange
         String name = "name";
         String alias = "alias";
