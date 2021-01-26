@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.sample_service.controllers;
 
+import org.springframework.security.test.context.support.WithMockUser;
 import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ class MainControllerTests {
     @MockBean
     private ConfigService configService;
 
+    @WithMockUser(value = "testUser")
     @Test
     void TestGetSecret_WhenConfigServiceExists_CorrectValueReturned() throws Exception {
         // Arrange
@@ -41,4 +43,12 @@ class MainControllerTests {
                 .andExpect(content().string(containsString("123")));
     }
 
+    @Test
+    void TestHelloEndpont_WithUnauthenticatedUSer_UnauthorizedAccessReturned() throws Exception {
+
+        // Act + Assert
+        this.mockMvc.perform(get("/hello"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
 }
