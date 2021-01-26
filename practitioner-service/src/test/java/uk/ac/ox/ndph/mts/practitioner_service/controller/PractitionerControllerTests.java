@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,7 +23,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 
-@SpringBootTest(properties = { "spring.cloud.enabled=false", "server.error.include-message=always" })
+//@ActiveProfiles("test")
+@SpringBootTest(properties = "spring.cloud.config.enabled=false" )
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
     @Autowired
