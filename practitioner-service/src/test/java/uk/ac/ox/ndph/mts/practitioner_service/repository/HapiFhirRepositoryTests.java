@@ -19,6 +19,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.slf4j.Logger;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,12 +31,14 @@ class HapiFhirRepositoryTests {
     @Captor
     private ArgumentCaptor<Bundle> bundleCaptor;
 
+    @Mock
+    Logger SILENT_LOGGER;
+
     @Test
-    void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTrasactionType()
-    {
+    void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTrasactionType() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
+        when(fhirContextWrapper.executeTransaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
         when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var practitioner = new Practitioner();
@@ -44,17 +47,17 @@ class HapiFhirRepositoryTests {
         fhirRepository.savePractitioner(practitioner);
 
         // Assert
-        verify(fhirContextWrapper).executeTrasaction(anyString(), bundleCaptor.capture());
+        verify(fhirContextWrapper).executeTransaction(anyString(), bundleCaptor.capture());
         var value = bundleCaptor.getValue();
         var type = value.getType();
         assertThat(type, equalTo(Bundle.BundleType.TRANSACTION));
     }
 
     @Test
-    void TestHapiRepository_WhenSavePractitioner_ReturnsCorrectId(){
+    void TestHapiRepository_WhenSavePractitioner_ReturnsCorrectId() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
+        when(fhirContextWrapper.executeTransaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
         when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var practitioner = new Practitioner();
@@ -68,9 +71,12 @@ class HapiFhirRepositoryTests {
     }
     
     @Test
-    void TestHapiRepository_WhenContextWrapperThrowsExpected_ThrowsRestException(){
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenThrow(new ResourceNotFoundException("error"));
+    void TestHapiRepository_WhenContextWrapperThrowsException_ThrowsRestException() throws FhirServerResponseException {
+        // Arrange
+        FhirServerResponseException exception = new FhirServerResponseException("message", new ResourceNotFoundException("error"));
+        when(fhirContextWrapper.executeTransaction(anyString(), any(Bundle.class))).thenThrow(exception);
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
+        fhirRepository.setLogger(SILENT_LOGGER);
         var practitioner = new Practitioner();
         
         // Act + Assert
@@ -78,10 +84,10 @@ class HapiFhirRepositoryTests {
     }
     
     @Test
-    void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException(){
+    void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
+        when(fhirContextWrapper.executeTransaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
         when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner(), new Practitioner()));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var practitioner = new Practitioner();
@@ -91,9 +97,9 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException(){
+    void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException() throws FhirServerResponseException {
         // Arrange
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(null);
+        when(fhirContextWrapper.executeTransaction(anyString(), any(Bundle.class))).thenReturn(null);
 
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var practitioner = new Practitioner();

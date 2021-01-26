@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 /**
@@ -21,7 +20,7 @@ public class HapiFhirRepository implements FhirRepository {
     private static final String PRACTITIONER_ENTITY_NAME = "Practitioner";
 
     private final FhirContextWrapper fhirContextWrapper;
-    private final Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
+    private Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
 
     @Value("${fhir.uri}")
     private String fhirUri = "";
@@ -41,11 +40,11 @@ public class HapiFhirRepository implements FhirRepository {
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri,
+            responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                 bundle(practitioner, PRACTITIONER_ENTITY_NAME));
-        } catch (BaseServerResponseException e) {
+        } catch (FhirServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(e.getMessage(), e);
+            throw new RestException("Failed to save practitioner", e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
@@ -74,5 +73,9 @@ public class HapiFhirRepository implements FhirRepository {
         bundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource).getRequest()
                 .setUrl(resourceName).setMethod(Bundle.HTTPVerb.POST);
         return bundle;
+    }
+
+    public void setLogger(final Logger logger) {
+        this.logger = logger;
     }
 }
