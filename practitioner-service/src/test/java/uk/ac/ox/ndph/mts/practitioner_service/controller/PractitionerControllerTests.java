@@ -22,7 +22,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 
-@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always" })
+@SpringBootTest(properties = { "spring.cloud.enabled=false", "server.error.include-message=always" })
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
     @Autowired
