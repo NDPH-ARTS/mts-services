@@ -6,7 +6,7 @@ on:
       - '**.md'
   push:
     # ONLY main branch should be listed below!
-    branches: [ main ]
+    branches: [ ci-test ]
   # schedule only runs on the main branch
   schedule:
     # * is a special character in YAML so you have to quote this string
@@ -54,10 +54,10 @@ jobs:
           docker push $TAG
       - name: Publish named image
         # The way to run this only on "merge" to main branch is to catch the "push" event into it (and schedule).
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push')
+        if: github.ref == 'refs/heads/ci-test' && (github.event_name == 'schedule' || github.event_name == 'push')
         env:
           # We use 2 tags: main-latest (every PR merge to main) and main-nightly (main branch images every night)
-          TAG: ${{ github.event_name == 'schedule' && 'main-nightly' || 'main-latest' }}
+          TAG: ${{ github.event_name == 'schedule' && 'ci-test-nightly' || 'ci-test-latest' }}
         run: |
           set -o errexit
           set -o nounset
