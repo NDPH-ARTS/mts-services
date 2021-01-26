@@ -6,7 +6,6 @@ COPY ./build-tools ./build-tools
 COPY ./pom.xml pom.xml
 
 # copy poms of ALL services
-COPY ./role-service/pom.xml ./role-service/pom.xml
 COPY ./trial-config-service/pom.xml ./trial-config-service/pom.xml
 COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
@@ -19,7 +18,7 @@ RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
 
 FROM scratch AS export
 ARG SVC
-COPY --from=builder ${SVC}/target/surefire-reports/*.xml ./
+COPY --from=builder ${SVC}/target/surefire-reports/TEST*.xml ./
 
 FROM openjdk:11.0.9.1-jre-buster
 ARG SVC
@@ -27,3 +26,5 @@ ARG JAR_FILE=${SVC}/target/*.jar
 COPY --from=builder ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 EXPOSE 8080:80
+
+
