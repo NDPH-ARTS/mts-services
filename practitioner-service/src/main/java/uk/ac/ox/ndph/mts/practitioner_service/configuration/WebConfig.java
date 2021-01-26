@@ -12,27 +12,10 @@ import uk.ac.ox.ndph.mts.practitioner_service.validation.RoleAssignmentValidatio
 @Configuration
 public class WebConfig {
 
-    private final Logger log = LoggerFactory.getLogger(WebConfig.class);
-
-    private static ExchangeFilterFunction logRequest(final Logger logger) {
-        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-            if (logger.isDebugEnabled()) {
-                final StringBuilder sb = new StringBuilder("Request: \n");
-                //append clientRequest method and url
-                clientRequest
-                    .headers()
-                    .forEach((name, values) -> values.forEach(value -> sb.append(name).append("=").append("value")));
-                logger.debug(sb.toString());
-            }
-            return Mono.just(clientRequest);
-        });
-    }
-
     @Bean
     public WebClient webClient() {
         return WebClient
             .builder()
-            //.filters(exchangeFilterFunctions -> exchangeFilterFunctions.add(logRequest(log)))
             .build();
     }
 

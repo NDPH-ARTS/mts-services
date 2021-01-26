@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
@@ -53,11 +52,22 @@ class RoleAssignmentValidationTests {
     @Test
     void TestRoleAssignmentValidation_WhenValidPractitioner_ReturnsValidResponse() {
         // Arrange
-        final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
+        final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", "testRoleId");
         // Act
         var result = validator.validate(roleAssignment);
         // Assert
         assertThat(result.isValid(), is(true));
+    }
+
+    @Test
+    void TestRoleAssignmentValidation_WhenInvalidRoler_ThrowsValidationException() {
+        // Arrange
+        final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", "missingRoleId");
+        // Act
+        var result = validator.validate(roleAssignment);
+        // Assert
+        assertThat(result.isValid(), is(false));
+        assertThat(result.getErrorMessage(), containsString("roleId"));
     }
 
 }

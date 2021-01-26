@@ -4,15 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Flux;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PageableResult;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
+
+import java.util.stream.Stream;
 
 /**
  * Implements a ModelEntityValidation for RoleAssignment
@@ -56,10 +58,7 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
 
     private boolean isRole(final String roleId) {
         try {
-            return roleId != null && getRoles().any(r -> {
-                logger.info("Checking role: " + r);
-                return r != null && r.getId() != null && r.getId().equals(roleId);
-            }).block();
+            return roleId != null && getRoles().anyMatch(r -> r != null && r.getId() != null && r.getId().equals(roleId));
         } catch (Exception ex) {
             // log, throw, or just return false?
             logger.warn("Web client exception looking up role ID: " + roleId + " in " + roleService, ex);
@@ -69,20 +68,7 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
 
     // dependency on RoleService
     // service discovery?
-    private Flux<RoleDTO> getRoles() {
-        // debug
-        final String body = webClient.get()
-            .uri(UriComponentsBuilder.fromHttpUrl(this.roleService)
-                .path("/roles")
-                .queryParam("page", 0)
-                .queryParam("size", Integer.MAX_VALUE)
-                .build()
-                .toUri())
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono(String.class).block();
-        logger.info("Got body: " + body);
-
+    private Stream<RoleDTO> getRoles() {
         return webClient.get()
             .uri(UriComponentsBuilder.fromHttpUrl(this.roleService)
                 .path("/roles")
@@ -92,7 +78,8 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
                 .toUri())
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToFlux(RoleDTO.class);
+            .bodyToMono(new ParameterizedTypeReference<PageableResult<RoleDTO>>() {})
+                .blockOptional().orElseGet(PageableResult::empty).stream();
     }
 
 }
