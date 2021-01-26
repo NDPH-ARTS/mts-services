@@ -11,20 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
+import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.PermissionRepository;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
-import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.logging.Logger;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(RoleController.class)
@@ -58,6 +54,10 @@ class RoleControllerTest {
     private ModelMapper modelMapper;
 
 
+    private String URI_ROLES="/roles";
+    private String URI_ROLE="/roles/%s";
+    private String URI_PERMISSIONS_FOR_ROLE="/roles/%s/permissions";
+
     @Test
     void whenPostValidRole_thenReturnSuccess()
             throws Exception {
@@ -68,7 +68,7 @@ class RoleControllerTest {
 
         String jsonRole = jsonMapper.writeValueAsString(role);
 
-        mvc.perform(post("/roles/")
+        mvc.perform(post(URI_ROLES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonRole)
                 .accept(MediaType.APPLICATION_JSON))
@@ -85,7 +85,7 @@ class RoleControllerTest {
 
         String jsonRole = jsonMapper.writeValueAsString(role);
 
-        mvc.perform(post("/roles/")
+        mvc.perform(post(URI_ROLES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonRole)
                 .accept(MediaType.APPLICATION_JSON))
@@ -114,7 +114,7 @@ class RoleControllerTest {
     void whenGetRolesPaged_thenReceiveSuccess()
             throws Exception {
 
-        mvc.perform(get("/roles?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
+        mvc.perform(get(URI_ROLES + "?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
 
 
@@ -127,7 +127,7 @@ class RoleControllerTest {
         dummyRole.setId(dummyId);
 
         when(roleRepo.findById(dummyId)).thenReturn(Optional.of(dummyRole));
-        mvc.perform(get("/roles/"+dummyId))
+        mvc.perform(get(String.format(URI_ROLE, dummyId)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(dummyId)));
@@ -137,7 +137,7 @@ class RoleControllerTest {
     void whenGetNonExistentRole_thenReceive404()
             throws Exception {
 
-        mvc.perform(get("/roles/nonexistentrole"))
+        mvc.perform(get(String.format(URI_ROLE, "/nonexistentrole")))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
 
@@ -156,7 +156,7 @@ class RoleControllerTest {
         dummyRole.setPermissions(Collections.singletonList(dummyPermission));
 
         when(roleRepo.findById(dummyRoleId)).thenReturn(Optional.of(dummyRole));
-        mvc.perform(get("/roles/"+dummyRoleId))
+        mvc.perform(get(String.format(URI_ROLE, dummyRoleId)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(dummyRoleId)))
@@ -175,7 +175,8 @@ class RoleControllerTest {
         permDTO.setId(dummyPermissionId);
         String jsonPermDTO = jsonMapper.writeValueAsString(Collections.singletonList(permDTO));
 
-        mvc.perform(post("/roles/"+dummyRoleId+"/permissions")
+        String uri = String.format(URI_PERMISSIONS_FOR_ROLE,dummyRoleId);
+        mvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonPermDTO)
                 .accept(MediaType.APPLICATION_JSON))

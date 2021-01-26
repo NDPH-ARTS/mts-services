@@ -30,6 +30,8 @@ class PermissionControllerTest {
     @MockBean
     private PermissionRepository permissionRepo;
 
+    private String URI_PERMISSIONS = "/permissions";
+
     @Test
     void whenGetPaged_thenReceiveSuccess()
             throws Exception {
@@ -38,7 +40,7 @@ class PermissionControllerTest {
         dummyPermission.setId(dummyId);
 
         when(permissionRepo.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl(Collections.singletonList(dummyPermission)));
-        mvc.perform(get("/permissions?page=0&size=10"))
+        mvc.perform(get(URI_PERMISSIONS + "?page=0&size=10"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(dummyId)));
