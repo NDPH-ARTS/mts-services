@@ -22,8 +22,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 
 @ExtendWith(MockitoExtension.class)
-//@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always" })
-@SpringBootTest(properties = { "server.error.include-message=always" })
 class PractitionerServiceTests {
 
     @Mock
