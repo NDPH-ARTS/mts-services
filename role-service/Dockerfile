@@ -14,7 +14,7 @@ COPY ./sample-service/pom.xml ./sample-service/pom.xml
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
 
-RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
+RUN mvn package --batch-mode -q --projects ${SVC}
 
 FROM scratch AS export
 ARG SVC

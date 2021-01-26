@@ -8,22 +8,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build services
-    strategy:
-      matrix:
-        service_name: ["practitioner-service", "trial-config-service", "role-service" ]
-    env:
-      GHCR: ghcr.io/ndph-arts
-    runs-on: ubuntu-latest
+  # build:
+    # name: Build services
+    # strategy:
+    #   matrix:
+    #     service_name: ["practitioner-service", "trial-config-service", "role-service" ]
+    # env:
+    #   GHCR: ghcr.io/ndph-arts
+    # runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build & test
-        run: |
-          export DOCKER_BUILDKIT=1
-          docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output ${{matrix.service_name}}-out -f "${{ matrix.service_name }}"/Dockerfile .
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v2
+    #   - name: Build & test
+    #     run: |
+    #       export DOCKER_BUILDKIT=1
+    #       docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -37,8 +37,15 @@ jobs:
         timeout-minutes: 5
         run: |
           export SAPASSWORD=$(openssl rand -base64 12)
-          export BASE_URL=localhost
+          export BASE_URL=http://localhost
           ./.ci/docker/check-docker-compose-services.sh
           cd api-tests
           npm run api-test-ci
           cd .. && docker-compose down
+          hostname -i | awk '{print $3}'
+      - name: Publish Test Report
+        if: always()
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: 'api-tests/api-test-results.xml'
