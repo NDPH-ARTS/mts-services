@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * AAD AuthenticationEntryPoint to set necessary response headers and content-type
+ * AAD AuthenticationEntryPoint is used to set necessary response headers and content
  * on the response before sending it back to the client.
  */
 @ControllerAdvice

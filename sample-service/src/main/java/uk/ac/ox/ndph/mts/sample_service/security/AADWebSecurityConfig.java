@@ -23,10 +23,17 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AADAppRoleStatelessAuthenticationFilter aadAuthFilter;
 
+    /**
+     * Http security configuration
+     * @param http - http security
+     * @throws Exception - general exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // disable csrf because we are using another token mechanism
         http.csrf().disable();
 
+        // Do not create user sessions
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
         // This requires all requests to have a valid token
