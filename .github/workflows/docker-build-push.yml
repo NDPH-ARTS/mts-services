@@ -66,7 +66,7 @@ jobs:
           TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
 
           # assume the step before created the image with the sha tag
-          docker tag $FROM_TAG -t $TO_TAG
+          docker tag $FROM_TAG $TO_TAG
           docker push $TO_TAG
 
   test:
