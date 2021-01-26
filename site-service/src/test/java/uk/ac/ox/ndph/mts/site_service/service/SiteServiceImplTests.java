@@ -55,26 +55,6 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestSaveSite_WithSite_ValidatesSite() {
-        // Arrange
-        String name = "name";
-        String alias = "alias";
-        Site site = new Site(name, alias);
-        var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
-        when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
-
-        //Act
-        String result = siteService.save(site);
-        assertThat(result, equalTo("123"));
-
-        //Assert
-        Mockito.verify(siteValidation).validate(siteCaptor.capture());
-        var value = siteCaptor.getValue();
-        assertThat(site, equalTo(value));
-    }
-
-    @Test
     void TestSaveSite_WhenValidSite_SavesToStore(){
         // Arrange
         String name = "name";
