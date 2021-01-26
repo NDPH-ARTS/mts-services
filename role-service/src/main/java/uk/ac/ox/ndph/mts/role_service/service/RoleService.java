@@ -40,7 +40,8 @@ public class RoleService {
 
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (roleOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(ResponseMessages.ROLE_NOT_FOUND.message(), roleId));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    String.format(ResponseMessages.ROLE_NOT_FOUND.message(), roleId));
         }
         validatePermissions(newPermissions);
 
@@ -51,13 +52,14 @@ public class RoleService {
 
 
     private void validatePermissions(List<Permission> newPermissions) throws ResponseStatusException {
-        if (newPermissions == null){
+        if (newPermissions == null) {
             return;
         }
         for (Permission newPermission : newPermissions) {
             if (!permissionRepository.existsById(newPermission.getId())) {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, String.format(ResponseMessages.PERMISSION_NOT_FOUND.message(), newPermission.getId()));
+                        HttpStatus.BAD_REQUEST,
+                        String.format(ResponseMessages.PERMISSION_NOT_FOUND.message(), newPermission.getId()));
             }
         }
     }

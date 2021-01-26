@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.PermissionRepository;
@@ -22,6 +23,7 @@ import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(RoleController.class)
@@ -113,6 +116,7 @@ class RoleControllerTest {
 
         mvc.perform(get("/roles?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
+
 
     @Test
     void whenGetOneRole_thenReceiveSuccess()
