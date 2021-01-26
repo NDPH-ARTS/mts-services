@@ -69,17 +69,17 @@ jobs:
           docker tag $FROM_TAG -t $TO_TAG
           docker push $TO_TAG
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build images
-        run: |
-          docker-compose build
-      - name: Start services using Docker Compose
-        timeout-minutes: 2
-        run: |
-          export SAPASSWORD=$(openssl rand -base64 12)
-          ./.ci/docker/check-docker-compose-services.sh
+#  test:
+#    name: Test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Build images
+#        run: |
+#          docker-compose build
+#      - name: Start services using Docker Compose
+#        timeout-minutes: 2
+#        run: |
+#          export SAPASSWORD=$(openssl rand -base64 12)
+#          ./.ci/docker/check-docker-compose-services.sh
