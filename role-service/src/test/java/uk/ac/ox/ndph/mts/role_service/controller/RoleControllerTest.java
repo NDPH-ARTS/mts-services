@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -93,12 +94,16 @@ class RoleControllerTest {
     void whenConvertRoleDtoToEntity_thenSameData() {
 
         RoleDTO roleDTO = new RoleDTO();
-        roleDTO.setId("test");
+        roleDTO.setId("role-test-id");
+        PermissionDTO permissionDTO = new PermissionDTO();
+        permissionDTO.setId("perm-test-id");
+        roleDTO.setPermissions(Collections.singletonList(permissionDTO));
 
         RoleController c = new RoleController(roleRepo, roleService, new ModelMapper());
         Role roleEntity = c.convertDtoToEntity(roleDTO, Role.class);
 
         assertEquals(roleEntity.getId(), roleDTO.getId());
+        assertTrue(roleEntity.getPermissions().stream().anyMatch(perm->perm.getId().equals(permissionDTO.getId())));
 
     }
 

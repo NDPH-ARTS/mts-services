@@ -24,11 +24,14 @@ public class RoleService {
         this.permissionRepository = permissionRepository;
     }
 
-    public Role saveRole(Role role) throws DuplicateRoleException {
+    public Role createRoleWithPermissions(Role role) throws DuplicateRoleException {
 
         if (roleRepository.existsById(role.getId())) {
             throw new DuplicateRoleException();
         }
+
+        validatePermissions(role.getPermissions());
+
         return roleRepository.save(role);
     }
 
@@ -37,20 +40,27 @@ public class RoleService {
 
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (roleOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role \"" + roleId + "\" not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role '" + roleId + "' not found.");
         }
-
-        for (Permission newPermission : newPermissions) {
-            if (!permissionRepository.existsById(newPermission.getId())) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Cannot update role \"" + roleId + " because permission \" to permission \" is unknown.");
-            }
-        }
+        validatePermissions(newPermissions);
 
         Role role = roleOptional.get();
         role.setPermissions(newPermissions);
         return roleRepository.save(role);
+    }
+
+
+    private void validatePermissions(List<Permission> newPermissions){
+        if (newPermissions == null){
+            return;
+        }
+        for (Permission newPermission : newPermissions) {
+            if (!permissionRepository.existsById(newPermission.getId())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Permission '"+newPermission.getId()+ "' is unknown.");
+            }
+        }
     }
 
 }

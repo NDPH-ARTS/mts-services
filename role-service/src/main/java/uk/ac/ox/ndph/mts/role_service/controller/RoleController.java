@@ -62,7 +62,7 @@ public class RoleController {
     public Role createRole(@Valid @RequestBody RoleDTO roleDto) {
 
         Role roleEntity = convertDtoToEntity(roleDto, Role.class);
-        return roleService.saveRole(roleEntity);
+        return roleService.createRoleWithPermissions(roleEntity);
     }
 
     @PostMapping("/{id}/permissions")

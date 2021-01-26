@@ -33,24 +33,51 @@ class RoleServiceTest {
 
 
     @Test
-    void whenAttemptToSaveDuplicateRole_thenAppropriateErrorThrown() {
+    void whenAttemptToCreateDuplicateRole_thenDuplicateRoleExceptionThrown() {
         String duplicateRoleName = "foo";
         when(roleRepository.existsById(duplicateRoleName)).thenReturn(true);
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
         Role r = new Role();
         r.setId(duplicateRoleName);
-        assertThrows(DuplicateRoleException.class, () -> roleService.saveRole(r));
+        assertThrows(DuplicateRoleException.class, () -> roleService.createRoleWithPermissions(r));
     }
 
     @Test
-    void whenSaveNewRole_thenSuccess() {
+    void whenCreateNewRole_thenSuccess() {
+        String newRoleName = "foo";
+        String goodPermissionName = "good-permission";
+        Role r = new Role();
+        r.setId(newRoleName);
+        Permission p = new Permission();
+        p.setId(goodPermissionName);
+        r.setPermissions(Collections.singletonList(p));
+        when(roleRepository.existsById(newRoleName)).thenReturn(false);
+        when(roleRepository.save(r)).thenReturn(r);
+        when(permissionRepository.existsById(goodPermissionName)).thenReturn(true);
+        RoleService roleService = new RoleService(roleRepository, permissionRepository);
+        Role roleReturned = roleService.createRoleWithPermissions(r);
+        assertNotNull(roleReturned);
+        assertNotNull(roleReturned.getPermissions().get(0));
+    }
+
+    @Test
+    void whenCreateNewRole_givenBadPermission_thenThrowsBadRequestExcep() {
         String newRoleName = "foo";
         Role r = new Role();
         r.setId(newRoleName);
+        String badPermissionName = "bad-permission";
+        Permission badPermission = new Permission();
+        badPermission.setId(badPermissionName);
+        r.setPermissions(Collections.singletonList(badPermission));
+
+        when(permissionRepository.existsById(badPermissionName)).thenReturn(false);
         when(roleRepository.existsById(newRoleName)).thenReturn(false);
-        when(roleRepository.save(r)).thenReturn(r);
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
-        assertNotNull(roleService.saveRole(r));
+
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,
+                () -> roleService.createRoleWithPermissions(r));
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+
     }
 
 
@@ -60,21 +87,22 @@ class RoleServiceTest {
         when(roleRepository.findById(badRoleId)).thenReturn(Optional.empty());
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
         List<Permission> dummyPermissionList = Collections.singletonList(new Permission());
-        ResponseStatusException thrown =  assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(badRoleId, dummyPermissionList));
+        ResponseStatusException thrown =  assertThrows(ResponseStatusException.class,
+                () -> roleService.updatePermissionsForRole(badRoleId, dummyPermissionList));
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     @Test
-    void whenUpdatePermissions_givenAnyBadPermission_thenThrowsBadRequestExcep() {
+    void whenUpdatePermissions_givenBadPermission_thenThrowsBadRequestExcep() {
         String goodRoleId = "foo";
         Role goodRole = new Role();
         goodRole.setId(goodRoleId);
 
-        String badPermissionName = "bar";
+        String badPermissionName = "bad-permission";
         Permission badPermission = new Permission();
         badPermission.setId(badPermissionName);
 
-        String goodPermissionName = "baz";
+        String goodPermissionName = "good-permission";
         Permission goodPermission = new Permission();
         goodPermission.setId(goodPermissionName);
 
