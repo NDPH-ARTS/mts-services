@@ -33,7 +33,7 @@ class HapiFhirRepositoryTests {
     private ArgumentCaptor<Bundle> bundleCaptor;
 
     @Test
-    void TestHapiRepository_WhenSaveOrganization_SendsBundleWithTrasactionType()
+    void TestHapiRepository_WhenSaveOrganization_SendsBundleWithTransactionType()
     {
         // Arrange
         var responseBundle = new Bundle();
@@ -54,7 +54,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenSaveResearchStudy_SendsBundleWithTrasactionType()
+    void TestHapiRepository_WhenSaveResearchStudy_SendsBundleWithTransactionType()
     {
         // Arrange
         var responseBundle = new Bundle();

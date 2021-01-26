@@ -38,7 +38,7 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public String saveOrganization(Organization organization) {
         // Log the request
-        logger.info(FhirRepo.SAVE_ORGANIZATION.message(),
+        logger.info(FhirRepo.SAVE_REQUEST.message(),
                 fhirContextWrapper.prettyPrint(organization));
 
         Bundle responseBundle;
@@ -62,10 +62,10 @@ public class HapiFhirRepository implements FhirRepository {
      * @param researchStudy the researchStudy to save.
      * @return ResearchStudy
      */
-    public ResearchStudy saveResearchStudy(ResearchStudy researchStudy) {
+    public String saveResearchStudy(ResearchStudy researchStudy) {
         // Log the request
 
-        logger.info(FhirRepo.SAVE_RESEARCHSTUDY.message(),
+        logger.info(FhirRepo.SAVE_REQUEST.message(),
                     fhirContextWrapper.prettyPrint(researchStudy));
 
         Bundle responseBundle;
@@ -82,7 +82,7 @@ public class HapiFhirRepository implements FhirRepository {
         logger.info(FhirRepo.SAVE_RESPONSE.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
 
-        return researchStudy;
+        return responseElement.getIdElement().getIdPart();
     }
 
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {

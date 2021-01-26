@@ -8,7 +8,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
@@ -18,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
-import uk.ac.ox.ndph.mts.site_service.service.SiteServiceInterface;
+import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 
@@ -29,7 +28,7 @@ class SiteControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private SiteServiceInterface siteServiceIntf;
+    private SiteService siteService;
 
     @Test
     void TestPostSite_WhenNoInput_Returns400() throws Exception {
@@ -42,7 +41,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
-        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenReturn("123");
+        when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
@@ -53,7 +52,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
-        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenReturn("123");
+        when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
@@ -64,7 +63,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
-        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenThrow(RestException.class);
+        when(siteService.save(Mockito.any(Site.class))).thenThrow(RestException.class);
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
 
         // Act + Assert
@@ -76,7 +75,7 @@ class SiteControllerTests {
     @Test
     void TestPostSite_WhenArgumentException_Returns400() throws Exception {
         // Arrange
-        when(siteServiceIntf.saveSite(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
+        when(siteService.save(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
 
         // Act + Assert

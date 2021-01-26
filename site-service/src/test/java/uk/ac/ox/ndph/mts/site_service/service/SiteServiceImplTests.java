@@ -21,7 +21,7 @@ import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 @ExtendWith(MockitoExtension.class)
-class SiteServiceTests {
+class SiteServiceImplTests {
     
     @Mock
     private EntityStore<Site> siteStore;
@@ -40,11 +40,11 @@ class SiteServiceTests {
         String parent = "parent";
 
         Site siteWithParent = new Site(name, alias, parent);
-        var siteService = new SiteService(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
         //Act
-        siteService.saveSite(siteWithParent);
+        siteService.save(siteWithParent);
 
         //Assert
         Mockito.verify(siteValidation).validate(siteCaptor.capture());
@@ -58,11 +58,11 @@ class SiteServiceTests {
         String name = "name";
         String alias = "alias";
         Site site = new Site(name, alias);
-        var siteService = new SiteService(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
         //Act
-        siteService.saveSite(site);
+        siteService.save(site);
 
         //Assert
         Mockito.verify(siteValidation).validate(siteCaptor.capture());
@@ -76,11 +76,11 @@ class SiteServiceTests {
         String name = "name";
         String alias = "alias";
         Site site = new Site(name, alias);
-        var siteService = new SiteService(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
         //Act
-        siteService.saveSite(site);
+        siteService.save(site);
 
         //Assert
         Mockito.verify(siteStore).saveEntity(siteCaptor.capture());
@@ -94,10 +94,10 @@ class SiteServiceTests {
         String name = "name";
         String alias = "alias";
         Site site = new Site(name, alias);
-        var siteService = new SiteService(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(false, "name"));
         //Act + Assert
-        Assertions.assertThrows(ValidationException.class, () -> siteService.saveSite(site),
+        Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
                 "Expecting save to throw validation exception");
     }
 
@@ -107,20 +107,20 @@ class SiteServiceTests {
         String name = "name";
         String alias = "alias";
         Site site = new Site(name, alias);
-        var siteService = new SiteService(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(false, "name"));
         //Act + Assert
-        Assertions.assertThrows(ValidationException.class, () -> siteService.saveSite(site),
+        Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
                 "Expecting save to throw validation exception");
         Mockito.verify(siteStore, Mockito.times(0)).saveEntity(any(Site.class));
     }
 
     @Test
-    void TestSiteService_WhenNullValues_ThrowsInitialisationError(){
+    void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError(){
         // Arrange + Act + Assert
-        Assertions.assertThrows(InitialisationError.class, () -> new SiteService(null, siteValidation),
+        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteValidation),
                 "null store should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new SiteService(siteStore, null),
+        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(siteStore, null),
                 "null validation should throw");
     }
 }

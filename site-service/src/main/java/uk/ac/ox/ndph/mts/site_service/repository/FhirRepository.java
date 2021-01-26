@@ -21,5 +21,5 @@ public interface FhirRepository {
      * @param researchStudy
      * @return ResearchStudy
      */
-    ResearchStudy saveResearchStudy(ResearchStudy researchStudy);
+    String saveResearchStudy(ResearchStudy researchStudy);
 }

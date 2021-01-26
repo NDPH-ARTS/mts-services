@@ -5,12 +5,12 @@
         {
             "name": "name",
             "displayName": "Name",
-            "validationRegex": "^[a-zA-Z\\s]{0,35}$"
+            "validationRegex": "^[a-zA-Z]{0,35}$"
         },
         {
             "name": "alias",
             "displayName": "Alias",
-            "validationRegex": "^[a-zA-Z\\s]{0,35}$"
+            "validationRegex": "^[a-zA-Z]{0,35}$"
         }
     ]
 }

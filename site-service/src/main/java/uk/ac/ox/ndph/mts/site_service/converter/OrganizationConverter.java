@@ -6,8 +6,6 @@ import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
-import java.util.Optional;
-
 /**
  * Implement an EntityConverter for Site
  */
@@ -32,12 +30,9 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
     }
 
     private void setParentOrganization(Site site, Organization fhirOrganization) {
-        Optional<String> optParentSiteId = Optional.ofNullable(site.getParentSiteId());
-        if (optParentSiteId.isPresent() && !optParentSiteId.isEmpty()) {
-            String parentSiteId = optParentSiteId.get();
-
+        if (null != site.getParentSiteId() && !site.getParentSiteId().isBlank()) {
             // Set the Parent Organization
-            fhirOrganization.setPartOf(new Reference("Organization/" + parentSiteId));
+            fhirOrganization.setPartOf(new Reference("Organization/" + site.getParentSiteId()));
         }
     }
 }

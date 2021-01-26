@@ -26,7 +26,7 @@ import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 @SpringBootTest(properties = { "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
-class SiteServiceIntegrationTests {
+class SiteServiceImplIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +38,7 @@ class SiteServiceIntegrationTests {
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
-        when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn(any(ResearchStudy.class));
+        when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
         
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
@@ -60,7 +60,6 @@ class SiteServiceIntegrationTests {
         assertThat(error, containsString("Name"));
     }
 
-    /*
     @Test
     void TestPostSite_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange
@@ -73,13 +72,12 @@ class SiteServiceIntegrationTests {
                 .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("test error"));
     }
-    */
 
     @Test
     void TestPostSite_WhenValidParentInput_Returns201AndId() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
-        when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn(any(ResearchStudy.class));
+        when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
 
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert

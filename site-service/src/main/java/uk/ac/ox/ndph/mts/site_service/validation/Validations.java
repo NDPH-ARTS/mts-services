@@ -4,7 +4,7 @@ package uk.ac.ox.ndph.mts.site_service.validation;
  * String constants
  */
 public enum Validations {
-    STARTUP("Laoded site validation with configuration: {}"),
+    STARTUP("Loaded site validation with configuration: {}"),
     ERROR("argument %s failed validation");
 
     private String message;
