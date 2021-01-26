@@ -34,7 +34,7 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
 
             // TODO: Check if the Parent Organization already exists.
 
-            // Set the Parent Organization
+            // Set the Parent Organization if and only if it exists.
             fhirOrganization.setPartOf(new Reference("Organization/" + site.getParentSiteId()));
         }
     }
