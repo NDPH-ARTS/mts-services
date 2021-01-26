@@ -111,7 +111,7 @@ services:
         context: .
         dockerfile: init-service/Dockerfile
         args:
-          SVC: init-service-console
+          SVC: init-service
       image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
       restart: on-failure
       environment:
