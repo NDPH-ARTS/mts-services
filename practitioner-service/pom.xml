@@ -16,7 +16,6 @@
         it as a FHIR practitioner entity to the FHIR store.
     </description>
     <properties>
-        <azure.version>2.3.5</azure.version>
         <hapifhir.version>5.0.2</hapifhir.version>
     </properties>
 
