@@ -2,9 +2,15 @@ name: Docker build and push
 
 on:
   pull_request:
-    # branches: [ main ]
     paths-ignore:
       - '**.md'
+  push:
+    # ONLY main branch should be listed below!
+    branches: [ main ]
+  # schedule only runs on the main branch
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '1 1 * * *'
   workflow_dispatch:
 
 jobs:
@@ -39,8 +45,30 @@ jobs:
           password: ${{ secrets.GHCR_LOGIN }}
       - name: Build & publish runtime image
         run: |
-          docker build --build-arg SVC="${{ matrix.service_name }}" -t $GHCR/"${{ matrix.service_name }}":${{ github.sha }} -f "${{ matrix.service_name }}"/Dockerfile .
-          docker push $GHCR/"${{ matrix.service_name }}":${{ github.sha }}
+          set -o errexit
+          set -o nounset
+
+          TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
+
+          docker build --build-arg SVC="${{ matrix.service_name }}" -t $TAG -f "${{ matrix.service_name }}"/Dockerfile .
+          docker push $TAG
+      - name: Publish named image
+        # The way to run this only on "merge" to main branch is to catch the "push" event into it (and schedule).
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push')
+        env:
+          # We use 2 tags: main-latest (every PR merge to main) and main-nightly (main branch images every night)
+          TAG: ${{ github.event_name == 'schedule' && 'main-nightly' || 'main-latest' }}
+        run: |
+          set -o errexit
+          set -o nounset
+
+          FROM_TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
+          TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
+
+          # assume the step before created the image with the sha tag
+          docker tag $FROM_TAG -t $TO_TAG
+          docker push $TO_TAG
+
   test:
     name: Test
     runs-on: ubuntu-latest
