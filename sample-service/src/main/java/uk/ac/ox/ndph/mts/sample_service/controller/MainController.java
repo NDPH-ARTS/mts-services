@@ -33,7 +33,7 @@ public class MainController {
      *
      * @return the secret as a string.
      */
-    @PreAuthorize("@authorisationService.authorise()")
+    @PreAuthorize("@authorisationService.authorise('stubPermission')")
     @GetMapping("/getsecret")
     public String getsecret() {
         return this.myConfig.getSecret();
@@ -44,7 +44,7 @@ public class MainController {
      *
      * @return a message as a string.
      */
-    @PreAuthorize("@authorisationService.authorise()")
+    @PreAuthorize("@authorisationService.authorise('stubPermission')")
     @GetMapping("/hello")
     public String hello() {
         return message;

@@ -24,7 +24,7 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
      */
     @Override
     protected Collection findAttributes(Class<?> clazz) {
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -47,7 +47,7 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
             for (Annotation a : annotations) {
                 // but not if the method has at least a PreAuthorize or PostAuthorize annotation
                 if (a instanceof PreAuthorize) {
-                    return null;
+                    return new ArrayList<>();
                 }
             }
         }
@@ -60,6 +60,6 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
      */
     @Override
     public Collection getAllConfigAttributes() {
-        return null;
+        return new ArrayList<>();
     }
 }
