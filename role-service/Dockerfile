@@ -16,10 +16,6 @@ COPY ./${SVC}/src ${SVC}/src
 
 RUN mvn package --batch-mode -q --projects ${SVC}
 
-FROM scratch AS export
-ARG SVC
-COPY --from=builder ${SVC}/target/surefire-reports/*.xml ./
-
 FROM openjdk:11.0.9.1-jre-buster
 ARG SVC
 ARG JAR_FILE=${SVC}/target/*.jar
