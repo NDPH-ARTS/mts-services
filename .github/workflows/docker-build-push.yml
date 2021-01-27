@@ -75,7 +75,7 @@ jobs:
           ./.ci/docker/check-docker-compose-services.sh
           npm run --prefix api-tests api-test-ci
           docker-compose down
-      - name: Publish Test Report
+      - name: Publish API Test Report
         if: always()
         uses: scacap/action-surefire-report@v1
         with:
