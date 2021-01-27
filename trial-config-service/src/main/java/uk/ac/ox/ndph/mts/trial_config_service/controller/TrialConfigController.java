@@ -82,7 +82,7 @@ public class TrialConfigController {
 
         try {
             trial = webClient.get()
-                .uri(url + File.separator + trialConfig)
+                .uri(url + "/" + trialConfig)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Trial.class)
