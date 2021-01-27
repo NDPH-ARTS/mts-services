@@ -31,7 +31,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // disable csrf because we are using another token mechanism
-        http.csrf().disable(); // Sensitive
+        http.csrf().disable(); //NOSONAR
 
         // Do not create user sessions
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
