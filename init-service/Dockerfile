@@ -6,7 +6,7 @@ COPY ./build-tools ./build-tools
 COPY ./pom.xml pom.xml
 
 # copy poms of ALL services
-COPY ./init-orchestrator-console/pom.xml ./init-orchestrator-console/pom.xml
+COPY ./init-service/pom.xml ./init-service/pom.xml
 COPY ./role-service/pom.xml ./role-service/pom.xml
 COPY ./trial-config-service/pom.xml ./trial-config-service/pom.xml
 COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
