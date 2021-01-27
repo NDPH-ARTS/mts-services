@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Service
-public class JsonService {
+public class TrialService {
 
     @Value("${config.json}")
     private String config;
@@ -21,7 +21,7 @@ public class JsonService {
     private GitRepo gitRepo;
 
     @Autowired
-    public JsonService(GitRepo gitRepo) {
+    public TrialService(GitRepo gitRepo) {
         this.gitRepo = gitRepo;
     }
 

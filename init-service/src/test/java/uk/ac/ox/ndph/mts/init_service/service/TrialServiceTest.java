@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.init_service.config.GitRepo;
 import uk.ac.ox.ndph.mts.init_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.init_service.model.*;
-import uk.ac.ox.ndph.mts.init_service.service.JsonService;
 
 import java.util.Collections;
 import java.util.Random;
@@ -20,9 +19,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class JsonServiceTest {
+class TrialServiceTest {
 
-    JsonService jsonService;
+    TrialService trialService;
 
     @Mock
     GitRepo gitRepo;
@@ -31,8 +30,8 @@ class JsonServiceTest {
     void createTrialFromGitRepo() {
         byte[] trialBytes = getTrialBytes();
         when(gitRepo.getTrialFile(any())).thenReturn(trialBytes);
-        jsonService = new JsonService(gitRepo);
-        assertEquals(mockedTrial().getTrialName(), jsonService.createTrialFromGitRepo("any").getTrialName());
+        trialService = new TrialService(gitRepo);
+        assertEquals(mockedTrial().getTrialName(), trialService.createTrialFromGitRepo("any").getTrialName());
     }
 
     @Test
@@ -41,8 +40,8 @@ class JsonServiceTest {
         byte[] trialBytes = new byte[7];
         rd.nextBytes(trialBytes);
         when(gitRepo.getTrialFile(any())).thenReturn(trialBytes);
-        jsonService = new JsonService(gitRepo);
-        assertThrows(InvalidConfigException.class, () -> jsonService.createTrialFromGitRepo("any"));
+        trialService = new TrialService(gitRepo);
+        assertThrows(InvalidConfigException.class, () -> trialService.createTrialFromGitRepo("any"));
     }
 
     private byte[] getTrialBytes() {
