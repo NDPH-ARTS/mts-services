@@ -25,18 +25,19 @@ public class TrialService {
         this.gitRepo = gitRepo;
     }
 
+    // TODO : rename once we have config-server setup
     protected Trial createTrialFromGitRepo(String fileName) {
-        Trial trial;
+        Trial trialFromGit;
 
         try {
             byte[] fileBytes = gitRepo.getTrialFile(fileName);
             ObjectMapper objMapper = new ObjectMapper();
-            trial = objMapper.readValue(fileBytes, Trial.class);
+            trialFromGit = objMapper.readValue(fileBytes, Trial.class);
         } catch (IOException ioException) {
             throw new InvalidConfigException(ioException.getMessage());
         }
 
-        return trial;
+        return trialFromGit;
     }
 
     @PostConstruct

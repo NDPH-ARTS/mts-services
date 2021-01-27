@@ -41,7 +41,7 @@ public class PractitionerServiceInvoker implements ServiceInvoker {
                     .bodyToMono(Practitioner.class)
                     .block();
         } catch (Exception e) {
-            LOGGER.info("FAILURE practitionerService " + e.getMessage());
+            LOGGER.info("FAILURE practitionerService {}", e.getMessage());
             throw new DependentServiceException("Error connecting to practitioner service");
         }
     }

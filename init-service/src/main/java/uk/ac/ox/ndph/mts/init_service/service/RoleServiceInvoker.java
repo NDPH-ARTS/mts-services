@@ -42,7 +42,7 @@ public class RoleServiceInvoker implements ServiceInvoker {
                     .bodyToMono(Role.class)
                     .block();
         } catch (Exception e) {
-            LOGGER.info("FAILURE roleService " + e.getMessage());
+            LOGGER.info("FAILURE roleService {}", e.getMessage());
             throw new DependentServiceException("Error connecting to role service");
         }
     }

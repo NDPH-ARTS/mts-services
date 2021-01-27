@@ -41,7 +41,7 @@ public class SiteServiceInvoker implements ServiceInvoker {
                     .bodyToMono(Site.class)
                     .block();
         } catch (Exception e) {
-            LOGGER.info("FAILURE siteService "  + e.getMessage());
+            LOGGER.info("FAILURE siteService {}", e.getMessage());
             throw new DependentServiceException("Error connecting to site service");
         }
     }
