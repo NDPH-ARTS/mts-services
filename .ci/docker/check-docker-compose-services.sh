@@ -1,4 +1,5 @@
-docker-compose up -d
+docker-compose pull
+docker-compose up -d --no-build
 echo "Waiting for docker compose services..."
 
 is_healthy() {
