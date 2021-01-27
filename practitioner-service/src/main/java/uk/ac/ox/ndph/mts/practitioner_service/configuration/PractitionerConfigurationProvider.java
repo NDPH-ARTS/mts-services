@@ -7,10 +7,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
-import java.io.File;
 
 /**
- * Provide Practitioner Configuration 
+ * Provide Practitioner Configuration
  */
 @Component
 public class PractitionerConfigurationProvider {
@@ -52,7 +51,7 @@ public class PractitionerConfigurationProvider {
     }
 
     private String getRepoURL() {
-        return configURI + File.separator + applicationName + File.separator + profile + File.separator + label;
+        return configURI + "/" + applicationName + "/" + profile + "/" + label;
     }
 
 }

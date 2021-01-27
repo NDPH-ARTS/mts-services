@@ -18,7 +18,6 @@ import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
 import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
 import uk.ac.ox.ndph.mts.trial_config_service.model.Trial;
 import uk.ac.ox.ndph.mts.trial_config_service.service.TrialConfigService;
-import java.io.File;
 
 @RefreshScope
 @RestController
@@ -96,7 +95,7 @@ public class TrialConfigController {
     }
 
     private String getRepoURL() {
-        return configURI + File.separator + applicationName + File.separator + profile + File.separator + label;
+        return configURI + "/" + applicationName + "/" + profile + "/" + label;
     }
 
 }
