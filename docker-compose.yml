@@ -64,7 +64,6 @@ services:
     ports:
       - "83:83"
 
-
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
     restart: on-failure
@@ -79,7 +78,6 @@ services:
       - "8080:8080"
     depends_on:
           - sql-fhir
-
 
   role-service:
     build:
@@ -97,8 +95,6 @@ services:
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
     ports:
       - "82:82"
-
-
 
   sql-fhir:
     image: "mcr.microsoft.com/mssql/server"
@@ -142,3 +138,4 @@ services:
       depends_on:
         - practitioner-service
         - role-service
+        - site-service
