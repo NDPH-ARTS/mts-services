@@ -42,10 +42,6 @@ public class Trial {
 
     @Override
     public String toString() {
-        return "Trial{"
-                + "persons=" + persons
-                + ", sites=" + sites
-                + ", roles=" + roles
-                + '}';
+        return String.format("Trial{persons='%s', sites='%s', roles='%s'}",persons, sites, roles);
     }
 }

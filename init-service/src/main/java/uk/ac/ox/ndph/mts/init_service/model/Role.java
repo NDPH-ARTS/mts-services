@@ -24,9 +24,6 @@ public class Role implements Entity {
 
     @Override
     public String toString() {
-        return "Role{"
-                + "id='" + id + '\''
-                + ", permissions=" + permissions
-                + '}';
+        return String.format("Role{id='%s', permissions='%s'}",id, permissions);
     }
 }
