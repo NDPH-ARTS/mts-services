@@ -11,3 +11,6 @@ module.exports = {
         'showPassed=false'
     ],
 };
+beforeEach(function () {
+    baseRequest = request(module.exports.baseUrl)
+})
