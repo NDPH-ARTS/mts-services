@@ -15,7 +15,9 @@ public class PractitionerAttributeConfiguration {
         this.validationRegex = "";
     }
 
-    public PractitionerAttributeConfiguration(final String name, final String displayName, final String validationRegex) {
+    public PractitionerAttributeConfiguration(final String name,
+                                              final String displayName,
+                                              final String validationRegex) {
         this.name = name;
         this.displayName = displayName;
         this.validationRegex = validationRegex;
