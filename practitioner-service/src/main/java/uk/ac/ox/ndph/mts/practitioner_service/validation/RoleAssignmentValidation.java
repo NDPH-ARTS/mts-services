@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
+import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PageableResult;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
@@ -27,14 +28,12 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
     @SuppressWarnings("FieldCanBeLocal")
     private final Logger logger = LoggerFactory.getLogger(RoleAssignmentValidation.class);
 
-    private final WebClient webClient;
-    private String roleService;
+    private final RoleServiceClient roleServiceClient;
 
     @Autowired
-    public RoleAssignmentValidation(final WebClient webClient, @Value("${role.service}") final String roleService) {
-        this.webClient = webClient;
-        this.roleService = roleService;
-        logger.info(Validations.STARTUP.message(), "RoleAssignment", roleService);
+    public RoleAssignmentValidation(final RoleServiceClient roleServiceClient) {
+        this.roleServiceClient = roleServiceClient;
+        logger.info(Validations.STARTUP.message(), "RoleAssignmentValidation");
     }
 
     @Override
@@ -58,28 +57,6 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
         return str == null || str.isBlank();
     }
 
-    private boolean isRole(final String roleId) {
-        return roleId != null && getRoles().anyMatch(r -> r.getId().equals(roleId));
-    }
-
-    // dependency on RoleService
-    // service discovery?
-    private Stream<RoleDTO> getRoles() {
-        return webClient.get()
-                .uri(UriComponentsBuilder.fromHttpUrl(this.roleService)
-                        .path("/roles")
-                        .queryParam("page", 0)
-                        .queryParam("size", Integer.MAX_VALUE)
-                        .build()
-                        .toUri())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<PageableResult<RoleDTO>>() {})
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .blockOptional()
-                .orElseGet(PageableResult::empty)
-                .stream()
-                .filter(r -> r != null && r.getId() != null);
-    }
+    private boolean isRole(final String roleId) { return roleId != null && this.roleServiceClient.roleIdExists(roleId); }
 
 }

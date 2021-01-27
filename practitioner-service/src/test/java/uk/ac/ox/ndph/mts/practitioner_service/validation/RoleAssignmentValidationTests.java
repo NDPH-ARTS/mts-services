@@ -3,7 +3,6 @@ package uk.ac.ox.ndph.mts.practitioner_service.validation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,29 +10,21 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
+import uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PageableResult;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleDTO;
 
-import java.util.Collections;
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class RoleAssignmentValidationTests {
-
-    private WebClient webClient;
 
     private MockWebServer mockBackEnd;
 
@@ -42,8 +33,7 @@ class RoleAssignmentValidationTests {
     @BeforeEach void initEach() throws Exception {
         this.mockBackEnd = new MockWebServer();
         this.mockBackEnd.start();
-        this.webClient = WebClient.create();
-        this.validator = new RoleAssignmentValidation(this.webClient, String.format("http://localhost:%s", mockBackEnd.getPort()));
+        this.validator = new RoleAssignmentValidation(new WebFluxRoleServiceClient(WebClient.builder(), String.format("http://localhost:%s", mockBackEnd.getPort())));
     }
 
     @ParameterizedTest
