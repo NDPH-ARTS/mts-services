@@ -15,18 +15,18 @@ import uk.ac.ox.ndph.mts.init_service.model.Site;
 import java.util.List;
 
 @Service
-public class SiteService implements EntityService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SiteService.class);
+public class SiteServiceInvoker implements ServiceInvoker {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceInvoker.class);
 
     @Value("${site.service}")
     private String siteService;
 
     private final WebClient webClient;
 
-    public SiteService() {
+    public SiteServiceInvoker() {
         this.webClient = WebClient.create(siteService);
     }
-    public SiteService(WebClient webClient) {
+    public SiteServiceInvoker(WebClient webClient) {
         this.webClient = webClient;
     }
 
@@ -34,7 +34,7 @@ public class SiteService implements EntityService {
 
         try {
             return webClient.post()
-                    .uri(siteService + "/site")
+                    .uri(siteService + "/sites")
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                     .body(Mono.just(site), Site.class)
                     .retrieve()

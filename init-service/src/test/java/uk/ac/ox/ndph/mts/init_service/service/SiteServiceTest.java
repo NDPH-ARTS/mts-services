@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
-import uk.ac.ox.ndph.mts.init_service.service.SiteService;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class SiteServiceTest {
 
-    SiteService siteService;
+    SiteServiceInvoker siteServiceInvoker;
 
     MockWebServer mockBackEnd;
 
@@ -34,7 +33,7 @@ class SiteServiceTest {
         mockBackEnd.start();
         WebClient webClient = WebClient.create(String.format("http://localhost:%s",
                 mockBackEnd.getPort()));
-        siteService = new SiteService(webClient);
+        siteServiceInvoker = new SiteServiceInvoker(webClient);
     }
 
     @AfterEach
@@ -50,7 +49,7 @@ class SiteServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(testSite))
                .addHeader("Content-Type", "application/json"));
-        Site returnedSite = siteService.send(testSite);
+        Site returnedSite = siteServiceInvoker.send(testSite);
         assertNotNull(returnedSite);
     }
 
@@ -64,7 +63,7 @@ class SiteServiceTest {
                 .setResponseCode(500));
 
         List<Site> sites = Collections.singletonList(testSite);
-        assertThrows(DependentServiceException.class, () -> siteService.execute(sites));
+        assertThrows(DependentServiceException.class, () -> siteServiceInvoker.execute(sites));
     }
 
     @Test
@@ -77,7 +76,7 @@ class SiteServiceTest {
                 .setBody(new ObjectMapper().writeValueAsString(testSite))
                 .addHeader("Content-Type", "application/json"));
         try {
-            siteService.execute(sites);
+            siteServiceInvoker.execute(sites);
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }

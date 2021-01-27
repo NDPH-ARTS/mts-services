@@ -15,24 +15,23 @@ import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import java.util.List;
 
 @Service
-public class PractitionerService implements EntityService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerService.class);
+public class PractitionerServiceInvoker implements ServiceInvoker {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerServiceInvoker.class);
 
     @Value("${practitioner.service}")
     private String practitionerService;
 
     private final WebClient webClient;
 
-    public PractitionerService() {
+    public PractitionerServiceInvoker() {
         this.webClient = WebClient.create(practitionerService);
     }
-    public PractitionerService(WebClient webClient) {
+    public PractitionerServiceInvoker(WebClient webClient) {
         this.webClient = webClient;
     }
 
     @Override
     public Practitioner send(Entity practitioner) throws DependentServiceException {
-
         try {
             return webClient.post()
                     .uri(practitionerService + "/practitioner")

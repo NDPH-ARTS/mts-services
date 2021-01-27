@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.init_service.service.PractitionerService;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTest {
 
-    PractitionerService practitionerService;
+    PractitionerServiceInvoker practitionerServiceInvoker;
 
     MockWebServer mockBackEnd;
 
@@ -34,7 +33,7 @@ class PractitionerServiceTest {
         mockBackEnd.start();
         WebClient webClient = WebClient.create(String.format("http://localhost:%s",
                 mockBackEnd.getPort()));
-        practitionerService = new PractitionerService(webClient);
+        practitionerServiceInvoker = new PractitionerServiceInvoker(webClient);
     }
 
     @AfterEach
@@ -52,7 +51,7 @@ class PractitionerServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(testPractitioner))
                .addHeader("Content-Type", "application/json"));
-        Practitioner returnedPractitioner = practitionerService.send(testPractitioner);
+        Practitioner returnedPractitioner = practitionerServiceInvoker.send(testPractitioner);
         assertNotNull(returnedPractitioner);
     }
 
@@ -67,7 +66,7 @@ class PractitionerServiceTest {
                 .setResponseCode(500));
 
         List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
-        assertThrows(DependentServiceException.class, () -> practitionerService.execute(practitioners));
+        assertThrows(DependentServiceException.class, () -> practitionerServiceInvoker.execute(practitioners));
     }
 
     @Test
@@ -81,7 +80,7 @@ class PractitionerServiceTest {
                 .setBody(new ObjectMapper().writeValueAsString(testPractitioner))
                 .addHeader("Content-Type", "application/json"));
         try {
-            practitionerService.execute(practitioners);
+            practitionerServiceInvoker.execute(practitioners);
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }

@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.Permission;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
-import uk.ac.ox.ndph.mts.init_service.service.RoleService;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class RoleServiceTest {
 
-    RoleService roleService;
+    RoleServiceInvoker roleServiceInvoker;
 
     MockWebServer mockBackEnd;
 
@@ -35,7 +34,7 @@ class RoleServiceTest {
         mockBackEnd.start();
         WebClient webClient = WebClient.create(String.format("http://localhost:%s",
                 mockBackEnd.getPort()));
-        roleService = new RoleService(webClient);
+        roleServiceInvoker = new RoleServiceInvoker(webClient);
     }
 
     @AfterEach
@@ -50,7 +49,7 @@ class RoleServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(testRole))
                .addHeader("Content-Type", "application/json"));
-        Role returnedRole = roleService.send(testRole);
+        Role returnedRole = roleServiceInvoker.send(testRole);
         assertNotNull(returnedRole);
     }
 
@@ -63,7 +62,7 @@ class RoleServiceTest {
                 .setResponseCode(500));
 
         List<Role> roles = Collections.singletonList(testRole);
-        assertThrows(DependentServiceException.class, () -> roleService.execute(roles));
+        assertThrows(DependentServiceException.class, () -> roleServiceInvoker.execute(roles));
     }
 
     @Test
@@ -81,7 +80,7 @@ class RoleServiceTest {
                 .setBody(new ObjectMapper().writeValueAsString(testRole))
                 .addHeader("Content-Type", "application/json"));
         try {
-            roleService.execute(roles);
+            roleServiceInvoker.execute(roles);
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }
