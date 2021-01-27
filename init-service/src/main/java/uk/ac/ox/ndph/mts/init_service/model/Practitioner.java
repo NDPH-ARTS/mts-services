@@ -35,10 +35,12 @@ public class Practitioner implements Entity {
 
     @Override
     public String toString() {
-        return "Practitioner{"
-                + "prefix='" + prefix + '\''
-                + ", givenName='" + givenName + '\''
-                + ", familyName='" + familyName + '\''
-                + '}';
+        return String.format(
+                "Practitioner{prefix='%s', " +
+                "givenName='%s', " +
+                "familyName'%s'}",
+                prefix,
+                givenName,
+                familyName);
     }
 }
