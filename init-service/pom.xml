@@ -12,7 +12,7 @@
   <artifactId>init-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>  
   <name>init-service</name>
-  <description>Service for init orchestrator clinical trials</description>
+  <description>A process that prepare the different micro-services and populates them with initial configuration and data</description>
 
   <dependencies>
     <dependency>
