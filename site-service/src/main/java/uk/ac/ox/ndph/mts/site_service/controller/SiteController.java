@@ -12,7 +12,7 @@ import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 /**
  * Controller for site endpoint of site-service
  */
-@RestController()
+@RestController
 @RequestMapping("/sites")
 public class SiteController {
 
