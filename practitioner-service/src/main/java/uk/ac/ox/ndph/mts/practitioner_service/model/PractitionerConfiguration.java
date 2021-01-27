@@ -28,12 +28,6 @@ public class PractitionerConfiguration {
         this.attributes = attributes;
     }
 
-    @Override
-    public String toString() {
-        // TODO(archiem) throwing exception to find out where this is used (part of Lombok-removal)
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
     public Collection<PractitionerAttributeConfiguration> getAttributes() {
         return Collections.unmodifiableCollection(attributes);
     }

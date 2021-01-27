@@ -23,12 +23,6 @@ public class PractitionerAttributeConfiguration {
         this.validationRegex = validationRegex;
     }
 
-    @Override
-    public String toString() {
-        // TODO(archiem) throwing exception to find out where this is used (part of Lombok-removal)
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
     public String getName() {
         return name;
     }

@@ -10,12 +10,6 @@ public class ValidationResponse {
         this.errorMessage = errorMessage;
     }
 
-    @Override
-    public String toString() {
-        // TODO(archiem) throwing exception to find out where this is used (part of Lombok-removal)
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
     public boolean isValid() {
         return isValid;
     }
