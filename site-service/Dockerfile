@@ -6,12 +6,11 @@ COPY ./build-tools ./build-tools
 COPY ./pom.xml pom.xml
 
 # copy poms of ALL services
+COPY ./site-service/pom.xml ./site-service/pom.xml
 COPY ./trial-config-service/pom.xml ./trial-config-service/pom.xml
 COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
 COPY ./role-service/pom.xml ./role-service/pom.xml
-COPY ./init-service/pom.xml ./init-service/pom.xml
-COPY ./site-service/pom.xml ./site-service/pom.xml
 
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
