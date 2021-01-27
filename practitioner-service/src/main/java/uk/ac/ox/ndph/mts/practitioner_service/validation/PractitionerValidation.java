@@ -46,6 +46,7 @@ public class PractitionerValidation implements ModelEntityValidation<Practitione
     @Autowired
     public PractitionerValidation(PractitionerConfigurationProvider configurationProvider) {
         var configuration = configurationProvider.getConfiguration();
+        logger.info(Validations.CONFIGSERVER.message(), configuration);
         validationMap = configuration.getAttributes().stream()
                 .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
                 .collect(Collectors.toMap(Pair::getRight,
