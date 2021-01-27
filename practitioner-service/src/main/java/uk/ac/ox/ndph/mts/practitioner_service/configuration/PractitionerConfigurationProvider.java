@@ -37,7 +37,7 @@ public class PractitionerConfigurationProvider {
 
         try {
             practitionerConfiguration = WebClient.create().get()
-                .uri(getRepoURL() + File.separator + "practitioner-configuration.json")
+                .uri(getRepoURL() + "/" + "practitioner-configuration.json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(PractitionerConfiguration.class)
