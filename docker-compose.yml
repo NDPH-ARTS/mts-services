@@ -67,8 +67,7 @@ services:
       dockerfile: role-service/Dockerfile
       args:
         SVC: role-service
-    image: ghcr.io/ndph-arts/role-config-service:${GITHUB_SHA}
-    container_name: "role-service"
+    image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
     depends_on:
       - sql-mts-data
     environment:
