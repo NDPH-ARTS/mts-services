@@ -36,9 +36,9 @@ public class Practitioner implements Entity {
     @Override
     public String toString() {
         return String.format(
-                "Practitioner{prefix='%s', " +
-                "givenName='%s', " +
-                "familyName'%s'}",
+                "Practitioner{prefix='%s', "
+                + "givenName='%s', "
+                + "familyName'%s'}",
                 prefix,
                 givenName,
                 familyName);

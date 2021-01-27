@@ -25,7 +25,7 @@ public class TrialService {
         this.gitRepo = gitRepo;
     }
 
-    // TODO : rename once we have config-server setup
+    // TODO (SAJ) : rename once we have config-server setup
     protected Trial createTrialFromGitRepo(String fileName) {
         Trial trialFromGit;
 

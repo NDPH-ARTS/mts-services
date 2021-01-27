@@ -22,6 +22,6 @@ public class Site implements Entity {
 
     @Override
     public String toString() {
-        return String.format("Site{name='%s', alias='%s'}",name, alias);
+        return String.format("Site{name='%s', alias='%s'}", name, alias);
     }
 }

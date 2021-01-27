@@ -13,6 +13,6 @@ public class Permission {
 
     @Override
     public String toString() {
-        return String.format("Permission{id='%s'}",id);
+        return String.format("Permission{id='%s'}", id);
     }
 }
