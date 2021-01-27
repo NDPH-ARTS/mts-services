@@ -35,7 +35,7 @@ class SiteServiceImplIntegrationTests {
     public FhirRepository repository;
 
     @Test
-    void TestPostSite_WhenValidInput_Returns200AndId() throws Exception {
+    void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
@@ -44,7 +44,7 @@ class SiteServiceImplIntegrationTests {
         // Act + Assert
         this.mockMvc
                 .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("123")));
+                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -74,7 +74,7 @@ class SiteServiceImplIntegrationTests {
     }
 
     @Test
-    void TestPostSite_WhenValidParentInput_Returns200AndId() throws Exception {
+    void TestPostSite_WhenValidParentInput_Returns201AndId() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
@@ -83,6 +83,6 @@ class SiteServiceImplIntegrationTests {
         // Act + Assert
         this.mockMvc
                 .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("123")));
+                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 }
