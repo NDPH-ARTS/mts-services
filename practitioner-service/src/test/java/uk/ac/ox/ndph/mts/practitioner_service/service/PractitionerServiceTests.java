@@ -12,6 +12,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
@@ -22,13 +23,13 @@ import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTests {
-    
+
     @Mock
     private EntityStore<Practitioner> practitionerStore;
 
     @Mock
     private ModelEntityValidation<Practitioner> practitionerValidation;
-    
+
     @Captor
     ArgumentCaptor<Practitioner> practitionerCaptor;
 

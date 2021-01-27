@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.springconfigserver;
+package uk.ac.ox.ndph.mts.configserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -39,7 +39,7 @@ class HapiFhirRepositoryTests {
         when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var practitioner = new Practitioner();
-        
+
         // Act
         fhirRepository.savePractitioner(practitioner);
 
@@ -59,24 +59,24 @@ class HapiFhirRepositoryTests {
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var practitioner = new Practitioner();
         practitioner.setId("123");
-        
+
         // Act
         var value = fhirRepository.savePractitioner(practitioner);
 
         // Assert
         assertThat(value, equalTo("123"));
     }
-    
+
     @Test
     void TestHapiRepository_WhenContextWrapperThrowsExpected_ThrowsRestException(){
         when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenThrow(new ResourceNotFoundException("error"));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var practitioner = new Practitioner();
-        
+
         // Act + Assert
         assertThrows(RestException.class, () -> fhirRepository.savePractitioner(practitioner));
     }
-    
+
     @Test
     void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException(){
         // Arrange
