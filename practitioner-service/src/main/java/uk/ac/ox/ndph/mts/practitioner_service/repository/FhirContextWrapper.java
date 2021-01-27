@@ -60,20 +60,4 @@ public class FhirContextWrapper {
         return new ArrayList<>(BundleUtil.toListOfResources(fhirContext, bundle));
     }
 
-//    public <T> IBaseResource readWithId(String id, Class<T> classType) {
-//        var client = fhirContext.newRestfulGenericClient("");
-//
-//        return client.read()
-//                .resource(classType.getName())
-//                .withId(id)
-//                .execute();
-//    }
-
-//    public Practitioner readPractitionerWithId(String id) {
-//        var client = fhirContext.newRestfulGenericClient(fhirUri);
-//        return client.read()
-//                .resource(Practitioner.class)
-//                .withId(id)
-//                .execute();
-//    }
 }

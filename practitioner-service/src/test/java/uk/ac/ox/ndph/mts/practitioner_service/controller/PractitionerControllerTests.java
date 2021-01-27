@@ -15,8 +15,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
@@ -32,10 +30,13 @@ class PractitionerControllerTests {
     @MockBean
     private EntityService entityService;
 
+    private final String practitionerUri = "/practitioner";
+    private final String roleAssignmentUri = "/practitioner/987/roles";
+
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
-        this.mockMvc.perform(post(getPractitionerUri()).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
@@ -46,7 +47,7 @@ class PractitionerControllerTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post(getPractitionerUri()).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -57,7 +58,7 @@ class PractitionerControllerTests {
         String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post(getPractitionerUri()).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -69,7 +70,7 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post(getPractitionerUri()).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway());
     }
 
@@ -81,14 +82,9 @@ class PractitionerControllerTests {
 
         // Act + Assert
         String error = this.mockMvc
-                .perform(post(getPractitionerUri()).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("prefix"));
-    }
-
-    private String getPractitionerUri() {
-        return MvcUriComponentsBuilder.fromMethodCall(on(PractitionerController.class)
-                .savePractitioner(null)).build().toUriString();
     }
 
 
@@ -97,7 +93,7 @@ class PractitionerControllerTests {
     @Test
     void TestPostRoleAssignment_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
-        this.mockMvc.perform(post(getRoleAssignmentUri()).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -111,7 +107,7 @@ class PractitionerControllerTests {
         String jsonString = "{}";
         // Act + Assert
         this.mockMvc
-                .perform(post(getRoleAssignmentUri()).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(returnedValue)));
@@ -125,14 +121,9 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post(getRoleAssignmentUri()).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print())
                 .andExpect(status().isBadGateway());
-    }
-
-    private String getRoleAssignmentUri() {
-        return MvcUriComponentsBuilder.fromMethodCall(on(PractitionerController.class)
-                .saveRoleAssignment("987", null)).build().toUriString();
     }
 
 }
