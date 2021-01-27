@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
  * a FHIR store.
@@ -80,6 +83,34 @@ public class HapiFhirRepository implements FhirRepository {
         }
 
         return responseElement.getIdElement().getIdPart();
+    }
+
+    @Override
+    public List<PractitionerRole> getPractitionerRoles(String practitionerId) {
+        // Log the request
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID.message(), practitionerId);
+        }
+
+        List<PractitionerRole> practitionerRoles = new ArrayList<>();
+
+        var fullTypeName = PractitionerRole.class.getTypeName();
+        var lastNotationIndex = fullTypeName.lastIndexOf('.') ;
+        var typeName = fullTypeName.substring(lastNotationIndex + 1);
+
+        var results = fhirContextWrapper.searchResource(
+                typeName,
+                PractitionerRole.PRACTITIONER.hasId(practitionerId));
+
+        for (var result: results) {
+            practitionerRoles.add((PractitionerRole) result);
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID_RESPONSE.message(), practitionerRoles.size());
+        }
+
+        return practitionerRoles;
     }
 
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {

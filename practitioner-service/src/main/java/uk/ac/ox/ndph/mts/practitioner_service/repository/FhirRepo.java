@@ -7,7 +7,9 @@ public enum FhirRepo {
     SAVE_REQUEST("request to fhir: {}"),
     SAVE_RESPONSE("response from fhir: {}"),
     UPDATE_ERROR("error while updating fhir store"),
-    BAD_RESPONSE_SIZE("bad response size from FHIR: %d");
+    BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
+    GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID("get practitioner roles by practitioner id: %s"),
+    GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID_RESPONSE("found %d practitioner roles");
 
     private String message;
  

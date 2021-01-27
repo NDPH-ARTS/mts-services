@@ -3,6 +3,8 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 
+import java.util.List;
+
 /**
  * Interface for a FHIR entity repository
  */
@@ -17,4 +19,6 @@ public interface FhirRepository {
     String savePractitioner(Practitioner practitioner);
 
     String savePractitionerRole(PractitionerRole practitionerRole);
+
+    List<PractitionerRole> getPractitionerRoles(String practitionerId);
 }
