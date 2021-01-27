@@ -28,9 +28,7 @@ public class Loader implements CommandLineRunner {
         roleService.execute(jsonService.getTrial().getRoles());
         siteService.execute(jsonService.getTrial().getSites());
         practitonerService.execute(jsonService.getTrial().getPersons());
-
     }
-
 }
 
 
