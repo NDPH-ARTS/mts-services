@@ -6,10 +6,29 @@ beforeEach(function () {
 })
 
 describe('As a user I want to set permissions for a role so that I can decide what functionality users assigned this role will have in the system', function () {
-    it.only('I am able to define the permissions linked to a role', async () => {
+    it('User is able to assign a permission to a role', async () => {
         const response = await baseRequest.post('/roles').send(requests.assignPermission);
         expect(response.text).to.contain("id")
         expect(response.status).to.equal(HttpStatus.OK)
+    });
+
+
+    it('User is able to assign multiple permissions to a role', async () => {
+        const response = await baseRequest.post('/roles').send(requests.multiplePermissions);
+        expect(response.text).to.contain("id")
+        expect(response.status).to.equal(HttpStatus.OK)
+    });
+
+    it('User gets a bad request error when no permission is assigned to a role', async () => {
+        const response = await baseRequest.post('/roles').send(requests.emptyPermission);
+        expect(response.status).to.equal(HttpStatus.BAD_REQUEST);
+        expect(response.text).to.contain("Permission  not found")
+    });
+
+    it('User gets a bad request error when a non-existing permission is assigned to a role', async () => {
+        const response = await baseRequest.post('/roles').send(requests.InvalidPermission);
+        expect(response.status).to.equal(HttpStatus.BAD_REQUEST);
+        expect(response.text).to.contain("Permission not-present not found")
     });
 
 });
