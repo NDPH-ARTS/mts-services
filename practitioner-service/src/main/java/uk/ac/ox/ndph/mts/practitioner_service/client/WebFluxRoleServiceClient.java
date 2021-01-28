@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.client;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -50,12 +51,33 @@ public class WebFluxRoleServiceClient implements RoleServiceClient {
     @Override
     public RoleDTO getRole(final String id) {
         Objects.requireNonNull(id, "id must be non-null");
-        return roleStream().filter(r -> r.getId().equals(id)).findFirst().orElse(null);
+        return webClient.get()
+                .uri("/role/{roleId}", id)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new RestException("Role not found: " + id)))
+                .bodyToMono(RoleDTO.class)
+                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+                .block();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean roleIdExists(String id) {
-        return getRole(id) != null;
+        Objects.requireNonNull(id, "id must be non-null");
+        return webClient.get()
+                .uri("/role/{roleId}", id)
+                .exchange()
+                .flatMap(clientResponse -> {
+                    if (clientResponse.statusCode().is4xxClientError()) {
+                        return Mono.just(false);
+                    } else if (clientResponse.statusCode().is2xxSuccessful()) {
+                        return Mono.just(true);
+                    } else {
+                        return clientResponse.createException().flatMap(Mono::error);
+                    }
+                }).onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+                .block();
     }
 
 }
