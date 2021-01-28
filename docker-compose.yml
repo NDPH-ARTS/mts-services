@@ -94,6 +94,11 @@ services:
       SERVER_PORT: "82"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
+    healthcheck:
+      test: curl http://localhost:82
+      interval: 10s
+      timeout: 10s
+      retries: 12
     ports:
       - "82:82"
 
