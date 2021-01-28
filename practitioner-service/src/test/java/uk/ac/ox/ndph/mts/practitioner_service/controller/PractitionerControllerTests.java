@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
+import org.mockito.Mockito;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,9 +28,10 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerAttributeConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
+
 @SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
-@AutoConfigureMockMvc
 class PractitionerControllerTests {
 
     @Autowired
@@ -38,11 +40,13 @@ class PractitionerControllerTests {
     @MockBean
     private EntityService entityService;
 
+    private final String practitionerUri = "/practitioner";
+    private final String roleAssignmentUri = "/practitioner/987/roles";
+
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
-
-        this.mockMvc.perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
@@ -53,7 +57,7 @@ class PractitionerControllerTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -64,7 +68,7 @@ class PractitionerControllerTests {
         String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -76,7 +80,7 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway());
     }
 
@@ -88,8 +92,48 @@ class PractitionerControllerTests {
 
         // Act + Assert
         String error = this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("prefix"));
     }
+
+
+    // RoleAssignment Tests
+
+    @Test
+    void TestPostRoleAssignment_WhenNoBody_Returns400() throws Exception {
+        // Act + Assert
+        this.mockMvc.perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void TestPostRoleAssignment_WhenPartialInput_Returns201AndId() throws Exception {
+        // We test that the controller doesn't do any logic
+        // Arrange
+        String returnedValue = "123";
+        when(entityService.saveRoleAssignment(Mockito.any(RoleAssignment.class))).thenReturn(returnedValue);
+        String jsonString = "{}";
+        // Act + Assert
+        this.mockMvc
+                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString(returnedValue)));
+    }
+
+    @Test
+    void TestPostRoleAssignment_WhenServiceFails_Returns502() throws Exception {
+        // Arrange
+        when(entityService.saveRoleAssignment(Mockito.any(RoleAssignment.class))).thenThrow(RestException.class);
+        String jsonString = "{}";
+
+        // Act + Assert
+        this.mockMvc
+                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andDo(print())
+                .andExpect(status().isBadGateway());
+    }
+
 }

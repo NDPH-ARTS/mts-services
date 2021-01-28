@@ -8,7 +8,7 @@ public enum Validations {
     ERROR("argument %s failed validation");
 
     private String message;
- 
+
     Validations(String message) {
         this.message = message;
     }

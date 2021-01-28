@@ -4,7 +4,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.configuration;
  * String constants
  */
 public enum Configurations {
-    ERROR("Error while loading configuration file");
+    ERROR("Error loading configuration file");
 
     private String message;
  
