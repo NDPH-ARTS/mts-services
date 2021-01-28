@@ -30,7 +30,7 @@ class PractitionerServiceTests {
     @Mock
     private EntityStore<Practitioner> practitionerStore;
     @Mock
-    private ModelEntityValidation<Practitioner> practitionerValidation;
+    private ModelEntityValidation<Practitioner> practitionerValidator;
 
     @Captor
     ArgumentCaptor<Practitioner> practitionerCaptor;
