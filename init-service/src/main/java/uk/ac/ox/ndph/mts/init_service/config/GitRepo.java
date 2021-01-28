@@ -27,12 +27,13 @@ import java.nio.file.Paths;
 @Component
 public class GitRepo {
 
-    private final Logger logger = LoggerFactory.getLogger(GitRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitRepo.class);
     private static final String GIT_LOCATION = "gitRepo" + File.separator + "jsonConfig";
 
     @PostConstruct
     public void init() throws InvalidConfigException {
         if (!Files.exists(Paths.get(GIT_LOCATION))) {
+            LOGGER.info("About to clone git repository {}", GIT_LOCATION);
             cloneRepository();
         }
     }
@@ -43,6 +44,7 @@ public class GitRepo {
                 .setURI("https://github.com/NDPH-ARTS/global-trial-config.git")
                 .setDirectory(Paths.get(GIT_LOCATION).toFile())
                 .call();
+            LOGGER.info("Cloned git repository https://github.com/NDPH-ARTS/global-trial-config.git");
         } catch (GitAPIException | JGitInternalException gitEx) {
             throw new InvalidConfigException(gitEx.getMessage());
         }
@@ -81,8 +83,8 @@ public class GitRepo {
                     ObjectId objectId = treeWalk.getObjectId(0);
                     ObjectLoader loader = getRepo().open(objectId);
 
-                    if (logger.isDebugEnabled()) {
-                        logger.info(new String(loader.getBytes(), StandardCharsets.UTF_8));
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.info(new String(loader.getBytes(), StandardCharsets.UTF_8));
                     }
 
                     fileBytes = loader.getBytes();

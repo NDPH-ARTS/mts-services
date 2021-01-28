@@ -1,6 +1,8 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,8 @@ import java.io.IOException;
 
 @Service
 public class TrialService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrialService.class);
 
     @Value("${config.json}")
     private String config;
@@ -43,6 +47,7 @@ public class TrialService {
     @PostConstruct
     public void init() throws InvalidConfigException {
         this.trial = createTrialFromGitRepo(config);
+        LOGGER.info("Trial : {}", this.trial);
     }
 
     public Trial getTrial() {

@@ -50,8 +50,10 @@ public class PractitionerServiceInvoker implements ServiceInvoker {
     public void execute(List<Practitioner> practitioners) throws NullEntityException {
         if (practitioners != null) {
             for (Entity practitioner : practitioners) {
+                LOGGER.info("Starting to create practitioner(s): {}", practitioner);
                 send(practitioner);
-                LOGGER.info("Created: {}", practitioner);
+                LOGGER.info("Finished creating {} practitioner(s)", practitioners.size());
+
             }
         } else {
             throw new NullEntityException("No Practitioners in payload");

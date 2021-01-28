@@ -50,8 +50,9 @@ public class SiteServiceInvoker implements ServiceInvoker {
     public void execute(List<Site> sites) throws NullEntityException {
         if (sites != null) {
             for (Site site : sites) {
+                LOGGER.info("Starting to create site(s): {}", sites);
                 send(site);
-                LOGGER.info("Created: {}", site);
+                LOGGER.info("Finished creating {} site(s)", sites.size());
             }
         } else {
             throw new NullEntityException("No Sites in payload");
