@@ -42,15 +42,12 @@ public class TrialService {
 
     @PostConstruct
     public void init() throws InvalidConfigException {
-        setTrial(createTrialFromGitRepo(config));
+        this.trial = createTrialFromGitRepo(config);
     }
 
     public Trial getTrial() {
         return trial;
     }
 
-    public void setTrial(Trial trial) {
-        this.trial = trial;
-    }
 }
 
