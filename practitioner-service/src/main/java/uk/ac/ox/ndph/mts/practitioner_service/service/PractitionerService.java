@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
+import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 
@@ -19,39 +21,65 @@ import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 @Service
 public class PractitionerService implements EntityService {
 
-    private EntityStore<Practitioner> practitionerStore;
-    private final ModelEntityValidation<Practitioner> entityValidation;
+    private final EntityStore<Practitioner> practitionerStore;
+    private final ModelEntityValidation<Practitioner> practitionerValidator;
+    @SuppressWarnings("FieldCanBeLocal")
     private final Logger logger = LoggerFactory.getLogger(PractitionerService.class);
 
+    private final EntityStore<RoleAssignment> roleAssignmentStore;
+    private final ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
+
     /**
-     *
      * @param practitionerStore Practitioner store interface
-     * @param entityValidation Practitioner validation interface 
+     * @param practitionerValidator Practitioner validation interface
      */
     @Autowired
     public PractitionerService(EntityStore<Practitioner> practitionerStore,
-            ModelEntityValidation<Practitioner> entityValidation) {
+                               ModelEntityValidation<Practitioner> practitionerValidator,
+                               EntityStore<RoleAssignment> roleAssignmentStore,
+                               ModelEntityValidation<RoleAssignment> roleAssignmentValidator) {
         if (practitionerStore == null) {
             throw new InitialisationError("practitioner store cannot be null");
         }
-        if (entityValidation == null) {
-            throw new InitialisationError("entity validation cannot be null");
+        if (practitionerValidator == null) {
+            throw new InitialisationError("practitioner entity validation cannot be null");
         }
+        if (roleAssignmentStore == null) {
+            throw new InitialisationError("RoleAssignment store cannot be null");
+        }
+        if (roleAssignmentValidator == null) {
+            throw new InitialisationError("RoleAssignment entity validation cannot be null");
+        }
+
         this.practitionerStore = practitionerStore;
-        this.entityValidation = entityValidation;
+        this.practitionerValidator = practitionerValidator;
+
+        this.roleAssignmentStore = roleAssignmentStore;
+        this.roleAssignmentValidator = roleAssignmentValidator;
+
         logger.info(Services.STARTUP.message());
     }
 
     /**
-     *
      * @param practitioner the Practitioner to save.
      * @return The id of the new practitioner
      */
     public String savePractitioner(Practitioner practitioner) {
-        var validationResponse = entityValidation.validate(practitioner);
+        var validationResponse = practitionerValidator.validate(practitioner);
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
         return practitionerStore.createEntity(practitioner);
+    }
+
+    //TODO: should this be on its own service?
+    @Override
+    public String saveRoleAssignment(RoleAssignment roleAssignment) {
+        //TODO: validate(?) that referenced IDs properties exist in the system
+        ValidationResponse validationResponse = roleAssignmentValidator.validate(roleAssignment);
+        if (!validationResponse.isValid()) {
+            throw new ValidationException(validationResponse.getErrorMessage());
+        }
+        return roleAssignmentStore.createEntity(roleAssignment);
     }
 }

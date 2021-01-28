@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.PractitionerRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.hl7.fhir.r4.model.Resource;
@@ -21,11 +22,10 @@ import java.util.Objects;
 @Component
 public class HapiFhirRepository implements FhirRepository {
 
-    private static final String PRACTITIONER_ENTITY_NAME = "Practitioner";
-
     private final FhirContextWrapper fhirContextWrapper;
     private final Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
 
+    @SuppressWarnings("FieldMayBeFinal") // Value injection shouldn't be final
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
@@ -44,14 +44,12 @@ public class HapiFhirRepository implements FhirRepository {
 
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_PRACTITIONER.message(),
-                fhirContextWrapper.prettyPrint(practitioner));
+            logger.info(FhirRepo.SAVE_REQUEST.message(), fhirContextWrapper.prettyPrint(practitioner));
         }
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
-                bundle(practitioner, PRACTITIONER_ENTITY_NAME));
+            responseBundle = fhirContextWrapper.executeTransaction(bundle(practitioner));
         } catch (BaseServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
             throw new RestException(e.getMessage(), e);
@@ -60,30 +58,58 @@ public class HapiFhirRepository implements FhirRepository {
 
         // Log the response
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_RESPONSE.message(),
-                    fhirContextWrapper.prettyPrint(responseElement));
+            logger.info(FhirRepo.SAVE_RESPONSE.message(), fhirContextWrapper.prettyPrint(responseElement));
         }
+
+        //TODO: replace with the actual id return
         return practitioner.getIdElement().getValue();
     }
+
+    @Override
+    public String savePractitionerRole(PractitionerRole practitionerRole) {
+        // Log the request
+        if (logger.isInfoEnabled()) {
+            logger.info(fhirContextWrapper.prettyPrint(practitionerRole));
+        }
+
+        Bundle responseBundle;
+        try {
+            responseBundle = fhirContextWrapper.executeTransaction(bundle(practitionerRole));
+        } catch (BaseServerResponseException e) {
+            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
+            throw new RestException(e.getMessage(), e);
+        }
+        IBaseResource responseElement = extractResponseResource(responseBundle);
+
+        // Log the response
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.SAVE_RESPONSE.message(), fhirContextWrapper.prettyPrint(responseElement));
+        }
+
+        return responseElement.getIdElement().getIdPart();
+    }
+
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
         var resp = fhirContextWrapper.toListOfResources(bundle);
-        
+
         if (resp.size() != 1) {
             logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
-            throw new RestException(String.format(
-                FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
-
+            throw new RestException(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
         }
         return resp.get(0);
     }
 
-    private Bundle bundle(Resource resource, String resourceName) {
+    private Bundle bundle(Resource resource) {
         Bundle bundle = new Bundle();
-        bundle.setType(Bundle.BundleType.TRANSACTION);
+        bundle.setType(Bundle.BundleType.TRANSACTION); // we use a single resource bundle, do we need this?
 
-        // Add the practitioner as an entry.
-        bundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource).getRequest()
-                .setUrl(resourceName).setMethod(Bundle.HTTPVerb.POST);
+        // Add the resource as an entry.
+        bundle.addEntry()
+                .setFullUrl(resource.getIdElement().getValue())
+                .setResource(resource)
+                .getRequest()
+                .setUrl(resource.fhirType())
+                .setMethod(Bundle.HTTPVerb.POST);
         return bundle;
     }
 }

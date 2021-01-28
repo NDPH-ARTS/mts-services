@@ -31,11 +31,11 @@
 
     <modules>
         <!--        <module>build-tools</module>-->
-
         <module>sample-service</module>
         <module>practitioner-service</module>
         <module>trial-config-service</module>
         <module>role-service</module>
+        <module>init-service</module>
         <module>site-service</module>
     </modules>
 
@@ -142,6 +142,8 @@
 
                         <!-- Exclude model classes -->
                         <exclude>**/*service/model/**</exclude>
+                        <!-- Exclude config classes -->
+                        <exclude>**/*service/config/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

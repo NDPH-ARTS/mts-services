@@ -18,7 +18,7 @@ jobs:
     name: Build services
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service", "trial-config-service", "site-service", "role-service"]
+        service_name: [ "sample-service", "practitioner-service", "trial-config-service", "site-service", "role-service", "init-service"]
     env:
       GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
