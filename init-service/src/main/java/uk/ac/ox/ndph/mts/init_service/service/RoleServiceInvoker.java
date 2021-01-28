@@ -48,7 +48,7 @@ public class RoleServiceInvoker implements ServiceInvoker {
         }
     }
 
-    public void execute(List<Role> roles) throws Exception {
+    public void execute(List<Role> roles) throws NullEntityException {
         if (roles != null) {
             for (Role role : roles) {
                 send(role);

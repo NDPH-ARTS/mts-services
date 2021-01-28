@@ -47,7 +47,7 @@ public class PractitionerServiceInvoker implements ServiceInvoker {
         }
     }
 
-    public void execute(List<Practitioner> practitioners) throws Exception {
+    public void execute(List<Practitioner> practitioners) throws NullEntityException {
         if (practitioners != null) {
             for (Entity practitioner : practitioners) {
                 send(practitioner);
