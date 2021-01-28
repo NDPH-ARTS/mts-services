@@ -1,38 +1,46 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
-import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfigurationProvider;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Attribute;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 
-/**
- * Implement a ModelEntityValidation for Practitioner
- */
+import java.util.Map;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 @Component
 public class PractitionerValidation implements ModelEntityValidation<Practitioner> {
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    class AttributeData {
+    static class AttributeData {
         private String description;
         private Pattern regex;
         private Function<Practitioner, String> getValue;
+
+        AttributeData(final String description, final Pattern regex, final Function<Practitioner, String> getValue) {
+            this.description = description;
+            this.regex = regex;
+            this.getValue = getValue;
+        }
+
+        public Function<Practitioner, String> getGetValue() {
+            return getValue;
+        }
+
+        public Pattern getRegex() {
+            return regex;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 
     private static final String REGEX_ALL = ".*";
