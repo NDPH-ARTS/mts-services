@@ -1,4 +1,4 @@
-docker-compose pull
+docker-compose pull -q
 docker-compose up -d --no-build
 echo "Waiting for docker compose services..."
 
