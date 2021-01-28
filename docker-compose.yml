@@ -57,7 +57,7 @@ services:
     environment:
       SERVER_PORT: "83"
     healthcheck:
-      test: curl http://localhost/
+      test: curl http://localhost:83
       interval: 10s
       timeout: 10s
       retries: 6
