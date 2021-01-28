@@ -37,6 +37,7 @@ jobs:
           fail_on_test_failures: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: "**/out/TEST*.xml"
+          fail_if_no_tests: false
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
