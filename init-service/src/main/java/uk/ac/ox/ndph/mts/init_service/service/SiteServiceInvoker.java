@@ -47,7 +47,7 @@ public class SiteServiceInvoker implements ServiceInvoker {
         }
     }
 
-    public void execute(List<Site> sites) throws Exception {
+    public void execute(List<Site> sites) throws NullEntityException {
         if (sites != null) {
             for (Site site : sites) {
                 send(site);
