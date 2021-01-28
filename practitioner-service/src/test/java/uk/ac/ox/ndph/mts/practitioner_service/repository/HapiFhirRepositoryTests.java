@@ -5,15 +5,21 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.assertj.core.api.Assertions;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -30,6 +36,31 @@ class HapiFhirRepositoryTests {
     @Captor
     private ArgumentCaptor<Bundle> bundleCaptor;
 
+    private static final String PERSON_ID = "personId";
+
+    @ParameterizedTest
+    @MethodSource("getAllBlankStrings")
+    void whenBlankPersonIdGiven_throwException(String personId) {
+        // Arrange
+        HapiFhirRepository sut = new HapiFhirRepository(fhirContextWrapper);
+        Practitioner practitioner = mock(Practitioner.class);
+
+        // Act + Assert
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> {
+                    sut.createPractitioner(practitioner, personId);
+                });
+    }
+
+    private static Stream<Arguments> getAllBlankStrings() {
+        return Stream.of(
+                Arguments.of((String)null),
+                Arguments.of(""),
+                Arguments.of("   "),
+                Arguments.of("\t"),
+                Arguments.of("\n"));
+    }
+
     @Test
     void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTrasactionType()
     {
@@ -41,7 +72,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
         
         // Act
-        fhirRepository.createPractitioner(practitioner);
+        fhirRepository.createPractitioner(practitioner, PERSON_ID);
 
         // Assert
         verify(fhirContextWrapper).executeTrasaction(anyString(), bundleCaptor.capture());
@@ -61,7 +92,7 @@ class HapiFhirRepositoryTests {
         practitioner.setId("123");
         
         // Act
-        var value = fhirRepository.createPractitioner(practitioner);
+        var value = fhirRepository.createPractitioner(practitioner, PERSON_ID);
 
         // Assert
         assertThat(value, equalTo("123"));
@@ -74,7 +105,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
         
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner));
+        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner, PERSON_ID));
     }
     
     @Test
@@ -87,7 +118,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner));
+        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner, PERSON_ID));
     }
 
     @Test
@@ -99,6 +130,6 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner));
+        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner, PERSON_ID));
     }
 }

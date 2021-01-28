@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+
+import java.util.Objects;
 
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
@@ -34,7 +37,11 @@ public class HapiFhirRepository implements FhirRepository {
      * @param practitioner the practitioner to save.
      * @return id of the saved practitioner
      */
-    public String createPractitioner(Practitioner practitioner) {
+    public String createPractitioner(final Practitioner practitioner, final String personId) {
+        if(StringUtils.isBlank(personId)) {
+            throw new IllegalArgumentException("Person ID must not be blank");
+        }
+
         // Log the request
         if (logger.isInfoEnabled()) {
             logger.info(FhirRepo.SAVE_PRACTITIONER.message(),

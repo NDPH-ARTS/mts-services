@@ -12,7 +12,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 @Component
 public class PractitionerStore implements EntityStore<Practitioner> {
 
-
     private FhirRepository repository;
     private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter;
 
@@ -30,6 +29,6 @@ public class PractitionerStore implements EntityStore<Practitioner> {
 
     @Override
     public String createEntity(Practitioner entity) {
-        return repository.createPractitioner(converter.convert(entity));
+        return repository.createPractitioner(converter.convert(entity), "");
     }
 }
