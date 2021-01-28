@@ -29,7 +29,7 @@ public class PractitionerStore implements EntityStore<Practitioner> {
     }
 
     @Override
-    public String saveEntity(Practitioner entity) {
-        return repository.savePractitioner(converter.convert(entity));
+    public String createEntity(Practitioner entity) {
+        return repository.createPractitioner(converter.convert(entity));
     }
 }

@@ -41,7 +41,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
         
         // Act
-        fhirRepository.savePractitioner(practitioner);
+        fhirRepository.createPractitioner(practitioner);
 
         // Assert
         verify(fhirContextWrapper).executeTrasaction(anyString(), bundleCaptor.capture());
@@ -61,7 +61,7 @@ class HapiFhirRepositoryTests {
         practitioner.setId("123");
         
         // Act
-        var value = fhirRepository.savePractitioner(practitioner);
+        var value = fhirRepository.createPractitioner(practitioner);
 
         // Assert
         assertThat(value, equalTo("123"));
@@ -74,7 +74,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
         
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.savePractitioner(practitioner));
+        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner));
     }
     
     @Test
@@ -87,7 +87,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.savePractitioner(practitioner));
+        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner));
     }
 
     @Test
@@ -99,6 +99,6 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.savePractitioner(practitioner));
+        assertThrows(RestException.class, () -> fhirRepository.createPractitioner(practitioner));
     }
 }

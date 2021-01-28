@@ -52,6 +52,6 @@ public class PractitionerService implements EntityService {
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
-        return practitionerStore.saveEntity(practitioner);
+        return practitionerStore.createEntity(practitioner);
     }
 }

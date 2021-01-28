@@ -10,5 +10,5 @@ public interface EntityStore<T> {
      * @param entity the entity to store.
      * @return the entity stored id.
      */
-    String saveEntity(T entity);
+    String createEntity(T entity);
 }

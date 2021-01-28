@@ -34,7 +34,7 @@ public class HapiFhirRepository implements FhirRepository {
      * @param practitioner the practitioner to save.
      * @return id of the saved practitioner
      */
-    public String savePractitioner(Practitioner practitioner) {
+    public String createPractitioner(Practitioner practitioner) {
         // Log the request
         if (logger.isInfoEnabled()) {
             logger.info(FhirRepo.SAVE_PRACTITIONER.message(),

@@ -42,7 +42,7 @@ class PractitionerServiceTests {
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
         var practitionerService = new PractitionerService(practitionerStore, practitionerValidation);
         when(practitionerValidation.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
-        when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
+        when(practitionerStore.createEntity(any(Practitioner.class))).thenReturn("123");
         //Act
         practitionerService.savePractitioner(practitioner);
 
@@ -61,12 +61,12 @@ class PractitionerServiceTests {
         Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
         var practitionerService = new PractitionerService(practitionerStore, practitionerValidation);
         when(practitionerValidation.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
-        when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
+        when(practitionerStore.createEntity(any(Practitioner.class))).thenReturn("123");
         //Act
         practitionerService.savePractitioner(practitioner);
 
         //Assert
-        Mockito.verify(practitionerStore).saveEntity(practitionerCaptor.capture());
+        Mockito.verify(practitionerStore).createEntity(practitionerCaptor.capture());
         var value = practitionerCaptor.getValue();
         assertThat(practitioner, equalTo(value));
     }
@@ -97,7 +97,7 @@ class PractitionerServiceTests {
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> practitionerService.savePractitioner(practitioner),
                 "Expecting save to throw validation exception");
-        Mockito.verify(practitionerStore, Mockito.times(0)).saveEntity(any(Practitioner.class));
+        Mockito.verify(practitionerStore, Mockito.times(0)).createEntity(any(Practitioner.class));
     }
 
     @Test

@@ -35,7 +35,7 @@ class PractitionerServiceIntegrationTests {
     @Test
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
-        when(repository.savePractitioner(any(Practitioner.class))).thenReturn("123");
+        when(repository.createPractitioner(any(Practitioner.class))).thenReturn("123");
         
         
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
@@ -48,7 +48,7 @@ class PractitionerServiceIntegrationTests {
     @Test
     void TestPostPractitioner_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
         // Arrange
-        when(repository.savePractitioner(any(Practitioner.class))).thenReturn("123");
+        when(repository.createPractitioner(any(Practitioner.class))).thenReturn("123");
         
         
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"\", \"familyName\": \"familyName\"}";
@@ -62,7 +62,7 @@ class PractitionerServiceIntegrationTests {
     @Test
     void TestPostPractitioner_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange
-        when(repository.savePractitioner(any(Practitioner.class))).thenThrow(new RestException("test error"));
+        when(repository.createPractitioner(any(Practitioner.class))).thenThrow(new RestException("test error"));
         
         
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
