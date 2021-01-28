@@ -47,12 +47,14 @@ public class RoleServiceInvoker implements ServiceInvoker {
         }
     }
 
-    public void execute(List<Role> roles) throws DependentServiceException {
+    public void execute(List<Role> roles) throws Exception {
         if (roles != null) {
             for (Role role : roles) {
                 send(role);
                 LOGGER.info("Created: {}", role);
             }
+        } else {
+            throw new Exception();
         }
     }
 }

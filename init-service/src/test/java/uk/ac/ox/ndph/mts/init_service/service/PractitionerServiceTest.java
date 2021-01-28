@@ -56,6 +56,11 @@ class PractitionerServiceTest {
     }
 
     @Test
+    void whenDependentServiceFailsWhenNull_CorrectException() {
+        assertThrows(Exception.class, () -> practitionerServiceInvoker.execute(null));
+    }
+
+    @Test
     void whenDependentServiceFails_CorrectException() {
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");

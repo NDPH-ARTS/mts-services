@@ -46,12 +46,14 @@ public class SiteServiceInvoker implements ServiceInvoker {
         }
     }
 
-    public void execute(List<Site> sites) throws DependentServiceException {
+    public void execute(List<Site> sites) throws Exception {
         if (sites != null) {
             for (Site site : sites) {
                 send(site);
                 LOGGER.info("Created: {}", site);
             }
+        } else {
+            throw new Exception();
         }
     }
 }

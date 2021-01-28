@@ -54,6 +54,11 @@ class RoleServiceTest {
     }
 
     @Test
+    void whenDependentServiceFailsWhenNull_CorrectException() {
+        assertThrows(Exception.class, () -> roleServiceInvoker.execute(null));
+    }
+
+    @Test
     void whenDependentServiceFails_CorrectException() {
         Role testRole = new Role();
         testRole.setId("testId");

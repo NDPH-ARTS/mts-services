@@ -30,7 +30,7 @@ class LoaderTest {
     TrialService trialService;
 
     @Test
-    void testLoader() {
+    void testLoader() throws Exception {
         Loader loader = new Loader(trialService, practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
 
         doNothing().when(roleServiceInvoker).execute(anyList());

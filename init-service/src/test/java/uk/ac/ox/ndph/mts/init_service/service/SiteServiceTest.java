@@ -54,6 +54,11 @@ class SiteServiceTest {
     }
 
     @Test
+    void whenDependentServiceFailsWhenNull_CorrectException() {
+        assertThrows(Exception.class, () -> siteServiceInvoker.execute(null));
+    }
+
+    @Test
     void whenDependentServiceFails_CorrectException() {
         Site testSite = new Site();
         testSite.setName("testName");

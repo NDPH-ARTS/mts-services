@@ -46,12 +46,14 @@ public class PractitionerServiceInvoker implements ServiceInvoker {
         }
     }
 
-    public void execute(List<Practitioner> practitioners) throws DependentServiceException {
+    public void execute(List<Practitioner> practitioners) throws Exception {
         if (practitioners != null) {
             for (Entity practitioner : practitioners) {
                 send(practitioner);
                 LOGGER.info("Created: {}", practitioner);
             }
+        }  else {
+            throw new Exception();
         }
     }
 
