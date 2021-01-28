@@ -142,6 +142,8 @@
 
                         <!-- Exclude model classes -->
                         <exclude>**/*service/model/**</exclude>
+                        <!-- Exclude config classes -->
+                        <exclude>**/*service/config/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
