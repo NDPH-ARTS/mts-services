@@ -11,17 +11,23 @@ import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 @Component
 public class Loader implements CommandLineRunner {
 
-    @Autowired
     private TrialService trialService;
 
-    @Autowired
     private PractitionerServiceInvoker practitionerServiceInvoker;
 
-    @Autowired
     private RoleServiceInvoker roleServiceInvoker;
 
-    @Autowired
     private SiteServiceInvoker siteServiceInvoker;
+
+    @Autowired
+    public Loader(TrialService trialService, PractitionerServiceInvoker practitionerServiceInvoker,
+                  RoleServiceInvoker roleServiceInvoker, SiteServiceInvoker siteServiceInvoker) {
+        this.trialService = trialService;
+        this.practitionerServiceInvoker = practitionerServiceInvoker;
+        this.roleServiceInvoker = roleServiceInvoker;
+        this.siteServiceInvoker = siteServiceInvoker;
+    }
+
 
     @Override
     public void run(String... args) {
