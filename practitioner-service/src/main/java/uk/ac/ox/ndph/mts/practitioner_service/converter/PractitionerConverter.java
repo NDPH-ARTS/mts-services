@@ -21,8 +21,23 @@ public class PractitionerConverter implements EntityConverter<Practitioner, org.
         fhirPractitioner.addName().setFamily(input.getFamilyName()).addGiven(input.getGivenName())
                 .addPrefix(input.getPrefix());
         fhirPractitioner.setGender(AdministrativeGender.UNKNOWN);
+
+        // TODO (archiem) Setting temporary FHIR transaction ID is unnecessary, but not harmful.
+        // I think this is the wrong place to be doing this though.
         String id = UUID.randomUUID().toString();
         fhirPractitioner.setId(id);
+
+        // TODO (archiem) Think this is the wrong place to be doing this.
+        // Converting and adding a new identifier is too presumptious.
+        // Probably a savePractitioner method should do this.
+        fhirPractitioner.addIdentifier()
+                .setSystem("urn:personId")
+                .setValue(generatePersonId());
+
         return fhirPractitioner;
+    }
+
+    private String generatePersonId() {
+        return UUID.randomUUID().toString();
     }
 }
