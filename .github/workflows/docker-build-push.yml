@@ -60,6 +60,7 @@ jobs:
 
   test:
     name: Test
+    if: github.event_name == 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     steps:
