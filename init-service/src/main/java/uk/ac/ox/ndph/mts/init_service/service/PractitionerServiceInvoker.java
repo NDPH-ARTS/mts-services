@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
+import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 
@@ -52,8 +53,8 @@ public class PractitionerServiceInvoker implements ServiceInvoker {
                 send(practitioner);
                 LOGGER.info("Created: {}", practitioner);
             }
-        }  else {
-            throw new Exception();
+        } else {
+            throw new NullEntityException("No Practitioners in payload");
         }
     }
 

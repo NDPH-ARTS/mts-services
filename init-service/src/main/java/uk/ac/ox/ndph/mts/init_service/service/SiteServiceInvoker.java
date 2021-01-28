@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
+import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 
@@ -53,7 +54,7 @@ public class SiteServiceInvoker implements ServiceInvoker {
                 LOGGER.info("Created: {}", site);
             }
         } else {
-            throw new Exception();
+            throw new NullEntityException("No Sites in payload");
         }
     }
 }

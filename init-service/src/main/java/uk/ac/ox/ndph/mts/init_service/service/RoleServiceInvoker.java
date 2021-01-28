@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
+import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
 
@@ -54,7 +55,7 @@ public class RoleServiceInvoker implements ServiceInvoker {
                 LOGGER.info("Created: {}", role);
             }
         } else {
-            throw new Exception();
+            throw new NullEntityException("No Roles in payload");
         }
     }
 }
