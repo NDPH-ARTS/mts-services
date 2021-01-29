@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThrows;
 
 @SpringBootTest(properties =  { "http.readTimeOutMs=1000", "http.connectTimeOutMs=500" })
 @ContextConfiguration
-public class WebFluxRoleServiceClientTest {
+class WebFluxRoleServiceClientTest {
 
     private TestRolesServiceBackend mockBackEnd;
 
