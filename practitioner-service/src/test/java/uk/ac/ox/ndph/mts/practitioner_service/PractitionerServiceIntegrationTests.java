@@ -11,10 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
-//import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
-import uk.ac.ox.ndph.mts.practitioner_service.service.PractitionerService;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -35,8 +32,6 @@ class PractitionerServiceIntegrationTests {
 
     @MockBean
     public FhirRepository repository;
-//    @MockBean
-//    PractitionerService practitionerService;
 
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
@@ -44,7 +39,6 @@ class PractitionerServiceIntegrationTests {
     @Test
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
-        //when(practitionerService.savePractitioner(any(Practitioner.class))).thenReturn("123");
         when(repository.createPractitioner(any(Practitioner.class))).thenReturn("123");
         
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
@@ -56,10 +50,8 @@ class PractitionerServiceIntegrationTests {
 
     @Test
     void TestPostPractitioner_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
-        // Mock PractitionerService
         // Arrange
         when(repository.createPractitioner(any(Practitioner.class))).thenReturn("123");
-        //when(practitionerService.savePractitioner(any(Practitioner.class))).thenThrow(ValidationException.class);
 
 
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"\", \"familyName\": \"familyName\"}";
@@ -72,12 +64,9 @@ class PractitionerServiceIntegrationTests {
 
     @Test
     void TestPostPractitioner_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
-        // Mock PractitionerService
-
         // Arrange
         when(repository.createPractitioner(any(Practitioner.class))).thenThrow(new RestException("test error"));
-        //when(practitionerService.savePractitioner(any(Practitioner.class))).thenThrow(new RestException("test error"));
-        
+
         
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
@@ -90,8 +79,6 @@ class PractitionerServiceIntegrationTests {
 
     @Test
     void TestPostRoleAssignment_WhenValidInput_Returns201AndId() throws Exception {
-        // Mock PractitionerService
-
         // Arrange
         when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
 
