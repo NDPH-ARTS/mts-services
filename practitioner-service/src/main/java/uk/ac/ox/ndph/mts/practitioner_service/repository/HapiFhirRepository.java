@@ -55,8 +55,11 @@ public class HapiFhirRepository implements FhirRepository {
             logger.info(FhirRepo.SAVE_RESPONSE.message(), fhirContextWrapper.prettyPrint(responseElement));
         }
 
-        //TODO: replace with the actual id return
-        return practitioner.getIdElement().getValue();
+        return getUnqualifiedResourceId(responseElement);
+    }
+
+    private String getUnqualifiedResourceId(final IBaseResource responseElement) {
+        return responseElement.getIdElement().toUnqualified().getIdPart();
     }
 
     @Override
