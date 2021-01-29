@@ -57,7 +57,7 @@ public class WebFluxRoleServiceClient implements RoleServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                        response -> Mono.error(new RestException("Role not found: " + id)))
+                    response -> Mono.error(new RestException("Role not found: " + id)))
                 .bodyToMono(RoleDTO.class)
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block();
