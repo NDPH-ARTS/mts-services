@@ -37,10 +37,7 @@ public class HapiFhirRepository implements FhirRepository {
      * @param practitioner the practitioner to save.
      * @return id of the saved practitioner
      */
-    public String createPractitioner(final Practitioner practitioner, final String personId) {
-        if(StringUtils.isBlank(personId)) {
-            throw new IllegalArgumentException("Person ID must not be blank");
-        }
+    public String createPractitioner(final Practitioner practitioner) {
 
         // Log the request
         if (logger.isInfoEnabled()) {

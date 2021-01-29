@@ -1,16 +1,12 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -18,13 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,32 +33,9 @@ class HapiFhirRepositoryTests {
 
     private FhirRepository repository;
 
-    private static final String PERSON_ID = "personId";
-
     @BeforeEach
     void init() {
         this.repository = new HapiFhirRepository(fhirContextWrapper);
-    }
-
-    @ParameterizedTest
-    @MethodSource("getAllBlankStrings")
-    void whenBlankPersonIdGiven_throwException(String personId) {
-        // Arrange
-        HapiFhirRepository sut = new HapiFhirRepository(fhirContextWrapper);
-        Practitioner practitioner = mock(Practitioner.class);
-
-        // Act + Assert
-        Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> sut.createPractitioner(practitioner, personId));
-    }
-
-    private static Stream<Arguments> getAllBlankStrings() {
-        return Stream.of(
-                Arguments.of((String) null),
-                Arguments.of(""),
-                Arguments.of("   "),
-                Arguments.of("\t"),
-                Arguments.of("\n"));
     }
 
     @Test
@@ -76,7 +47,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act
-        repository.createPractitioner(practitioner, PERSON_ID);
+        repository.createPractitioner(practitioner);
 
         // Assert
         verify(fhirContextWrapper).executeTransaction(bundleCaptor.capture());
@@ -95,7 +66,7 @@ class HapiFhirRepositoryTests {
         practitioner.setId("123");
 
         // Act
-        var value = repository.createPractitioner(practitioner, PERSON_ID);
+        var value = repository.createPractitioner(practitioner);
 
         // Assert
         assertThat(value, equalTo("123"));
@@ -107,7 +78,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act + Assert
-        assertThrows(RestException.class, () -> repository.createPractitioner(practitioner, PERSON_ID));
+        assertThrows(RestException.class, () -> repository.createPractitioner(practitioner));
     }
 
     @Test
@@ -119,7 +90,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act + Assert
-        assertThrows(RestException.class, () -> repository.createPractitioner(practitioner, PERSON_ID));
+        assertThrows(RestException.class, () -> repository.createPractitioner(practitioner));
     }
 
     @Test
@@ -129,7 +100,7 @@ class HapiFhirRepositoryTests {
         var practitioner = new Practitioner();
 
         // Act + Assert
-        assertThrows(RestException.class, () -> repository.createPractitioner(practitioner, PERSON_ID));
+        assertThrows(RestException.class, () -> repository.createPractitioner(practitioner));
     }
 
 

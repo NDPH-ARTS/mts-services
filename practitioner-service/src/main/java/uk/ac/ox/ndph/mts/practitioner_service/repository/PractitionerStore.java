@@ -24,7 +24,6 @@ public class PractitionerStore implements EntityStore<Practitioner> {
 
     @Override
     public String createEntity(Practitioner entity) {
-        // TODO provide proper personId using generator
-        return repository.createPractitioner(converter.convert(entity), "");
+        return repository.createPractitioner(converter.convert(entity));
     }
 }

@@ -5,7 +5,7 @@ import org.hl7.fhir.r4.model.PractitionerRole;
 
 public interface FhirRepository {
 
-    String createPractitioner(Practitioner practitioner, String personId);
+    String createPractitioner(Practitioner practitioner);
 
     String savePractitionerRole(PractitionerRole practitionerRole);
 
