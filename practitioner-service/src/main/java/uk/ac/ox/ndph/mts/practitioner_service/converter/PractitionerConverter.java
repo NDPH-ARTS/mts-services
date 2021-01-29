@@ -27,17 +27,7 @@ public class PractitionerConverter implements EntityConverter<Practitioner, org.
         String id = UUID.randomUUID().toString();
         fhirPractitioner.setId(id);
 
-        // TODO (archiem) Think this is the wrong place to be doing this.
-        // Converting and adding a new identifier is too presumptious.
-        // Probably a savePractitioner method should do this.
-        fhirPractitioner.addIdentifier()
-                .setSystem("urn:personId")
-                .setValue(generatePersonId());
-
         return fhirPractitioner;
     }
 
-    private String generatePersonId() {
-        return UUID.randomUUID().toString();
-    }
 }
