@@ -21,7 +21,8 @@ public class PageableResult<T> implements Iterable<T> {
     private final PageableResultRequest pageable;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public PageableResult(@JsonProperty("content") final Collection<T> content, @JsonProperty("pageable") PageableResultRequest pageable) {
+    public PageableResult(@JsonProperty("content") final Collection<T> content,
+                          @JsonProperty("pageable") PageableResultRequest pageable) {
         Objects.requireNonNull(content, "content cannot be null");
         Objects.requireNonNull(pageable, "pageable cannot be null");
         this.content = content;
