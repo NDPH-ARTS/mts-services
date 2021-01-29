@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 /**
  * WebFlux WebClient based version of the REST role-service client. Note this is a sync interface only.
  */
-@Service
+@Service("prototype]")
 public class WebFluxRoleServiceClient implements RoleServiceClient {
 
     private final WebClient webClient;
