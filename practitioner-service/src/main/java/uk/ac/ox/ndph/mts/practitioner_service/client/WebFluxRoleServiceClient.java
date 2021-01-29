@@ -25,7 +25,7 @@ public class WebFluxRoleServiceClient implements RoleServiceClient {
     private final WebClient webClient;
 
     public WebFluxRoleServiceClient(final WebClient.Builder webClientBuilder,
-                                    @Value("${role.service.url}") String roleServiceUrlBase) {
+                                    @Value("${role.service.uri}") String roleServiceUrlBase) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrlBase).build();
     }
 
