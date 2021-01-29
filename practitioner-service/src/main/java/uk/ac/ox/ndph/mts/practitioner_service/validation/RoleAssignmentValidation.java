@@ -3,21 +3,10 @@ package uk.ac.ox.ndph.mts.practitioner_service.validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PageableResult;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
-import uk.ac.ox.ndph.mts.practitioner_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
-
-import java.util.stream.Stream;
 
 /**
  * Implements a ModelEntityValidation for RoleAssignment
@@ -57,6 +46,8 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
         return str == null || str.isBlank();
     }
 
-    private boolean isRole(final String roleId) { return roleId != null && this.roleServiceClient.roleIdExists(roleId); }
+    private boolean isRole(final String roleId) {
+        return roleId != null && this.roleServiceClient.roleIdExists(roleId);
+    }
 
 }

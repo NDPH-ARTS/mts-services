@@ -24,7 +24,8 @@ public class WebFluxRoleServiceClient implements RoleServiceClient {
 
     private final WebClient webClient;
 
-    public WebFluxRoleServiceClient(final WebClient.Builder webClientBuilder, @Value("${role.service.url}") String roleServiceUrlBase) {
+    public WebFluxRoleServiceClient(final WebClient.Builder webClientBuilder,
+                    @Value("${role.service.url}") String roleServiceUrlBase) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrlBase).build();
     }
 
@@ -55,7 +56,8 @@ public class WebFluxRoleServiceClient implements RoleServiceClient {
                 .uri("/role/{roleId}", id)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new RestException("Role not found: " + id)))
+                .onStatus(HttpStatus::is4xxClientError,
+                        response -> Mono.error(new RestException("Role not found: " + id)))
                 .bodyToMono(RoleDTO.class)
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block();

@@ -23,11 +23,9 @@ public class RoleDTO implements Serializable {
         this.id = value;
     }
 
-   @Override
-   public String toString() {
-      return "RoleDTO{" +
-              "id='" + id + '\'' +
-              '}';
-   }
+    @Override
+    public String toString() {
+        return "RoleDT(id='" + id + "\'}";
+    }
 
 }

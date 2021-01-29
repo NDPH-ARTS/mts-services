@@ -65,7 +65,9 @@ public class PageableResult<T> implements Iterable<T> {
         private final int pageSize;
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-        public PageableResultRequest(@JsonProperty("pageNumber") final int pageNumber, @JsonProperty("pageSize") final int pageSize) {
+        public PageableResultRequest(
+                @JsonProperty("pageNumber") final int pageNumber,
+                @JsonProperty("pageSize") final int pageSize) {
             this.pageNumber = pageNumber;
             this.pageSize = pageSize;
         }
