@@ -20,6 +20,20 @@ More information can be found at
 https://cloud.spring.io/spring-cloud-config/reference/html
 
 MTS services configuration
+The services that consume the config-server now only need to have a bootstrap property file in the 
+/resources directory. The other property files will be served up by the config server.
+
+The bootstrap property file will now contain properties to locate and instruct the config-server.
+The following properties can be used to get started
+
+`spring.application.name=trial-config-service` - name of service, this is required to help the
+config server locate the property file in the file repo. Typically the repo will contain many property files 
+which need to be named in a distinct manner to allow the config server to locate individual service property
+files successfully. If this is ommitted the default application.properties file will be used at the base of the file repo.
+
+`spring.cloud.config.uri=http://localhost:8888` - config server location
+`spring.cloud.config.profile=default` - profile to help separate properties for envs - e.g dev, qa, int, prod etc
+`spring.cloud.config.label=main` - the version of the property files - in our case teh GIT branch.
 
 
 Deployment
