@@ -25,7 +25,7 @@ public class RoleDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "RoleDT(id='" + id + "\'}";
+        return "RoleDTO(id='" + id + "\'}";
     }
 
 }

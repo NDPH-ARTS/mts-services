@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ConfigurationProperties(prefix = "http")
-public class WebConfig {
+public class WebClientConfig {
 
     @Value("${http.connectTimeOutMs:1000}")
     private int connectTimeOutMs;

@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
-import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,8 +8,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
+import uk.ac.ox.ndph.mts.practitioner_service.TestRolesServiceBackend;
 import uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
@@ -17,23 +21,35 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import java.net.HttpURLConnection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
-import static uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClientTest.queueErrorResponse;
-import static uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClientTest.queueRoleResponse;
+
 
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ContextConfiguration
 class RoleAssignmentValidationTests {
 
-    private MockWebServer mockBackEnd;
+    private TestRolesServiceBackend mockBackEnd;
 
     private RoleAssignmentValidation validator;
 
-    @BeforeEach void initEach() throws Exception {
-        this.mockBackEnd = new MockWebServer();
-        this.mockBackEnd.start();
-        this.validator = new RoleAssignmentValidation(new WebFluxRoleServiceClient(WebClient.builder(), String.format("http://localhost:%s", mockBackEnd.getPort())));
+    @Autowired
+    private WebClient.Builder webClientBuilder;
+
+    @BeforeEach void initEach() {
+        this.mockBackEnd = TestRolesServiceBackend.autoStart();
+        this.validator = new RoleAssignmentValidation(new WebFluxRoleServiceClient(webClientBuilder, mockBackEnd.getUrl()));
+    }
+
+    @AfterEach
+    void cleanup() {
+        this.mockBackEnd.shutdown();
+    }
+
+    @Test
+    void testConfiguration() {
+        assertThat(webClientBuilder, is(notNullValue()));
     }
 
     @ParameterizedTest
@@ -57,10 +73,10 @@ class RoleAssignmentValidationTests {
     }
 
     @Test
-    void TestRoleAssignmentValidation_WhenValidRole_ReturnsValidResponse() throws Exception {
+    void TestRoleAssignmentValidation_WhenValidRole_ReturnsValidResponse() {
         // Arrange
         final var roleId = "testRoleId";
-        queueRoleResponse(mockBackEnd, roleId);
+        mockBackEnd.queueRoleResponse(roleId);
         final var roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         final var result = validator.validate(roleAssignment);
@@ -69,10 +85,10 @@ class RoleAssignmentValidationTests {
     }
 
     @Test
-    void TestRoleAssignmentValidation_WhenInvalidRole_ReturnsInvalidResponse() throws Exception {
+    void TestRoleAssignmentValidation_WhenInvalidRole_ReturnsInvalidResponse() {
         // Arrange
         var roleId = "missingRoleId";
-        queueErrorResponse(mockBackEnd, HttpURLConnection.HTTP_NOT_FOUND);
+        mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_NOT_FOUND);
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         var result = validator.validate(roleAssignment);
@@ -85,7 +101,7 @@ class RoleAssignmentValidationTests {
     void TestRoleAssignmentValidation_WhenServiceFails_ThrowsException() {
         // Arrange
         var roleId = "testRoleId";
-        queueErrorResponse(mockBackEnd, HttpURLConnection.HTTP_INTERNAL_ERROR);
+        mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         // Assert
