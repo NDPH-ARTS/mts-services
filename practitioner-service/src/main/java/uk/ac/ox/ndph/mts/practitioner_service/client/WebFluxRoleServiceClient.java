@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 /**
  * WebFlux WebClient based version of the REST role-service client. Note this is a sync interface only.
  */
-@Service("prototype]")
+@Component
 public class WebFluxRoleServiceClient implements RoleServiceClient {
 
     private final WebClient webClient;

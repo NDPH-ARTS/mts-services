@@ -30,7 +30,7 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
         if (isNullOrBlank(entity.getRoleId())) {
             return new ValidationResponse(false, "roleId must have a value");
         }
-        if (!isRole(entity.getRoleId())) {
+        if (!this.roleServiceClient.roleIdExists(entity.getRoleId())) {
             return new ValidationResponse(false, "roleId must refer to a valid role");
         }
         return new ValidationResponse(true, "");
@@ -38,10 +38,6 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
 
     private boolean isNullOrBlank(String str) {
         return str == null || str.isBlank();
-    }
-
-    private boolean isRole(final String roleId) {
-        return roleId != null && this.roleServiceClient.roleIdExists(roleId);
     }
 
 }

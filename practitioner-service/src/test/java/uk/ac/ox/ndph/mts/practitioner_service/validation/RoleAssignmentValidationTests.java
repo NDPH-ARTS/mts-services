@@ -1,28 +1,27 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
-import uk.ac.ox.ndph.mts.practitioner_service.TestRolesServiceBackend;
 import uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
-import java.net.HttpURLConnection;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -30,26 +29,17 @@ import static org.junit.Assert.assertThrows;
 @ContextConfiguration
 class RoleAssignmentValidationTests {
 
-    private TestRolesServiceBackend mockBackEnd;
+    @Mock
+    private WebFluxRoleServiceClient roleServiceClient;
+
+    @Captor
+    ArgumentCaptor<String> roleIdCaptor;
 
     private RoleAssignmentValidation validator;
 
-    @Autowired
-    private WebClient.Builder webClientBuilder;
-
-    @BeforeEach void initEach() {
-        this.mockBackEnd = TestRolesServiceBackend.autoStart();
-        this.validator = new RoleAssignmentValidation(new WebFluxRoleServiceClient(webClientBuilder, mockBackEnd.getUrl()));
-    }
-
-    @AfterEach
-    void cleanup() {
-        this.mockBackEnd.shutdown();
-    }
-
-    @Test
-    void testConfiguration() {
-        assertThat(webClientBuilder, is(notNullValue()));
+    @BeforeEach
+    void setup() {
+         this.validator = new RoleAssignmentValidation(roleServiceClient);
     }
 
     @ParameterizedTest
@@ -76,37 +66,43 @@ class RoleAssignmentValidationTests {
     void TestRoleAssignmentValidation_WhenValidRole_ReturnsValidResponse() {
         // Arrange
         final var roleId = "testRoleId";
-        mockBackEnd.queueRoleResponse(roleId);
+        when(roleServiceClient.roleIdExists(roleId)).thenReturn(true);
         final var roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         final var result = validator.validate(roleAssignment);
         // Assert
         assertThat(result.isValid(), is(true));
+        Mockito.verify(roleServiceClient).roleIdExists(roleIdCaptor.capture());
+        assertThat(roleId, equalTo(roleIdCaptor.getValue()));
     }
 
     @Test
     void TestRoleAssignmentValidation_WhenInvalidRole_ReturnsInvalidResponse() {
         // Arrange
         var roleId = "missingRoleId";
-        mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_NOT_FOUND);
+        when(roleServiceClient.roleIdExists(roleId)).thenReturn(false);
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         var result = validator.validate(roleAssignment);
         // Assert
         assertThat(result.isValid(), is(false));
         assertThat(result.getErrorMessage(), containsString("roleId"));
+        Mockito.verify(roleServiceClient).roleIdExists(roleIdCaptor.capture());
+        var value = roleIdCaptor.getValue();
+        assertThat(roleId, equalTo(value));
     }
 
     @Test
     void TestRoleAssignmentValidation_WhenServiceFails_ThrowsException() {
         // Arrange
         var roleId = "testRoleId";
-        mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
+        when(roleServiceClient.roleIdExists(roleId)).thenThrow(new RestException("mock"));
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         // Assert
         assertThrows(RestException.class, () -> validator.validate(roleAssignment));
-
+        Mockito.verify(roleServiceClient).roleIdExists(roleIdCaptor.capture());
+        assertThat(roleId, equalTo(roleIdCaptor.getValue()));
     }
 
 }

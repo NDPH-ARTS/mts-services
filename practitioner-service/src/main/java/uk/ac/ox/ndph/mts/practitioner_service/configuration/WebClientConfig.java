@@ -27,9 +27,9 @@ public class WebClientConfig {
     public ClientHttpConnector connectorWithConnectAndReadTimeOuts() {
         return new ReactorClientHttpConnector(HttpClient.create()
                 .tcpConfiguration(tcpClient ->
-                    tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeOutMs)
+                    tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeOutMs())
                         .doOnConnected(conn -> conn
-                            .addHandlerLast(new ReadTimeoutHandler(readTimeOutMs, TimeUnit.MILLISECONDS)))));
+                            .addHandlerLast(new ReadTimeoutHandler(getReadTimeOutMs(), TimeUnit.MILLISECONDS)))));
     }
 
     @Bean

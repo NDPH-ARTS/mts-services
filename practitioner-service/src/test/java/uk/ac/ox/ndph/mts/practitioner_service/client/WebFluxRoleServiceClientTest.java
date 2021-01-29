@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
 
-@SpringBootTest(properties =  { "http.readTimeOutMs=1000" })
+@SpringBootTest(properties =  { "http.readTimeOutMs=1000", "http.connectTimeOutMs=500" })
 @ContextConfiguration
 public class WebFluxRoleServiceClientTest {
 
@@ -54,7 +54,6 @@ public class WebFluxRoleServiceClientTest {
         // Assert
         assertThat(result, is(iterableWithSize(1)));
         assertThat(result, everyItem(hasProperty("id", equalTo(roleId))));
-
     }
 
     @Test
