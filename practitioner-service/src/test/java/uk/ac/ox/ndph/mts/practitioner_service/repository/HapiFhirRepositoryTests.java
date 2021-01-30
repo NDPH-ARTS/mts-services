@@ -81,8 +81,6 @@ class HapiFhirRepositoryTests {
         // Arrange
         FhirServerResponseException exception = new FhirServerResponseException("message", new ResourceNotFoundException("error"));
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenThrow(exception);
-        var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
-        fhirRepository.setLogger(SILENT_LOGGER);
         var practitioner = new Practitioner();
 
         // Act + Assert

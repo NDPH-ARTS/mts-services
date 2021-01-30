@@ -19,7 +19,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 public class HapiFhirRepository implements FhirRepository {
 
     private final FhirContextWrapper fhirContextWrapper;
-    private Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
 
     @SuppressWarnings("FieldMayBeFinal") // Value injection shouldn't be final
     @Value("${fhir.uri}")
@@ -67,8 +67,7 @@ public class HapiFhirRepository implements FhirRepository {
         try {
             responseBundle = fhirContextWrapper.executeTransaction(bundle(practitionerRole));
         } catch (FhirServerResponseException e) {
-            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(e.getMessage(), e);
+            throw new RestException("Failed to save practitioner role", e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
@@ -104,7 +103,4 @@ public class HapiFhirRepository implements FhirRepository {
         return bundle;
     }
 
-    public void setLogger(final Logger logger) {
-        this.logger = logger;
-    }
 }
