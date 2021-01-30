@@ -3,11 +3,8 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,7 +33,7 @@ public class PractitionerStore implements EntityStore<Practitioner> {
     }
 
     @Override
-    public List<Practitioner> listEntities(String Id) {
+    public List<Practitioner> listEntities(String id) {
         throw new NotImplementedException();
     }
 

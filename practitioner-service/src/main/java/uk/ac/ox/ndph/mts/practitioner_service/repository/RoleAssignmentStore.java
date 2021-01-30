@@ -1,11 +1,11 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import org.hl7.fhir.r4.model.PractitionerRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +16,8 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
 
 
     private final FhirRepository repository;
-    private final EntityConverter<RoleAssignment, org.hl7.fhir.r4.model.PractitionerRole> roleAssignmentPractitionerRoleEntityConverter;
-    private final EntityConverter<org.hl7.fhir.r4.model.PractitionerRole,RoleAssignment> practitionerRoleRoleAssignmentEntityConverter;
+    private final EntityConverter<RoleAssignment, PractitionerRole> roleAssignmentPractitionerRoleEntityConverter;
+    private final EntityConverter<PractitionerRole, RoleAssignment> practitionerRoleRoleAssignmentEntityConverter;
 
     /**
      * @param repository - The fhir repository
@@ -26,8 +26,10 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
      */
     @Autowired
     public RoleAssignmentStore(FhirRepository repository,
-                               EntityConverter<RoleAssignment, org.hl7.fhir.r4.model.PractitionerRole> roleAssignmentPractitionerRoleEntityConverter,
-                               EntityConverter<org.hl7.fhir.r4.model.PractitionerRole,RoleAssignment> practitionerRoleRoleAssignmentEntityConverter) {
+                               EntityConverter<RoleAssignment, PractitionerRole>
+                                       roleAssignmentPractitionerRoleEntityConverter,
+                               EntityConverter<PractitionerRole, RoleAssignment>
+                                           practitionerRoleRoleAssignmentEntityConverter) {
         this.repository = repository;
         this.roleAssignmentPractitionerRoleEntityConverter = roleAssignmentPractitionerRoleEntityConverter;
         this.practitionerRoleRoleAssignmentEntityConverter = practitionerRoleRoleAssignmentEntityConverter;
@@ -39,8 +41,9 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
     }
 
     @Override
-    public List<RoleAssignment> listEntities(String Id) {
-        return practitionerRoleRoleAssignmentEntityConverter.convertList(repository.getPractitionerRolesByIdentifier(Id));
+    public List<RoleAssignment> listEntities(String id) {
+        return practitionerRoleRoleAssignmentEntityConverter.convertList(
+                repository.getPractitionerRolesByIdentifier(id));
     }
 
 }

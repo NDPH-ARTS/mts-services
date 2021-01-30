@@ -14,7 +14,7 @@ public interface EntityStore<T> {
      */
     String saveEntity(T entity);
 
-    List<T> listEntities(String Id);
+    List<T> listEntities(String id);
 
 
 }

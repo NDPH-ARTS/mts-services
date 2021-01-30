@@ -96,20 +96,22 @@ public class HapiFhirRepository implements FhirRepository {
         List<PractitionerRole> practitionerRoles = new ArrayList<>();
 
         var fullTypeName = PractitionerRole.class.getTypeName();
-        var lastNotationIndex = fullTypeName.lastIndexOf('.') ;
+        var lastNotationIndex = fullTypeName.lastIndexOf('.');
         var typeName = fullTypeName.substring(lastNotationIndex + 1);
 
         var results = fhirContextWrapper.searchResourceWithInclude(
                 typeName,
                 new Include("Practitioner:identifier"),
-                PractitionerRole.PRACTITIONER.hasChainedProperty(Practitioner.IDENTIFIER.exactly().identifier(identifier)));
+                PractitionerRole.PRACTITIONER.hasChainedProperty(
+                        Practitioner.IDENTIFIER.exactly().identifier(identifier)));
 
         for (var result: results) {
             practitionerRoles.add((PractitionerRole) result);
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID_RESPONSE.message(), practitionerRoles.size());
+            logger.info(
+                    FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID_RESPONSE.message(), practitionerRoles.size());
         }
 
         return practitionerRoles;

@@ -31,7 +31,7 @@ public class RoleAssignmentConverter implements EntityConverter<RoleAssignment,
     }
 
     @Override
-    public List<org.hl7.fhir.r4.model.PractitionerRole> convertList(List<RoleAssignment> input){
+    public List<org.hl7.fhir.r4.model.PractitionerRole> convertList(List<RoleAssignment> input) {
         List<org.hl7.fhir.r4.model.PractitionerRole> practitionerRoles = new ArrayList<>();
         for (var roleAssignment: input) {
             practitionerRoles.add(convert(roleAssignment));

@@ -54,7 +54,7 @@ public class PractitionerController {
 
     @GetMapping(path = "/roles")
     @PathParam("identifier")
-    public ResponseEntity<List<RoleAssignment>> getRoleAssignments(@PathParam("identifier") String identifier){
+    public ResponseEntity<List<RoleAssignment>> getRoleAssignments(@PathParam("identifier") String identifier) {
         List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByIdentifier(identifier);
         return  ResponseEntity.status(HttpStatus.OK).body(roleAssignments);
     }

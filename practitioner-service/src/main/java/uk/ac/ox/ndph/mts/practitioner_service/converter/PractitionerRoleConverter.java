@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.converter;
 
+import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
@@ -21,7 +22,7 @@ public class PractitionerRoleConverter implements EntityConverter<org.hl7.fhir.r
      * @return MTS PractitionerRole
      */
     @Override
-    public RoleAssignment convert(org.hl7.fhir.r4.model.PractitionerRole input) {
+    public RoleAssignment convert(PractitionerRole input) {
         var sideId = extractReferenceId(input.getOrganization());
         var practitionerId = extractReferenceId(input.getPractitioner());
 
@@ -32,13 +33,13 @@ public class PractitionerRoleConverter implements EntityConverter<org.hl7.fhir.r
     }
 
     private String extractReferenceId(Reference reference) {
-        var Id = reference.getReference();
-        Id = Id.substring(Id.lastIndexOf('/') + 1);
-        return Id;
+        var id = reference.getReference();
+        id = id.substring(id.lastIndexOf('/') + 1);
+        return id;
     }
 
     @Override
-    public List<RoleAssignment> convertList(List<org.hl7.fhir.r4.model.PractitionerRole> input){
+    public List<RoleAssignment> convertList(List<PractitionerRole> input) {
         List<RoleAssignment> roleAssignments = new ArrayList<>();
         for (var practitionerRole: input) {
             roleAssignments.add(convert(practitionerRole));
