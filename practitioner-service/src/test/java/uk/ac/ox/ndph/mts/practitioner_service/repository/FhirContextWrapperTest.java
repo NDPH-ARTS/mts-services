@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import org.assertj.core.api.Assertions;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
@@ -11,8 +10,20 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class FhirContextWrapperTest {
+
+    @Test
+    void getResourcesFrom_whenNullBundle_thenThrowException() {
+        // Arrange
+        FhirContextWrapper sut = new FhirContextWrapper();
+
+        // Act + Assert
+        assertThatExceptionOfType(NullPointerException.class)
+                .isThrownBy(() -> sut.getResourcesFrom(null, 1))
+                .withMessage("Bundle must not be null");
+    }
 
     @Test
     void getResourcesFrom_whenEmptyBundleAndExpectNonZero_thenThrowException() {
@@ -21,7 +32,7 @@ class FhirContextWrapperTest {
         Bundle bundleNoResource = new Bundle();
 
         // Act + Assert
-        Assertions.assertThatExceptionOfType(RestException.class)
+        assertThatExceptionOfType(RestException.class)
                 .isThrownBy(() -> sut.getResourcesFrom(bundleNoResource, 1))
                 .withMessage(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), 0));
     }
@@ -46,7 +57,7 @@ class FhirContextWrapperTest {
         bundleMultiple.addEntry().setResource(new Practitioner());
 
         // Act + Assert
-        Assertions.assertThatExceptionOfType(RestException.class)
+        assertThatExceptionOfType(RestException.class)
                 .isThrownBy(() -> sut.getResourcesFrom(bundleMultiple, 1))
                 .withMessage(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), 2));
     }

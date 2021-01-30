@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
@@ -63,6 +64,7 @@ public class FhirContextWrapper {
     }
 
     public List<IBaseResource> getResourcesFrom(final Bundle bundle, final int expectedNumResources) {
+        Objects.requireNonNull(bundle, "Bundle must not be null");
         final List<IBaseResource> resources = toListOfResources(bundle);
         if(resources.size() != expectedNumResources) {
             throw new RestException(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), resources.size()));
