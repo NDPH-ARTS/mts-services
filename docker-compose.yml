@@ -63,6 +63,10 @@ services:
     restart: on-failure
     ports:
       - "8888:8888"
+    healthcheck:
+      test: curl http://localhost:8888/
+      interval: 10s
+      timeout: 10s
 
   site-service:
     build:
