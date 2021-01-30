@@ -11,15 +11,12 @@ public class PractitionerStore implements EntityStore<Practitioner> {
 
     private FhirRepository repository;
     private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter;
-    private final IdGenerator generator;
 
     @Autowired
     public PractitionerStore(FhirRepository repository,
-                             EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter,
-                             final IdGenerator generator) {
+                             EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter) {
         this.repository = repository;
         this.converter = converter;
-        this.generator = generator;
     }
 
     @Override
