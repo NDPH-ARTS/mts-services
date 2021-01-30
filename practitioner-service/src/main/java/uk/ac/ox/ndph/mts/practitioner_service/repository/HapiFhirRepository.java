@@ -41,14 +41,14 @@ public class HapiFhirRepository implements FhirRepository {
             logger.info(FhirRepo.SAVE_REQUEST.message(), fhirContextWrapper.prettyPrint(practitioner));
         }
 
-        Bundle responseBundle;
+        final Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(bundle(practitioner));
         } catch (BaseServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
             throw new RestException(e.getMessage(), e);
         }
-        IBaseResource responseElement = extractResponseResource(responseBundle);
+        IBaseResource responseElement = fhirContextWrapper.getResourcesFrom(responseBundle, 1).get(0);
 
         // Log the response
         if (logger.isInfoEnabled()) {

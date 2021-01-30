@@ -2,9 +2,11 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,6 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,15 +42,15 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTransactionType() {
+    void createPractitioner_WhenSavePractitioner_SendsBundleWithTransactionType() {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
-        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
-        var practitioner = new Practitioner();
+        Practitioner DUMMY_PRACTITIONER = new Practitioner();
+        when(fhirContextWrapper.getResourcesFrom(any(Bundle.class), eq(1))).thenReturn(List.of(DUMMY_PRACTITIONER));
 
         // Act
-        repository.createPractitioner(practitioner);
+        repository.createPractitioner(new Practitioner());
 
         // Assert
         verify(fhirContextWrapper).executeTransaction(bundleCaptor.capture());
@@ -57,23 +60,24 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenSavePractitioner_ReturnsCorrectId() {
+    void createPractitioner_WhenSavePractitioner_ReturnsCorrectId() {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
-        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
-        var practitioner = new Practitioner();
-        practitioner.setId("123");
+        Practitioner RESPONSE_PRACTITIONER = new Practitioner();
+        IdType UUID = IdType.newRandomUuid();
+        RESPONSE_PRACTITIONER.setIdElement(UUID);
+        when(fhirContextWrapper.getResourcesFrom(any(Bundle.class), eq(1))).thenReturn(List.of(RESPONSE_PRACTITIONER));
 
         // Act
-        var value = repository.createPractitioner(practitioner);
+        String practitionerId = repository.createPractitioner(new Practitioner());
 
         // Assert
-        assertThat(value, equalTo("123"));
+        assertThat(practitionerId, equalTo(UUID.getValue()));
     }
 
     @Test
-    void TestHapiRepository_WhenContextWrapperThrowsExpected_ThrowsRestException() {
+    void createPractitioner_WhenContextWrapperThrowsExpected_ThrowsRestException() {
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenThrow(new ResourceNotFoundException("error"));
         var practitioner = new Practitioner();
 
@@ -81,20 +85,13 @@ class HapiFhirRepositoryTests {
         assertThrows(RestException.class, () -> repository.createPractitioner(practitioner));
     }
 
+    // TODO Are we sure that executeTransaction can return null?
+    // If it can't, then this test isn't needed and can be deleted
+    // If it can, executeTransaction should return Optional<Bundle> so that client code always knows to handle this.
+    // If the handling of a missing Bundle always requires throwing a RestException, then why not put that into executeTransaction?
     @Test
-    void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException() {
-        // Arrange
-        var responseBundle = new Bundle();
-        when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
-        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner(), new Practitioner()));
-        var practitioner = new Practitioner();
-
-        // Act + Assert
-        assertThrows(RestException.class, () -> repository.createPractitioner(practitioner));
-    }
-
-    @Test
-    void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException() {
+    @Disabled("Not sure that executeTransaction can ever return null")
+    void createPractitioner_WhenContextReturnsNull_ThrowsRestException() {
         // Arrange
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(null);
         var practitioner = new Practitioner();
