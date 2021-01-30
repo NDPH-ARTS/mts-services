@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
@@ -55,6 +56,9 @@ public class PractitionerController {
     @GetMapping(path = "/roles")
     @PathParam("identifier")
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(@PathParam("identifier") String identifier) {
+        if (identifier == null || identifier.isEmpty()){
+            throw new RestException("A required parameter: identifier is blank or missing.");
+        }
         List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByIdentifier(identifier);
         return  ResponseEntity.status(HttpStatus.OK).body(roleAssignments);
     }

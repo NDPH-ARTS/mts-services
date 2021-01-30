@@ -90,7 +90,7 @@ public class HapiFhirRepository implements FhirRepository {
     public List<PractitionerRole> getPractitionerRolesByIdentifier(String identifier) {
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID.message(), identifier);
+            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER.message() + identifier);
         }
 
         List<PractitionerRole> practitionerRoles = new ArrayList<>();
@@ -111,7 +111,7 @@ public class HapiFhirRepository implements FhirRepository {
 
         if (logger.isInfoEnabled()) {
             logger.info(
-                    FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID_RESPONSE.message(), practitionerRoles.size());
+                    FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER_RESPONSE.message(), practitionerRoles.size());
         }
 
         return practitionerRoles;
