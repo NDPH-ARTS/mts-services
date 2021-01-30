@@ -1,23 +1,26 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-/**
- * Practitioner Model
- */
-@Data
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Practitioner {
 
-    private String prefix;
-    private String givenName;
-    private String familyName;
+    private final String prefix;
+    private final String givenName;
+    private final String familyName;
 
+    public Practitioner(final String prefix, final String givenName, final String familyName) {
+        this.prefix = prefix;
+        this.givenName = givenName;
+        this.familyName = familyName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
 }

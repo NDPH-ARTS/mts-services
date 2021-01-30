@@ -1,24 +1,37 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-
-/**
- * Practitioner Attribute configuration Model
- */
 @Component
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class PractitionerAttributeConfiguration {
-    private String name;
-    private String displayName;
-    private String validationRegex;
+
+    private final String name;
+    private final String displayName;
+    private final String validationRegex;
+
+    public PractitionerAttributeConfiguration() {
+        this.name = "";
+        this.displayName = "";
+        this.validationRegex = "";
+    }
+
+    public PractitionerAttributeConfiguration(final String name,
+                                              final String displayName,
+                                              final String validationRegex) {
+        this.name = name;
+        this.displayName = displayName;
+        this.validationRegex = validationRegex;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getValidationRegex() {
+        return validationRegex;
+    }
 }
