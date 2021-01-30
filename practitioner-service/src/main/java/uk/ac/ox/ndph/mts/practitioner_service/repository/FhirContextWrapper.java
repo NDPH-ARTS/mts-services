@@ -1,18 +1,16 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.util.BundleUtil;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Wrapper around a Fhir Context
@@ -66,7 +64,7 @@ public class FhirContextWrapper {
     public List<IBaseResource> getResourcesFrom(final Bundle bundle, final int expectedNumResources) {
         Objects.requireNonNull(bundle, "Bundle must not be null");
         final List<IBaseResource> resources = toListOfResources(bundle);
-        if(resources.size() != expectedNumResources) {
+        if (resources.size() != expectedNumResources) {
             throw new RestException(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), resources.size()));
         }
         return resources;
