@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,6 +21,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
+
+import java.util.Collections;
 
 @SpringBootTest(properties = {"server.error.include-message=always"})
 @AutoConfigureMockMvc
@@ -32,6 +35,7 @@ class PractitionerControllerTests {
 
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
+    private final String roleAssignmentByIdentifierUri = "/practitioner/roles";
 
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
@@ -124,6 +128,29 @@ class PractitionerControllerTests {
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print())
                 .andExpect(status().isBadGateway());
+    }
+
+    @Test
+    void TestGetRoleAssignmentByIdentifier_WithMissingIdentifierParam_Returns500() throws Exception {
+        // We test that the endpoint requires identifier parameter
+        // Arrange
+        // Act + Assert
+        this.mockMvc
+                .perform(get(roleAssignmentByIdentifierUri).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    void TestGetRoleAssignmentByIdentifier_WithIdentifierParam_ReturnsRoleAssignmentAsExpected() throws Exception {
+
+        // Arrange
+        RoleAssignment expectedRoleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
+        when(entityService.getRoleAssignmentsByIdentifier("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
+
+        // Act + Assert
+        this.mockMvc
+                .perform(get(roleAssignmentByIdentifierUri).param("identifier", "123").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
 }

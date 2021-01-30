@@ -56,7 +56,7 @@ public class PractitionerController {
     @GetMapping(path = "/roles")
     @PathParam("identifier")
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(@PathParam("identifier") String identifier) {
-        if (identifier == null || identifier.isEmpty()){
+        if (identifier == null || identifier.isEmpty()) {
             throw new RestException("A required parameter: identifier is blank or missing.");
         }
         List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByIdentifier(identifier);
