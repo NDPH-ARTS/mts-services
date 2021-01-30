@@ -86,7 +86,7 @@ public class PractitionerService implements EntityService {
     }
 
     @Override
-    public List<RoleAssignment> getRoleAssignments(String practitionerId) {
-        return roleAssignmentStore.listEntities(practitionerId);
+    public List<RoleAssignment> getRoleAssignmentsByIdentifier(String identifier) {
+        return roleAssignmentStore.listEntities(identifier);
     }
 }

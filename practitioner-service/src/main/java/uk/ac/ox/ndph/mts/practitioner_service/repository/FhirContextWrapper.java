@@ -71,11 +71,12 @@ public class FhirContextWrapper {
      * @param criterion criterion to filter search results
      * @return the list of resources by type and criterion
      */
-    public List<IBaseResource> searchResource(String resourceTypeName, ICriterion<?> criterion){
+    public List<IBaseResource> searchResourceWithInclude(String resourceTypeName, Include includeObject, ICriterion<?> criterion){
         var client = fhirContext.newRestfulGenericClient(fhirUri);
 
         var resultsBundle = client.search()
                 .forResource(resourceTypeName)
+                .include(includeObject)
                 .where(criterion)
                 .returnBundle(org.hl7.fhir.r4.model.Bundle.class)
                 .execute();

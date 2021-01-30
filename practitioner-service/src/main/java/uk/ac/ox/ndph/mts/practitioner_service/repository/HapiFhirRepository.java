@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import ca.uhn.fhir.model.api.Include;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
@@ -86,10 +87,10 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     @Override
-    public List<PractitionerRole> getPractitionerRoles(String practitionerId) {
+    public List<PractitionerRole> getPractitionerRolesByIdentifier(String identifier) {
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID.message(), practitionerId);
+            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_PRACTITIONER_ID.message(), identifier);
         }
 
         List<PractitionerRole> practitionerRoles = new ArrayList<>();
@@ -98,9 +99,10 @@ public class HapiFhirRepository implements FhirRepository {
         var lastNotationIndex = fullTypeName.lastIndexOf('.') ;
         var typeName = fullTypeName.substring(lastNotationIndex + 1);
 
-        var results = fhirContextWrapper.searchResource(
+        var results = fhirContextWrapper.searchResourceWithInclude(
                 typeName,
-                PractitionerRole.PRACTITIONER.hasId(practitionerId));
+                new Include("Practitioner:identifier"),
+                PractitionerRole.PRACTITIONER.hasChainedProperty(Practitioner.IDENTIFIER.exactly().identifier(identifier)));
 
         for (var result: results) {
             practitionerRoles.add((PractitionerRole) result);

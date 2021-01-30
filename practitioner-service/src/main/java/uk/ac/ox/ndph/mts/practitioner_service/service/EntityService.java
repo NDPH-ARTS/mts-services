@@ -20,5 +20,5 @@ public interface EntityService {
 
     String saveRoleAssignment(RoleAssignment roleAssignment);
 
-    List<RoleAssignment> getRoleAssignments(String practitionerId);
+    List<RoleAssignment> getRoleAssignmentsByIdentifier(String practitionerId);
 }
