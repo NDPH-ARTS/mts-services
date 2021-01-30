@@ -8,12 +8,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class FhirContextWrapperIntegrationTest {
 
     @Test
-    public void testExecution() {
+    void testExecution() {
         // Arrange
         FhirContextWrapper sut = new FhirContextWrapper();
         Bundle bundle = new Bundle();
 
         // Act + Assert
-        assertThrows(FhirServerResponseException.class, () -> sut.executeTransaction("http://nonExistentFhirService:8080", bundle));
+        assertThrows(FhirServerResponseException.class, () ->
+                sut.executeTransaction("http://nonExistentFhirService:8080", bundle));
     }
 }
