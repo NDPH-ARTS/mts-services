@@ -12,6 +12,7 @@ COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
 COPY ./config-server/pom.xml ./config-server/pom.xml
 COPY ./role-service/pom.xml ./role-service/pom.xml
+COPY ./init-service/pom.xml ./init-service/pom.xml
 
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
