@@ -18,7 +18,7 @@ jobs:
     name: Build services
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service", "trial-config-service", "site-service", "role-service", "init-service"]
+        service_name: [ "sample-service", "practitioner-service", "trial-config-service", "site-service", "role-service", "init-service", "config-server"]
     env:
       GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
@@ -37,6 +37,7 @@ jobs:
           fail_on_test_failures: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: "**/out/TEST*.xml"
+          fail_if_no_tests: false
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -79,7 +80,7 @@ jobs:
         run: |
           docker-compose build
       - name: Start services using Docker Compose
-        timeout-minutes: 2
+        timeout-minutes: 4
         run: |
           export SAPASSWORD=$(openssl rand -base64 12)
           ./.ci/docker/check-docker-compose-services.sh
