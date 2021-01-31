@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -9,8 +10,11 @@ import java.util.List;
 @Component
 public class PractitionerConfiguration {
 
-    private final String name;
-    private final String displayName;
+    @Value("${name}")
+    private String name;
+
+    @Value("${displayName}")
+    private String displayName;
 
     private final List<PractitionerAttributeConfiguration> attributes;
 
