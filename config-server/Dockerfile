@@ -11,17 +11,16 @@ COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
 COPY ./config-server/pom.xml ./config-server/pom.xml
 COPY ./role-service/pom.xml ./role-service/pom.xml
-COPY ./init-service/pom.xml ./init-service/pom.xml
 COPY ./site-service/pom.xml ./site-service/pom.xml
+COPY ./init-service/pom.xml ./init-service/pom.xml
 
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
 
-RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true -Dcheckstyle.skip
+RUN mvn package --projects ${SVC} # -Dmaven.test.failure.ignore=true
 
 FROM scratch AS export
 ARG SVC
-COPY --from=builder ${SVC}/target/surefire-reports/TEST*.xml ./
 
 FROM openjdk:11.0.9.1-jre-buster
 ARG SVC
