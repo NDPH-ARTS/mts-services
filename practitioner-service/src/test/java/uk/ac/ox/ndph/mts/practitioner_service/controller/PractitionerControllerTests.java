@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,7 +100,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc.perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest()).andReturn().getResolvedException();
     }
 
     @Test
@@ -135,9 +136,11 @@ class PractitionerControllerTests {
         // We test that the endpoint requires identifier parameter
         // Arrange
         // Act + Assert
-        this.mockMvc
+        String error = this.mockMvc
                 .perform(get(roleAssignmentByIdentifierUri).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
+
+        assertThat(error, equalTo("A required parameter: identifier is blank or missing."));
     }
 
     @Test
@@ -147,10 +150,14 @@ class PractitionerControllerTests {
         RoleAssignment expectedRoleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
         when(entityService.getRoleAssignmentsByIdentifier("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
 
+        String jsonExpectedRoleAssignment = "[{\"practitionerId\":\"practitionerId\",\"siteId\":\"siteId\",\"roleId\":\"roleId\"}]";
+
         // Act + Assert
         this.mockMvc
                 .perform(get(roleAssignmentByIdentifierUri).param("identifier", "123").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(
+                        content().string(containsString(jsonExpectedRoleAssignment)));
     }
 
 }
