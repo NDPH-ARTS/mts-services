@@ -33,7 +33,6 @@
         <!--        <module>build-tools</module>-->
         <module>sample-service</module>
         <module>practitioner-service</module>
-        <module>trial-config-service</module>
         <module>config-server</module>
         <module>role-service</module>
         <module>init-service</module>
