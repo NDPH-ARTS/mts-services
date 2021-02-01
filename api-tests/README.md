@@ -14,7 +14,7 @@ To run tests locally
 
 # set the env variables and build the docker image locally as per the service under test
 # export BASE_URL, example
-BASE_URL=ttp://localhost:82/roles
+BASE_URL=ttp://localhost:82
 
 # without the html reports
 npm run test 

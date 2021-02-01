@@ -1,4 +1,6 @@
-docker-compose up -d
+docker-compose pull -q
+docker-compose up --scale init-service=0 --scale trial-config-service=0 -d --no-build
+
 echo "Waiting for docker compose services..."
 
 is_healthy() {
@@ -15,5 +17,9 @@ is_healthy() {
     fi
 }
 
-while ! is_healthy trial-config-service; do sleep 5; done
-while ! is_healthy practitioner-service; do sleep 5; done
+while ! is_healthy config-server; do sleep 10; done
+while ! is_healthy site-service; do sleep 10; done
+while ! is_healthy practitioner-service; do sleep 10; done
+while ! is_healthy role-service; do sleep 10; done
+
+echo "Compose services started."

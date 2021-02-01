@@ -28,7 +28,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,7 +51,7 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
         this.mockMvc.perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -63,7 +62,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -74,7 +73,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -86,7 +85,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isBadGateway());
+                .andExpect(status().isBadGateway());
     }
 
     @Test
@@ -97,10 +96,11 @@ class PractitionerControllerTests {
 
         // Act + Assert
         Exception ex = this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException();
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException();
         assert ex != null;
         String error = ex.getMessage();
+
         assertThat(error, containsString("prefix"));
     }
 
@@ -151,7 +151,6 @@ class PractitionerControllerTests {
     void TestPostRoleAssignment_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
         this.mockMvc.perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -165,7 +164,6 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(returnedValue)));
     }
@@ -179,7 +177,6 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print())
                 .andExpect(status().isBadGateway());
     }
 

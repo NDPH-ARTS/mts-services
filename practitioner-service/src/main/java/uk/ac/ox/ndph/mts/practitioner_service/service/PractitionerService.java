@@ -88,7 +88,6 @@ public class PractitionerService implements EntityService {
     //TODO: should this be on its own service?
     @Override
     public String saveRoleAssignment(RoleAssignment roleAssignment) {
-        //TODO: validate(?) that referenced IDs properties exist in the system
         ValidationResponse validationResponse = roleAssignmentValidator.validate(roleAssignment);
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());

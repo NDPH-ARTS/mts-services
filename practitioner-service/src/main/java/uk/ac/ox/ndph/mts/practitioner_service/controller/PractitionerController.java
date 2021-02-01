@@ -60,4 +60,5 @@ public class PractitionerController {
         String roleAssignmentId = entityService.saveRoleAssignment(roleAssignment);
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(roleAssignmentId));
     }
+
 }
