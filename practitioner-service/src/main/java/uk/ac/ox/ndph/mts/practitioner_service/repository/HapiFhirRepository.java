@@ -43,7 +43,8 @@ public class HapiFhirRepository implements FhirRepository {
         try {
             responseBundle = fhirContextWrapper.executeTransaction(bundle(practitioner));
         } catch (FhirServerResponseException e) {
-            throw new RestException("Failed to save practitioner", e);
+            final String message = FhirRepo.FAILED_TO_SAVE_PRACTITIONER.message();
+            throw new RestException(message, e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 

@@ -51,7 +51,8 @@ public class FhirContextWrapper {
             return fhirContext.newRestfulGenericClient(fhirUri).transaction()
                     .withBundle(input).execute();
         } catch (BaseServerResponseException ex) {
-            throw new FhirServerResponseException("Problem executing transaction with bundle at: " + fhirUri, ex);
+            final String message = String.format(FhirRepo.PROBLEM_EXECUTING_TRANSACTION.message(), fhirUri);
+            throw new FhirServerResponseException(message, ex);
         }
     }
 

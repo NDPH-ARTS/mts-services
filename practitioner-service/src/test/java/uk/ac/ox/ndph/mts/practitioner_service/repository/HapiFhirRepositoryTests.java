@@ -20,7 +20,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.slf4j.Logger;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,9 +30,6 @@ class HapiFhirRepositoryTests {
 
     @Captor
     private ArgumentCaptor<Bundle> bundleCaptor;
-
-    @Mock
-    Logger SILENT_LOGGER;
 
     private FhirRepository repository;
 
