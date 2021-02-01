@@ -15,10 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * The security configuration class to support AAD with JWT (no sessions)
  */
+// The NOSONAR annotations in this class addresses a security hotspot which requires a known RBAC or ACL mechanism
+// We have our custom authorisation mechanism which is not recognised by Sonar
 @ConditionalOnProperty(prefix = "azure.activedirectory", value = "client-id")
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter { //NOSONAR
 
     @Autowired
     private AADAppRoleStatelessAuthenticationFilter aadAuthFilter;
@@ -37,7 +39,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
         // This requires all requests to have a valid token
-        http.authorizeRequests()
+        http.authorizeRequests() //NOSONAR
                 .anyRequest().authenticated();
 
         // This enables us to return appropriate http codes
