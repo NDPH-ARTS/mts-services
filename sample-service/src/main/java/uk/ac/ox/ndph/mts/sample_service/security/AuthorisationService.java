@@ -33,17 +33,13 @@ public class AuthorisationService {
             return false;
         }
 
-        /** we will also update the practitioner roles to be only those who have the permissions to perform the action
-        currently just a stub to show we filtered them out
+        //we will also update the practitioner roles to be only those who have the permissions to perform the action
+        //currently just a stub to show we filtered them out
 
-         List<String> updatedParticipantRoles = participantRoles.subList(0, 1);
-         */
+        List<String> updatedParticipantRoles = participantRoles.subList(0, 1);
 
         //Get entity site. Currently just a stub
         String entitySite = "stubSite";
-
-        /** Commenting the following lines out because of sonar test coverage which can't be tested fully on stubs
-         But the code is relevant to the flow
 
         for (String role :  updatedParticipantRoles) {
             //Validate that one of the roles has the site that is allowed to work on the entity
@@ -51,7 +47,6 @@ public class AuthorisationService {
                 return true;
             }
         }
-         */
 
         return isSiteAuthorised(entitySite, "stubRole");
     }
