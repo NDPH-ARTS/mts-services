@@ -31,4 +31,10 @@ describe('As a user I want to set permissions for a role so that I can decide wh
         expect(response.text).to.contain("Permission not-present not found")
     });
 
+    it('User is able to view the created roles', async () => {
+        const response = await baseRequest.get('/roles?page=0&size=2');
+        expect(response.status).to.equal(HttpStatus.OK)
+        expect(response.text).to.contain("id");
+    });
+
 });
