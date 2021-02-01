@@ -16,8 +16,7 @@ is_healthy() {
     fi
 }
 
-while ! is_healthy trial-config-service; do sleep 10; done
+while ! is_healthy config-server; do sleep 10; done
+while ! is_healthy site-service; do sleep 10; done
 while ! is_healthy practitioner-service; do sleep 10; done
 while ! is_healthy role-service; do sleep 10; done
-while ! is_healthy site-service; do sleep 10; done
-while ! is_healthy config-server; do sleep 10; done
