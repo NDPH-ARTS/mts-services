@@ -23,11 +23,12 @@ public class FhirContextWrapper {
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
-    /**
-     * constructor
-     */
     public FhirContextWrapper() {
         fhirContext = FhirContext.forR4();
+    }
+
+    public FhirContextWrapper(FhirContext fhirContext) {
+        this.fhirContext = fhirContext;
     }
 
     /**
