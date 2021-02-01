@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
@@ -44,9 +43,9 @@ public class HapiFhirRepository implements FhirRepository {
         final Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(bundle(practitioner));
-        } catch (BaseServerResponseException e) {
-            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(e.getMessage(), e);
+        } catch (FhirServerResponseException e) {
+            final String message = FhirRepo.FAILED_TO_SAVE_PRACTITIONER.message();
+            throw new RestException(message, e);
         }
         IBaseResource responseElement = fhirContextWrapper.getResourcesFrom(responseBundle, 1).get(0);
 
@@ -72,9 +71,8 @@ public class HapiFhirRepository implements FhirRepository {
         Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(bundle(practitionerRole));
-        } catch (BaseServerResponseException e) {
-            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(e.getMessage(), e);
+        } catch (FhirServerResponseException e) {
+            throw new RestException("Failed to save practitioner role", e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
@@ -90,7 +88,7 @@ public class HapiFhirRepository implements FhirRepository {
         var resp = fhirContextWrapper.toListOfResources(bundle);
 
         if (resp.size() != 1) {
-            logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
+            logger.info(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
             throw new RestException(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
         }
         return resp.get(0);
@@ -109,4 +107,5 @@ public class HapiFhirRepository implements FhirRepository {
                 .setMethod(Bundle.HTTPVerb.POST);
         return bundle;
     }
+
 }
