@@ -1,7 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service;
 
 import org.hl7.fhir.r4.model.Practitioner;
-import org.hl7.fhir.r4.model.PractitionerRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 
@@ -34,8 +32,8 @@ class PractitionerServiceIntegrationTests {
     @MockBean
     public FhirRepository repository;
 
-    @MockBean
-    private WebFluxRoleServiceClient roleServiceClient;
+//    @MockBean
+//    private WebFluxRoleServiceClient roleServiceClient;
 
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
@@ -81,17 +79,16 @@ class PractitionerServiceIntegrationTests {
         assertThat(error, containsString("test error"));
     }
 
-
-    @Test
-    void TestPostRoleAssignment_WhenValidInput_Returns201AndId() throws Exception {
-        // Arrange
-        when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
-        when(roleServiceClient.roleIdExists("roleId")).thenReturn(true);
-
-        String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
-        // Act + Assert
-        this.mockMvc
-                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
-    }
+//    @Test
+//    void TestPostRoleAssignment_WhenValidInput_Returns201AndId() throws Exception {
+//        // Arrange
+//        when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
+//        when(roleServiceClient.roleIdExists("roleId")).thenReturn(true);
+//
+//        String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
+//        // Act + Assert
+//        this.mockMvc
+//                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+//                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+//    }
 }
