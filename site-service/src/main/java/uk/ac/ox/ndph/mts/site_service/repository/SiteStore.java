@@ -39,19 +39,30 @@ public class SiteStore implements EntityStore<Site> {
      */
     @Override
     public String saveEntity(Site entity) {
+        String orgId = "";
 
-        // TODO: Check if the Organization already exists.
+        //Check if the Organization already exists.
+        String orgIdFound = repository.findOrganizationByName(entity.getName());
 
-        Organization org = converter.convert(entity);
-        String orgId = repository.saveOrganization(org);
-        org.setId(orgId);
-        logger.info(FhirRepo.SAVE_REQUEST.message(), orgId);
+        if (FhirRepo.NOT_FOUND.message().equalsIgnoreCase(orgIdFound)) {
 
-        // TODO: Add research study only when needed.
-        String researchStudyId = createResearchStudy(org);
-        logger.info(FhirRepo.SAVE_REQUEST.message(), researchStudyId);
+            Organization org = converter.convert(entity);
+            orgId = repository.saveOrganization(org);
+            org.setId(orgId);
+            if (logger.isInfoEnabled()) {
+                logger.info(FhirRepo.SAVE_REQUEST.message(), orgId);
+            }
 
-        return orgId;
+            // TODO: Add research study only when needed.
+            String researchStudyId = createResearchStudy(org);
+            if (logger.isInfoEnabled()) {
+                logger.info(FhirRepo.SAVE_REQUEST.message(), researchStudyId);
+            }
+
+            return orgId;
+        }
+        // return the Organization that already exists.
+        return orgIdFound;
     }
 
     private String createResearchStudy(Organization org) {

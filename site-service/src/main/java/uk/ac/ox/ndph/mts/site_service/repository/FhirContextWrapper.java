@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Organization;
 import org.springframework.stereotype.Component;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -42,6 +43,21 @@ public class FhirContextWrapper {
     public Bundle executeTrasaction(String uri, Bundle input) {
         return fhirContext.newRestfulGenericClient(uri).transaction()
                     .withBundle(input).execute();
+    }
+
+    /**
+     * Execute a bundle transaction to a FHIR endpoint
+     * @param uri the FHIR endpoint URI
+     * @param name of the organization to search.
+     * @return Organization searched by name.
+     */
+    public Bundle executeSearchByName(String uri, String name) {
+        return fhirContext.newRestfulGenericClient(uri)
+                .search()
+                .forResource(Organization.class)
+                .where(Organization.NAME.matches().value(name))
+                .returnBundle(Bundle.class)
+                .execute();
     }
 
     /**

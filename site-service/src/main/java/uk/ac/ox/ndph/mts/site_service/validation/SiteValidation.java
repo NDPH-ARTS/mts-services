@@ -55,7 +55,9 @@ public class SiteValidation implements ModelEntityValidation<Site> {
 
         validateMap();
 
-        logger.info(Validations.STARTUP.message(), configuration);
+        if (logger.isInfoEnabled()) {
+            logger.info(Validations.STARTUP.message(), configuration);
+        }
     }
 
     @Override

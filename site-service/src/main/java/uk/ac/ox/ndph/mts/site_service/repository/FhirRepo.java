@@ -7,7 +7,9 @@ public enum FhirRepo {
     SAVE_REQUEST("request to fhir: %s"),
     SAVE_RESPONSE("response from fhir: %s"),
     UPDATE_ERROR("error while updating fhir store"),
-    BAD_RESPONSE_SIZE("bad response size from FHIR: %d");
+    SEARCH_ERROR("error while searching fhir store"),
+    BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
+    NOT_FOUND("NOT FOUND");
 
     private String message;
  
