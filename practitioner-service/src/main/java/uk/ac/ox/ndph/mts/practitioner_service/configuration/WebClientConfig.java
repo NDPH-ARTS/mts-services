@@ -23,7 +23,6 @@ public class WebClientConfig {
     @Value("${http.readTimeOutMs:10000}")
     private long readTimeOutMs;
 
-    @Bean
     public ClientHttpConnector connectorWithConnectAndReadTimeOuts() {
         return new ReactorClientHttpConnector(HttpClient.create()
                 .tcpConfiguration(tcpClient ->
@@ -37,7 +36,6 @@ public class WebClientConfig {
         return WebClient.builder().clientConnector(connectorWithConnectAndReadTimeOuts());
     }
 
-    @Bean
     public WebClient webClient() {
         return webClientBuilder().build();
     }

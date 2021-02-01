@@ -11,8 +11,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
@@ -23,10 +21,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@ContextConfiguration
 class RoleAssignmentValidationTests {
 
     @Mock

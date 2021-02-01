@@ -1,10 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PageableResult;
-import uk.ac.ox.ndph.mts.practitioner_service.model.RoleDTO;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -44,38 +41,17 @@ public final class TestRolesServiceBackend {
         return String.format("http://localhost:%s", mockBackEnd.getPort());
     }
 
-    public void queueRolesResponse(final String roleId) {
-        try {
-            final var roleObj = new RoleDTO();
-            if (roleId != null) {
-                roleObj.setId(roleId);
-            }
-            final var response = (roleId == null) ? PageableResult.empty() : PageableResult.singleton(roleObj);
-            mockBackEnd.enqueue(new MockResponse()
-                    .setBody(new ObjectMapper().writeValueAsString(response))
-                    .addHeader("Content-Type", "application/json"));
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
     public void queueRoleResponse(final String roleId) {
         queueRoleResponse(roleId, 0);
     }
 
-    public void queueRoleResponse(final String roleId, final int timeOut) {
+    public void queueRoleResponse(final String roleId, final int delayInSeconds) {
         try {
-            final var roleObj = new RoleDTO();
-            if (roleId != null) {
-                roleObj.setId(roleId);
-            }
             final MockResponse response = new MockResponse()
-                    .setBody(new ObjectMapper().writeValueAsString(roleObj))
+                    .setBody("{ \"id\": \"" + roleId  + "\" }")
                     .addHeader("Content-Type", "application/json");
-            if (timeOut > 0) {
-                response.throttleBody(1, timeOut, TimeUnit.SECONDS);
+            if (delayInSeconds > 0) {
+                response.setHeadersDelay(delayInSeconds, TimeUnit.SECONDS);
             }
             mockBackEnd.enqueue(response);
         } catch (RuntimeException ex) {

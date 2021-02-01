@@ -23,7 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always",
+        "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerServiceIntegrationTests {
