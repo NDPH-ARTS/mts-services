@@ -20,3 +20,5 @@ while ! is_healthy trial-config-service; do sleep 5; done
 while ! is_healthy practitioner-service; do sleep 5; done
 while ! is_healthy role-service; do sleep 5; done
 while ! is_healthy site-service; do sleep 5; done
+while ! is_healthy config-service; do sleep 5; done
+while ! is_healthy init-service; do sleep 5; done
