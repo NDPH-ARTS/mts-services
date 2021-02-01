@@ -33,9 +33,11 @@ public class AuthorisationService {
             return false;
         }
 
-        //we will also update the practitioner roles to be only those who have the permissions to perform the action
-        //currently just a stub to show we filtered them out
-        //List<String> updatedParticipantRoles = participantRoles.subList(0, 1);
+        /** we will also update the practitioner roles to be only those who have the permissions to perform the action
+        currently just a stub to show we filtered them out
+
+         List<String> updatedParticipantRoles = participantRoles.subList(0, 1);
+         */
 
         //Get entity site. Currently just a stub
         String entitySite = "stubSite";

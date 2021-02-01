@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @ConditionalOnProperty(prefix = "azure.activedirectory", value = "client-id")
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter { //NOSONAR
+public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AADAppRoleStatelessAuthenticationFilter aadAuthFilter;
