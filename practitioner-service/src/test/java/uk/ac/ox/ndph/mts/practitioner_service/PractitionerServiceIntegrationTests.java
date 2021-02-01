@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,7 +50,7 @@ class PractitionerServiceIntegrationTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -64,7 +63,7 @@ class PractitionerServiceIntegrationTests {
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
+                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("Given Name"));
     }
 
@@ -78,7 +77,7 @@ class PractitionerServiceIntegrationTests {
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
+                .andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("test error"));
     }
 
@@ -93,6 +92,6 @@ class PractitionerServiceIntegrationTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 }

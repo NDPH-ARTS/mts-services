@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,11 +23,12 @@ public class FhirContextWrapper {
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
-    /**
-     * constructor
-     */
     public FhirContextWrapper() {
         fhirContext = FhirContext.forR4();
+    }
+
+    public FhirContextWrapper(FhirContext fhirContext) {
+        this.fhirContext = fhirContext;
     }
 
     /**
@@ -45,9 +47,14 @@ public class FhirContextWrapper {
      * @param input the Bundle to save
      * @return the returned Bundle object from FHIR endpoint
      */
-    public Bundle executeTransaction(Bundle input) {
-        return fhirContext.newRestfulGenericClient(fhirUri).transaction()
-                .withBundle(input).execute();
+    public Bundle executeTransaction(Bundle input) throws FhirServerResponseException {
+        try {
+            return fhirContext.newRestfulGenericClient(fhirUri).transaction()
+                    .withBundle(input).execute();
+        } catch (BaseServerResponseException ex) {
+            final String message = String.format(FhirRepo.PROBLEM_EXECUTING_TRANSACTION.message(), fhirUri);
+            throw new FhirServerResponseException(message, ex);
+        }
     }
 
     /**
