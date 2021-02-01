@@ -4,11 +4,11 @@ package uk.ac.ox.ndph.mts.practitioner_service.validation;
  * String constants
  */
 public enum Validations {
-    STARTUP("Laoded practitioner validation with configuration: {}"),
+    STARTUP("Loaded practitioner validation with configuration: {}"),
     ERROR("argument %s failed validation");
 
     private String message;
- 
+
     Validations(String message) {
         this.message = message;
     }

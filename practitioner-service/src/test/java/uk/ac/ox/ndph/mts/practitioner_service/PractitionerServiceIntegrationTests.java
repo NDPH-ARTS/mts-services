@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service;
 
 import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.PractitionerRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 
-@SpringBootTest(properties = { "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerServiceIntegrationTests {
@@ -32,6 +33,9 @@ class PractitionerServiceIntegrationTests {
     @MockBean
     public FhirRepository repository;
 
+    private final String practitionerUri = "/practitioner";
+    private final String roleAssignmentUri = "/practitioner/987/roles";
+
     @Test
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
@@ -41,7 +45,7 @@ class PractitionerServiceIntegrationTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -54,7 +58,7 @@ class PractitionerServiceIntegrationTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"\", \"familyName\": \"familyName\"}";
         // Act + Assert
         var error = this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("Given Name"));
     }
@@ -68,8 +72,22 @@ class PractitionerServiceIntegrationTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         var error = this.mockMvc
-                .perform(post("/practitioner").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("test error"));
+    }
+
+
+    @Test
+    void TestPostRoleAssignment_WhenValidInput_Returns201AndId() throws Exception {
+        // Arrange
+        when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
+
+
+        String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
+        // Act + Assert
+        this.mockMvc
+                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 }
