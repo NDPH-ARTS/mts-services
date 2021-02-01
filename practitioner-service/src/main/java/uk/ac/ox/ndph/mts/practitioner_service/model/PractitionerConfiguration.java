@@ -1,22 +1,21 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@Configuration
+@ConfigurationProperties(prefix = "config")
+@EnableConfigurationProperties
 public class PractitionerConfiguration {
 
-    @Value("${name}")
     private String name;
-
-    @Value("${displayName}")
     private String displayName;
-
-    private final List<PractitionerAttributeConfiguration> attributes;
+    private List<PractitionerAttributeConfiguration> attributes;
 
     public PractitionerConfiguration() {
         this.name = "";
@@ -42,5 +41,17 @@ public class PractitionerConfiguration {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setAttributes(List<PractitionerAttributeConfiguration> attributes) {
+        this.attributes = attributes;
     }
 }
