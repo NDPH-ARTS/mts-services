@@ -31,15 +31,24 @@
 
     <modules>
         <!--        <module>build-tools</module>-->
-
         <module>sample-service</module>
         <module>practitioner-service</module>
         <module>trial-config-service</module>
+        <module>config-server</module>
         <module>role-service</module>
+        <module>init-service</module>
         <module>site-service</module>
     </modules>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -142,6 +151,8 @@
 
                         <!-- Exclude model classes -->
                         <exclude>**/*service/model/**</exclude>
+                        <!-- Exclude config classes -->
+                        <exclude>**/*service/config/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

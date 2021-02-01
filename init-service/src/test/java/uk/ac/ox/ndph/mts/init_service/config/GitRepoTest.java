@@ -1,22 +1,13 @@
-package uk.ac.ox.ndph.mts.trial_config_service.config;
+package uk.ac.ox.ndph.mts.init_service.config;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import uk.ac.ox.ndph.mts.trial_config_service.exception.InvalidConfigException;
-import uk.ac.ox.ndph.mts.trial_config_service.exception.ResourceAlreadyExistsException;
+import uk.ac.ox.ndph.mts.init_service.config.GitRepo;
+import uk.ac.ox.ndph.mts.init_service.exception.InvalidConfigException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GitRepoTest {

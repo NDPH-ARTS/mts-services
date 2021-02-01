@@ -1,38 +1,57 @@
 package uk.ac.ox.ndph.mts.practitioner_service.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 
 /**
- * Provide Practitioner Configuration 
+ * Provide Practitioner Configuration
  */
 @Component
 public class PractitionerConfigurationProvider {
 
-    @Value("classpath:practitioner-configuration.json")
-    Resource configurationFile;
+    @Value("${spring.cloud.config.uri}")
+    private String configURI;
 
-    private PractitionerConfiguration configuration;
+    @Value("${spring.application.name}")
+    private String applicationName;
+
+    @Value("${spring.cloud.config.profile}")
+    private String profile;
+
+    @Value("${spring.cloud.config.label}")
+    private String label;
+
 
     /**
      * Get Practitioner Configuration
      * @return PractitionerConfiguration
      */
     public PractitionerConfiguration getConfiguration() {
-        if (configuration == null) {
-            try {
-                String jsonString = new String(configurationFile.getInputStream().readAllBytes());
-                configuration = new ObjectMapper().readValue(jsonString, PractitionerConfiguration.class);
-            } catch (Exception e) {
-                throw new InitialisationError(Configurations.ERROR.message(), e);
-            }
+
+        PractitionerConfiguration practitionerConfiguration;
+
+        try {
+            practitionerConfiguration = WebClient.create().get()
+                .uri(getRepoURL() + "/" + "practitioner-configuration.json")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(PractitionerConfiguration.class)
+                .block();
+        } catch (WebClientException wce) {
+            throw new RestException(wce.getMessage());
         }
-        return configuration;
+
+        return practitionerConfiguration;
+
     }
+
+    private String getRepoURL() {
+        return configURI + "/" + applicationName + "/" + profile + "/" + label;
+    }
+
 }
