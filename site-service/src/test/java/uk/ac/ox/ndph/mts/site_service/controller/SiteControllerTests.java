@@ -8,18 +8,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
+
+import java.util.Collections;
 
 @SpringBootTest(properties = { "server.error.include-message=always" })
 @AutoConfigureMockMvc
@@ -84,4 +89,42 @@ class SiteControllerTests {
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("name"));
     }
+
+
+    @Test
+    void TestGetSite_WhenNoSites_Returns501() throws Exception {
+        // Arrange
+        when(siteService.getSites()).thenThrow(new InvariantException("root"));
+        // Act + Assert
+        final String error = this.mockMvc
+                .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotImplemented()).andReturn().getResolvedException().getMessage();
+        assertThat(error, containsString("root"));
+
+    }
+
+    @Test
+    void TestGetSite_WhenSites_Returns200AndList() throws Exception {
+        // arrange
+        when(siteService.getSites()).thenReturn(Collections.singletonList(new Site("CCO", "Root")));
+        // act
+        final String result = this.mockMvc
+                .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // assert - not perfect as need to parse to a JSON object to check keys/values properly
+        assertThat(result, stringContainsInOrder("\"name\":", "\"CCO\""));
+        assertThat(result, stringContainsInOrder("\"alias\":", "\"Root\""));
+        assertThat(result, stringContainsInOrder("\"parentSiteId\":", "null"));
+    }
+
+    @Test
+    void TestGetSite_WhenFhirDependencyFails_Returns502() throws Exception {
+        // Arrange
+        when(siteService.getSites()).thenThrow(RestException.class);
+        // Act + Assert
+        this.mockMvc
+                .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isBadGateway());
+    }
+
 }

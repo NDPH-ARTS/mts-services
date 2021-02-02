@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
+import java.util.Objects;
+
 /**
  * Site Model
  */
@@ -24,7 +26,7 @@ public class Site {
     }
 
     /**
-     * Site Constructor with two parameters
+     * Site Constructor with name alias and parent
      *
      * @param name the Site name
      * @param alias the Site alias
@@ -37,8 +39,26 @@ public class Site {
         this.parentSiteId = parentSiteId;
     }
 
+
+    /**
+     * Site factory with name alias parent and ID
+     * make this a named factory to avoid mixing up site ID with parent site ID
+     * @param siteId site ID (never null)
+     * @param name the Site name
+     * @param alias the Site alias
+     * @param parentSiteId the Site parentSiteId
+     *
+     */
+    public static Site withIdNameAliasAndParent(final String siteId, String name, String alias, String parentSiteId) {
+        final Site site = new Site(name, alias, parentSiteId);
+        Objects.requireNonNull(siteId);
+        site.setSiteId(siteId);
+        return site;
+    }
+
     private String name;
     private String alias;
+    private String siteId;
     private String parentSiteId;
 
     /**
@@ -92,5 +112,13 @@ public class Site {
      */
     public void setParentSiteId(String parentSiteId) {
         this.parentSiteId = parentSiteId;
+    }
+
+    public String getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
     }
 }

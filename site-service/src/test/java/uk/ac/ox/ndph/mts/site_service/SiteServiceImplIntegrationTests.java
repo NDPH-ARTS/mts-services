@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.site_service;
 
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +14,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -22,6 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
+
+import java.util.Collections;
+import java.util.List;
 
 @SpringBootTest(properties = { "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
@@ -85,4 +88,31 @@ class SiteServiceImplIntegrationTests {
                 .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
+
+    @Test
+    void TestGetSites_ReturnsList() throws Exception {
+        // Arrange
+        final var org = new Organization()
+                .setName("CCO")
+                .addAlias("Root");
+        org.setId("this-is-my-id");
+        when(repository.getOrganizations()).thenReturn(List.of(org));
+        // Act + Assert
+        this.mockMvc
+                .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andExpect(content().string(containsString("\"this-is-my-id\"")));
+    }
+
+
+    @Test
+    void TestGetSites_WhenNoSites_ReturnsInternalServerError() throws Exception {
+        // Arrange
+        when(repository.getOrganizations()).thenReturn(Collections.emptyList());
+        // Act + Assert
+        final var message = this.mockMvc
+                .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotImplemented()).andReturn().getResolvedException().getMessage();
+        assertThat(message, containsString("No root site"));
+    }
+
 }

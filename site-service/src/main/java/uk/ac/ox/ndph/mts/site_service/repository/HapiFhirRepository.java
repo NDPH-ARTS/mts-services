@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
+import java.util.Collection;
+
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
  * a FHIR store.
@@ -30,6 +32,26 @@ public class HapiFhirRepository implements FhirRepository {
 
     HapiFhirRepository(FhirContextWrapper fhirContextWrapper) {
         this.fhirContextWrapper = fhirContextWrapper;
+    }
+
+    /**
+     * Return the list of all organizations. Note this may include organizations that are
+     * not {uk.ac.ox.ndph.mts.site_service.model.Site}s - caller must filter.
+     * @return all organization instances in the store, might be empty, not null
+     */
+    public Collection<Organization> getOrganizations() {
+        try {
+            // note no where clause here - just gets all the orgs;
+            // would like to filter on sites (by the site type extension?)
+            final Bundle responseBundle = fhirContextWrapper
+                    .search(fhirUri, ORGANIZATION_ENTITY_NAME)
+                    .execute();
+            return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
+        } catch (BaseServerResponseException e) {
+            logger.warn(String.format(
+                    FhirRepo.SEARCH_ERROR.message(), ORGANIZATION_ENTITY_NAME), e);
+            throw new RestException(e.getMessage(), e);
+        }
     }
 
     /**

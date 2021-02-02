@@ -4,15 +4,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import java.util.Collection;
 import java.util.List;
 
+import ca.uhn.fhir.rest.gclient.IQuery;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Organization;
-import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResearchStudy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -143,4 +142,34 @@ class HapiFhirRepositoryTests {
         // Act + Assert
         assertThrows(RestException.class, () -> fhirRepository.saveResearchStudy(researchStudy));
     }
+
+    @SuppressWarnings("unchecked")
+    private IQuery<Bundle> mockQuery() {
+        return mock(IQuery.class);
+    }
+
+    @Test
+    void TestHapiRepository_getOrganizations_WhenContextReturnsSearch_ReturnsOrganizations() {
+        // arrange
+        final var org = new Organization()
+                .setName("CCO")
+                .addAlias("Root");
+        org.setId("this-is-my-id");
+        final var responseBundle = new Bundle();
+        responseBundle.addEntry()
+                .setResource(org);
+        final var mockQuery = mockQuery();
+        when(mockQuery.execute()).thenReturn(responseBundle);
+        when(fhirContextWrapper.search(anyString(), eq("Organization"))).thenReturn(mockQuery);
+        when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(List.of(org));
+        final var fhirRepository =  new HapiFhirRepository(fhirContextWrapper);
+        // act
+        final Collection<Organization> orgs = fhirRepository.getOrganizations();
+        // assert
+        verify(mockQuery).execute();
+        assertThat(orgs, is(not(empty())));
+        assertThat(orgs.size(), is(1));
+        assertThat(orgs, hasItem(hasProperty("name", equalTo("CCO"))));
+    }
+
 }

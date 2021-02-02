@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Implement an EntityStore for Site.
  */
@@ -17,19 +20,24 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 public class SiteStore implements EntityStore<Site> {
 
     private final FhirRepository repository;
-    private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> converter;
+    private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter;
+    private final EntityConverter<org.hl7.fhir.r4.model.Organization, Site> fromOrgConverter;
     private final Logger logger = LoggerFactory.getLogger(SiteStore.class);
 
     /**
      *
      * @param repository - The fhir repository
-     * @param converter - a model-entity to fhir-entity converter
+     * @param fromSiteConverter - a model-entity to fhir-entity converter
+     * @param fromOrgConverter - a fhir-entity to model-entity converter
      */
     @Autowired
     public SiteStore(FhirRepository repository,
-                     EntityConverter<Site, org.hl7.fhir.r4.model.Organization> converter) {
+                     EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter,
+                     EntityConverter<org.hl7.fhir.r4.model.Organization, Site> fromOrgConverter
+                     ) {
         this.repository = repository;
-        this.converter = converter;
+        this.fromSiteConverter = fromSiteConverter;
+        this.fromOrgConverter = fromOrgConverter;
     }
 
     /**
@@ -42,7 +50,7 @@ public class SiteStore implements EntityStore<Site> {
 
         // TODO: Check if the Organization already exists.
 
-        Organization org = converter.convert(entity);
+        Organization org = fromSiteConverter.convert(entity);
         String orgId = repository.saveOrganization(org);
         org.setId(orgId);
         logger.info(FhirRepo.SAVE_REQUEST.message(), orgId);
@@ -61,4 +69,17 @@ public class SiteStore implements EntityStore<Site> {
         rs.setSponsor(new Reference("Organization/" + org.getId()));
         return repository.saveResearchStudy(rs);
     }
+
+    /**
+     * This should never actually be empty, but enforce that invariant at the service level not the store level
+     * @return list of site entities
+     */
+    @Override
+    public List<Site> geAllEntities() {
+        return this.repository.getOrganizations()
+                .stream()
+                .map(fromOrgConverter::convert)
+                .collect(Collectors.toList());
+    }
+
 }
