@@ -82,6 +82,8 @@ ___
 Practitioner service is backed up by a FHIR store which is accessible as an HTTP/S endpoint and configurable by the "fhir.uri" application property.
 Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir/docs/client/examples.html) to handle the model and transactions with FHIR store.
 
+### MTS role-service
+Requires a URL pointing to the role service in the `role.service` property
 
 ## Validation Configuration
 

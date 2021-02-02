@@ -13,6 +13,9 @@ COPY ./sample-service/pom.xml ./sample-service/pom.xml
 COPY ./site-service/pom.xml ./site-service/pom.xml
 COPY ./config-server/pom.xml ./config-server/pom.xml
 
+# cache most dependencies as a layer to be used in other builds while POMs don't change
+RUN mvn dependency:go-offline --batch-mode -q --projects ${SVC}
+
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
 

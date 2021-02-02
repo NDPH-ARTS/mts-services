@@ -26,18 +26,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build & test
-        run: |
-          export DOCKER_BUILDKIT=1
-          docker build --build-arg SVC="${{ matrix.service_name }}" --target export -t test --output out -f "${{ matrix.service_name }}"/Dockerfile .
-      - name: Publish Test Report
-        if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1
-        with:
-          fail_on_test_failures: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: "**/out/TEST*.xml"
-          fail_if_no_tests: false
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -71,16 +59,27 @@ jobs:
           docker push $TO_TAG
 
   test:
-    name: Test
+    name: API Integration Tests
+    if: github.event_name == 'pull_request'
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build images
-        run: |
-          docker-compose build
       - name: Start services using Docker Compose
-        timeout-minutes: 4
+        timeout-minutes: 5
+        env:
+          SAPASSWORD: $(openssl rand -base64 12)
+          BASE_URL: http://localhost
+          GITHUB_SHA: ${{github.sha}}
         run: |
-          export SAPASSWORD=$(openssl rand -base64 12)
           ./.ci/docker/check-docker-compose-services.sh
+          npm run --prefix api-tests api-test-ci
+          docker-compose down
+      - name: Publish API Test Report
+        if: always()
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: 'api-tests/api-test-results.xml'
+          fail_on_test_failures: true

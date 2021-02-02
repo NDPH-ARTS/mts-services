@@ -17,6 +17,7 @@
     </description>
     <properties>
         <hapifhir.version>5.0.2</hapifhir.version>
+        <okhttp.version>4.9.0</okhttp.version>
     </properties>
 
     <dependencies>
@@ -55,10 +56,31 @@
             <version>5.6.3</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
+
+         <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+         </dependency>
+
+       <!-- web client for cross-service calls -->
+       <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-webflux</artifactId>
+       </dependency>
+       <dependency>
+          <groupId>org.springframework.data</groupId>
+          <artifactId>spring-data-commons</artifactId>
+       </dependency>
+
     </dependencies>
 
 </project>

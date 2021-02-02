@@ -7,7 +7,7 @@
     "test:awesome": "mocha specs/*/*.js --reporter mochawesome || true",
     "open:report": "open mochawesome-report/mochawesome.html",
     "test": "mocha specs/*/*.js",
-    "test-ci": "mocha specs/*/*.js --reporter mocha-junit-reporter"
+    "api-test-ci": "npm i && mocha --timeout 8000 --reporter mocha-junit-reporter --reporter-options mochaFile=./api-test-results.xml specs/*/*.js || true"
   },
   "devDependencies": {
     "chai": "^3.5.0",
