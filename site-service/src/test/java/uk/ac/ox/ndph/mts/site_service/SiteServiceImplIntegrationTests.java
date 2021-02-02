@@ -37,7 +37,7 @@ class SiteServiceImplIntegrationTests {
     @Test
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
-        when(repository.findOrganizationByName(anyString())).thenReturn("NOT FOUND");
+        when(repository.findOrganizationByName(anyString())).thenReturn(null);
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
         
@@ -64,7 +64,7 @@ class SiteServiceImplIntegrationTests {
     @Test
     void TestPostSite_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange
-        when(repository.findOrganizationByName(anyString())).thenReturn("NOT FOUND");
+        when(repository.findOrganizationByName(anyString())).thenReturn(null);
         when(repository.saveOrganization(any(Organization.class))).thenThrow(new RestException("test error"));
         
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
@@ -78,7 +78,7 @@ class SiteServiceImplIntegrationTests {
     @Test
     void TestPostSite_WhenValidParentInput_Returns201AndId() throws Exception {
         // Arrange
-        when(repository.findOrganizationByName(anyString())).thenReturn("NOT FOUND");
+        when(repository.findOrganizationByName(anyString())).thenReturn(null);
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
 

@@ -60,17 +60,16 @@ class HapiFhirRepositoryTests {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeSearchByName(anyString(), anyString())).thenReturn(responseBundle);
-        //when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Organization()));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var uri = "";
         var name = "findByName";
-        String notFound = "NOT FOUND";
+
         // Act
-        String strFound = fhirRepository.findOrganizationByName(name);
+        Organization org = fhirRepository.findOrganizationByName(name);
 
         // Assert
         verify(fhirContextWrapper).executeSearchByName(uri, name);
-        assertEquals(notFound, strFound);
+        assertEquals(null, org);
     }
 
     @Test

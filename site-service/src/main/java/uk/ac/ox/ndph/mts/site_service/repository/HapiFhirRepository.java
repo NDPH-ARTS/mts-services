@@ -39,7 +39,7 @@ public class HapiFhirRepository implements FhirRepository {
     public String saveOrganization(Organization organization) {
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_REQUEST.message(),
+            logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(organization));
         }
 
@@ -57,7 +57,7 @@ public class HapiFhirRepository implements FhirRepository {
 
         // Log the response
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_RESPONSE.message(),
+            logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
         }
 
@@ -68,12 +68,12 @@ public class HapiFhirRepository implements FhirRepository {
      * @param name of the organization to search.
      * @return id of the saved organization
      */
-    public String findOrganizationByName(String name) {
+    public Organization findOrganizationByName(String name) {
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_REQUEST.message(), name);
+            logger.info(FhirRepo.REQUEST_PAYLOAD.message(), name);
         }
-        Bundle responseBundle = new Bundle();
+        Bundle responseBundle;
 
         try {
             responseBundle = fhirContextWrapper.executeSearchByName(fhirUri, name);
@@ -87,10 +87,11 @@ public class HapiFhirRepository implements FhirRepository {
 
         if (!responseBundle.getEntry().isEmpty()) {
             IBaseResource responseElement = extractResponseResource(responseBundle);
-            return responseElement.getIdElement().getIdPart();
+            //return responseElement.getIdElement().getIdPart();
+            return null;
         }
 
-        return FhirRepo.NOT_FOUND.message();
+        return null;
     }
 
     /**
@@ -100,7 +101,7 @@ public class HapiFhirRepository implements FhirRepository {
     public String saveResearchStudy(ResearchStudy researchStudy) {
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_REQUEST.message(),
+            logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(researchStudy));
         }
 
@@ -118,7 +119,7 @@ public class HapiFhirRepository implements FhirRepository {
 
         // Log the response
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.SAVE_RESPONSE.message(),
+            logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
         }
 

@@ -22,7 +22,7 @@ public interface FhirRepository {
      * @param name of the organization to search.
      * @return Organization searched by name.
      */
-    String findOrganizationByName(String name);
+    Organization findOrganizationByName(String name);
 
     /**
      * Creates a new ResearchStudy resource.

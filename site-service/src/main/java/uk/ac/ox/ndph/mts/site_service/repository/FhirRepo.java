@@ -4,8 +4,8 @@ package uk.ac.ox.ndph.mts.site_service.repository;
  * String constants
  */
 public enum FhirRepo {
-    SAVE_REQUEST("request to fhir: %s"),
-    SAVE_RESPONSE("response from fhir: %s"),
+    REQUEST_PAYLOAD("request to fhir: %s"),
+    RESPONSE_PAYLOAD("response from fhir: %s"),
     UPDATE_ERROR("error while updating fhir store"),
     SEARCH_ERROR("error while searching fhir store"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),

@@ -18,11 +18,15 @@ import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
+import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 @ExtendWith(MockitoExtension.class)
 class SiteServiceImplTests {
-    
+
+    @Mock
+    private FhirRepository repository;
+
     @Mock
     private EntityStore<Site> siteStore;
 
@@ -40,7 +44,7 @@ class SiteServiceImplTests {
         String parent = "parent";
 
         Site siteWithParent = new Site(name, alias, parent);
-        var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(repository, siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
 
@@ -60,7 +64,7 @@ class SiteServiceImplTests {
         String name = "name";
         String alias = "alias";
         Site site = new Site(name, alias);
-        var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(repository, siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
         //Act
@@ -78,7 +82,7 @@ class SiteServiceImplTests {
         String name = "name";
         String alias = "alias";
         Site site = new Site(name, alias);
-        var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(repository, siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(false, "name"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
@@ -89,9 +93,11 @@ class SiteServiceImplTests {
     @Test
     void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError(){
         // Arrange + Act + Assert
-        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteValidation),
+        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteStore, siteValidation),
+                "null repository should throw");
+        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(repository,null, siteValidation),
                 "null store should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(siteStore, null),
+        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(repository, siteStore, null),
                 "null validation should throw");
     }
 }
