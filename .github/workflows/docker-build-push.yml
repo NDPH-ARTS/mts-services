@@ -18,7 +18,7 @@ jobs:
     name: Build services
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service", "trial-config-service", "site-service", "role-service", "init-service", "config-server"]
+        service_name: [ "sample-service", "practitioner-service", "site-service", "role-service", "init-service", "config-server"]
     env:
       GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
           docker push $TO_TAG
 
   test:
-    name: Test
+    name: API Integration Tests
     if: github.event_name == 'pull_request'
     needs: build
     runs-on: ubuntu-latest
