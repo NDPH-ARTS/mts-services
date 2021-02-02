@@ -1,5 +1,7 @@
+const utils = require('../../data/common/utils')
+
 const validRole = {
-    "id": getRandomString(7),
+    "id": utils.getRandomString(7),
 }
 
 const emptyString = {
@@ -7,17 +9,7 @@ const emptyString = {
 }
 
 const tooLongId = {
-    "id": getRandomString(256),
-}
-
-function getRandomString(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+    "id": utils.getRandomString(256),
 }
 
 module.exports = {

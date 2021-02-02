@@ -1,9 +1,6 @@
 const requests = require('../../data/practitioner-service/createperson')
 const conf = require('../../config/conf')
 
-beforeEach(function () {
-    baseRequest = request(conf.BASE_URL)
-})
 
 describe('As a user with Create Person permission, I want to have my create person request validated by the system, So that I cannot create an invalid person', function () {
 
