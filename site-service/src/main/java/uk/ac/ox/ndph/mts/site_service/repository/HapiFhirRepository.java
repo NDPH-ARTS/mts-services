@@ -73,7 +73,7 @@ public class HapiFhirRepository implements FhirRepository {
         if (logger.isInfoEnabled()) {
             logger.info(FhirRepo.SAVE_REQUEST.message(), name);
         }
-        Bundle responseBundle;
+        Bundle responseBundle = new Bundle();
 
         try {
             responseBundle = fhirContextWrapper.executeSearchByName(fhirUri, name);

@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -51,6 +52,25 @@ class HapiFhirRepositoryTests {
         var value = bundleCaptor.getValue();
         var type = value.getType();
         assertThat(type, equalTo(Bundle.BundleType.TRANSACTION));
+    }
+
+    @Test
+    void TestHapiRepository_WhenSearchOrganizationByName_Sends_NOT_FOUND()
+    {
+        // Arrange
+        var responseBundle = new Bundle();
+        when(fhirContextWrapper.executeSearchByName(anyString(), anyString())).thenReturn(responseBundle);
+        //when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Organization()));
+        var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
+        var uri = "";
+        var name = "findByName";
+        String notFound = "NOT FOUND";
+        // Act
+        String strFound = fhirRepository.findOrganizationByName(name);
+
+        // Assert
+        verify(fhirContextWrapper).executeSearchByName(uri, name);
+        assertEquals(notFound, strFound);
     }
 
     @Test
