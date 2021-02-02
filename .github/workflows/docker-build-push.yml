@@ -59,7 +59,7 @@ jobs:
           docker push $TO_TAG
 
   test:
-    name: Test
+    name: API Integration Tests
     if: github.event_name == 'pull_request'
     needs: build
     runs-on: ubuntu-latest
