@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service.security;
+package uk.ac.ox.ndph.mts.sample_service.security.authentication;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,8 @@
-package uk.ac.ox.ndph.mts.sample_service.security;
+package uk.ac.ox.ndph.mts.sample_service.security.authentication;
 
+// TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
 import com.microsoft.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
     private AADAppRoleStatelessAuthenticationFilter aadAuthFilter;
 
     /**

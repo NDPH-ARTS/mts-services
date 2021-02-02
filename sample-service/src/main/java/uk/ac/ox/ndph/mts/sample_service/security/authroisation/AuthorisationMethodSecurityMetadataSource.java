@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service.security;
+package uk.ac.ox.ndph.mts.sample_service.security.authroisation;
 
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.access.method.AbstractFallbackMethodSecurityMetadataSource;
