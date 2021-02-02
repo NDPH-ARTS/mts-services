@@ -34,7 +34,7 @@ class LoaderTest {
         Loader loader = new Loader(trialService, practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
 
         doNothing().when(roleServiceInvoker).execute(anyList());
-        doNothing().when(siteServiceInvoker).execute(anyList());
+        doReturn(null).when(siteServiceInvoker).execute(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList());
 
         when(trialService.getTrial()).thenReturn(mockedTrial());

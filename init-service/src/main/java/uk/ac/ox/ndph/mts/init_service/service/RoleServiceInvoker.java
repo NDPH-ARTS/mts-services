@@ -50,17 +50,15 @@ public class RoleServiceInvoker implements ServiceInvoker {
         }
     }
 
-    public List<String> execute(List<Role> roles) throws NullEntityException {
-        List<String> roleIDs = new ArrayList<>();
+    public void execute(List<Role> roles) throws NullEntityException {
         if (roles != null) {
             for (Role role : roles) {
                 LOGGER.info("Starting to create role(s): {}", role);
-                roleIDs.add(send(role));
+                send(role);
                 LOGGER.info("Finished creating {} role(s)", roles.size());
             }
         } else {
             throw new NullEntityException("No Roles in payload");
         }
-        return roleIDs;
     }
 }

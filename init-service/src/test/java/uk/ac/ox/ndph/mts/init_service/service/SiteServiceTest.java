@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
+import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 
 import java.io.IOException;
@@ -46,8 +47,10 @@ class SiteServiceTest {
         Site testSite = new Site();
         testSite.setName("testName");
         testSite.setAlias("testAlias");
+        IDResponse mockResponseFromSiteService = new IDResponse();
+        mockResponseFromSiteService.setId("test-id");
         mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(testSite))
+                .setBody(new ObjectMapper().writeValueAsString(mockResponseFromSiteService))
                .addHeader("Content-Type", "application/json"));
         String returnedSiteId = siteServiceInvoker.send(testSite);
         assertNotNull(returnedSiteId);
