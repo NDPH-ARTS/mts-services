@@ -18,9 +18,7 @@ public class SiteServiceApplication {
      *
      */
     public static void main(String[] args) {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(Application.STARTUP.message());
-        }
+        LOGGER.info(Application.STARTUP.message());
 
         SpringApplication.run(SiteServiceApplication.class, args);
     }

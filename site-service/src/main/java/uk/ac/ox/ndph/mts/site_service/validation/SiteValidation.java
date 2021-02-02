@@ -1,24 +1,23 @@
 package uk.ac.ox.ndph.mts.site_service.validation;
 
-import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.model.Attribute;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
+
+import java.util.Map;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Implement a ModelEntityValidation for Site

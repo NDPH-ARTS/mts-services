@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
+import uk.ac.ox.ndph.mts.site_service.repository.FhirRepo;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
@@ -26,10 +28,9 @@ public class SiteServiceImpl implements SiteService {
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
-     *
      * @param repository - The fhir repository
      * @param siteStore Site store interface
-     * @param entityValidation Site validation interface 
+     * @param entityValidation Site validation interface
      */
     @Autowired
     public SiteServiceImpl(FhirRepository repository, EntityStore<Site> siteStore,
@@ -65,13 +66,20 @@ public class SiteServiceImpl implements SiteService {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
 
-        //Check if the Organization already exists.
-        Organization org = repository.findOrganizationByName(site.getName());
-
-        if (null == org) {
-            return siteStore.saveEntity(site);
-        } else {
+        validationResponse = validateSiteExists(site);
+        if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
+
+        return siteStore.saveEntity(site);
+    }
+
+    private ValidationResponse validateSiteExists(Site site) {
+        //Check if the Organization already exists.
+        Organization org = repository.findOrganizationByName(site.getName());
+        if (null != org) {
+            return new ValidationResponse(false, FhirRepo.SITE_EXISTS.message());
+        }
+        return new ValidationResponse(true, "");
     }
 }

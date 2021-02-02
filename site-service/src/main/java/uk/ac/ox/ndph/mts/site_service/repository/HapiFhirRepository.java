@@ -86,9 +86,7 @@ public class HapiFhirRepository implements FhirRepository {
         }
 
         if (!responseBundle.getEntry().isEmpty()) {
-            IBaseResource responseElement = extractResponseResource(responseBundle);
-            //return responseElement.getIdElement().getIdPart();
-            return null;
+            return (Organization) responseBundle.getEntry().get(0).getResource();
         }
 
         return null;
