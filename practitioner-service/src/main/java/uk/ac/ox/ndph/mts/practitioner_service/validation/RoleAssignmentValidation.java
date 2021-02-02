@@ -1,9 +1,8 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 
@@ -13,12 +12,11 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 @Component
 public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssignment> {
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private final Logger logger = LoggerFactory.getLogger(RoleAssignmentValidation.class);
+    private final RoleServiceClient roleServiceClient;
 
     @Autowired
-    public RoleAssignmentValidation() {
-        logger.info(Validations.STARTUP.message(), "RoleAssignment", "");
+    public RoleAssignmentValidation(final RoleServiceClient roleServiceClient) {
+        this.roleServiceClient = roleServiceClient;
     }
 
     @Override
@@ -32,7 +30,9 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
         if (isNullOrBlank(entity.getRoleId())) {
             return new ValidationResponse(false, "roleId must have a value");
         }
-
+        if (!this.roleServiceClient.roleIdExists(entity.getRoleId())) {
+            return new ValidationResponse(false, "roleId must refer to a valid role");
+        }
         return new ValidationResponse(true, "");
     }
 

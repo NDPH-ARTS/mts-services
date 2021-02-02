@@ -1,16 +1,16 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
 /**
@@ -47,4 +47,5 @@ public class PractitionerController {
         String roleAssignmentId = entityService.saveRoleAssignment(roleAssignment);
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(roleAssignmentId));
     }
+
 }

@@ -80,7 +80,7 @@ services:
     environment:
       SERVER_PORT: "83"
     healthcheck:
-      test: curl http://localhost/
+      test: curl http://localhost:83
       interval: 10s
       timeout: 10s
       retries: 6
@@ -108,14 +108,19 @@ services:
       dockerfile: role-service/Dockerfile
       args:
         SVC: role-service
-    image: ghcr.io/ndph-arts/role-config-service:${GITHUB_SHA}
-    container_name: "role-service"
+    image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
     depends_on:
       - sql-mts-data
     environment:
       SERVER_PORT: "82"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+    healthcheck:
+      test: curl http://localhost:82
+      interval: 10s
+      timeout: 10s
+      retries: 12
     ports:
       - "82:82"
 
