@@ -65,6 +65,29 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     /**
+     * @param id of the organization to search.
+     * @return id of the saved organization
+     */
+    public Organization findOrganizationByID(String id) {
+        // Log the request
+        if (logger.isInfoEnabled()) {
+            logger.info(FhirRepo.REQUEST_PAYLOAD.message(), id);
+        }
+        Organization organization = null;
+
+        try {
+            organization = fhirContextWrapper.executeSearchById(fhirUri, id);
+
+        } catch (BaseServerResponseException e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
+            }
+            throw new RestException(e.getMessage(), e);
+        }
+        return organization;
+    }
+
+    /**
      * @param name of the organization to search.
      * @return id of the saved organization
      */

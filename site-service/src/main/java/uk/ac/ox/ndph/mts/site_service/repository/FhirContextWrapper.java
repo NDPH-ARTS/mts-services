@@ -48,6 +48,16 @@ public class FhirContextWrapper {
     /**
      * Execute a bundle transaction to a FHIR endpoint
      * @param uri the FHIR endpoint URI
+     * @param id of the organization to search.
+     * @return Organization searched by Id.
+     */
+    public Organization executeSearchById(String uri, String id) {
+        return fhirContext.newRestfulGenericClient(uri).read().resource(Organization.class).withId(id).execute();
+    }
+
+    /**
+     * Execute a bundle transaction to a FHIR endpoint
+     * @param uri the FHIR endpoint URI
      * @param name of the organization to search.
      * @return Organization searched by name.
      */

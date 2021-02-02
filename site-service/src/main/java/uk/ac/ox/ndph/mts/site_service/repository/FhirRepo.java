@@ -9,7 +9,8 @@ public enum FhirRepo {
     UPDATE_ERROR("error while updating fhir store"),
     SEARCH_ERROR("error while searching fhir store"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
-    SITE_EXISTS("Site Already Exists");
+    SITE_EXISTS("Site Already Exists"),
+    SITE_DOESNT_MATCH_PARENT("Site Exists But Doesn't Match Parent");;
 
     private String message;
  
