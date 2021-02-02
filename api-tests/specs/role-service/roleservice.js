@@ -3,6 +3,7 @@ const conf = require('../../config/conf')
 const endpointUri = ':82/roles';
 
 describe('As a user I want to create roles so that they can be assigned to persons', function () {
+
     it('I am able to add a role to the trial site successfully', async () => {
         const response = await baseRequest.post(endpointUri).send(requests.validRole);
         expect(response.text).to.contain("id")
