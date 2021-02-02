@@ -13,6 +13,7 @@ import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,31 +33,34 @@ public class RoleServiceInvoker implements ServiceInvoker {
     }
 
     @Override
-    public Role send(Entity role) throws DependentServiceException {
+    public String send(Entity role) throws DependentServiceException {
 
         try {
-            return webClient.post()
+            Role responseDataRole = webClient.post()
                     .uri(roleService + "/roles")
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                     .body(Mono.just(role), Role.class)
                     .retrieve()
                     .bodyToMono(Role.class)
                     .block();
+            return responseDataRole.getId();
         } catch (Exception e) {
             LOGGER.info("FAILURE roleService {}", e.getMessage());
             throw new DependentServiceException("Error connecting to role service");
         }
     }
 
-    public void execute(List<Role> roles) throws NullEntityException {
+    public List<String> execute(List<Role> roles) throws NullEntityException {
+        List<String> roleIDs = new ArrayList<>();
         if (roles != null) {
             for (Role role : roles) {
                 LOGGER.info("Starting to create role(s): {}", role);
-                send(role);
+                roleIDs.add(send(role));
                 LOGGER.info("Finished creating {} role(s)", roles.size());
             }
         } else {
             throw new NullEntityException("No Roles in payload");
         }
+        return roleIDs;
     }
 }

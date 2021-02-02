@@ -49,8 +49,8 @@ class SiteServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(testSite))
                .addHeader("Content-Type", "application/json"));
-        Site returnedSite = siteServiceInvoker.send(testSite);
-        assertNotNull(returnedSite);
+        String returnedSiteId = siteServiceInvoker.send(testSite);
+        assertNotNull(returnedSiteId);
     }
 
     @Test

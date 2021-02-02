@@ -31,7 +31,7 @@ public class Loader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        roleServiceInvoker.execute(trialService.getTrial().getRoles());
+        //roleServiceInvoker.execute(trialService.getTrial().getRoles());
         siteServiceInvoker.execute(trialService.getTrial().getSites());
         practitionerServiceInvoker.execute(trialService.getTrial().getPersons());
     }

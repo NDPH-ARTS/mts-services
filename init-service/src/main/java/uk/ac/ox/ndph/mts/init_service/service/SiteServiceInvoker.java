@@ -11,8 +11,10 @@ import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
+import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,31 +33,34 @@ public class SiteServiceInvoker implements ServiceInvoker {
         this.webClient = webClient;
     }
 
-    public Site send(Entity site) throws DependentServiceException {
+    public String send(Entity site) throws DependentServiceException {
 
         try {
-            return webClient.post()
+            IDResponse responseData = webClient.post()
                     .uri(siteService + "/sites")
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                     .body(Mono.just(site), Site.class)
                     .retrieve()
-                    .bodyToMono(Site.class)
+                    .bodyToMono(IDResponse.class)//Question: Why does site-service post endpoint return only the ID, not full Site data?
                     .block();
+            return responseData.getId();
         } catch (Exception e) {
             LOGGER.info("FAILURE siteService {}", e.getMessage());
             throw new DependentServiceException("Error connecting to site service");
         }
     }
 
-    public void execute(List<Site> sites) throws NullEntityException {
+    public List<String> execute(List<Site> sites) throws NullEntityException {
+        List<String> siteIDs = new ArrayList<>();
         if (sites != null) {
             for (Site site : sites) {
                 LOGGER.info("Starting to create site(s): {}", sites);
-                send(site);
+                siteIDs.add(send(site));
                 LOGGER.info("Finished creating {} site(s)", sites.size());
             }
         } else {
             throw new NullEntityException("No Sites in payload");
         }
+        return siteIDs;
     }
 }

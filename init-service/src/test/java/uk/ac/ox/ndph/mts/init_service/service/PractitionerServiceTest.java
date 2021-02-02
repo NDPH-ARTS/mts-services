@@ -51,8 +51,8 @@ class PractitionerServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(testPractitioner))
                .addHeader("Content-Type", "application/json"));
-        Practitioner returnedPractitioner = practitionerServiceInvoker.send(testPractitioner);
-        assertNotNull(returnedPractitioner);
+        String returnedPractitionerId = practitionerServiceInvoker.send(testPractitioner);
+        assertNotNull(returnedPractitionerId);
     }
 
     @Test
