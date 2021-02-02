@@ -3,15 +3,22 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.gclient.ICriterion;
+import com.jayway.jsonpath.Criteria;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
+import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +27,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import uk.ac.ox.ndph.mts.practitioner_service.converter.PractitionerRoleConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
+
+import javax.naming.Name;
 
 @ExtendWith(MockitoExtension.class)
 class HapiFhirRepositoryTests {
@@ -169,5 +180,39 @@ class HapiFhirRepositoryTests {
 
         // Act + Assert
         assertThrows(RestException.class, () -> repository.savePractitionerRole(entity));
+    }
+
+    @Test
+    void TestGetPractitionerRolesByIdentifier_WhenSearchResourceWithInclude_ReturnsEmptyList(){
+        // Arrange
+        when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(new ArrayList<>());
+        var value = repository.getPractitionerRolesByPractitionerIdentifier("123");
+
+        assertThat(value, equalTo(new ArrayList<PractitionerRole>()));
+    }
+
+    @Test
+    void TestGetPractitionerRolesByIdentifier_WhenSearchResourceWithInclude_ReturnsNotEmptyList(){
+        // Arrange
+        var response = new ArrayList<IBaseResource>();
+
+        org.hl7.fhir.r4.model.PractitionerRole fhirPractitionerRole = new org.hl7.fhir.r4.model.PractitionerRole();
+        fhirPractitionerRole.setOrganization(new Reference("Organization/site123"));
+        fhirPractitionerRole.setPractitioner(new Reference("Practitioner/123"));
+        fhirPractitionerRole.addCode().setText("role123");
+        response.add(fhirPractitionerRole);
+
+        when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(response);
+        var value = repository.getPractitionerRolesByPractitionerIdentifier("123");
+
+        PractitionerRoleConverter practitionerRoleConverter = new PractitionerRoleConverter();
+        RoleAssignment roleAssignment = practitionerRoleConverter.convert(value.get(0));
+
+        assertAll(
+                () ->assertThat(value.size(), equalTo(1)),
+                () ->assertThat(roleAssignment.getPractitionerId(), equalTo("123") ),
+                () ->assertThat(roleAssignment.getSiteId(), equalTo("site123")),
+                () ->assertThat(roleAssignment.getRoleId(), equalTo("role123"))
+                );
     }
 }

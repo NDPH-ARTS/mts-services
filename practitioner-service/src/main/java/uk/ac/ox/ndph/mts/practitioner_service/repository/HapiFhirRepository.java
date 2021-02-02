@@ -87,21 +87,20 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     @Override
-    public List<PractitionerRole> getPractitionerRolesByIdentifier(String identifier) {
+    public List<PractitionerRole> getPractitionerRolesByPractitionerIdentifier(String identifier) {
         // Log the request
         if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER.message() + identifier);
+            logger.info(
+                    String.format(
+                            FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER.message(),
+                            identifier));
         }
 
         List<PractitionerRole> practitionerRoles = new ArrayList<>();
 
-        var fullTypeName = PractitionerRole.class.getTypeName();
-        var lastNotationIndex = fullTypeName.lastIndexOf('.');
-        var typeName = fullTypeName.substring(lastNotationIndex + 1);
-
-        var results = fhirContextWrapper.searchResourceWithInclude(
-                typeName,
-                new Include("Practitioner:identifier"),
+        var results = fhirContextWrapper.searchResource(
+                PractitionerRole.class,
+                //new Include("Practitioner:identifier"),
                 PractitionerRole.PRACTITIONER.hasChainedProperty(
                         Practitioner.IDENTIFIER.exactly().identifier(identifier)));
 
@@ -111,7 +110,9 @@ public class HapiFhirRepository implements FhirRepository {
 
         if (logger.isInfoEnabled()) {
             logger.info(
-                    FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER_RESPONSE.message(), practitionerRoles.size());
+                    String.format(
+                            FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER_RESPONSE.message(),
+                            practitionerRoles.size()));
         }
 
         return practitionerRoles;
@@ -138,6 +139,7 @@ public class HapiFhirRepository implements FhirRepository {
                 .getRequest()
                 .setUrl(resource.fhirType())
                 .setMethod(Bundle.HTTPVerb.POST);
+
         return bundle;
     }
 }

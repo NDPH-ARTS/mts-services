@@ -1,12 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
@@ -15,7 +10,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
-import javax.ws.rs.PathParam;
 import java.util.List;
 
 /**
@@ -54,12 +48,12 @@ public class PractitionerController {
     }
 
     @GetMapping(path = "/roles")
-    @PathParam("identifier")
-    public ResponseEntity<List<RoleAssignment>> getRoleAssignments(@PathParam("identifier") String identifier) {
-        if (identifier == null || identifier.isEmpty()) {
+    public ResponseEntity<List<RoleAssignment>> getRoleAssignments(@RequestParam String userIdentity) {
+        if (userIdentity == null || userIdentity.isEmpty()) {
             throw new RestException("A required parameter: identifier is blank or missing.");
         }
-        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByIdentifier(identifier);
-        return  ResponseEntity.status(HttpStatus.OK).body(roleAssignments);
+
+        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByPractitionerIdentifier(userIdentity);
+        return ResponseEntity.ok(roleAssignments);
     }
 }

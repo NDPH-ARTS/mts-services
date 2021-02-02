@@ -6,6 +6,8 @@ import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.PractitionerRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ca.uhn.fhir.context.FhirContext;
@@ -62,23 +64,21 @@ public class FhirContextWrapper {
 
     /**
      * Search for a list of resources by type and criterion
-     * @param resourceTypeName resource type name
+     * @param resourceClass resource class to return
      * @param criterion criterion to filter search results
      * @return the list of resources by type and criterion
      */
-    public List<IBaseResource> searchResourceWithInclude(String resourceTypeName,
-                                                         Include includeObject,
+    public <T extends IBaseResource> List<IBaseResource> searchResource(Class<T> resourceClass,
                                                          ICriterion<?> criterion) {
         var client = fhirContext.newRestfulGenericClient(fhirUri);
 
         var resultsBundle = client.search()
-                .forResource(resourceTypeName)
-                .include(includeObject)
+                .forResource(resourceClass)
                 .where(criterion)
                 .returnBundle(org.hl7.fhir.r4.model.Bundle.class)
                 .execute();
 
-        // extract first page
+                // extract first page
         List<IBaseResource> searchResults = new ArrayList<>(BundleUtil.toListOfResources(fhirContext, resultsBundle));
 
         // loop on next pages

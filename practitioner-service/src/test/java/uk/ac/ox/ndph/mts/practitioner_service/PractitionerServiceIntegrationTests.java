@@ -90,4 +90,6 @@ class PractitionerServiceIntegrationTests {
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
+
+
 }

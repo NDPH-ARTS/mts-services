@@ -132,29 +132,29 @@ class PractitionerControllerTests {
     }
 
     @Test
-    void TestGetRoleAssignmentByIdentifier_WithMissingIdentifierParam_Returns500() throws Exception {
-        // We test that the endpoint requires identifier parameter
+    void TestGetRoleAssignmentByPractitionerIdentifier_WithMissingUserIdentityParam_Returns500() throws Exception {
+        // We test that the endpoint requires user identity parameter
         // Arrange
         // Act + Assert
         String error = this.mockMvc
                 .perform(get(roleAssignmentByIdentifierUri).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
+                .andExpect(status().is4xxClientError()).andReturn().getResolvedException().getMessage();
 
-        assertThat(error, equalTo("A required parameter: identifier is blank or missing."));
+        assertThat(error, equalTo("Required String parameter 'userIdentity' is not present"));
     }
 
     @Test
-    void TestGetRoleAssignmentByIdentifier_WithIdentifierParam_ReturnsRoleAssignmentAsExpected() throws Exception {
+    void TestGetRoleAssignmentByPractitionerIdentifier_WithIdentifierParam_ReturnsRoleAssignmentAsExpected() throws Exception {
 
         // Arrange
         RoleAssignment expectedRoleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
-        when(entityService.getRoleAssignmentsByIdentifier("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
+        when(entityService.getRoleAssignmentsByPractitionerIdentifier("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
 
         String jsonExpectedRoleAssignment = "[{\"practitionerId\":\"practitionerId\",\"siteId\":\"siteId\",\"roleId\":\"roleId\"}]";
 
         // Act + Assert
         this.mockMvc
-                .perform(get(roleAssignmentByIdentifierUri).param("identifier", "123").contentType(MediaType.APPLICATION_JSON))
+                .perform(get(roleAssignmentByIdentifierUri).param("userIdentity", "123").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(
                         content().string(containsString(jsonExpectedRoleAssignment)));

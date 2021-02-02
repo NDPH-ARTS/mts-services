@@ -43,7 +43,7 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
     @Override
     public List<RoleAssignment> listEntities(String id) {
         return practitionerRoleRoleAssignmentEntityConverter.convertList(
-                repository.getPractitionerRolesByIdentifier(id));
+                repository.getPractitionerRolesByPractitionerIdentifier(id));
     }
 
 }
