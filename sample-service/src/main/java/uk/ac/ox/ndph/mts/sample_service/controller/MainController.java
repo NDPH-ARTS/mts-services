@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.sample_service.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ public class MainController {
      *
      * @return the secret as a string.
      */
+    @PreAuthorize("@authorisationService.authorise('stubPermission')") //NOSONAR
     @GetMapping("/getsecret")
     public String getsecret() {
         return this.myConfig.getSecret();
@@ -42,6 +44,7 @@ public class MainController {
      *
      * @return a message as a string.
      */
+    @PreAuthorize("@authorisationService.authorise('stubPermission')") //NOSONAR
     @GetMapping("/hello")
     public String hello() {
         return message;
