@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
+import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 
@@ -13,10 +14,13 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssignment> {
 
     private final RoleServiceClient roleServiceClient;
+    private final SiteServiceClient siteServiceClient;
 
     @Autowired
-    public RoleAssignmentValidation(final RoleServiceClient roleServiceClient) {
+    public RoleAssignmentValidation(final RoleServiceClient roleServiceClient,
+                                    final SiteServiceClient siteServiceClient) {
         this.roleServiceClient = roleServiceClient;
+        this.siteServiceClient = siteServiceClient;
     }
 
     @Override
@@ -30,9 +34,17 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
         if (isNullOrBlank(entity.getRoleId())) {
             return new ValidationResponse(false, "roleId must have a value");
         }
-        if (!this.roleServiceClient.roleIdExists(entity.getRoleId())) {
-            return new ValidationResponse(false, "roleId must refer to a valid role");
+
+        if (!this.roleServiceClient.entityIdExists(entity.getRoleId())) {
+            return new ValidationResponse(false,
+                    String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "roleId"));
         }
+
+        if (!this.siteServiceClient.entityIdExists(entity.getSiteId())) {
+            return new ValidationResponse(false,
+                    String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "siteId"));
+        }
+
         return new ValidationResponse(true, "");
     }
 
