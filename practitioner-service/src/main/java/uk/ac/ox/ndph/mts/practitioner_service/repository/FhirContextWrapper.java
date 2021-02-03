@@ -5,8 +5,6 @@ import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
@@ -26,21 +24,12 @@ public class FhirContextWrapper {
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
-    private final Logger logger;
-
     public FhirContextWrapper() {
         this.fhirContext = FhirContext.forR4();
-        this.logger = LoggerFactory.getLogger(FhirContextWrapper.class);
     }
 
     public FhirContextWrapper(FhirContext fhirContext) {
         this.fhirContext = fhirContext;
-        this.logger = LoggerFactory.getLogger(FhirContextWrapper.class);
-    }
-
-    public FhirContextWrapper(final FhirContext fhirContext, final Logger logger) {
-        this.fhirContext = fhirContext;
-        this.logger = logger;
     }
 
     /**
@@ -90,6 +79,6 @@ public class FhirContextWrapper {
         if (resources.size() > 1) {
             throw new RestException("Bundle has more than one resource");
         }
-        throw new UnsupportedOperationException("Not implemented yet");
+        return resources.get(0);
     }
 }

@@ -140,6 +140,21 @@ class FhirContextWrapperTest {
     }
 
     @Test
+    void toSingleResource_whenBundleHasSingleResource_thenReturnResource() {
+        // Arrange
+        Practitioner practitioner = new Practitioner();
+        List<Practitioner> resources = List.of(practitioner);
+        FhirContextWrapper spy = spy(FhirContextWrapper.class);
+        doReturn(resources).when(spy).toListOfResources(any(Bundle.class));
+
+        // Act
+        IBaseResource resource = spy.toSingleResource(bundle);
+
+        // Assert
+        assertThat(resource).isEqualTo(practitioner);
+    }
+
+    @Test
     void executeTransaction_whenTransactionThrowsBaseServerResponseException_thenTranslateToCheckedException() {
         // Arrange
         FhirContext fhirContext = mock(FhirContext.class, RETURNS_DEEP_STUBS);
