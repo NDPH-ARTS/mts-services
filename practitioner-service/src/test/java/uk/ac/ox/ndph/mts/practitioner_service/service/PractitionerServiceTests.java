@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +15,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
@@ -23,6 +23,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+
+import java.util.Collections;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTests {
@@ -189,4 +192,30 @@ class PractitionerServiceTests {
                 "Expecting save to throw validation exception");
         Mockito.verify(roleAssignmentStore, Mockito.times(0)).saveEntity(any(RoleAssignment.class));
     }
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WithNullUserIdentity_ThrowsException(){
+
+        Assertions.assertThrows(NullPointerException.class, () ->
+                        service.getRoleAssignmentsByUserIdentity(null),
+                "Identifier can not be null.");
+
+        Mockito.verify(roleAssignmentStore,
+                Mockito.times(0)).listEntitiesByUserIdentity(anyString());
+    }
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WithUserIdentity_ReturnsAssignmentRolesAsExpected(){
+
+        String userIdentity = "userIdentity";
+        List<RoleAssignment> expectedResult = Collections.singletonList(
+                new RoleAssignment("practitionerId", "siteId", "roleId"));
+        when(roleAssignmentStore.listEntitiesByUserIdentity(userIdentity)).thenReturn(expectedResult);
+
+        List<RoleAssignment> actualResult = service.getRoleAssignmentsByUserIdentity(userIdentity);
+
+        //Assert
+        assertThat(expectedResult, equalTo(actualResult));
+    }
 }
+

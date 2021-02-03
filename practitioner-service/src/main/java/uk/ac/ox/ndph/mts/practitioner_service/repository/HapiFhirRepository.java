@@ -84,22 +84,21 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     @Override
-    public List<PractitionerRole> getPractitionerRolesByPractitionerIdentifier(String identifier) {
+    public List<PractitionerRole> getPractitionerRolesByUserIdentity(String userIdentity) {
         // Log the request
         if (logger.isInfoEnabled()) {
             logger.info(
                     String.format(
-                            FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER.message(),
-                            identifier));
+                            FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY.message(),
+                            userIdentity));
         }
 
         List<PractitionerRole> practitionerRoles = new ArrayList<>();
 
         var results = fhirContextWrapper.searchResource(
                 PractitionerRole.class,
-                //new Include("Practitioner:identifier"),
                 PractitionerRole.PRACTITIONER.hasChainedProperty(
-                        Practitioner.IDENTIFIER.exactly().identifier(identifier)));
+                        Practitioner.IDENTIFIER.exactly().identifier(userIdentity)));
 
         for (var result: results) {
             practitionerRoles.add((PractitionerRole) result);
@@ -108,7 +107,7 @@ public class HapiFhirRepository implements FhirRepository {
         if (logger.isInfoEnabled()) {
             logger.info(
                     String.format(
-                            FhirRepo.GET_PRACTITIONER_ROLES_BY_IDENTIFIER_RESPONSE.message(),
+                            FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE.message(),
                             practitionerRoles.size()));
         }
 

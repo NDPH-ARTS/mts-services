@@ -1,6 +1,8 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import java.util.Collections;
+
+import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ class PractitionerControllerTests {
 
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
-    private final String roleAssignmentByIdentifierUri = "/practitioner/roles";
+    private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
 
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
@@ -130,29 +132,42 @@ class PractitionerControllerTests {
     }
 
     @Test
-    void TestGetRoleAssignmentByPractitionerIdentifier_WithMissingUserIdentityParam_Returns500() throws Exception {
+    void TestGetRoleAssignmentByUserIdentity_WithMissingUserIdentityParam_Returns500() throws Exception {
         // We test that the endpoint requires user identity parameter
         // Arrange
         // Act + Assert
         String error = this.mockMvc
-                .perform(get(roleAssignmentByIdentifierUri).contentType(MediaType.APPLICATION_JSON))
+                .perform(get(roleAssignmentByUserIdentityUri).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError()).andReturn().getResolvedException().getMessage();
 
         assertThat(error, equalTo("Required String parameter 'userIdentity' is not present"));
     }
 
     @Test
-    void TestGetRoleAssignmentByPractitionerIdentifier_WithIdentifierParam_ReturnsRoleAssignmentAsExpected() throws Exception {
+    void TestGetRoleAssignmentByUserIdentity_WithNullUserIdentityParam_Returns500() throws Exception {
+        // We test that the endpoint requires user identity parameter
+        // Arrange
+        // Act + Assert
+        String error = this.mockMvc
+                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", Strings.EMPTY)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
+
+        assertThat(error, equalTo("A required parameter: userIdentity is blank or missing."));
+    }
+
+    @Test
+    void TestGetRoleAssignmentByUserIdentity_WithUserIdentityParam_ReturnsRoleAssignmentAsExpected() throws Exception {
 
         // Arrange
         RoleAssignment expectedRoleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
-        when(entityService.getRoleAssignmentsByPractitionerIdentifier("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
+        when(entityService.getRoleAssignmentsByUserIdentity("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
 
         String jsonExpectedRoleAssignment = "[{\"practitionerId\":\"practitionerId\",\"siteId\":\"siteId\",\"roleId\":\"roleId\"}]";
 
         // Act + Assert
         this.mockMvc
-                .perform(get(roleAssignmentByIdentifierUri).param("userIdentity", "123").contentType(MediaType.APPLICATION_JSON))
+                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", "123").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(
                         content().string(containsString(jsonExpectedRoleAssignment)));

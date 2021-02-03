@@ -16,6 +16,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -54,12 +56,13 @@ public class PractitionerController {
     }
 
     @GetMapping(path = "/roles")
-    public ResponseEntity<List<RoleAssignment>> getRoleAssignments(@RequestParam String userIdentity) {
+    public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
+            @NotBlank @NotNull @RequestParam String userIdentity) {
         if (userIdentity == null || userIdentity.isEmpty()) {
-            throw new RestException("A required parameter: identifier is blank or missing.");
+            throw new RestException("A required parameter: userIdentity is blank or missing.");
         }
 
-        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByPractitionerIdentifier(userIdentity);
+        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(userIdentity);
         return ResponseEntity.ok(roleAssignments);
     }
 }

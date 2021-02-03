@@ -187,16 +187,16 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestGetPractitionerRolesByIdentifier_WhenSearchResourceWithInclude_ReturnsEmptyList(){
+    void TestGetPractitionerRolesByUserIdentity_WhenSearchResource_ReturnsEmptyList(){
         // Arrange
         when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(new ArrayList<>());
-        var value = repository.getPractitionerRolesByPractitionerIdentifier("123");
+        var value = repository.getPractitionerRolesByUserIdentity("123");
 
         assertThat(value, equalTo(new ArrayList<PractitionerRole>()));
     }
 
     @Test
-    void TestGetPractitionerRolesByIdentifier_WhenSearchResourceWithInclude_ReturnsNotEmptyList(){
+    void TestGetPractitionerRolesByUserIdentity_WhenSearchResource_ReturnsNotEmptyList(){
         // Arrange
         var response = new ArrayList<IBaseResource>();
 
@@ -207,7 +207,7 @@ class HapiFhirRepositoryTests {
         response.add(fhirPractitionerRole);
 
         when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(response);
-        var value = repository.getPractitionerRolesByPractitionerIdentifier("123");
+        var value = repository.getPractitionerRolesByUserIdentity("123");
 
         PractitionerRoleConverter practitionerRoleConverter = new PractitionerRoleConverter();
         RoleAssignment roleAssignment = practitionerRoleConverter.convert(value.get(0));

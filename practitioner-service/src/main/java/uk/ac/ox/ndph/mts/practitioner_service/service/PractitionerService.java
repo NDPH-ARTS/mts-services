@@ -13,7 +13,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implement an EntityService interface.
@@ -85,7 +87,8 @@ public class PractitionerService implements EntityService {
     }
 
     @Override
-    public List<RoleAssignment> getRoleAssignmentsByPractitionerIdentifier(String identifier) {
-        return roleAssignmentStore.listEntities(identifier);
+    public List<RoleAssignment> getRoleAssignmentsByUserIdentity(@NotNull String userIdentity) {
+        Objects.requireNonNull(userIdentity, "Identifier can not be null.");
+        return roleAssignmentStore.listEntitiesByUserIdentity(userIdentity);
     }
 }
