@@ -32,14 +32,13 @@ public class PractitionerService implements EntityService {
     private final ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
 
     /**
-     * @param practitionerStore Practitioner store interface
+     * @param practitionerStore     Practitioner store interface
      * @param practitionerValidator Practitioner validation interface
      */
     @Autowired
     public PractitionerService(EntityStore<Practitioner> practitionerStore,
-                               ModelEntityValidation<Practitioner> practitionerValidator,
-                               EntityStore<RoleAssignment> roleAssignmentStore,
-                               ModelEntityValidation<RoleAssignment> roleAssignmentValidator) {
+            ModelEntityValidation<Practitioner> practitionerValidator, EntityStore<RoleAssignment> roleAssignmentStore,
+            ModelEntityValidation<RoleAssignment> roleAssignmentValidator) {
         if (practitionerStore == null) {
             throw new InitialisationError("practitioner store cannot be null");
         }
@@ -82,10 +81,19 @@ public class PractitionerService implements EntityService {
         if (StringUtils.isBlank(practitionerId)) {
             throw new BadRequestException("Practitioner ID must not be blank");
         }
-        // TODO (archiem) more to implement here
+        
+        var practitioner = practitionerStore.getEntity(practitionerId);
+        // practitioner.addIdentity(userAccountId);
+        practitionerStore.saveEntity(practitioner);
+                
     }
+    
+    @Override
+    public Practitioner getPractitioner(String id) {
+        return practitionerStore.getEntity(id);
+    }
+    
 
-    //TODO: should this be on its own service?
     @Override
     public String saveRoleAssignment(RoleAssignment roleAssignment) {
         ValidationResponse validationResponse = roleAssignmentValidator.validate(roleAssignment);

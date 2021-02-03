@@ -5,7 +5,6 @@ import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.assertj.core.api.Assertions;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
-import org.hl7.fhir.r4.model.Resource;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,4 +47,5 @@ class FhirContextWrapperTest {
         // Assert
         assertThat(id).isEqualTo("345");
     }
+    
 }

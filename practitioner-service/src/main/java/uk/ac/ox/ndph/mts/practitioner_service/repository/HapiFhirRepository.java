@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 /**
@@ -77,6 +79,22 @@ public class HapiFhirRepository implements FhirRepository {
         }
 
         return responseElement.getIdElement().getIdPart();
+    }
+
+    /**
+     * Search for a fhir practitioner by fhir id
+     *
+     * @param id of the practitioner to search.
+     */
+    public Practitioner getPractitioner(String id) {
+        try {
+            return fhirContextWrapper.getById(id);
+        } catch (BaseServerResponseException e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
+            }
+            throw new RestException(e.getMessage(), e);
+        }
     }
 
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {

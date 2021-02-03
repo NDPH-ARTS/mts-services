@@ -19,4 +19,12 @@ public interface EntityService {
     void linkPractitioner(String userAccountId, String practitionerId);
 
     String saveRoleAssignment(RoleAssignment roleAssignment);
+
+    /**
+     * Retrieve a practitioner entity
+     *
+     * @param id of the Practitioner to fetch.
+     * @return the Practitioner entity
+     */
+    Practitioner getPractitioner(String id);
 }

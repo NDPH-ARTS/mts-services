@@ -15,6 +15,8 @@ public interface FhirRepository {
      * @return Nothing.
      */
     String savePractitioner(Practitioner practitioner);
-
+    
+    Practitioner getPractitioner(String id);
+    
     String savePractitionerRole(PractitionerRole practitionerRole);
 }

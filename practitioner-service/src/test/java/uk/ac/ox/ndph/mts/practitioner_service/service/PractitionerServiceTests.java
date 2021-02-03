@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -40,17 +41,18 @@ class PractitionerServiceTests {
     @Captor
     ArgumentCaptor<Practitioner> practitionerCaptor;
 
-    PractitionerService practitionerService;
     final String PRACTITIONER_ID = "practitionerId";
     final String USER_ACCOUNT_ID = "userAccountId";
-
+    
     @Mock
     private EntityStore<RoleAssignment> roleAssignmentStore;
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
     @Captor
     ArgumentCaptor<RoleAssignment> roleAssignmentCaptor;
-
+    
+    //  Wat?
+    PractitionerService practitionerService;
     private PractitionerService service;
 
     @BeforeEach
@@ -58,13 +60,23 @@ class PractitionerServiceTests {
         practitionerService = new PractitionerService(practitionerStore, practitionerValidator,
                                                       roleAssignmentStore, roleAssignmentValidator);
     }
-
+    //  Wat?
+    //  Wat?
     @BeforeEach
     void init() {
         this.service = new PractitionerService(practitionerStore, practitionerValidator,
                 roleAssignmentStore, roleAssignmentValidator);
     }
 
+    @Test
+    void TestGetPractitioner_CallsEntityStore() {
+        String id = "42";
+        Practitioner practitioner = new Practitioner(id, "pref", "given", "family");
+        when(practitionerStore.getEntity(id)).thenReturn(practitioner);
+        
+        assertEquals(practitioner, service.getPractitioner(id));
+    }
+    
     @Test
     void TestSavePractitioner_WithPractitioner_ValidatesPractitioner() {
         // Arrange

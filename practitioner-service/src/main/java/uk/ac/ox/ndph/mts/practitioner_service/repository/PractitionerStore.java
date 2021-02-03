@@ -11,25 +11,31 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
  */
 @Component
 public class PractitionerStore implements EntityStore<Practitioner> {
-
-
     private FhirRepository repository;
-    private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter;
+    private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter;
+    private EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter;
 
     /**
      *
      * @param repository - The fhir repository
-     * @param converter - a model-entity to fhir-entity converter
+     * @param modelToFhirConverter - a model-entity to fhir-entity converter
      */
     @Autowired
     public PractitionerStore(FhirRepository repository,
-            EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter) {
+            EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter, 
+            EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter) {
         this.repository = repository;
-        this.converter = converter;
+        this.modelToFhirConverter = modelToFhirConverter;
+        this.fhirToModelConverter = fhirToModelConverter;
     }
 
     @Override
+    public uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner getEntity(String id) {
+        return fhirToModelConverter.convert(repository.getPractitioner(id));
+    }
+    
+    @Override
     public String saveEntity(Practitioner entity) {
-        return repository.savePractitioner(converter.convert(entity));
+        return repository.savePractitioner(modelToFhirConverter.convert(entity));
     }
 }

@@ -30,4 +30,10 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
     public String saveEntity(RoleAssignment entity) {
         return repository.savePractitionerRole(converter.convert(entity));
     }
+    
+    @Override
+    public RoleAssignment getEntity(String id) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
 }

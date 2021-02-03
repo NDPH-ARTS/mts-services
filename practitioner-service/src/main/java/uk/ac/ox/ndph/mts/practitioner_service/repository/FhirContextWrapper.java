@@ -3,13 +3,14 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
 
 /**
@@ -32,6 +33,24 @@ public class FhirContextWrapper {
     }
 
     /**
+     * Execute a search bundle transaction on a FHIR endpoint to search for an
+     * entity by an exact id match
+     *
+     * @param uri the FHIR endpoint URI
+     * @param id  of the practitioner
+     * @return Organization searched by name.
+     */
+    public Practitioner getById(String id) {
+        return fhirContext
+            .newRestfulGenericClient(fhirUri)
+            .read()
+            .resource(Practitioner.class)
+            .withId(id)
+            .encodedJson()
+            .execute();
+    }
+
+    /**
      * Pretty print a resource
      *
      * @param resource the resource to print
@@ -49,8 +68,7 @@ public class FhirContextWrapper {
      */
     public Bundle executeTransaction(Bundle input) throws FhirServerResponseException {
         try {
-            return fhirContext.newRestfulGenericClient(fhirUri).transaction()
-                    .withBundle(input).execute();
+            return fhirContext.newRestfulGenericClient(fhirUri).transaction().withBundle(input).execute();
         } catch (BaseServerResponseException ex) {
             final String message = String.format(FhirRepo.PROBLEM_EXECUTING_TRANSACTION.message(), fhirUri);
             throw new FhirServerResponseException(message, ex);

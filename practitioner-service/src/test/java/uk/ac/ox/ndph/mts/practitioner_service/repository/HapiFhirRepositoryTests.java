@@ -1,11 +1,10 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,7 +20,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnclassifiedServerFailureException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +41,21 @@ class HapiFhirRepositoryTests {
         this.repository = new HapiFhirRepository(fhirContextWrapper);
     }
 
+    @Test
+    void TestGetEntity_When_IdValid() {
+        String id = "42";
+		Practitioner practitioner = new Practitioner();
+        when(fhirContextWrapper.getById(id)).thenReturn(practitioner);
+        assertEquals(practitioner, repository.getPractitioner(id));
+    }
+
+    @Test
+    void TestGetEntity_When_FhirException() {
+        String id = "22";
+        when(fhirContextWrapper.getById(id)).thenThrow(new UnclassifiedServerFailureException(500, "Error"));
+        assertThrows(RestException.class, () -> repository.getPractitioner(id));
+    }
+    
     @Test
     void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTransactionType() throws FhirServerResponseException {
         // Arrange
