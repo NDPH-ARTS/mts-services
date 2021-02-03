@@ -47,7 +47,7 @@ public class HapiFhirRepository implements FhirRepository {
             final String message = FhirRepo.FAILED_TO_SAVE_PRACTITIONER.message();
             throw new RestException(message, e);
         }
-        IBaseResource responseElement = fhirContextWrapper.getResourcesFrom(responseBundle, 1).get(0);
+        IBaseResource responseElement = fhirContextWrapper.toSingleResource(responseBundle);
 
         // Log the response
         if (logger.isInfoEnabled()) {

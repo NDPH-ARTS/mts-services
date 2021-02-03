@@ -130,9 +130,7 @@ class FhirContextWrapperTest {
     void toSingleResource_whenBundleHasMoreThanOneResource_thenThrowException() {
         // Arrange
         List<Practitioner> resources = List.of(new Practitioner(), new Practitioner());
-        FhirContext context = mock(FhirContext.class);
-        FhirContextWrapper sut = new FhirContextWrapper(context);
-        FhirContextWrapper spy = spy(sut);
+        FhirContextWrapper spy = spy(FhirContextWrapper.class);
         doReturn(resources).when(spy).toListOfResources(any(Bundle.class));
 
         // Act + Assert

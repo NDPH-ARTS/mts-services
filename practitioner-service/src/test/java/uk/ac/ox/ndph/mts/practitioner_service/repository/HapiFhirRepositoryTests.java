@@ -47,7 +47,7 @@ class HapiFhirRepositoryTests {
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
         Practitioner DUMMY_PRACTITIONER = new Practitioner();
-        when(fhirContextWrapper.getResourcesFrom(any(Bundle.class), eq(1))).thenReturn(List.of(DUMMY_PRACTITIONER));
+        when(fhirContextWrapper.toSingleResource(any(Bundle.class))).thenReturn(DUMMY_PRACTITIONER);
 
         // Act
         repository.createPractitioner(new Practitioner());
@@ -67,7 +67,7 @@ class HapiFhirRepositoryTests {
         Practitioner RESPONSE_PRACTITIONER = new Practitioner();
         IdType UUID = IdType.newRandomUuid();
         RESPONSE_PRACTITIONER.setIdElement(UUID);
-        when(fhirContextWrapper.getResourcesFrom(any(Bundle.class), eq(1))).thenReturn(List.of(RESPONSE_PRACTITIONER));
+        when(fhirContextWrapper.toSingleResource(any(Bundle.class))).thenReturn(RESPONSE_PRACTITIONER);
 
         // Act
         String practitionerId = repository.createPractitioner(new Practitioner());
