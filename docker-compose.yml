@@ -10,10 +10,12 @@ services:
     restart: on-failure
     depends_on:
       - fhir-api
-      - config-server
+      - role-service
     environment:
       SERVER_PORT: "80"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      SPRING_PROFILES_ACTIVE: "local"
+      FHIR_URI: "http://fhir-api:8080/"
+      ROLE_SERVICE_URI: "http://role-service:82/"
     healthcheck:
       test: curl http://localhost/
       interval: 10s
@@ -21,25 +23,6 @@ services:
       retries: 6
     ports:
       - "80:80"
-
-  config-server:
-    build:
-      context: .
-      dockerfile: config-server/Dockerfile
-      args:
-        SVC: config-server
-    environment:
-      SERVER_PORT: "8888"
-      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/spring-config-server.git"
-      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "practitioner-service"
-    image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
-    restart: on-failure
-    ports:
-      - "8888:8888"
-    healthcheck:
-      test: curl http://localhost:8888/
-      interval: 10s
-      timeout: 10s
 
   site-service:
     build:
@@ -73,7 +56,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-          - sql-fhir
+      - sql-fhir
 
   role-service:
     build:
