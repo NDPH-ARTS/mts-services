@@ -56,7 +56,7 @@ public class SiteServiceImpl implements SiteService {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
 
-        validationResponse = validateSiteExists(site);
+        validationResponse = validateSiteExists(site.getName());
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
@@ -64,9 +64,9 @@ public class SiteServiceImpl implements SiteService {
         return siteStore.saveEntity(site);
     }
 
-    private ValidationResponse validateSiteExists(Site site) {
+    private ValidationResponse validateSiteExists(String name) {
         //Check if the Organization already exists.
-        Organization org = siteStore.findOrganizationByName(site.getName());
+        Organization org = siteStore.findOrganizationByName(name);
         if (null != org) {
             return new ValidationResponse(false, FhirRepo.SITE_EXISTS.message());
         }
