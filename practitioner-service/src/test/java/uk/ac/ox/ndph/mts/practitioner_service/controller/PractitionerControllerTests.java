@@ -1,33 +1,34 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
-import org.mockito.Mockito;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
-import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
-import java.util.Collections;
-
-@SpringBootTest(properties = {"server.error.include-message=always"})
+@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+@ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -42,7 +43,7 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
         this.mockMvc.perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -53,7 +54,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -64,7 +65,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -76,7 +77,7 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isBadGateway());
+                .andExpect(status().isBadGateway());
     }
 
     @Test
@@ -88,7 +89,7 @@ class PractitionerControllerTests {
         // Act + Assert
         String error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
+                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("prefix"));
     }
 
@@ -99,8 +100,7 @@ class PractitionerControllerTests {
     void TestPostRoleAssignment_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
         this.mockMvc.perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isBadRequest()).andReturn().getResolvedException();
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -113,7 +113,6 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(returnedValue)));
     }
@@ -127,7 +126,6 @@ class PractitionerControllerTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print())
                 .andExpect(status().isBadGateway());
     }
 

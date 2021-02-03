@@ -6,12 +6,13 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 public enum FhirRepo {
     SAVE_REQUEST("request to fhir: {}"),
     SAVE_RESPONSE("response from fhir: {}"),
-    UPDATE_ERROR("error while updating fhir store"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
+    PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s"),
+    FAILED_TO_SAVE_PRACTITIONER("Failed to save practitioner"),
     GET_PRACTITIONER_ROLES_BY_IDENTIFIER("get practitioner roles by identifier %s"),
     GET_PRACTITIONER_ROLES_BY_IDENTIFIER_RESPONSE("found %d practitioner roles");
 
-    private String message;
+    private final String message;
  
     FhirRepo(String message) {
         this.message = message;

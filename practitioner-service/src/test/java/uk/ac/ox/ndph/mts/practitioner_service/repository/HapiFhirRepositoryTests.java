@@ -50,7 +50,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTransactionType() {
+    void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTransactionType() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
@@ -68,7 +68,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenSavePractitioner_ReturnsCorrectId() {
+    void TestHapiRepository_WhenSavePractitioner_ReturnsCorrectId() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
@@ -84,8 +84,10 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextWrapperThrowsExpected_ThrowsRestException() {
-        when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenThrow(new ResourceNotFoundException("error"));
+    void TestHapiRepository_WhenContextWrapperThrowsException_ThrowsRestException() throws FhirServerResponseException {
+        // Arrange
+        FhirServerResponseException exception = new FhirServerResponseException("message", new ResourceNotFoundException("error"));
+        when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenThrow(exception);
         var practitioner = new Practitioner();
 
         // Act + Assert
@@ -93,7 +95,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException() {
+    void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
@@ -105,8 +107,9 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException() {
+    void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException() throws FhirServerResponseException {
         // Arrange
+        var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(null);
         var practitioner = new Practitioner();
 
@@ -118,7 +121,7 @@ class HapiFhirRepositoryTests {
     // PractitionerRole Tests
 
     @Test
-    void TestSavePractitionerRole_WhenSaveEntity_SendsBundleWithTransactionType() {
+    void TestSavePractitionerRole_WhenSaveEntity_SendsBundleWithTransactionType() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
@@ -136,7 +139,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestSavePractitionerRole_WhenSaveEntity_ReturnsCorrectId() {
+    void TestSavePractitionerRole_WhenSaveEntity_ReturnsCorrectId() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
@@ -152,8 +155,9 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestSavePractitionerRole_WhenExecuteTransactionThrowsException_ThrowsRestException() {
-        when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenThrow(new ResourceNotFoundException("error"));
+    void TestSavePractitionerRole_WhenExecuteTransactionThrowsException_ThrowsRestException() throws FhirServerResponseException {
+        FhirServerResponseException DUMMY_EXCEPTION = new FhirServerResponseException("", null);
+        when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenThrow(DUMMY_EXCEPTION);
         var entity = new PractitionerRole();
 
         // Act + Assert
@@ -161,7 +165,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestSavePractitionerRole_WhenExecuteTransactionReturnsEmptyBundle_ThrowsRestException() {
+    void TestSavePractitionerRole_WhenExecuteTransactionReturnsEmptyBundle_ThrowsRestException() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
@@ -173,7 +177,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestSavePractitionerRole_WhenExecuteTransactionReturnsNull_ThrowsRestException() {
+    void TestSavePractitionerRole_WhenExecuteTransactionReturnsNull_ThrowsRestException() throws FhirServerResponseException {
         // Arrange
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(null);
         var entity = new PractitionerRole();

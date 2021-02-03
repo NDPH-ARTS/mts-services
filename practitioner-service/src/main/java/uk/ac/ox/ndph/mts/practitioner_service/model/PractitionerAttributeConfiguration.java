@@ -1,13 +1,18 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+
+@Configuration
+@ConfigurationProperties(prefix = "attributes")
+@EnableConfigurationProperties
 public class PractitionerAttributeConfiguration {
 
-    private final String name;
-    private final String displayName;
-    private final String validationRegex;
+    private String name;
+    private String displayName;
+    private String validationRegex;
 
     public PractitionerAttributeConfiguration() {
         this.name = "";
@@ -33,5 +38,17 @@ public class PractitionerAttributeConfiguration {
 
     public String getValidationRegex() {
         return validationRegex;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setValidationRegex(String validationRegex) {
+        this.validationRegex = validationRegex;
     }
 }

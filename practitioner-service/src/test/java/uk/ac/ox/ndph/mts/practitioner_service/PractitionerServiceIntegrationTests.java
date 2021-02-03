@@ -10,19 +10,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import uk.ac.ox.ndph.mts.practitioner_service.client.WebFluxRoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 
-@SpringBootTest(properties = { "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always",
+        "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerServiceIntegrationTests {
@@ -32,6 +33,9 @@ class PractitionerServiceIntegrationTests {
 
     @MockBean
     public FhirRepository repository;
+
+    @MockBean
+    private WebFluxRoleServiceClient roleServiceClient;
 
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
@@ -46,7 +50,7 @@ class PractitionerServiceIntegrationTests {
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @Test
@@ -59,7 +63,7 @@ class PractitionerServiceIntegrationTests {
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
+                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("Given Name"));
     }
 
@@ -73,7 +77,7 @@ class PractitionerServiceIntegrationTests {
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
+                .andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("test error"));
     }
 
@@ -82,13 +86,13 @@ class PractitionerServiceIntegrationTests {
     void TestPostRoleAssignment_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
-
+        when(roleServiceClient.roleIdExists("roleId")).thenReturn(true);
 
         String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
 

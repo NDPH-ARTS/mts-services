@@ -10,8 +10,10 @@ services:
     restart: on-failure
     depends_on:
       - fhir-api
+      - config-server
     environment:
       SERVER_PORT: "80"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
     healthcheck:
       test: curl http://localhost/
       interval: 10s
@@ -20,30 +22,24 @@ services:
     ports:
       - "80:80"
 
-  trial-config-service:
+  config-server:
     build:
       context: .
-      dockerfile: trial-config-service/Dockerfile
+      dockerfile: config-server/Dockerfile
       args:
-        SVC: trial-config-service
-    image: ghcr.io/ndph-arts/trial-config-service:${GITHUB_SHA}
-    restart: on-failure
+        SVC: config-server
     environment:
-      SERVER_PORT: "80"
-      JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
-      ROLE_SERVICE: "http://role-service:82"
-    healthcheck:
-        test: curl --fail -s http://localhost/ || exit 1
-        interval: 10s
-        timeout: 10s
-        retries: 6
-
+      SERVER_PORT: "8888"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/spring-config-server.git"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "practitioner-service"
+    image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
+    restart: on-failure
     ports:
-      - "81:80"
-    depends_on:
-      - sql-mts-data
-      - role-service
+      - "8888:8888"
+    healthcheck:
+      test: curl http://localhost:8888/
+      interval: 10s
+      timeout: 10s
 
   site-service:
     build:
@@ -57,7 +53,7 @@ services:
     environment:
       SERVER_PORT: "83"
     healthcheck:
-      test: curl http://localhost/
+      test: curl http://localhost:83
       interval: 10s
       timeout: 10s
       retries: 6
@@ -85,14 +81,19 @@ services:
       dockerfile: role-service/Dockerfile
       args:
         SVC: role-service
-    image: ghcr.io/ndph-arts/role-config-service:${GITHUB_SHA}
-    container_name: "role-service"
+    image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
     depends_on:
       - sql-mts-data
     environment:
       SERVER_PORT: "82"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+    healthcheck:
+      test: curl http://localhost:82
+      interval: 10s
+      timeout: 10s
+      retries: 12
     ports:
       - "82:82"
 

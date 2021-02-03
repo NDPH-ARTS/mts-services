@@ -24,9 +24,9 @@ public class RestException extends RuntimeException {
     /**
      *
      * @param message the exception message
-     * @param innterException the innter exception
+     * @param cause case of the exception
      */
-    public RestException(String message, Exception innterException) {
-        super(message, innterException);
+    public RestException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
