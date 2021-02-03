@@ -46,18 +46,14 @@ public class HapiFhirRepository implements FhirRepository {
             responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
                 bundle(organization, ORGANIZATION_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            }
+            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
             throw new RestException(e.getMessage(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
+        logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
-        }
 
         return responseElement.getIdElement().getIdPart();
     }
@@ -74,9 +70,7 @@ public class HapiFhirRepository implements FhirRepository {
             responseBundle = fhirContextWrapper.executeSearchByName(fhirUri, name);
 
         } catch (BaseServerResponseException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
-            }
+            logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
             throw new RestException(e.getMessage(), e);
         }
 
@@ -93,28 +87,22 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public String saveResearchStudy(ResearchStudy researchStudy) {
         // Log the request
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
+        logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(researchStudy));
-        }
 
         Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTrasaction(fhirUri,
                     bundle(researchStudy, RESEARCHSTUDY_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            }
+            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
             throw new RestException(e.getMessage(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
+        logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
-        }
 
         return responseElement.getIdElement().getIdPart();
     }
@@ -123,9 +111,7 @@ public class HapiFhirRepository implements FhirRepository {
         var resp = fhirContextWrapper.toListOfResources(bundle);
         
         if (resp.size() != 1) {
-            if (logger.isInfoEnabled()) {
-                logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
-            }
+            logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
 
             throw new RestException(String.format(
                 FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
