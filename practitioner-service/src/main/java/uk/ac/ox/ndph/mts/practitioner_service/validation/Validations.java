@@ -5,9 +5,10 @@ package uk.ac.ox.ndph.mts.practitioner_service.validation;
  */
 public enum Validations {
     STARTUP("Loaded practitioner validation with configuration: {}"),
+    EXTERNAL_ENTITY_NOT_EXIST_ERROR("The value of %s doesn't exist"),
     ERROR("argument %s failed validation");
 
-    private String message;
+    private final String message;
 
     Validations(String message) {
         this.message = message;
