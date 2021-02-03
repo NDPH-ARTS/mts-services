@@ -5,13 +5,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
-public class RoleServiceClient extends AbstractEntityServiceClient {
+public class SiteServiceClient extends AbstractEntityServiceClient {
 
-    public RoleServiceClient(final WebClient.Builder webClientBuilder,
-                             @Value("${role.service.uri}") String serviceUrlBase) {
-        this.serviceUrlBase =  serviceUrlBase;
+    public SiteServiceClient(final WebClient.Builder webClientBuilder,
+                             @Value("${site.service.uri}") String serviceUrlBase) {
+        this.serviceUrlBase = serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
-        this.serviceExistsRoute = "/roles/{id}";
+        this.serviceExistsRoute = "/sites/{siteId}";
     }
 
 }
+
