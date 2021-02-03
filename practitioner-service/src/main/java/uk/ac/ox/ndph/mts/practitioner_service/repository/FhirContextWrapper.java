@@ -1,15 +1,20 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.RuntimeResourceDefinition;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,12 +29,21 @@ public class FhirContextWrapper {
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
+    private final Logger logger;
+
     public FhirContextWrapper() {
-        fhirContext = FhirContext.forR4();
+        this.fhirContext = FhirContext.forR4();
+        this.logger = LoggerFactory.getLogger(FhirContextWrapper.class);
     }
 
     public FhirContextWrapper(FhirContext fhirContext) {
         this.fhirContext = fhirContext;
+        this.logger = LoggerFactory.getLogger(FhirContextWrapper.class);
+    }
+
+    public FhirContextWrapper(final FhirContext fhirContext, final Logger logger) {
+        this.fhirContext = fhirContext;
+        this.logger = logger;
     }
 
     /**
@@ -58,13 +72,7 @@ public class FhirContextWrapper {
         }
     }
 
-    /**
-     * Extracts a list of resources from a bundle
-     *
-     * @param bundle the bundle to extract
-     * @return the list of resources in the bundle
-     */
-    public List<IBaseResource> toListOfResources(Bundle bundle) {
+    public List<IBaseResource> toListOfResources(final Bundle bundle) {
         return new ArrayList<>(BundleUtil.toListOfResources(fhirContext, bundle));
     }
 
@@ -75,5 +83,16 @@ public class FhirContextWrapper {
             throw new RestException(String.format(FhirRepo.BAD_RESPONSE_SIZE.message(), resources.size()));
         }
         return resources;
+    }
+
+    public IBaseResource toSingleResource(final Bundle bundle) {
+        final List<IBaseResource> resources = toListOfResources(bundle);
+        if(resources.isEmpty()) {
+            throw new RestException("Failed to find resources in bundle");
+        }
+        if(resources.size() > 1) {
+            throw new RestException("Bundle has more than one resource");
+        }
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

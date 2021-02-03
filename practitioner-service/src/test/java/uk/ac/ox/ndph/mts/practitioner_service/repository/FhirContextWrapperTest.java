@@ -7,17 +7,24 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.slf4j.Logger;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -26,6 +33,34 @@ class FhirContextWrapperTest {
     final FhirContextWrapper sut = new FhirContextWrapper();
     final Bundle EMPTY_BUNDLE = new Bundle();
     final Bundle bundle = new Bundle();
+    final Logger SILENT_LOGGER = mock(Logger.class);
+
+//    @Test
+//    void toListOfResources_whenBundleHasNoResources_logNpeThrownByHapi() {
+//        // Arrange
+//        FhirContext fhirContext = mock(FhirContext.class);
+//        Logger logger = mock(Logger.class);
+//        FhirContextWrapper sut = new FhirContextWrapper(fhirContext, logger);
+//
+//        // Act
+//        sut.toListOfResources(EMPTY_BUNDLE);
+//
+//        // Assert
+//        verify(logger).error(eq("Failed to fetch resources from bundle"), any(NullPointerException.class));
+//    }
+
+//    @Test
+//    void toListOfResources_whenBundleHasNoResources_returnEmptyList() {
+//        // Arrange
+//        FhirContext fhirContext = mock(FhirContext.class);
+//        FhirContextWrapper sut = new FhirContextWrapper(fhirContext);
+//
+//        // Act
+//        final List<IBaseResource> resources = sut.toListOfResources(EMPTY_BUNDLE);
+//
+//        // Assertions
+//        assertThat(resources).isEmpty();
+//    }
 
     @Test
     void getResourcesFrom_whenNullBundle_thenThrowException() {
@@ -80,7 +115,34 @@ class FhirContextWrapperTest {
     }
 
     @Test
-    void whenTransactionThrowsBaseServerResponseException_thenTranslateToCheckedException() {
+    void toSingleResource_whenBundleEmpty_thenThrowException() {
+        // Arrange
+        FhirContextWrapper spy = spy(FhirContextWrapper.class);
+        doReturn(Collections.emptyList()).when(spy).toListOfResources(any(Bundle.class));
+
+        // Act + Assert
+        assertThatExceptionOfType(RestException.class)
+                .isThrownBy(() -> spy.toSingleResource(EMPTY_BUNDLE))
+                .withMessage("Failed to find resources in bundle");
+    }
+
+    @Test
+    void toSingleResource_whenBundleHasMoreThanOneResource_thenThrowException() {
+        // Arrange
+        List<Practitioner> resources = List.of(new Practitioner(), new Practitioner());
+        FhirContext context = mock(FhirContext.class);
+        FhirContextWrapper sut = new FhirContextWrapper(context);
+        FhirContextWrapper spy = spy(sut);
+        doReturn(resources).when(spy).toListOfResources(any(Bundle.class));
+
+        // Act + Assert
+        assertThatExceptionOfType(RestException.class)
+                .isThrownBy(() -> spy.toSingleResource(bundle))
+                .withMessage("Bundle has more than one resource");
+    }
+
+    @Test
+    void executeTransaction_whenTransactionThrowsBaseServerResponseException_thenTranslateToCheckedException() {
         // Arrange
         FhirContext fhirContext = mock(FhirContext.class, RETURNS_DEEP_STUBS);
         final BaseServerResponseException fhirException = mock(BaseServerResponseException.class);
