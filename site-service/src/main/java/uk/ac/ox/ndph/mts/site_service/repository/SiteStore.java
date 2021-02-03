@@ -44,15 +44,9 @@ public class SiteStore implements EntityStore<Site> {
         Organization org = converter.convert(entity);
         orgId = repository.saveOrganization(org);
         org.setId(orgId);
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.REQUEST_PAYLOAD.message(), orgId);
-        }
 
         // TODO: Add research study only when needed.
         String researchStudyId = createResearchStudy(org);
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.REQUEST_PAYLOAD.message(), researchStudyId);
-        }
 
         return orgId;
     }

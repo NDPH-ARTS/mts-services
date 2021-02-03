@@ -49,10 +49,7 @@ public class SiteServiceImpl implements SiteService {
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
 
-        if (logger.isInfoEnabled()) {
-            logger.info(Services.STARTUP.message());
-        }
-
+        logger.info(Services.STARTUP.message());
     }
 
     /**
