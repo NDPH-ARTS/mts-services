@@ -68,8 +68,6 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public Organization findOrganizationByName(String name) {
         // Log the request
-        logger.info(FhirRepo.REQUEST_PAYLOAD.message(), name);
-
         Bundle responseBundle;
 
         try {

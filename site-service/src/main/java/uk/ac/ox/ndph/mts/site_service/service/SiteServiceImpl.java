@@ -56,8 +56,7 @@ public class SiteServiceImpl implements SiteService {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
 
-        String siteName = site.getName().trim();
-        validationResponse = validateSiteExists(siteName);
+        validationResponse = validateSiteExists(site.getName());
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
@@ -65,7 +64,7 @@ public class SiteServiceImpl implements SiteService {
         return siteStore.saveEntity(site);
     }
 
-    private ValidationResponse validateSiteExists(final String orgName) {
+    private ValidationResponse validateSiteExists(String orgName) {
         //Check if the Organization already exists.
         Organization org = siteStore.findOrganizationByName(orgName);
         if (null != org) {
