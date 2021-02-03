@@ -6,6 +6,8 @@ import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
+import static uk.ac.ox.ndph.mts.site_service.converter.SiteConverter.ORG_PREFIX;
+
 /**
  */
 @Component
@@ -34,7 +36,7 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
             // TODO: Check if the Parent Organization already exists.
 
             // Set the Parent Organization if and only if it exists.
-            fhirOrganization.setPartOf(new Reference("Organization/" + site.getParentSiteId()));
+            fhirOrganization.setPartOf(new Reference(ORG_PREFIX + site.getParentSiteId()));
         }
     }
 }
