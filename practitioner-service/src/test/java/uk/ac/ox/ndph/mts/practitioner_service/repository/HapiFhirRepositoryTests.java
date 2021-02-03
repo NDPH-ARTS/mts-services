@@ -4,6 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -60,10 +62,10 @@ class HapiFhirRepositoryTests {
     void TestHapiRepository_WhenSavePractitioner_ReturnsCorrectId() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
+        Practitioner practitioner = new Practitioner();
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
-        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
-        var practitioner = new Practitioner();
-        practitioner.setId("123");
+        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(practitioner));
+        when(fhirContextWrapper.getUnqualifiedIdPart(practitioner)).thenReturn("123");
 
         // Act
         var value = repository.savePractitioner(practitioner);

@@ -67,4 +67,7 @@ public class FhirContextWrapper {
         return new ArrayList<>(BundleUtil.toListOfResources(fhirContext, bundle));
     }
 
+    public String getUnqualifiedIdPart(final IBaseResource resource) {
+        return resource.getIdElement().toUnqualified().getIdPart();
+    }
 }

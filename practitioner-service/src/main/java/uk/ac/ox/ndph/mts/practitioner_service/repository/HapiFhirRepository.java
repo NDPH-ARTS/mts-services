@@ -53,8 +53,7 @@ public class HapiFhirRepository implements FhirRepository {
             logger.info(FhirRepo.SAVE_RESPONSE.message(), fhirContextWrapper.prettyPrint(responseElement));
         }
 
-        //TODO: replace with the actual id return
-        return practitioner.getIdElement().getValue();
+        return fhirContextWrapper.getUnqualifiedIdPart(responseElement);
     }
 
     @Override
