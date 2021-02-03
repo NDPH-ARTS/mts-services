@@ -51,11 +51,11 @@ public class SiteStore implements EntityStore<Site> {
     /**
      * Find Organization By ID from the FHIR store
      *
-     * @param name of the organization to search.
+     * @param organizationName of the organization to search.
      * @return Organization searched by name.
      */
-    public Organization findOrganizationByName(String name) {
-        return repository.findOrganizationByName(name);
+    public Organization findOrganizationByName(String organizationName) {
+        return repository.findOrganizationByName(organizationName);
     }
 
     private String createResearchStudy(Organization org) {

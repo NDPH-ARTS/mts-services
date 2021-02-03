@@ -17,8 +17,8 @@ public interface EntityStore<T> {
     /**
      * Find Organization By ID from the FHIR store
      *
-     * @param name of the organization to search.
+     * @param organizationName of the organization to search.
      * @return Organization searched by name.
      */
-    Organization findOrganizationByName(String name);
+    Organization findOrganizationByName(String organizationName);
 }
