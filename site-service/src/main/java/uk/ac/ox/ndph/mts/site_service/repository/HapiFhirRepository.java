@@ -41,16 +41,13 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public Collection<Organization> getOrganizations() {
         try {
-            // note no where clause here - just gets all the orgs;
-            // would like to filter on sites (by the site type extension?)
+            // TODO: filter organizations by the extension element that identifies them as sites
             final Bundle responseBundle = fhirContextWrapper
                     .search(fhirUri, ORGANIZATION_ENTITY_NAME)
                     .execute();
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
-            logger.warn(String.format(
-                    FhirRepo.SEARCH_ERROR.message(), ORGANIZATION_ENTITY_NAME), e);
-            throw new RestException(e.getMessage(), e);
+            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
 
@@ -59,13 +56,12 @@ public class HapiFhirRepository implements FhirRepository {
      * @return id of the saved organization
      */
     public String saveOrganization(Organization organization) {
-        // Log the request
         logger.info(FhirRepo.SAVE_REQUEST.message(),
                 fhirContextWrapper.prettyPrint(organization));
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
+            responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                 bundle(organization, ORGANIZATION_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
@@ -92,7 +88,7 @@ public class HapiFhirRepository implements FhirRepository {
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri,
+            responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                     bundle(researchStudy, RESEARCHSTUDY_ENTITY_NAME));
         } catch (BaseServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
