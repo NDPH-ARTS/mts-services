@@ -38,10 +38,8 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public String saveOrganization(Organization organization) {
         // Log the request
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
+        logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(organization));
-        }
 
         Bundle responseBundle;
         try {

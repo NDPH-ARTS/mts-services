@@ -11,7 +11,6 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepo;
-import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 /**
@@ -22,22 +21,17 @@ import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 @Service
 public class SiteServiceImpl implements SiteService {
 
-    private final FhirRepository repository;
     private EntityStore<Site> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
-     * @param repository - The fhir repository
      * @param siteStore Site store interface
      * @param entityValidation Site validation interface
      */
     @Autowired
-    public SiteServiceImpl(FhirRepository repository, EntityStore<Site> siteStore,
+    public SiteServiceImpl(EntityStore<Site> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
-        if (repository == null) {
-            throw new InitialisationError("repository cannot be null");
-        }
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
         }
@@ -45,14 +39,10 @@ public class SiteServiceImpl implements SiteService {
             throw new InitialisationError("entity validation cannot be null");
         }
 
-        this.repository = repository;
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
 
-        if (logger.isInfoEnabled()) {
-            logger.info(Services.STARTUP.message());
-        }
-
+        logger.info(Services.STARTUP.message());
     }
 
     /**
@@ -76,7 +66,7 @@ public class SiteServiceImpl implements SiteService {
 
     private ValidationResponse validateSiteExists(Site site) {
         //Check if the Organization already exists.
-        Organization org = repository.findOrganizationByName(site.getName());
+        Organization org = siteStore.findOrganizationByName(site.getName());
         if (null != org) {
             return new ValidationResponse(false, FhirRepo.SITE_EXISTS.message());
         }
