@@ -24,12 +24,15 @@ public class TrialConfigFile {
     @JsonProperty(value = "site_service", required = true)
     private Service siteService;
 
+    @JsonProperty(value = "role_service", required = true)
+    private Service roleService;
+
     @JsonProperty(value = "practitioner_service", required = true)
     private Service practitionerService;
 
-    @JsonProperty(value = "config_server_service", required = true)
-    private Service configServerService;
+    @JsonProperty(value = "init_service", required = true)
+    private Service initService;
 
     @JsonProperty(value = "spring_cloud", required = true)
-    private SpringCloudService springCloudService;
+    private SpringCloud springCloud;
 }
