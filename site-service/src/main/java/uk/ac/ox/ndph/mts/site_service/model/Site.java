@@ -1,7 +1,5 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
-import java.util.Objects;
-
 /**
  * Site Model
  */
