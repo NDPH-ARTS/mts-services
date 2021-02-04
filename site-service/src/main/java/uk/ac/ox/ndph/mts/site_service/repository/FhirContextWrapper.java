@@ -64,11 +64,12 @@ public class FhirContextWrapper {
     /**
      * Return a search instance which can be configured and executed, returning a single type of resource
      * @param uri FHIR endpoint URI
+     * @param resourceClass class of resource to return in bundle
      */
-    public IQuery<Bundle> search(final String uri, final String resourceName) {
+    public IQuery<Bundle> search(final String uri, final Class<? extends IBaseResource> resourceClass) {
         return fhirContext.newRestfulGenericClient(uri)
                 .search()
-                .forResource(resourceName)
+                .forResource(resourceClass)
                 .returnBundle(Bundle.class);
     }
 

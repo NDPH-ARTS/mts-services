@@ -43,7 +43,7 @@ public class HapiFhirRepository implements FhirRepository {
         try {
             // TODO: filter organizations by the extension element that identifies them as sites
             final Bundle responseBundle = fhirContextWrapper
-                    .search(fhirUri, ORGANIZATION_ENTITY_NAME)
+                    .search(fhirUri, Organization.class)
                     .execute();
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {

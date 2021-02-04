@@ -12,11 +12,12 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
 
     @Override
     public Site convert(final Organization org) {
-        final String siteId = org.getIdElement().getIdPart();
-        final String name = org.getName();
-        final String alias = (org.getAlias().isEmpty()) ? null : org.getAlias().get(0).getValueAsString();
-        final String parentSiteId = findParentSiteId(org);
-        return Site.withIdNameAliasAndParent(siteId, name, alias, parentSiteId);
+        return new Site(
+                org.getIdElement().getIdPart(),
+                org.getName(),
+                (org.getAlias().isEmpty()) ? null : org.getAlias().get(0).getValueAsString(),
+                findParentSiteId(org)
+        );
     }
 
     private String findParentSiteId(final Organization org) {

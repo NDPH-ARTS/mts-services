@@ -160,7 +160,7 @@ class HapiFhirRepositoryTests {
                 .setResource(org);
         final var mockQuery = mockQuery();
         when(mockQuery.execute()).thenReturn(responseBundle);
-        when(fhirContextWrapper.search(anyString(), eq("Organization"))).thenReturn(mockQuery);
+        when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(List.of(org));
         final var fhirRepository =  new HapiFhirRepository(fhirContextWrapper);
         // act
@@ -174,7 +174,7 @@ class HapiFhirRepositoryTests {
 
     @Test
     void TestHapiRepository_getOrganizations_WhenContextWrapperThrowsExpected_ThrowsRestException() {
-        when(fhirContextWrapper.search(anyString(), anyString())).thenThrow(new ResourceNotFoundException("error"));
+        when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenThrow(new ResourceNotFoundException("error"));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act + Assert
         assertThrows(RestException.class, () -> fhirRepository.getOrganizations());

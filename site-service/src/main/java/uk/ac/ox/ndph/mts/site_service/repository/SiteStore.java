@@ -75,7 +75,7 @@ public class SiteStore implements EntityStore<Site> {
      * @return list of site entities
      */
     @Override
-    public List<Site> geAllEntities() {
+    public List<Site> findAll() {
         return this.repository.getOrganizations()
                 .stream()
                 .map(fromOrgConverter::convert)

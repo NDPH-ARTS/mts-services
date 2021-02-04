@@ -103,9 +103,9 @@ class SiteServiceImplTests {
     void TestGetSites_WhenEmpty_ThrowsInvariantException() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        when(siteStore.geAllEntities()).thenReturn(Collections.emptyList());
+        when(siteStore.findAll()).thenReturn(Collections.emptyList());
         // act + assert
-        Assertions.assertThrows(InvariantException.class, () -> siteService.getSites(),
+        Assertions.assertThrows(InvariantException.class, () -> siteService.findSites(),
                 "Expecting getSites to throw invariant exception");
     }
 
@@ -114,9 +114,9 @@ class SiteServiceImplTests {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         final var site = new Site("CCO", "Root", null);
-        when(siteStore.geAllEntities()).thenReturn(Collections.singletonList(site));
+        when(siteStore.findAll()).thenReturn(Collections.singletonList(site));
         // act
-        final List<Site> sites = siteService.getSites();
+        final List<Site> sites = siteService.findSites();
         // assert
         assertThat(sites, is(not(empty())));
         assertThat(sites, hasItem(samePropertyValuesAs(site)));

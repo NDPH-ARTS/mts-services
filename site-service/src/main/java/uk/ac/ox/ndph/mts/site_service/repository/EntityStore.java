@@ -14,5 +14,5 @@ public interface EntityStore<T> {
      */
     String saveEntity(T entity);
 
-    List<T> geAllEntities();
+    List<T> findAll();
 }

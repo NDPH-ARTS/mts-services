@@ -94,7 +94,7 @@ class SiteControllerTests {
     @Test
     void TestGetSite_WhenNoSites_Returns501() throws Exception {
         // Arrange
-        when(siteService.getSites()).thenThrow(new InvariantException("root"));
+        when(siteService.findSites()).thenThrow(new InvariantException("root"));
         // Act + Assert
         final String error = this.mockMvc
                 .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
@@ -106,7 +106,7 @@ class SiteControllerTests {
     @Test
     void TestGetSite_WhenSites_Returns200AndList() throws Exception {
         // arrange
-        when(siteService.getSites()).thenReturn(Collections.singletonList(new Site("CCO", "Root")));
+        when(siteService.findSites()).thenReturn(Collections.singletonList(new Site("CCO", "Root")));
         // act
         final String result = this.mockMvc
                 .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
@@ -120,7 +120,7 @@ class SiteControllerTests {
     @Test
     void TestGetSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
-        when(siteService.getSites()).thenThrow(RestException.class);
+        when(siteService.findSites()).thenThrow(RestException.class);
         // Act + Assert
         this.mockMvc
                 .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))

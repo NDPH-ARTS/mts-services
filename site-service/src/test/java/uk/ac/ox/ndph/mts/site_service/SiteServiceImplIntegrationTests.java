@@ -30,6 +30,8 @@ import java.util.List;
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class SiteServiceImplIntegrationTests {
+    
+    public static final String SITES_ROUTE = "/sites";
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,7 +48,7 @@ class SiteServiceImplIntegrationTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -58,7 +60,7 @@ class SiteServiceImplIntegrationTests {
         String jsonString = "{\"name\": \"\", \"alias\": \"alias\"}";
         // Act + Assert
         var error = this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("Name"));
     }
@@ -71,7 +73,7 @@ class SiteServiceImplIntegrationTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         var error = this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("test error"));
     }
@@ -85,7 +87,7 @@ class SiteServiceImplIntegrationTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -99,7 +101,7 @@ class SiteServiceImplIntegrationTests {
         when(repository.getOrganizations()).thenReturn(List.of(org));
         // Act + Assert
         this.mockMvc
-                .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
+                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().string(containsString("\"this-is-my-id\"")));
     }
 
@@ -110,7 +112,7 @@ class SiteServiceImplIntegrationTests {
         when(repository.getOrganizations()).thenReturn(Collections.emptyList());
         // Act + Assert
         final var message = this.mockMvc
-                .perform(get("/sites").contentType(MediaType.APPLICATION_JSON))
+                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotImplemented()).andReturn().getResolvedException().getMessage();
         assertThat(message, containsString("No root site"));
     }

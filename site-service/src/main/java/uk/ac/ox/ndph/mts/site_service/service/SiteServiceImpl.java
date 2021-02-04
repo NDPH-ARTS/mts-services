@@ -61,13 +61,15 @@ public class SiteServiceImpl implements SiteService {
     }
 
     /**
-     * Get complete sites list
+     * Get complete sites list.  Note the list should never be empty if the trial has been initialized, and
+     * this method should not be called if the trial has not been initialized. So throws an exception if the
+     * store returns an empty sites list.
      * @return list of sites, never empty
      * @throws InvariantException if the list from the store is empty
      */
     @GetMapping
-    public List<Site> getSites() {
-        final List<Site> sites = this.siteStore.geAllEntities();
+    public List<Site> findSites() {
+        final List<Site> sites = this.siteStore.findAll();
         if (sites.isEmpty()) {
             throw new InvariantException(Services.NO_ROOT_SITE.message());
         }

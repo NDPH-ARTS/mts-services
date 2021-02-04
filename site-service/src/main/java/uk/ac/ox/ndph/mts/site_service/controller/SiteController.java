@@ -49,7 +49,7 @@ public class SiteController {
      */
     @GetMapping
     public ResponseEntity<List<Site>> sites() {
-        return ResponseEntity.status(HttpStatus.OK).body(siteService.getSites());
+        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 
 }

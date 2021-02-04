@@ -41,19 +41,16 @@ public class Site {
 
 
     /**
-     * Site factory with name alias parent and ID
-     * make this a named factory to avoid mixing up site ID with parent site ID
-     * @param siteId site ID (never null)
+     * Site Constructor with siteId name alias and parent
+     * @param siteId site ID
      * @param name the Site name
      * @param alias the Site alias
      * @param parentSiteId the Site parentSiteId
      *
      */
-    public static Site withIdNameAliasAndParent(final String siteId, String name, String alias, String parentSiteId) {
-        final Site site = new Site(name, alias, parentSiteId);
-        Objects.requireNonNull(siteId);
-        site.setSiteId(siteId);
-        return site;
+    public Site(final String siteId, String name, String alias, String parentSiteId) {
+        this(name, alias, parentSiteId);
+        this.siteId = siteId;
     }
 
     private String name;

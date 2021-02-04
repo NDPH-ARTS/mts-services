@@ -6,8 +6,6 @@ import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
-/**
- */
 @Component
 public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir.r4.model.Organization> {
 

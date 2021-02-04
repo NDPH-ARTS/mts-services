@@ -21,5 +21,5 @@ public interface SiteService {
      * Get all current sites
      * @return list of sites, should never be empty (always have a root node)
      */
-    List<Site> getSites();
+    List<Site> findSites();
 }
