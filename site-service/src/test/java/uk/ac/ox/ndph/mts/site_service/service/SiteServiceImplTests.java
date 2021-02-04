@@ -2,7 +2,7 @@ package uk.ac.ox.ndph.mts.site_service.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,8 +45,8 @@ class SiteServiceImplTests {
 
         Site siteWithParent = new Site(name, alias, parent);
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
-        when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+        when(siteValidation.validate(siteWithParent)).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.saveEntity(siteWithParent)).thenReturn("123");
 
         //Act
         String result = siteService.save(siteWithParent);
@@ -65,8 +65,8 @@ class SiteServiceImplTests {
         String alias = "alias";
         Site site = new Site(name, alias);
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
-        when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+        when(siteValidation.validate(site)).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.saveEntity(site)).thenReturn("123");
         //Act
         siteService.save(site);
 
@@ -83,11 +83,11 @@ class SiteServiceImplTests {
         String alias = "alias";
         Site site = new Site(name, alias);
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(false, "name"));
+        when(siteValidation.validate(site)).thenReturn(new ValidationResponse(false, "name"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
                 "Expecting save to throw validation exception");
-        Mockito.verify(siteStore, Mockito.times(0)).saveEntity(any(Site.class));
+        Mockito.verify(siteStore, Mockito.times(0)).saveEntity(site);
     }
 
     @Test
@@ -97,5 +97,21 @@ class SiteServiceImplTests {
                 "null store should throw");
         Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(siteStore, null),
                 "null validation should throw");
+    }
+
+    @Test
+    void TestFindtSiteByName_WhenStoreHasSite_ReturnsSite() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        final var site = new Site("CCO", "Root", null);
+        when(siteStore.findOrganizationByName(anyString())).thenReturn(site);
+
+        // act
+        String siteName = "CCO";
+        final Site siteFound = siteService.findSiteByName(siteName);
+
+        // assert
+        assertThat(siteFound.getName(), equalTo(site.getName()));
+        assertThat(siteFound.getAlias(), equalTo(site.getAlias()));
     }
 }

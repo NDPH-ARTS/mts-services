@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
-import org.hl7.fhir.r4.model.Organization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,10 +63,19 @@ public class SiteServiceImpl implements SiteService {
         return siteStore.saveEntity(site);
     }
 
+    /**
+     *
+     * @param siteName the Site to search.
+     * @return site The Site being searched.
+     */
+    public Site findSiteByName(String siteName) {
+        return siteStore.findOrganizationByName(siteName);
+    }
+
     private ValidationResponse validateSiteExists(String orgName) {
-        //Check if the Organization already exists.
-        Organization org = siteStore.findOrganizationByName(orgName);
-        if (null != org) {
+        //Check if the Site already exists.
+        Site site = findSiteByName(orgName);
+        if (null != site) {
             return new ValidationResponse(false, FhirRepo.SITE_EXISTS.message());
         }
         return new ValidationResponse(true, "");

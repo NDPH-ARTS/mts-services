@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
-import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Organization;
@@ -45,9 +44,9 @@ public class HapiFhirRepository implements FhirRepository {
         try {
             responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
                 bundle(organization, ORGANIZATION_ENTITY_NAME));
-        } catch (BaseServerResponseException e) {
+        } catch (FhirServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(e.getMessage(), e);
+            throw new RestException(FhirRepo.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
@@ -69,9 +68,9 @@ public class HapiFhirRepository implements FhirRepository {
         try {
             responseBundle = fhirContextWrapper.executeSearchByName(fhirUri, name);
 
-        } catch (BaseServerResponseException e) {
+        } catch (FhirServerResponseException e) {
             logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
-            throw new RestException(e.getMessage(), e);
+            throw new RestException(FhirRepo.SEARCH_ERROR.message(), e);
         }
 
         if (!responseBundle.getEntry().isEmpty()) {
@@ -94,9 +93,9 @@ public class HapiFhirRepository implements FhirRepository {
         try {
             responseBundle = fhirContextWrapper.executeTrasaction(fhirUri,
                     bundle(researchStudy, RESEARCHSTUDY_ENTITY_NAME));
-        } catch (BaseServerResponseException e) {
+        } catch (FhirServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(e.getMessage(), e);
+            throw new RestException(FhirRepo.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 

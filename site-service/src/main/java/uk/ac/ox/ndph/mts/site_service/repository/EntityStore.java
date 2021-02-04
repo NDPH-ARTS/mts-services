@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
-import org.hl7.fhir.r4.model.Organization;
+import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 /**
  * Interface for a store of a data model entity
@@ -20,5 +20,5 @@ public interface EntityStore<T> {
      * @param organizationName of the organization to search.
      * @return Organization searched by name.
      */
-    Organization findOrganizationByName(String organizationName);
+    Site findOrganizationByName(String organizationName);
 }
