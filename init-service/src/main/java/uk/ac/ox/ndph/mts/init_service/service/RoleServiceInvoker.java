@@ -3,11 +3,8 @@ package uk.ac.ox.ndph.mts.init_service.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
@@ -22,7 +19,6 @@ public class RoleServiceInvoker extends ServiceInvoker {
     @Value("${role.service}")
     private String roleService;
 
-
     public RoleServiceInvoker() {
         this.webClient = WebClient.create(roleService);
     }
@@ -33,8 +29,9 @@ public class RoleServiceInvoker extends ServiceInvoker {
     @Override
     protected String create(Entity role) throws DependentServiceException {
 
+        String uri = roleService + "/roles";
         try {
-            Role returnedRole = sendBlockingPostRequest(roleService + "/roles", role, Role.class);
+            Role returnedRole = sendBlockingPostRequest(uri, role, Role.class);
             return returnedRole.getId();
         } catch (Exception e) {
             LOGGER.info("FAILURE roleService {}", e.getMessage());

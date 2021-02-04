@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.init_service.model;
 
-public class RoleAssignment implements Entity{
+public class RoleAssignment implements Entity {
 
     private String practitionerId;
     private String siteId;

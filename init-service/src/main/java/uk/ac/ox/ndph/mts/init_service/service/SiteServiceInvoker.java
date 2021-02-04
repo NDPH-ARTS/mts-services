@@ -3,16 +3,12 @@ package uk.ac.ox.ndph.mts.init_service.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
-import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 
 import java.util.ArrayList;
@@ -25,7 +21,6 @@ public class SiteServiceInvoker extends ServiceInvoker {
     @Value("${site.service}")
     private String siteService;
 
-
     public SiteServiceInvoker() {
         this.webClient = WebClient.create(siteService);
     }
@@ -36,7 +31,8 @@ public class SiteServiceInvoker extends ServiceInvoker {
     protected String create(Entity site) throws DependentServiceException {
 
         try {
-            IDResponse responseFromSiteService = sendBlockingPostRequest(siteService + "/sites", site, IDResponse.class);
+            String uri = siteService + "/sites";
+            IDResponse responseFromSiteService = sendBlockingPostRequest(uri, site, IDResponse.class);
             return responseFromSiteService.getId();
 
         } catch (Exception e) {

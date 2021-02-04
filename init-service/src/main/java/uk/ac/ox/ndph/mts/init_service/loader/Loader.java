@@ -35,8 +35,9 @@ public class Loader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         roleServiceInvoker.execute(trialService.getTrial().getRoles());
         List<String> siteIds = siteServiceInvoker.execute(trialService.getTrial().getSites());
-        String siteId = siteIds.get(0);// This is yuk but is the assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
-        practitionerServiceInvoker.execute(trialService.getTrial().getPersons(), siteId);
+        String siteIdForUserRoles = siteIds.get(0); // This yuk but it is the assumption
+                                                    // in story https://ndph-arts.atlassian.net/browse/ARTS-164
+        practitionerServiceInvoker.execute(trialService.getTrial().getPersons(), siteIdForUserRoles);
     }
 }
 

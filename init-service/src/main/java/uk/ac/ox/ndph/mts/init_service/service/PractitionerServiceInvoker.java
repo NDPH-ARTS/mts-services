@@ -3,15 +3,8 @@ package uk.ac.ox.ndph.mts.init_service.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
@@ -28,7 +21,6 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     @Value("${practitioner.service}")
     private String practitionerService;
 
-
     public PractitionerServiceInvoker() {
         this.webClient = WebClient.create(practitionerService);
     }
@@ -40,7 +32,8 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     @Override
     protected String create(Entity practitioner) throws DependentServiceException {
         try {
-            IDResponse response = sendBlockingPostRequest(practitionerService + "/practitioner", practitioner, IDResponse.class);
+            String createEndpoint = practitionerService + "/practitioner";
+            IDResponse response = sendBlockingPostRequest(createEndpoint, practitioner, IDResponse.class);
             return response.getId();
         } catch (Exception e) {
             LOGGER.info("FAILURE at practitionerService create endpoint {}", e.getMessage());
@@ -50,10 +43,10 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
 
     protected void assignRoleToPractitioner(RoleAssignment roleAssignment) throws DependentServiceException {
         try {
-
-            IDResponse response = sendBlockingPostRequest(practitionerService + "/practitioner/" + roleAssignment.getPractitionerId() + "/roles", roleAssignment, IDResponse.class);
+            String uri = practitionerService + "/practitioner/" + roleAssignment.getPractitionerId() + "/roles";
+            sendBlockingPostRequest(uri, roleAssignment, IDResponse.class);
         } catch (Exception e) {
-            LOGGER.info("FAILURE at practitionerService assignroles endpoint {}", e.getMessage());
+            LOGGER.info("FAILURE at practitionerService assign roles endpoint {}", e.getMessage());
             throw new DependentServiceException("Error connecting to practitioner service to assign roles");
         }
     }

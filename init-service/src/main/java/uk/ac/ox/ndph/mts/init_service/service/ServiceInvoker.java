@@ -13,7 +13,7 @@ public abstract class ServiceInvoker {
 
     protected WebClient webClient;
 
-    protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected) throws DependentServiceException {
+    protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected) {
         return webClient.post()
                 .uri(uri)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
