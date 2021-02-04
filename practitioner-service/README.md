@@ -113,7 +113,6 @@ To run, setup the following env args:
 
 ```sh
 SPRING_PROFILES_ACTIVE=dev/prod/etc
-SPRING_CLOUD_CONFIG_PROFILE=dev/prod/etc
 SPRING_CLOUD_CONFIG_LABEL=main
 SPRING_CLOUD_CONFIG_URI=<some-uri>
 ```
