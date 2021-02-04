@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,8 +53,8 @@ class SiteServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(mockResponseFromSiteService))
                .addHeader("Content-Type", "application/json"));
-        String returnedSiteId = siteServiceInvoker.send(testSite);
-        assertNotNull(returnedSiteId);
+        String returnedSiteId = siteServiceInvoker.create(testSite);
+        assertEquals(returnedSiteId,mockResponseFromSiteService.getId());
     }
 
     @Test
@@ -75,16 +76,20 @@ class SiteServiceTest {
     }
 
     @Test
-    void createOneSiteList() throws IOException {
+    void createSiteListReturnsIds() throws IOException {
         Site testSite = new Site();
         testSite.setName("testName");
         testSite.setAlias("testAlias");
         List<Site> sites = Collections.singletonList(testSite);
+        IDResponse mockResponseFromSiteService = new IDResponse();
+        mockResponseFromSiteService.setId("test-id");
+
         mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(testSite))
+                .setBody(new ObjectMapper().writeValueAsString(mockResponseFromSiteService))
                 .addHeader("Content-Type", "application/json"));
         try {
-            siteServiceInvoker.execute(sites);
+            List<String> returnedIds = siteServiceInvoker.execute(sites);
+            assertEquals(returnedIds.get(0),mockResponseFromSiteService.getId());
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }

@@ -34,8 +34,8 @@ class LoaderTest {
         Loader loader = new Loader(trialService, practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
 
         doNothing().when(roleServiceInvoker).execute(anyList());
-        doReturn(null).when(siteServiceInvoker).execute(anyList());
-        doNothing().when(practitionerServiceInvoker).execute(anyList());
+        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
+        doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         when(trialService.getTrial()).thenReturn(mockedTrial());
 
@@ -43,7 +43,7 @@ class LoaderTest {
 
         verify(roleServiceInvoker, times(1)).execute(anyList());
         verify(siteServiceInvoker, times(1)).execute(anyList());
-        verify(practitionerServiceInvoker, times(1)).execute(anyList());
+        verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
 
     Trial mockedTrial() {

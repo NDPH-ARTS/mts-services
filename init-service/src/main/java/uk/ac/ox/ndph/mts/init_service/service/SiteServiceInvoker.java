@@ -33,7 +33,7 @@ public class SiteServiceInvoker implements ServiceInvoker {
         this.webClient = webClient;
     }
 
-    public String send(Entity site) throws DependentServiceException {
+    public String create(Entity site) throws DependentServiceException {
 
         try {
             IDResponse responseData = webClient.post()
@@ -55,7 +55,7 @@ public class SiteServiceInvoker implements ServiceInvoker {
         if (sites != null) {
             for (Site site : sites) {
                 LOGGER.info("Starting to create site(s): {}", sites);
-                siteIDs.add(send(site));
+                siteIDs.add(create(site));
                 LOGGER.info("Finished creating {} site(s)", sites.size());
             }
         } else {

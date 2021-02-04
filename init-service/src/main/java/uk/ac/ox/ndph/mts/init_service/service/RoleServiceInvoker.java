@@ -13,7 +13,6 @@ import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,7 +32,7 @@ public class RoleServiceInvoker implements ServiceInvoker {
     }
 
     @Override
-    public String send(Entity role) throws DependentServiceException {
+    public String create(Entity role) throws DependentServiceException {
 
         try {
             Role responseDataRole = webClient.post()
@@ -54,7 +53,7 @@ public class RoleServiceInvoker implements ServiceInvoker {
         if (roles != null) {
             for (Role role : roles) {
                 LOGGER.info("Starting to create role(s): {}", role);
-                send(role);
+                create(role);
                 LOGGER.info("Finished creating {} role(s)", roles.size());
             }
         } else {

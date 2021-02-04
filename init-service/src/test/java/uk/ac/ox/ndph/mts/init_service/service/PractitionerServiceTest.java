@@ -7,11 +7,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.init_service.model.RoleAssignment;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -19,7 +21,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTest {
@@ -54,13 +58,13 @@ class PractitionerServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(mockResponseFromPractitionerService))
                .addHeader("Content-Type", "application/json"));
-        String returnedPractitionerId = practitionerServiceInvoker.send(testPractitioner);
+        String returnedPractitionerId = practitionerServiceInvoker.create(testPractitioner);
         assertNotNull(returnedPractitionerId);
     }
 
     @Test
     void whenDependentServiceFailsWhenNull_CorrectException() {
-        assertThrows(Exception.class, () -> practitionerServiceInvoker.execute(null));
+        assertThrows(Exception.class, () -> practitionerServiceInvoker.execute(null, "dummy-site-id"));
     }
 
     @Test
@@ -74,23 +78,65 @@ class PractitionerServiceTest {
                 .setResponseCode(500));
 
         List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
-        assertThrows(DependentServiceException.class, () -> practitionerServiceInvoker.execute(practitioners));
+        assertThrows(DependentServiceException.class, () -> practitionerServiceInvoker.execute(practitioners, "dummy-site-id"));
     }
 
     @Test
-    void testPractitionerService_WithList_WhenValidInput() throws IOException {
+    void testExecute_WithList_WhenValidInput() throws IOException {
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
         testPractitioner.setPrefix("Mr");
         List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
+        IDResponse mockResponseFromPractitionerService = new IDResponse();
+        mockResponseFromPractitionerService.setId("test-practitioner-id");
         mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(testPractitioner))
+                .setBody(new ObjectMapper().writeValueAsString(mockResponseFromPractitionerService))
                 .addHeader("Content-Type", "application/json"));
         try {
-            practitionerServiceInvoker.execute(practitioners);
+            practitionerServiceInvoker.execute(practitioners, "dummy-site-id");
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }
+    }
+
+    @Test
+    void testAssignRoleToPractitioner() throws IOException {
+
+        RoleAssignment ra = new RoleAssignment("id-dummy-practitioner", "id-dummy-site", "id-dummy-role");
+        IDResponse mockResponseBody = new IDResponse();
+        mockResponseBody.setId("id-dummy-role-assignment");
+        mockBackEnd.enqueue(new MockResponse()
+                .setBody(new ObjectMapper().writeValueAsString(mockResponseBody))
+                .addHeader("Content-Type", "application/json"));
+        try {
+            practitionerServiceInvoker.assignRoleToPractitioner(ra);
+        } catch(Exception e) {
+            fail("Should not have thrown any exception");
+        }
+    }
+
+    @Test
+    void testExecute_UsesReturnedPractitionerId_inRoleAssignment() throws Exception {
+        Practitioner testPractitioner = new Practitioner();
+        testPractitioner.setFamilyName("testFamilyName");
+        testPractitioner.setGivenName("testGivenName");
+        testPractitioner.setPrefix("Mrs");
+        testPractitioner.setRoles(Collections.singletonList("superuser"));
+        List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
+
+        String practitionerId ="dummy-practitioner-id";
+
+        PractitionerServiceInvoker mockServiceInvoker = mock(PractitionerServiceInvoker.class, org.mockito.Mockito.CALLS_REAL_METHODS);
+
+        doReturn(practitionerId).when(mockServiceInvoker).create(testPractitioner);
+        doNothing().when(mockServiceInvoker).assignRoleToPractitioner(any(RoleAssignment.class));
+
+        mockServiceInvoker.execute(practitioners, "dummy-site-id");
+
+        ArgumentCaptor<RoleAssignment> argumentCaptor = ArgumentCaptor.forClass(RoleAssignment.class);
+        verify(mockServiceInvoker).assignRoleToPractitioner(argumentCaptor.capture());
+        assertEquals(practitionerId, argumentCaptor.getValue().getPractitionerId());
+
     }
 }

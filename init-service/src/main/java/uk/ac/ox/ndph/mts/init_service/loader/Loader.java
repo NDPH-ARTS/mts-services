@@ -8,6 +8,8 @@ import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 
+import java.util.List;
+
 @Component
 public class Loader implements CommandLineRunner {
 
@@ -32,8 +34,9 @@ public class Loader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         roleServiceInvoker.execute(trialService.getTrial().getRoles());
-        siteServiceInvoker.execute(trialService.getTrial().getSites());
-        practitionerServiceInvoker.execute(trialService.getTrial().getPersons());
+        List<String> siteIds = siteServiceInvoker.execute(trialService.getTrial().getSites());
+        String siteId = siteIds.get(0);// This is yuk but is the assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
+        practitionerServiceInvoker.execute(trialService.getTrial().getPersons(), siteId);
     }
 }
 
