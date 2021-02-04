@@ -1,9 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,20 +10,22 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
-import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
+import uk.ac.ox.ndph.mts.site_service.repository.HapiFhirRepository;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SiteServiceImplTests {
-
-    @Mock
-    private FhirRepository repository;
 
     @Mock
     private EntityStore<Site> siteStore;
@@ -114,4 +114,18 @@ class SiteServiceImplTests {
         assertThat(siteFound.getName(), equalTo(site.getName()));
         assertThat(siteFound.getAlias(), equalTo(site.getAlias()));
     }
+
+    @Test
+    void TestFindtSiteByName_WhenStoreHasNoSite_ReturnsNull() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        when(siteStore.findOrganizationByName(anyString())).thenReturn(null);
+
+        // act
+        String siteName = "CCO";
+        final Site siteFound = siteService.findSiteByName(siteName);
+        assertThat(siteFound, equalTo(null));
+    }
+
+
 }
