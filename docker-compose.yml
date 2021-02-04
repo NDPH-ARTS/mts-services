@@ -139,7 +139,7 @@ services:
         ROLE_SERVICE: "http://role-service:82"
         SITE_SERVICE: "http://site-service:83"
         PRACTITIONER_SERVICE: "http://practitioner-service:80"
-        CONFIG_JSON: config-init.json
+        CONFIG_JSON: config-init-bootstrap-roles.json
       depends_on:
         - practitioner-service
         - role-service

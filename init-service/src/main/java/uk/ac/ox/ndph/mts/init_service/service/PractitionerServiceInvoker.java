@@ -58,9 +58,8 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
                 LOGGER.info("Starting to create practitioner(s): {}", practitioner);
                 String practitionerId = create(practitioner);
 
-                LOGGER.info("Assigning roles to practitioner(s): {} {}", practitionerId, practitioner.getRoles());
                 if (practitioner.getRoles() != null) {
-
+                    LOGGER.info("Assigning roles to practitioner(s): {} {}", practitionerId, practitioner.getRoles());
                     for (String roleId : practitioner.getRoles()) {
                         RoleAssignment ra = new RoleAssignment(practitionerId, siteId, roleId);
                         assignRoleToPractitioner(ra);
