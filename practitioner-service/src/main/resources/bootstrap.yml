@@ -3,6 +3,4 @@ spring:
     name: practitioner-service
   cloud:
     config:
-      uri: http://placeholder:port
-      profile: placeholder
-      label: placeholder
+      uri: http://placeholder:1234
