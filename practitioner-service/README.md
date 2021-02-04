@@ -101,7 +101,6 @@ The current json file allows up to 35 characters for any field, and specifies on
 when running locally, the config server is not required. setup the following env vars and run the project:
 
 ```sh
-SPRING_CLOUD_CONFIG_PROFILE=local
 SPRING_PROFILES_ACTIVE=local
 FHIR_URI=<some-uri>
 ROLE_SERVICE_URI=<some-uri>

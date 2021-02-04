@@ -26,6 +26,25 @@ services:
     ports:
       - "80:80"
 
+  config-server:
+    build:
+      context: .
+      dockerfile: config-server/Dockerfile
+      args:
+        SVC: config-server
+    environment:
+      SERVER_PORT: "8888"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/spring-config-server.git"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "practitioner-service"
+    image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
+    restart: on-failure
+    ports:
+      - "8888:8888"
+    healthcheck:
+      test: curl http://localhost:8888/
+      interval: 10s
+      timeout: 10s
+
   site-service:
     build:
       context: .
