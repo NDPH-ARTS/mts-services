@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class SiteServiceImplIntegrationTests {
     
-    public static final String SITES_ROUTE = "/sites";
+    private static final String SITES_ROUTE = "/sites";
 
     @Autowired
     private MockMvc mockMvc;
