@@ -12,19 +12,19 @@ import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
+import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SiteServiceInvoker implements ServiceInvoker {
+public class SiteServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceInvoker.class);
 
     @Value("${site.service}")
     private String siteService;
 
-    private final WebClient webClient;
 
     public SiteServiceInvoker() {
         this.webClient = WebClient.create(siteService);
@@ -33,17 +33,12 @@ public class SiteServiceInvoker implements ServiceInvoker {
         this.webClient = webClient;
     }
 
-    public String create(Entity site) throws DependentServiceException {
+    protected String create(Entity site) throws DependentServiceException {
 
         try {
-            IDResponse responseData = webClient.post()
-                    .uri(siteService + "/sites")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(Mono.just(site), Site.class)
-                    .retrieve()
-                    .bodyToMono(IDResponse.class)//Question: Why does site-service post endpoint return only the ID, not full Site data?
-                    .block();
-            return responseData.getId();
+            IDResponse responseFromSiteService = sendBlockingPostRequest(siteService + "/sites", site, IDResponse.class);
+            return responseFromSiteService.getId();
+
         } catch (Exception e) {
             LOGGER.info("FAILURE siteService {}", e.getMessage());
             throw new DependentServiceException("Error connecting to site service");

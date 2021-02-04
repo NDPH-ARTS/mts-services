@@ -16,13 +16,12 @@ import uk.ac.ox.ndph.mts.init_service.model.Role;
 import java.util.List;
 
 @Service
-public class RoleServiceInvoker implements ServiceInvoker {
+public class RoleServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoleServiceInvoker.class);
 
     @Value("${role.service}")
     private String roleService;
 
-    private final WebClient webClient;
 
     public RoleServiceInvoker() {
         this.webClient = WebClient.create(roleService);
@@ -32,17 +31,11 @@ public class RoleServiceInvoker implements ServiceInvoker {
     }
 
     @Override
-    public String create(Entity role) throws DependentServiceException {
+    protected String create(Entity role) throws DependentServiceException {
 
         try {
-            Role responseDataRole = webClient.post()
-                    .uri(roleService + "/roles")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(Mono.just(role), Role.class)
-                    .retrieve()
-                    .bodyToMono(Role.class)
-                    .block();
-            return responseDataRole.getId();
+            Role returnedRole = sendBlockingPostRequest(roleService + "/roles", role, Role.class);
+            return returnedRole.getId();
         } catch (Exception e) {
             LOGGER.info("FAILURE roleService {}", e.getMessage());
             throw new DependentServiceException("Error connecting to role service");

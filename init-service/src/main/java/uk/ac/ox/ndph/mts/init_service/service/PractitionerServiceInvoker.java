@@ -22,53 +22,41 @@ import uk.ac.ox.ndph.mts.init_service.model.RoleAssignment;
 import java.util.List;
 
 @Service
-public class PractitionerServiceInvoker implements ServiceInvoker {
+public class PractitionerServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerServiceInvoker.class);
 
     @Value("${practitioner.service}")
     private String practitionerService;
 
-    private final WebClient webClient;
 
     public PractitionerServiceInvoker() {
         this.webClient = WebClient.create(practitionerService);
     }
+
     public PractitionerServiceInvoker(WebClient webClient) {
         this.webClient = webClient;
     }
 
     @Override
-    public String create(Entity practitioner) throws DependentServiceException {
+    protected String create(Entity practitioner) throws DependentServiceException {
         try {
-            IDResponse responseData = webClient.post()
-                    .uri(practitionerService + "/practitioner")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(Mono.just(practitioner), Practitioner.class)
-                    .retrieve()
-                    .bodyToMono(IDResponse.class)//Question: Why does practitioner-service post endpoint return only the ID, not full Site data?
-                    .block();
-            return responseData.getId();
+            IDResponse response = sendBlockingPostRequest(practitionerService + "/practitioner", practitioner, IDResponse.class);
+            return response.getId();
         } catch (Exception e) {
-            LOGGER.info("FAILURE practitionerService {}", e.getMessage());
+            LOGGER.info("FAILURE at practitionerService create endpoint {}", e.getMessage());
             throw new DependentServiceException("Error connecting to practitioner service");
         }
     }
 
     protected void assignRoleToPractitioner(RoleAssignment roleAssignment) throws DependentServiceException {
         try {
-            webClient.post()
-                    .uri(practitionerService + "/practitioner/"+roleAssignment.getPractitionerId()+"/roles")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(Mono.just(roleAssignment), RoleAssignment.class)
-                    .retrieve()
-                    .bodyToMono(IDResponse.class)
-                    .block();
+
+            IDResponse response = sendBlockingPostRequest(practitionerService + "/practitioner/" + roleAssignment.getPractitionerId() + "/roles", roleAssignment, IDResponse.class);
         } catch (Exception e) {
-            LOGGER.info("FAILURE practitionerService {}", e.getMessage());
+            LOGGER.info("FAILURE at practitionerService assignroles endpoint {}", e.getMessage());
             throw new DependentServiceException("Error connecting to practitioner service to assign roles");
         }
     }
-
 
 
     public void execute(List<Practitioner> practitioners, String siteId) throws NullEntityException {
@@ -77,17 +65,16 @@ public class PractitionerServiceInvoker implements ServiceInvoker {
                 LOGGER.info("Starting to create practitioner(s): {}", practitioner);
                 String practitionerId = create(practitioner);
 
-                LOGGER.info("Assigning roles to practitioner(s): {}", practitioner.getRoles());
-                if(practitioner.getRoles()!=null){
+                LOGGER.info("Assigning roles to practitioner(s): {} {}", practitionerId, practitioner.getRoles());
+                if (practitioner.getRoles() != null) {
 
-                    for(String roleId : practitioner.getRoles()){
-                        LOGGER.info("role assignment role id="+roleId+" siteid="+siteId+" practitionerID="+practitionerId);
+                    for (String roleId : practitioner.getRoles()) {
                         RoleAssignment ra = new RoleAssignment(practitionerId, siteId, roleId);
                         assignRoleToPractitioner(ra);
                     }
                 }
 
-                LOGGER.info("Finished creating {} practitioner(s)", practitioners.size()+" practitionerId = "+practitionerId);
+                LOGGER.info("Finished creating {} practitioner", practitioners.size());
             }
         } else {
             throw new NullEntityException("No Practitioners in payload");
