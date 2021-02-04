@@ -1,15 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.Collection;
-import java.util.List;
-
 import ca.uhn.fhir.rest.gclient.IQuery;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
@@ -19,8 +11,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
+
+import java.util.Collection;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class HapiFhirRepositoryTests {
@@ -164,7 +164,7 @@ class HapiFhirRepositoryTests {
         when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(List.of(org));
         final var fhirRepository =  new HapiFhirRepository(fhirContextWrapper);
         // act
-        final Collection<Organization> orgs = fhirRepository.getOrganizations();
+        final Collection<Organization> orgs = fhirRepository.findOrganizations();
         // assert
         verify(mockQuery).execute();
         assertThat(orgs, is(not(empty())));
@@ -177,7 +177,7 @@ class HapiFhirRepositoryTests {
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenThrow(new ResourceNotFoundException("error"));
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.getOrganizations());
+        assertThrows(RestException.class, fhirRepository::findOrganizations);
     }
 
 }

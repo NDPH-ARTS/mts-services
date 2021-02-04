@@ -30,6 +30,6 @@ public interface FhirRepository {
      * not {uk.ac.ox.ndph.mts.site_service.model.Site}s - caller must filter.
      * @return all organization instances in the store, might be empty, not null
      */
-    Collection<Organization> getOrganizations();
+    Collection<Organization> findOrganizations();
 
 }

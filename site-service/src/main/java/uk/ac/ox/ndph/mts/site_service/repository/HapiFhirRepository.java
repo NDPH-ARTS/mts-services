@@ -1,15 +1,15 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
+import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class HapiFhirRepository implements FhirRepository {
      * not {uk.ac.ox.ndph.mts.site_service.model.Site}s - caller must filter.
      * @return all organization instances in the store, might be empty, not null
      */
-    public Collection<Organization> getOrganizations() {
+    public Collection<Organization> findOrganizations() {
         try {
             // TODO: filter organizations by the extension element that identifies them as sites
             final Bundle responseBundle = fhirContextWrapper

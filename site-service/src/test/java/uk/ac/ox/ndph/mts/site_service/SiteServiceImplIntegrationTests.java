@@ -10,21 +10,21 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = { "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
 @ActiveProfiles("test-all-required")
@@ -98,7 +98,7 @@ class SiteServiceImplIntegrationTests {
                 .setName("CCO")
                 .addAlias("Root");
         org.setId("this-is-my-id");
-        when(repository.getOrganizations()).thenReturn(List.of(org));
+        when(repository.findOrganizations()).thenReturn(List.of(org));
         // Act + Assert
         this.mockMvc
                 .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
@@ -109,7 +109,7 @@ class SiteServiceImplIntegrationTests {
     @Test
     void TestGetSites_WhenNoSites_ReturnsInternalServerError() throws Exception {
         // Arrange
-        when(repository.getOrganizations()).thenReturn(Collections.emptyList());
+        when(repository.findOrganizations()).thenReturn(Collections.emptyList());
         // Act + Assert
         final var message = this.mockMvc
                 .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
