@@ -100,7 +100,7 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestFindtSiteByName_WhenStoreHasSite_ReturnsSite() {
+    void TestFindSiteByName_WhenStoreHasSite_ReturnsSite() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         final var site = new Site("CCO", "Root", null);
@@ -116,7 +116,20 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestFindtSiteByName_WhenStoreHasNoSite_ReturnsNull() {
+    void TestSaveSite_WhenStoreHasSite_ThrowsSiteExistsException() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        final var site = new Site("CCO", "Root", null);
+        when(siteValidation.validate(site)).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findOrganizationByName(anyString())).thenReturn(site);
+
+        // assert
+        Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
+                "Site Already Exists");
+    }
+
+    @Test
+    void TestFindSiteByName_WhenStoreHasNoSite_ReturnsNull() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteStore.findOrganizationByName(anyString())).thenReturn(null);
