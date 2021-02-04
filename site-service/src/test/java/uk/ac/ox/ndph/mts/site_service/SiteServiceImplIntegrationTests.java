@@ -22,6 +22,7 @@ import uk.ac.ox.ndph.mts.site_service.repository.FhirServerResponseException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -42,7 +43,7 @@ class SiteServiceImplIntegrationTests {
     public FhirRepository repository;
 
     @Mock
-    EntityConverter<Organization, Site> fromOrgConverterMock;
+    EntityConverter<Organization, Site> fromOrgConverter;
 
     @Mock
     private EntityStore<Site> siteStore;
@@ -113,15 +114,17 @@ class SiteServiceImplIntegrationTests {
         org.setId("the-id");
         org.addAlias(alias);
         org.setPartOf(new Reference("Organization/" + parentId));
-        final Site convertedSite = new SiteConverter().convert(org);
+        Site convertedSite = new SiteConverter().convert(org);
 
         // Arrange
         when(repository.findOrganizationByName(organizationName)).thenReturn(org);
-        when(fromOrgConverterMock.convert(org)).thenReturn(convertedSite);
+        when(fromOrgConverter.convert(org)).thenReturn(convertedSite);
 
         //act
         Site site = siteStore.findOrganizationByName(organizationName);
 
-        assertThat(site, null);
+        assertEquals(null, site);
+        assertThat(convertedSite.getName(), is(equalTo(org.getName())));
+        assertThat(convertedSite.getAlias(), is(equalTo(alias)));
     }
 }
