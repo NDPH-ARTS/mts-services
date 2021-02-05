@@ -73,8 +73,11 @@ public class PractitionerService implements EntityService {
         return practitionerStore.saveEntity(practitioner);
     }
 
+    // TODO consider adding a new type to distinguish these String parameters (otherwise it's prone to
+    //  errors from accidental argument swapping).
     @Override
     public void linkPractitioner(final String userAccountId, final String practitionerId) {
+        // TODO add a LinkPractitionerValidator object
         if (StringUtils.isBlank(userAccountId)) {
             throw new BadRequestException("User Account ID must not be blank");
         }
@@ -83,16 +86,14 @@ public class PractitionerService implements EntityService {
         }
         
         var practitioner = practitionerStore.getEntity(practitionerId);
-        // practitioner.addIdentity(userAccountId);
+        practitioner.setUserAccountId(userAccountId);
         practitionerStore.saveEntity(practitioner);
-                
     }
     
     @Override
     public Practitioner getPractitioner(String id) {
         return practitionerStore.getEntity(id);
     }
-    
 
     @Override
     public String saveRoleAssignment(RoleAssignment roleAssignment) {

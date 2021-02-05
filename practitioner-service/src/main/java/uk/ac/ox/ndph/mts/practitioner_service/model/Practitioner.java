@@ -7,6 +7,7 @@ public class Practitioner {
     private final String prefix;
     private final String givenName;
     private final String familyName;
+    private String userAccountId;
 
     @JsonCreator
     public Practitioner(final String id, final String prefix, final String givenName, final String familyName) {
@@ -37,5 +38,13 @@ public class Practitioner {
 
     public String getId() {
         return id;
-    }    
+    }
+
+    public void setUserAccountId(final String userAccountId) {
+        this.userAccountId = userAccountId;
+    }
+
+    public String getUserAccountId() {
+        return userAccountId;
+    }
 }

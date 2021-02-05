@@ -29,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +42,8 @@ class PractitionerServiceTests {
     @Captor
     ArgumentCaptor<Practitioner> practitionerCaptor;
 
-    final String PRACTITIONER_ID = "practitionerId";
-    final String USER_ACCOUNT_ID = "userAccountId";
+    private static final String PRACTITIONER_ID = "practitionerId";
+    private static final String USER_ACCOUNT_ID = "userAccountId";
     
     @Mock
     private EntityStore<RoleAssignment> roleAssignmentStore;
@@ -52,6 +53,7 @@ class PractitionerServiceTests {
     ArgumentCaptor<RoleAssignment> roleAssignmentCaptor;
     
     //  Wat?
+    // TODO: "Wat" needs explanation
     PractitionerService practitionerService;
     private PractitionerService service;
 
@@ -62,6 +64,7 @@ class PractitionerServiceTests {
     }
     //  Wat?
     //  Wat?
+    // TODO: "Wat" needs explanation
     @BeforeEach
     void init() {
         this.service = new PractitionerService(practitionerStore, practitionerValidator,
@@ -181,6 +184,20 @@ class PractitionerServiceTests {
 
     private static Stream<String> getBlankStrings() {
         return Stream.of(null, "", "  ", "\t", "\n");
+    }
+
+    @Test
+    void linkPractitioner_whenValidPractitioner_thenSetUserAccountId() {
+        // Arrange
+        final Practitioner practitioner = new Practitioner("", "", "");
+        practitioner.setUserAccountId("");
+        when(practitionerStore.getEntity(anyString())).thenReturn(practitioner);
+
+        // Act
+        practitionerService.linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
+
+        // Assert
+        assertThat(practitioner.getUserAccountId(), equalTo(USER_ACCOUNT_ID));
     }
 
 
