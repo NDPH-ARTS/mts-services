@@ -3,19 +3,23 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 /**
  * String constants
  */
-public enum FhirRepo {
-    REQUEST_PAYLOAD("request to fhir: %s"),
-    RESPONSE_PAYLOAD("response from fhir: %s"),
-    UPDATE_ERROR("error while updating fhir store"),
+public enum Repositorys {
+    REQUEST_PAYLOAD("request to FHIR: %s"),
+    RESPONSE_PAYLOAD("response from FHIR: %s"),
+    UPDATE_ERROR("error while updating FHIR store"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
     SEARCH_ERROR("error while searching for resource: %s"),
-    PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s"),
+    PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s");
+    /*
+    wrong place for these ones
     SITE_EXISTS("Site Already Exists"),
     SITE_DOESNT_MATCH_PARENT("Site Exists But Doesn't Match Parent");;
+    */
+
 
     private String message;
  
-    FhirRepo(String message) {
+    Repositorys(String message) {
         this.message = message;
     }
 

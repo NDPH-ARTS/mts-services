@@ -20,14 +20,6 @@ public interface FhirRepository {
     String saveOrganization(Organization organization);
 
     /**
-     * Find Organization By ID from the FHIR store
-     *
-     * @param id of the organization to search.
-     * @return Organization searched by id.
-     */
-    Organization findOrganizationByID(String id);
-
-    /**
      * Find Organization By name from the FHIR store
      *
      * @param name of the organization to search.

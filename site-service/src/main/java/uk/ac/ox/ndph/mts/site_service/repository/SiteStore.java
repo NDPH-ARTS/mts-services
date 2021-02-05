@@ -48,15 +48,11 @@ public class SiteStore implements EntityStore<String, Site> {
      */
     @Override
     public String saveEntity(Site entity) {
-        String orgId = "";
-
-        Organization org = fromSiteConverter.convert(entity);
-        orgId = repository.saveOrganization(org);
+        final Organization org = fromSiteConverter.convert(entity);
+        final String orgId = repository.saveOrganization(org);
         org.setId(orgId);
-
-        // TODO: Add research study only when needed.
+        // TODO (who): Add research study only when needed.
         createResearchStudy(org);
-
         return orgId;
     }
 

@@ -7,6 +7,7 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +50,7 @@ public class HapiFhirRepository implements FhirRepository {
                     .execute(); // TODO (alexb paged): needs to handle paged response
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
+            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
 
@@ -59,7 +60,7 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public String saveOrganization(Organization organization) {
         // Log the request
-        logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
+        logger.info(Repositorys.REQUEST_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(organization));
 
         Bundle responseBundle;
@@ -67,65 +68,40 @@ public class HapiFhirRepository implements FhirRepository {
             responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                 bundle(organization, ORGANIZATION_ENTITY_NAME));
         } catch (FhirServerResponseException e) {
-            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(FhirRepo.UPDATE_ERROR.message(), e);
+            logger.warn(Repositorys.UPDATE_ERROR.message(), e);
+            throw new RestException(Repositorys.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
+        logger.info(Repositorys.RESPONSE_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
 
         return responseElement.getIdElement().getIdPart();
     }
 
     /**
-     * @param id of the organization to search.
-     * @return id of the saved organization
-     */
-    public Organization findOrganizationByID(String id) {
-        // Log the request
-        if (logger.isInfoEnabled()) {
-            logger.info(FhirRepo.REQUEST_PAYLOAD.message(), id);
-        }
-        Organization organization = null;
-
-        try {
-            organization = fhirContextWrapper.executeSearchById(fhirUri, id);
-
-        } catch (BaseServerResponseException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
-            }
-            throw new RestException(e.getMessage(), e);
-        }
-        return organization;
-    }
-
-    /**
+     * Exact search on name
      * @param name of the organization to search.
-     * @return org with that name or empty if not found
+     * @return org with that name or none() if not found
      */
     @Override
-    public Optional<Organization> findOrganizationByName(String name) {
-    //    Bundle responseBundle;
-
-       // try {
-//            responseBundle = fhirContextWrapper.executeSearchByName(fhirUri, name);
-        return Optional.empty(); // TODO (alexb): fix me
-        //   } catch (FhirServerResponseException e) {
-   //         logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
-    //        throw new RestException(FhirRepo.SEARCH_ERROR.message(), e);
-     //   }
-/*
-        if (!responseBundle.getEntry().isEmpty()) {
-            return Optional.empty(); // TODO (alexb): fix me
-            //return (Organization) responseBundle.getEntry().get(0).getResource();
+    public Optional<Organization> findOrganizationByName(final String name) {
+        try {
+            return fhirContextWrapper
+                    .search(fhirUri, Organization.class)
+                    .where(Organization.NAME.matchesExactly().value(name))
+                    .returnBundle(Bundle.class)
+                    .execute()
+                    .getEntry()
+                    .stream()
+                    .findFirst()
+                    .map(Bundle.BundleEntryComponent::getResource)
+                    .filter(r -> r.getResourceType().equals(ResourceType.Organization))
+                    .map(Organization.class::cast);
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
         }
-
-        return null;
-        */
-
     }
 
     /**
@@ -134,7 +110,7 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public String saveResearchStudy(ResearchStudy researchStudy) {
         // Log the request
-        logger.info(FhirRepo.REQUEST_PAYLOAD.message(),
+        logger.info(Repositorys.REQUEST_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(researchStudy));
 
         Bundle responseBundle;
@@ -142,13 +118,13 @@ public class HapiFhirRepository implements FhirRepository {
             responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                     bundle(researchStudy, RESEARCHSTUDY_ENTITY_NAME));
         } catch (FhirServerResponseException e) {
-            logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
-            throw new RestException(FhirRepo.UPDATE_ERROR.message(), e);
+            logger.warn(Repositorys.UPDATE_ERROR.message(), e);
+            throw new RestException(Repositorys.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
 
         // Log the response
-        logger.info(FhirRepo.RESPONSE_PAYLOAD.message(),
+        logger.info(Repositorys.RESPONSE_PAYLOAD.message(),
                     fhirContextWrapper.prettyPrint(responseElement));
 
         return responseElement.getIdElement().getIdPart();
@@ -158,10 +134,10 @@ public class HapiFhirRepository implements FhirRepository {
         var resp = fhirContextWrapper.toListOfResources(bundle);
         
         if (resp.size() != 1) {
-            logger.info(FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size());
+            logger.info(Repositorys.BAD_RESPONSE_SIZE.message(), resp.size());
 
             throw new RestException(String.format(
-                FhirRepo.BAD_RESPONSE_SIZE.message(), resp.size()));
+                Repositorys.BAD_RESPONSE_SIZE.message(), resp.size()));
 
         }
         return resp.get(0);
@@ -170,7 +146,6 @@ public class HapiFhirRepository implements FhirRepository {
     private Bundle bundle(Resource resource, String resourceName) {
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION);
-
         // Add the site as an entry.
         bundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource).getRequest()
                 .setUrl(resourceName).setMethod(Bundle.HTTPVerb.POST);
@@ -189,7 +164,7 @@ public class HapiFhirRepository implements FhirRepository {
         } catch (ResourceNotFoundException ex) {
             return Optional.empty();
         } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
+            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
 

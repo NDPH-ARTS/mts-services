@@ -1,13 +1,14 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
-import uk.ac.ox.ndph.mts.site_service.model.Site;
-
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface for a store of a data model entity
+ *  @param <K> type of ID for entities
+ *  @param <T> type of entity
  */
-public interface EntityStore<T> {
+public interface EntityStore<K, T> {
 
     /**
      * save the entity
@@ -17,16 +18,26 @@ public interface EntityStore<T> {
     String saveEntity(T entity);
 
     /**
-     * Find All Organizations from the FHIR store
-     * @return List of Organizations
+     * Find all entities in the store
+     * @return List of entities
      */
     List<T> findAll();
 
     /**
-     * Find Organization By ID from the FHIR store
+     * Find entity by name in the store
      *
-     * @param organizationName of the organization to search.
-     * @return Organization searched by name.
+     * @param name to search for
+     * @return entity or none() if none found
      */
-    Site findOrganizationByName(String organizationName);
+    Optional<T> findByName(String name);
+
+
+    /**
+     * Find entity by ID in the store
+     *
+     * @param id ID of entity to find
+     * @return entity or none() if none found
+     */
+    Optional<T> findById(K id);
+
 }

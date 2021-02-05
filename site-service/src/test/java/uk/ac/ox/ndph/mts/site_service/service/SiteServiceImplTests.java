@@ -18,6 +18,7 @@ import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -26,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -135,15 +137,14 @@ class SiteServiceImplTests {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         final var site = new Site("CCO", "Root", null);
-        when(siteStore.findOrganizationByName(anyString())).thenReturn(site);
-
+        when(siteStore.findByName(eq(site.getName()))).thenReturn(Optional.of(site));
         // act
         String siteName = "CCO";
-        final Site siteFound = siteService.findSiteByName(siteName);
-
+        final Optional<Site> siteFound = siteService.findSiteByName(siteName);
         // assert
-        assertThat(siteFound.getName(), equalTo(site.getName()));
-        assertThat(siteFound.getAlias(), equalTo(site.getAlias()));
+        assertThat(siteFound.isPresent(), is(true));
+        assertThat(siteFound.get().getName(), equalTo(site.getName()));
+        assertThat(siteFound.get().getAlias(), equalTo(site.getAlias()));
     }
 
     @Test
@@ -152,7 +153,7 @@ class SiteServiceImplTests {
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         final var site = new Site("CCO", "Root", null);
         when(siteValidation.validate(site)).thenReturn(new ValidationResponse(true, ""));
-        when(siteStore.findOrganizationByName(anyString())).thenReturn(site);
+        when(siteStore.findByName(eq(site.getName()))).thenReturn(Optional.of(site));
 
         // assert
         Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
@@ -160,15 +161,14 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestFindSiteByName_WhenStoreHasNoSite_ReturnsNull() {
+    void TestFindSiteByName_WhenStoreHasNoSite_ReturnsEmpty() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        when(siteStore.findOrganizationByName(anyString())).thenReturn(null);
-
+        when(siteStore.findByName(anyString())).thenReturn(Optional.empty());
         // act
         String siteName = "CCO";
-        final Site siteFound = siteService.findSiteByName(siteName);
-        assertThat(siteFound, equalTo(null));
+        final Optional<Site> siteFound = siteService.findSiteByName(siteName);
+        assertThat(siteFound.isEmpty(), is(true));
     }
 
 }

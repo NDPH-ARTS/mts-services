@@ -15,8 +15,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 public class WebConfig implements WebMvcConfigurer {
 
     /**
-     * api call
-     * @return Docket
+     * Return the Swagger UI docket handler
+     * @return Docket for Swagger UI
      */
     @Bean
     public Docket api() {

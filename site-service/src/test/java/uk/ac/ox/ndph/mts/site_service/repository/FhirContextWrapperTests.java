@@ -17,7 +17,7 @@ public class FhirContextWrapperTests {
     private static final String FHIR_URL = "http://localhost:8080"; // danger! dependency on external server
 
     @Test
-    void TestReadById_whenResourceDoesNotExist_returnsNone() {
+    void TestReadById_whenResourceDoesNotExist_thenThrows() {
         // arrange
         final var wrapper = new FhirContextWrapper();
         // act

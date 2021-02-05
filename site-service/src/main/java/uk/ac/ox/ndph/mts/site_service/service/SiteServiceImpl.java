@@ -4,17 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
+import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
-import uk.ac.ox.ndph.mts.site_service.repository.FhirRepo;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implement an SiteServiceInterface interface.
@@ -24,16 +24,16 @@ import java.util.List;
 @Service
 public class SiteServiceImpl implements SiteService {
 
-    private EntityStore<Site> siteStore;
+    private final EntityStore<String, Site> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
-     * @param siteStore Site store interface
+     * @param siteStore        Site store interface
      * @param entityValidation Site validation interface
      */
     @Autowired
-    public SiteServiceImpl(EntityStore<Site> siteStore,
+    public SiteServiceImpl(final EntityStore<String, Site> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
@@ -49,21 +49,24 @@ public class SiteServiceImpl implements SiteService {
     }
 
     /**
-     *
      * @param site the Site to save.
      * @return The id of the new site
      */
+    @Override
     public String save(Site site) {
         var validationResponse = entityValidation.validate(site);
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
-
-        validationResponse = validateSiteExists(site.getName());
-        if (!validationResponse.isValid()) {
-            throw new ValidationException(validationResponse.getErrorMessage());
+        if (findSiteByName(site.getName()).isPresent()) {
+            throw new ValidationException(Services.SITE_EXISTS.message());
         }
-
+        if (site.getParentSiteId() != null) {
+            validationResponse = validateParentSiteExists(site.getParentSiteId());
+            if (!validationResponse.isValid()) {
+                throw new ValidationException(validationResponse.getErrorMessage());
+            }
+        }
         return siteStore.saveEntity(site);
     }
 
@@ -71,10 +74,11 @@ public class SiteServiceImpl implements SiteService {
      * Get complete sites list.  Note the list should never be empty if the trial has been initialized, and
      * this method should not be called if the trial has not been initialized. So throws an exception if the
      * store returns an empty sites list.
+     *
      * @return list of sites, never empty
      * @throws InvariantException if the list from the store is empty
      */
-    @GetMapping
+    @Override
     public List<Site> findSites() {
         final List<Site> sites = this.siteStore.findAll();
         if (sites.isEmpty()) {
@@ -83,22 +87,36 @@ public class SiteServiceImpl implements SiteService {
         return sites;
     }
 
-    /**
-     *
-     * @param siteName the Site to search.
-     * @return site The Site being searched.
-     */
-    public Site findSiteByName(String siteName) {
-        return siteStore.findOrganizationByName(siteName);
+    private ValidationResponse validateParentSiteExists(final String parentSiteId) {
+        if (this.siteStore.findById(parentSiteId).isPresent()) {
+            return new ValidationResponse(true, "");
+        }
+        return new ValidationResponse(false, Services.PARENT_NOT_FOUND.message());
     }
 
-    private ValidationResponse validateSiteExists(String orgName) {
-        //Check if the Site already exists.
-        Site site = findSiteByName(orgName);
-        if (null != site) {
-            return new ValidationResponse(false, FhirRepo.SITE_EXISTS.message());
-        }
-        return new ValidationResponse(true, "");
+    /**
+     * Find Site By Site Name
+     *
+     * @param siteName the Site to search.
+     * @return site The Site being searched, or none() if not found
+     */
+    @Override
+    public Optional<Site> findSiteByName(String siteName) {
+        return siteStore.findByName(siteName);
+    }
+
+    /**
+     * Find site by ID
+     *
+     * @param id site ID to search for
+     * @return site if found
+     * @throws NotFoundException if not found
+     */
+    public Site findSiteById(String id) throws NotFoundException {
+        return this.siteStore
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(Services.SITE_NOT_FOUND.message(), id));
+
     }
 
 }
