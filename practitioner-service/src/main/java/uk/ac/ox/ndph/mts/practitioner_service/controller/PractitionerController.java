@@ -48,7 +48,8 @@ public class PractitionerController {
     @PostMapping(path = "/link")
     @Consumes(APPLICATION_JSON_VALUE)
     @Produces(APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> practitionerLink(@RequestParam String userAccountId,
+    public ResponseEntity<Response> practitionerLink(
+            @RequestParam String userAccountId,
             @RequestParam String practitionerId) {
         entityService.linkPractitioner(userAccountId, practitionerId);
         // TODO (archiem) implement return value

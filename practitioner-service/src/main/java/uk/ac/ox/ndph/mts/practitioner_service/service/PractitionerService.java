@@ -85,7 +85,7 @@ public class PractitionerService implements EntityService {
             throw new BadRequestException("Practitioner ID must not be blank");
         }
         
-        var practitioner = practitionerStore.getEntity(practitionerId);
+        final Practitioner practitioner = practitionerStore.getEntity(practitionerId);
         practitioner.setUserAccountId(userAccountId);
         practitionerStore.saveEntity(practitioner);
     }

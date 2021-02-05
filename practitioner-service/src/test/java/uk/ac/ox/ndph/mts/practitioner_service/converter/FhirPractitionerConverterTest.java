@@ -4,18 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Practitioner;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FhirPractitionerConverterTest {
 
     private FhirPractitionerConverter converter;
 
-    @Before
+    @BeforeEach
     public void setup() {
         converter = new FhirPractitionerConverter();    
     }
-    
+
     @Test
     public void convert_ConvertsValidPractitioner() {
         Practitioner practitioner = new Practitioner();
