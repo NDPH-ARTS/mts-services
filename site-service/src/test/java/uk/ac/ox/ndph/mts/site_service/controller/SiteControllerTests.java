@@ -19,6 +19,7 @@ import java.util.Collections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -123,11 +124,28 @@ class SiteControllerTests {
     @Test
     void TestGetSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
-        when(siteService.findSites()).thenThrow(RestException.class);
+        when(siteService.findSiteById(anyString())).thenThrow(RestException.class);
         // Act + Assert
         this.mockMvc
-                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
+                .perform(get(SITES_ROUTE + "/id-that-does-not-exist")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadGateway());
     }
+
+
+    /*
+    @Test
+    void TestGetSite_WhenIdFound_Returns200AndSite() throws Exception {
+        // Arrange
+        final String siteId = "the-site-id";
+        when(siteService.findSiteById(equal).thenReturn(new Site("TheSite", "site", "parentId", )));
+        // Act + Assert
+        this.mockMvc
+                .perform(get(SITES_ROUTE + "/id-that-does-not-exist")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isBadGateway());
+    }
+
+     */
 
 }

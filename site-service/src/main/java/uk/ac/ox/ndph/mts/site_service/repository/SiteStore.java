@@ -11,13 +11,14 @@ import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Implement an EntityStore for Site.
  */
 @Component
-public class SiteStore implements EntityStore<Site> {
+public class SiteStore implements EntityStore<String, Site> {
 
     private final FhirRepository repository;
     private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter;
@@ -80,6 +81,16 @@ public class SiteStore implements EntityStore<Site> {
                 .stream()
                 .map(fromOrgConverter::convert)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Find a site entity by ID
+     * @return optional with site entity with given ID or none if not found
+     */
+    @Override
+    public Optional<Site> findById(final String id) {
+        return this.repository.findOrganizationById(id)
+                .map(fromOrgConverter::convert);
     }
 
 }

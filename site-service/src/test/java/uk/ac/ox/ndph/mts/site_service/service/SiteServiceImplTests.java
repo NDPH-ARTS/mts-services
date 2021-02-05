@@ -28,7 +28,7 @@ import java.util.List;
 class SiteServiceImplTests {
 
     @Mock
-    private EntityStore<Site> siteStore;
+    private EntityStore<String, Site> siteStore;
 
     @Mock
     private ModelEntityValidation<Site> siteValidation;

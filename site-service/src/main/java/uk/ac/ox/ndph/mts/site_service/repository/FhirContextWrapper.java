@@ -1,15 +1,15 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.gclient.IQuery;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.stereotype.Component;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.util.BundleUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Wrapper around a Fhir Context
@@ -71,6 +71,24 @@ public class FhirContextWrapper {
                 .search()
                 .forResource(resourceClass)
                 .returnBundle(Bundle.class);
+    }
+
+    /**
+     * Execute a query read for the given resource type and ID
+     * @param uri FHIR endpoint URI
+     * @param resourceClass resource class to return
+     * @param id ID to lookup
+     * @return instance of the given resource
+     * @throws ResourceNotFoundException if server returned a 404
+     */
+    public <T extends IBaseResource> T readById(final String uri,
+                                                     final Class<T> resourceClass,
+                                                     final String id) {
+        return fhirContext.newRestfulGenericClient(uri)
+                .read()
+                .resource(resourceClass)
+                .withId(id)
+                .execute();
     }
 
 }

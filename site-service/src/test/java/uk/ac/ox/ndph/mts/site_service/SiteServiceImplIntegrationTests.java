@@ -117,4 +117,26 @@ class SiteServiceImplIntegrationTests {
         assertThat(message, containsString("No root site"));
     }
 
+
+    @Test
+    void TestGetSiteById_WhenSiteExists_ReturnsSite() throws Exception {
+        // arrange
+        // act
+        // assert
+    }
+
+    @Test
+    void TestGetSiteById_WhenSiteDoesNotExist_ReturnsNotFoundError() throws Exception {
+        // arrange
+        // act
+        // assert
+    }
+
+    @Test
+    void TestGetSiteById_WhenRepositoryThrows_ReturnsBadGateway() throws Exception {
+        // arrange
+        // act
+        // assert
+    }
+
 }

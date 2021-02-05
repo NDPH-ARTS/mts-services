@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
+import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 public class SiteServiceImpl implements SiteService {
 
-    private EntityStore<Site> siteStore;
+    private EntityStore<String, Site> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
@@ -32,7 +32,7 @@ public class SiteServiceImpl implements SiteService {
      * @param entityValidation Site validation interface 
      */
     @Autowired
-    public SiteServiceImpl(EntityStore<Site> siteStore,
+    public SiteServiceImpl(EntityStore<String, Site> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
@@ -67,13 +67,24 @@ public class SiteServiceImpl implements SiteService {
      * @return list of sites, never empty
      * @throws InvariantException if the list from the store is empty
      */
-    @GetMapping
     public List<Site> findSites() {
         final List<Site> sites = this.siteStore.findAll();
         if (sites.isEmpty()) {
             throw new InvariantException(Services.NO_ROOT_SITE.message());
         }
         return sites;
+    }
+
+    /**
+     * Find a site by ID,
+     * @param id site ID, not null
+     * @return site instance
+     * @throws NotFoundException if site with that iD not found
+     */
+    public Site findSiteById(final String id) throws NotFoundException {
+        return this.siteStore
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(Services.SITE_NOT_FOUND.message(), id));
     }
 
 }
