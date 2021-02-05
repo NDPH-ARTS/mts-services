@@ -5,7 +5,8 @@ package uk.ac.ox.ndph.mts.site_service.service;
  */
 public enum Services {
     STARTUP("Loaded site service required dependencies"),
-    NO_ROOT_SITE("No root site found");
+    NO_ROOT_SITE("No root site found"),
+    SITE_NOT_FOUND("Site ID not found");
 
     private String message;
  

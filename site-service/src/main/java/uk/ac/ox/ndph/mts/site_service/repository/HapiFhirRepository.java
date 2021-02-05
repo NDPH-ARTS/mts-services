@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Organization;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
@@ -41,10 +43,10 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public Collection<Organization> findOrganizations() {
         try {
-            // TODO: filter organizations by the extension element that identifies them as sites
+            // TODO (alexb siteType): filter organizations by the extension element that identifies them as sites
             final Bundle responseBundle = fhirContextWrapper
                     .search(fhirUri, Organization.class)
-                    .execute();
+                    .execute(); // TODO (alexb paged): needs to handle paged response
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
             throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
@@ -102,25 +104,28 @@ public class HapiFhirRepository implements FhirRepository {
 
     /**
      * @param name of the organization to search.
-     * @return id of the saved organization
+     * @return org with that name or empty if not found
      */
-    public Organization findOrganizationByName(String name) {
-        // Log the request
-        Bundle responseBundle;
+    @Override
+    public Optional<Organization> findOrganizationByName(String name) {
+    //    Bundle responseBundle;
 
-        try {
-            responseBundle = fhirContextWrapper.executeSearchByName(fhirUri, name);
-
-        } catch (FhirServerResponseException e) {
-            logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
-            throw new RestException(FhirRepo.SEARCH_ERROR.message(), e);
-        }
-
+       // try {
+//            responseBundle = fhirContextWrapper.executeSearchByName(fhirUri, name);
+        return Optional.empty(); // TODO (alexb): fix me
+        //   } catch (FhirServerResponseException e) {
+   //         logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
+    //        throw new RestException(FhirRepo.SEARCH_ERROR.message(), e);
+     //   }
+/*
         if (!responseBundle.getEntry().isEmpty()) {
-            return (Organization) responseBundle.getEntry().get(0).getResource();
+            return Optional.empty(); // TODO (alexb): fix me
+            //return (Organization) responseBundle.getEntry().get(0).getResource();
         }
 
         return null;
+        */
+
     }
 
     /**
@@ -171,4 +176,21 @@ public class HapiFhirRepository implements FhirRepository {
                 .setUrl(resourceName).setMethod(Bundle.HTTPVerb.POST);
         return bundle;
     }
+
+    /**
+     * Return an organization by ID in an Optional
+     * @param id organization ID to search for
+     * @return optional with the organization or empty() if not found
+     */
+    @Override
+    public Optional<Organization> findOrganizationById(final String id) {
+        try {
+            return Optional.of(fhirContextWrapper.readById(fhirUri, Organization.class, id));
+        } catch (ResourceNotFoundException ex) {
+            return Optional.empty();
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
+    }
+
 }

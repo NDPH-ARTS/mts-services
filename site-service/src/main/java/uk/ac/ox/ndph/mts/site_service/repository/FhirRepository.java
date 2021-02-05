@@ -4,6 +4,7 @@ import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Interface for a FHIR entity repository
@@ -27,12 +28,12 @@ public interface FhirRepository {
     Organization findOrganizationByID(String id);
 
     /**
-     * Find Organization By ID from the FHIR store
+     * Find Organization By name from the FHIR store
      *
      * @param name of the organization to search.
-     * @return Organization searched by name.
+     * @return Organization searched by name or none if not found
      */
-    Organization findOrganizationByName(String name);
+    Optional<Organization> findOrganizationByName(String name);
 
     /**
      * Creates a new ResearchStudy resource.
@@ -47,5 +48,12 @@ public interface FhirRepository {
      * @return all organization instances in the store, might be empty, not null
      */
     Collection<Organization> findOrganizations();
+
+    /**
+     * Return an organization by ID, or Optional.none() if not found
+     * @param id organization ID to search for
+     * @return optional with the organization or none if not found
+     */
+    Optional<Organization> findOrganizationById(String id);
 
 }
