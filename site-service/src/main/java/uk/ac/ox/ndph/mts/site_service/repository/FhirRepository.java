@@ -3,6 +3,8 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
 
+import java.util.Collection;
+
 /**
  * Interface for a FHIR entity repository
  */
@@ -38,4 +40,12 @@ public interface FhirRepository {
      * @return ResearchStudy
      */
     String saveResearchStudy(ResearchStudy researchStudy);
+
+    /**
+     * Return the list of all organizations. Note this may include organizations that are
+     * not {uk.ac.ox.ndph.mts.site_service.model.Site}s - caller must filter.
+     * @return all organization instances in the store, might be empty, not null
+     */
+    Collection<Organization> findOrganizations();
+
 }

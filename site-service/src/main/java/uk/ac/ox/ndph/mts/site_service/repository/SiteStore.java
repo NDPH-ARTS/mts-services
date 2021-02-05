@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Implement an EntityStore for Site.
  */
@@ -22,14 +25,16 @@ public class SiteStore implements EntityStore<Site> {
     private final Logger logger = LoggerFactory.getLogger(SiteStore.class);
 
     /**
-     *  @param repository - The fhir repository
-     * @param fromSiteConverter - a model-entity to fhir-entity fromSiteConverter
-     * @param fromOrgConverter - a fhir-entity to model-entity fromOrgConverter
+     *
+     * @param repository - The fhir repository
+     * @param fromSiteConverter - a model-entity to fhir-entity converter
+     * @param fromOrgConverter - a fhir-entity to model-entity converter
      */
     @Autowired
     public SiteStore(FhirRepository repository,
-                     EntityConverter<Site, Organization> fromSiteConverter,
-                     EntityConverter<Organization, Site> fromOrgConverter) {
+                     EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter,
+                     EntityConverter<org.hl7.fhir.r4.model.Organization, Site> fromOrgConverter
+                     ) {
         this.repository = repository;
         this.fromSiteConverter = fromSiteConverter;
         this.fromOrgConverter = fromOrgConverter;
@@ -76,4 +81,17 @@ public class SiteStore implements EntityStore<Site> {
         rs.setSponsor(new Reference("Organization/" + org.getId()));
         return repository.saveResearchStudy(rs);
     }
+
+    /**
+     * This should never actually be empty, but enforce that invariant at the service level not the store level
+     * @return list of site entities
+     */
+    @Override
+    public List<Site> findAll() {
+        return this.repository.findOrganizations()
+                .stream()
+                .map(fromOrgConverter::convert)
+                .collect(Collectors.toList());
+    }
+
 }

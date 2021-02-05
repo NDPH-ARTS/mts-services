@@ -8,14 +8,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
+import java.util.Collections;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -24,6 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = { "server.error.include-message=always" })
 @AutoConfigureMockMvc
 class SiteControllerTests {
+
+    private static final String SITES_ROUTE = "/sites";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -34,7 +42,7 @@ class SiteControllerTests {
     void TestPostSite_WhenNoInput_Returns400() throws Exception {
 
         // Act + Assert
-        this.mockMvc.perform(post("/sites").contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
@@ -45,7 +53,7 @@ class SiteControllerTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -56,7 +64,7 @@ class SiteControllerTests {
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
@@ -68,7 +76,7 @@ class SiteControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isBadGateway());
     }
 
@@ -80,8 +88,46 @@ class SiteControllerTests {
 
         // Act + Assert
         String error = this.mockMvc
-                .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("name"));
     }
+
+
+    @Test
+    void TestGetSite_WhenNoSites_Returns501() throws Exception {
+        // Arrange
+        when(siteService.findSites()).thenThrow(new InvariantException("root"));
+        // Act + Assert
+        final String error = this.mockMvc
+                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotImplemented()).andReturn().getResolvedException().getMessage();
+        assertThat(error, containsString("root"));
+
+    }
+
+    @Test
+    void TestGetSite_WhenSites_Returns200AndList() throws Exception {
+        // arrange
+        when(siteService.findSites()).thenReturn(Collections.singletonList(new Site("CCO", "Root")));
+        // act
+        final String result = this.mockMvc
+                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // assert - not perfect as need to parse to a JSON object to check keys/values properly
+        assertThat(result, stringContainsInOrder("\"name\":", "\"CCO\""));
+        assertThat(result, stringContainsInOrder("\"alias\":", "\"Root\""));
+        assertThat(result, stringContainsInOrder("\"parentSiteId\":", "null"));
+    }
+
+    @Test
+    void TestGetSite_WhenFhirDependencyFails_Returns502() throws Exception {
+        // Arrange
+        when(siteService.findSites()).thenThrow(RestException.class);
+        // Act + Assert
+        this.mockMvc
+                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isBadGateway());
+    }
+
 }

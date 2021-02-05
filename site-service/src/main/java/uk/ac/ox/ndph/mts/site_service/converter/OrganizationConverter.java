@@ -11,7 +11,7 @@ import uk.ac.ox.ndph.mts.site_service.repository.FhirRepo;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 
 /**
- * Implement an EntityConverter for Site
+ * Implement an EntityConverter for Organization.
  */
 @Component
 public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir.r4.model.Organization> {
@@ -67,4 +67,5 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
     private boolean isNullOrBlank(String str) {
         return str == null || str.isBlank();
     }
+
 }

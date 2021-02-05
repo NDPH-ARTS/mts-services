@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
+import java.util.Collection;
+
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
  * a FHIR store.
@@ -33,6 +35,23 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     /**
+     * Return the list of all organizations. Note this may include organizations that are
+     * not {uk.ac.ox.ndph.mts.site_service.model.Site}s - caller must filter.
+     * @return all organization instances in the store, might be empty, not null
+     */
+    public Collection<Organization> findOrganizations() {
+        try {
+            // TODO: filter organizations by the extension element that identifies them as sites
+            final Bundle responseBundle = fhirContextWrapper
+                    .search(fhirUri, Organization.class)
+                    .execute();
+            return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
+    }
+
+    /**
      * @param organization the organization to save.
      * @return id of the saved organization
      */
@@ -43,7 +62,7 @@ public class HapiFhirRepository implements FhirRepository {
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri, 
+            responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                 bundle(organization, ORGANIZATION_ENTITY_NAME));
         } catch (FhirServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
@@ -115,7 +134,7 @@ public class HapiFhirRepository implements FhirRepository {
 
         Bundle responseBundle;
         try {
-            responseBundle = fhirContextWrapper.executeTrasaction(fhirUri,
+            responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                     bundle(researchStudy, RESEARCHSTUDY_ENTITY_NAME));
         } catch (FhirServerResponseException e) {
             logger.warn(FhirRepo.UPDATE_ERROR.message(), e);
