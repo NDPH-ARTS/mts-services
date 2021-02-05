@@ -3,6 +3,8 @@ package uk.ac.ox.ndph.mts.practitioner_service.controller;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,6 +51,8 @@ class PractitionerControllerTests {
     private final String roleAssignmentUri = "/practitioner/987/roles";
     private static final String PARAM_PRACTITIONER = "practitionerId";
     private static final String PARAM_USER = "userAccountId";
+    private static final String USER_ACCOUNT_ID = "idOfUserAccount";
+    private static final String PRACTITIONER_ID = "idOfPractitioner";
 
     @Test
     void TestGetPractitioner_WithInvalidId_ReturnsPractitioner() throws Exception {
@@ -136,19 +140,15 @@ class PractitionerControllerTests {
 
     @ParameterizedTest
     @MethodSource("atLeastOneParamNotPresent")
-    void testLinkPractitioner_whenParamsNotPresent_error(String userParam, String practitionerParam) throws Exception {
-        // Arrange
-        final String USER_ACCOUNT = "userAccount";
-        final String PRACTITIONER = "practitioner";
-
+    void linkPractitioner_whenParamsNotPresent_error(String userParam, String practitionerParam) throws Exception {
         // Act
         this.mockMvc.perform(post("/practitioner/link")
-                        .param(userParam, USER_ACCOUNT)
-                        .param(practitionerParam, PRACTITIONER)
+                        .param(userParam, USER_ACCOUNT_ID)
+                        .param(practitionerParam, PRACTITIONER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());
         // Assert
-        verify(entityService, never()).linkPractitioner(USER_ACCOUNT, PRACTITIONER);
+        verify(entityService, never()).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
     }
 
     private static Stream<Arguments> atLeastOneParamNotPresent() {
@@ -159,19 +159,29 @@ class PractitionerControllerTests {
     }
 
     @Test
-    void testLinkPractitioner_whenParamsPresent_callsEntityService() throws Exception {
-        // Arrange
-        final String USER_ACCOUNT = "userAccount";
-        final String PRACTITIONER = "practitioner";
-
+    void linkPractitioner_whenParamsPresent_callsEntityService() throws Exception {
         // Act
         this.mockMvc
                 .perform(post("/practitioner/link")
-                        .param(PARAM_USER, USER_ACCOUNT)
-                        .param(PARAM_PRACTITIONER, PRACTITIONER)
+                        .param(PARAM_USER, USER_ACCOUNT_ID)
+                        .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
                         .contentType(MediaType.APPLICATION_JSON));
         // Assert
-        verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT, PRACTITIONER);
+        verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
+    }
+
+    @Test
+    void linkPractitioner_whenLinkSucceeds_thenReturnCreatedStatus() throws Exception {
+        // Arrange
+        doNothing().when(entityService).linkPractitioner(anyString(), anyString());
+
+        // Act + Assert
+        this.mockMvc
+                .perform(post("/practitioner/link")
+                                 .param(PARAM_USER, USER_ACCOUNT_ID)
+                                 .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
+                                 .contentType(MediaType.APPLICATION_JSON))
+                                 .andExpect(status().isCreated());
     }
 
 

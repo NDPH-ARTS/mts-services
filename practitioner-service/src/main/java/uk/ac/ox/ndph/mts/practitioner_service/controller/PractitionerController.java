@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,8 +53,7 @@ public class PractitionerController {
             @RequestParam String userAccountId,
             @RequestParam String practitionerId) {
         entityService.linkPractitioner(userAccountId, practitionerId);
-        // TODO (archiem) implement return value
-        return null;
+        return ResponseEntity.status(CREATED).build();
     }
 
     @GetMapping(path = "/{id}")
