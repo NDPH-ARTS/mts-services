@@ -8,6 +8,7 @@ public enum FhirRepo {
     RESPONSE_PAYLOAD("response from fhir: %s"),
     UPDATE_ERROR("error while updating fhir store"),
     SEARCH_ERROR("error while searching fhir store"),
+    PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
     SITE_EXISTS("Site Already Exists"),
     SITE_DOESNT_MATCH_PARENT("Site Exists But Doesn't Match Parent");;

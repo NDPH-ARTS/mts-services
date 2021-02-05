@@ -17,19 +17,22 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 public class SiteStore implements EntityStore<Site> {
 
     private final FhirRepository repository;
-    private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> converter;
+    private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter;
+    private final EntityConverter<org.hl7.fhir.r4.model.Organization, Site> fromOrgConverter;
     private final Logger logger = LoggerFactory.getLogger(SiteStore.class);
 
     /**
-     *
-     * @param repository - The fhir repository
-     * @param converter - a model-entity to fhir-entity converter
+     *  @param repository - The fhir repository
+     * @param fromSiteConverter - a model-entity to fhir-entity fromSiteConverter
+     * @param fromOrgConverter - a fhir-entity to model-entity fromOrgConverter
      */
     @Autowired
     public SiteStore(FhirRepository repository,
-                     EntityConverter<Site, org.hl7.fhir.r4.model.Organization> converter) {
+                     EntityConverter<Site, Organization> fromSiteConverter,
+                     EntityConverter<Organization, Site> fromOrgConverter) {
         this.repository = repository;
-        this.converter = converter;
+        this.fromSiteConverter = fromSiteConverter;
+        this.fromOrgConverter = fromOrgConverter;
     }
 
     /**
@@ -41,14 +44,29 @@ public class SiteStore implements EntityStore<Site> {
     public String saveEntity(Site entity) {
         String orgId = "";
 
-        Organization org = converter.convert(entity);
+        Organization org = fromSiteConverter.convert(entity);
         orgId = repository.saveOrganization(org);
         org.setId(orgId);
 
         // TODO: Add research study only when needed.
-        String researchStudyId = createResearchStudy(org);
+        createResearchStudy(org);
 
         return orgId;
+    }
+
+    /**
+     * Find Organization By ID from the FHIR store
+     *
+     * @param organizationName of the organization to search.
+     * @return Organization searched by name.
+     */
+    public Site findOrganizationByName(String organizationName) {
+        Organization org = repository.findOrganizationByName(organizationName);
+        Site site = null;
+        if (null != org) {
+            site = fromOrgConverter.convert(org);
+        }
+        return site;
     }
 
     private String createResearchStudy(Organization org) {

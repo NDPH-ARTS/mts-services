@@ -14,4 +14,12 @@ public interface SiteService {
      * @return the id of the created entity.
      */
     String save(Site site);
+
+    /**
+     * Find Site By Site Name
+     *
+     * @param siteName the Site to search.
+     * @return site The Site being searched.
+     */
+    Site findSiteByName(String siteName);
 }

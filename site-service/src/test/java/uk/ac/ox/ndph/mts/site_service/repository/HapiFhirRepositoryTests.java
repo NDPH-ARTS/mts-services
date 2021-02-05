@@ -33,7 +33,7 @@ class HapiFhirRepositoryTests {
     private ArgumentCaptor<Bundle> bundleCaptor;
 
     @Test
-    void TestHapiRepository_WhenSaveOrganization_SendsBundleWithTransactionType()
+    void TestHapiRepository_WhenSaveOrganization_SendsBundleWithTransactionType() throws FhirServerResponseException
     {
         // Arrange
         var responseBundle = new Bundle();
@@ -54,7 +54,29 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenSearchOrganizationByName_Sends_NOT_FOUND()
+    void TestHapiRepository_WhenSearchOrganizationByName_Success() throws FhirServerResponseException
+    {
+        // Arrange
+        var organization = new Organization();
+        organization.setName("abc");
+        var responseBundle = new Bundle();
+        responseBundle.addEntry();
+
+        when(fhirContextWrapper.executeSearchByName(anyString(), anyString())).thenReturn(responseBundle);
+        var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
+        var uri = "";
+        var name = "findByName";
+
+        // Act
+        Organization org = fhirRepository.findOrganizationByName(name);
+
+        // Assert
+        verify(fhirContextWrapper).executeSearchByName(uri, name);
+        assertEquals(null, org);
+    }
+
+    @Test
+    void TestHapiRepository_WhenSearchOrganizationByName_Sends_NULL() throws FhirServerResponseException
     {
         // Arrange
         var responseBundle = new Bundle();
@@ -72,7 +94,20 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenSaveResearchStudy_SendsBundleWithTransactionType()
+    void TestHapiRepository_WhenSearchOrganizationByName_ThrowsException() throws FhirServerResponseException {
+
+        FhirServerResponseException exception = new FhirServerResponseException("message", new ResourceNotFoundException("error"));
+        when(fhirContextWrapper.executeSearchByName(anyString(), anyString())).thenThrow(exception);
+        var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
+        String organizationName = "abc";
+
+        // Act + Assert
+        assertThrows(RestException.class, () -> fhirRepository.findOrganizationByName(organizationName));
+
+    }
+
+    @Test
+    void TestHapiRepository_WhenSaveResearchStudy_SendsBundleWithTransactionType() throws FhirServerResponseException
     {
         // Arrange
         var responseBundle = new Bundle();
@@ -93,8 +128,10 @@ class HapiFhirRepositoryTests {
     }
     
     @Test
-    void TestHapiRepository_WhenContextWrapperThrowsExpected_ThrowsRestException(){
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenThrow(new ResourceNotFoundException("error"));
+    void TestHapiRepository_WhenContextWrapperThrowsExpected_ThrowsException() throws FhirServerResponseException
+    {
+        FhirServerResponseException exception = new FhirServerResponseException("message", new ResourceNotFoundException("error"));
+        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenThrow(exception);
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var organization = new Organization();
         
@@ -103,7 +140,8 @@ class HapiFhirRepositoryTests {
     }
     
     @Test
-    void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException(){
+    void TestHapiRepository_WhenContextReturnsMalformedBundle_ThrowsRestException()  throws FhirServerResponseException
+    {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
@@ -116,7 +154,8 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException(){
+    void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException() throws FhirServerResponseException
+    {
         // Arrange
         when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(null);
 
@@ -128,8 +167,10 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextWrapperResearchStudyThrowsExpected_ThrowsRestException(){
-        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenThrow(new ResourceNotFoundException("error"));
+    void TestHapiRepository_WhenContextWrapperResearchStudyThrowsExpected_ThrowsRestException()  throws FhirServerResponseException
+    {
+        FhirServerResponseException exception = new FhirServerResponseException("message", new ResourceNotFoundException("error"));
+        when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenThrow(exception);
         var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         var researchStudy = new ResearchStudy();
 
@@ -138,7 +179,8 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextReturnsMalformedBundleResearchStudy_ThrowsRestException(){
+    void TestHapiRepository_WhenContextReturnsMalformedBundleResearchStudy_ThrowsRestException()  throws FhirServerResponseException
+    {
         // Arrange
         var responseBundle = new Bundle();
         when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(responseBundle);
@@ -151,7 +193,8 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepository_WhenContextReturnsNullResearchStudy_ThrowsRestException(){
+    void TestHapiRepository_WhenContextReturnsNullResearchStudy_ThrowsRestException() throws FhirServerResponseException
+    {
         // Arrange
         when(fhirContextWrapper.executeTrasaction(anyString(), any(Bundle.class))).thenReturn(null);
 

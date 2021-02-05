@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
-import org.hl7.fhir.r4.model.Organization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepo;
-import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 /**
@@ -22,22 +20,17 @@ import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 @Service
 public class SiteServiceImpl implements SiteService {
 
-    private final FhirRepository repository;
     private EntityStore<Site> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
-     * @param repository - The fhir repository
      * @param siteStore Site store interface
      * @param entityValidation Site validation interface
      */
     @Autowired
-    public SiteServiceImpl(FhirRepository repository, EntityStore<Site> siteStore,
+    public SiteServiceImpl(EntityStore<Site> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
-        if (repository == null) {
-            throw new InitialisationError("repository cannot be null");
-        }
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
         }
@@ -45,7 +38,6 @@ public class SiteServiceImpl implements SiteService {
             throw new InitialisationError("entity validation cannot be null");
         }
 
-        this.repository = repository;
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
 
@@ -63,7 +55,7 @@ public class SiteServiceImpl implements SiteService {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
 
-        validationResponse = validateSiteExists(site);
+        validationResponse = validateSiteExists(site.getName());
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
@@ -71,10 +63,19 @@ public class SiteServiceImpl implements SiteService {
         return siteStore.saveEntity(site);
     }
 
-    private ValidationResponse validateSiteExists(Site site) {
-        //Check if the Organization already exists.
-        Organization org = repository.findOrganizationByName(site.getName());
-        if (null != org) {
+    /**
+     *
+     * @param siteName the Site to search.
+     * @return site The Site being searched.
+     */
+    public Site findSiteByName(String siteName) {
+        return siteStore.findOrganizationByName(siteName);
+    }
+
+    private ValidationResponse validateSiteExists(String orgName) {
+        //Check if the Site already exists.
+        Site site = findSiteByName(orgName);
+        if (null != site) {
             return new ValidationResponse(false, FhirRepo.SITE_EXISTS.message());
         }
         return new ValidationResponse(true, "");

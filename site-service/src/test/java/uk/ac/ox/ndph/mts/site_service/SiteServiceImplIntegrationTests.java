@@ -1,8 +1,10 @@
 package uk.ac.ox.ndph.mts.site_service;
 
 import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResearchStudy;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,11 +12,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
+import uk.ac.ox.ndph.mts.site_service.converter.SiteConverter;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
+import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
+import uk.ac.ox.ndph.mts.site_service.repository.FhirServerResponseException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -33,6 +41,12 @@ class SiteServiceImplIntegrationTests {
 
     @MockBean
     public FhirRepository repository;
+
+    @Mock
+    EntityConverter<Organization, Site> fromOrgConverter;
+
+    @Mock
+    private EntityStore<Site> siteStore;
 
     @Test
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
@@ -87,5 +101,30 @@ class SiteServiceImplIntegrationTests {
         this.mockMvc
                 .perform(post("/sites").contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+    }
+
+    @Test
+    void TestHapiRepository_WhenSearchOrganizationByName_Success() {
+        // Arrange
+        final String alias = "the-alias";
+        final String parentId = "the-parent-id";
+        final String organizationName = "the-name";
+        final Organization org = new Organization();
+        org.setName(organizationName);
+        org.setId("the-id");
+        org.addAlias(alias);
+        org.setPartOf(new Reference("Organization/" + parentId));
+        Site convertedSite = new SiteConverter().convert(org);
+
+        // Arrange
+        when(repository.findOrganizationByName(organizationName)).thenReturn(org);
+        when(fromOrgConverter.convert(org)).thenReturn(convertedSite);
+
+        //act
+        Site site = siteStore.findOrganizationByName(organizationName);
+
+        assertEquals(null, site);
+        assertThat(convertedSite.getName(), is(equalTo(org.getName())));
+        assertThat(convertedSite.getAlias(), is(equalTo(alias)));
     }
 }
