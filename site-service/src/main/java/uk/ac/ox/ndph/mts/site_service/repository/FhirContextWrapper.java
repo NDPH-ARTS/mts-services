@@ -54,36 +54,6 @@ public class FhirContextWrapper {
     }
 
     /**
-     * Execute a bundle transaction to a FHIR endpoint
-     * @param uri the FHIR endpoint URI
-     * @param id of the organization to search.
-     * @return Organization searched by Id.
-
-    public Organization executeSearchById(String uri, String id) {
-    return fhirContext.newRestfulGenericClient(uri).read().resource(Organization.class).withId(id).execute();
-    }     */
-
-    /**
-     * Execute a bundle transaction to a FHIR endpoint
-     * @param uri the FHIR endpoint URI
-     * @param name of the organization to search.
-     * @return Organization searched by name.
-    public Bundle executeSearchByName(String uri, String name) throws FhirServerResponseException {
-    try {
-    return fhirContext.newRestfulGenericClient(uri)
-    .search()
-    .forResource(Organization.class)
-    .where(Organization.NAME.matches().value(name))
-    .returnBundle(Bundle.class)
-    .execute();
-    } catch (BaseServerResponseException ex) {
-    final String message = String.format(FhirRepo.SEARCH_ERROR.message(), uri);
-    throw new FhirServerResponseException(message, ex);
-    }
-    }     */
-
-
-    /**
      * Extracts a list of resources from a bundle
      *
      * @param bundle the bundle to extract

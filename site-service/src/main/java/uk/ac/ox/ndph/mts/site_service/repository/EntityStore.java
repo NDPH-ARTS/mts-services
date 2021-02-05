@@ -31,7 +31,6 @@ public interface EntityStore<K, T> {
      */
     Optional<T> findByName(String name);
 
-
     /**
      * Find entity by ID in the store
      *
@@ -39,5 +38,14 @@ public interface EntityStore<K, T> {
      * @return entity or none() if none found
      */
     Optional<T> findById(K id);
+
+    /**
+     * Find the root entity if that makes sense for the entity type.
+     * Default implementation just returns empty
+     * @return entity or empty() if no root present or undefined for this type
+     */
+    default Optional<T> findRoot() {
+        return Optional.empty();
+    }
 
 }

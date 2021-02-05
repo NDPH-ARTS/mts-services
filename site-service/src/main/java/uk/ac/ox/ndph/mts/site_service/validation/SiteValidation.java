@@ -28,7 +28,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     @Getter
     @Setter
     @AllArgsConstructor
-    class AttributeData {
+    static class AttributeData {
         private String description;
         private Pattern regex;
         private Function<Site, String> getValue;

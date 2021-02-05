@@ -23,6 +23,10 @@ import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for {@link HapiFhirRepository}. Note that {@link SiteStore} is a fairly thing wrapper around the
+ * repository, so should not need it's own tests.
+ */
 @ExtendWith(MockitoExtension.class)
 class HapiFhirRepositoryTests {
 

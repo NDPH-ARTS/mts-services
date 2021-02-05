@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
+import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
@@ -20,6 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -133,19 +135,33 @@ class SiteControllerTests {
     }
 
 
-    /*
     @Test
     void TestGetSite_WhenIdFound_Returns200AndSite() throws Exception {
         // Arrange
         final String siteId = "the-site-id";
-        when(siteService.findSiteById(equal).thenReturn(new Site("TheSite", "site", "parentId", )));
+        when(siteService.findSiteById(eq(siteId))).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId"));
         // Act + Assert
-        this.mockMvc
-                .perform(get(SITES_ROUTE + "/id-that-does-not-exist")
+        final String result = this.mockMvc
+                .perform(get(SITES_ROUTE + "/" + siteId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadGateway());
+                .andDo(print()).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(result, stringContainsInOrder("\"siteId\":", "\"" + siteId + "\""));
+        assertThat(result, stringContainsInOrder("\"name\":", "\"TheSite\""));
+        assertThat(result, stringContainsInOrder("\"alias\":", "\"the-alias\""));
+        assertThat(result, stringContainsInOrder("\"parentSiteId\":", "\"parentId\""));
     }
 
-     */
+    @Test
+    void TestGetSite_WhenIdNotFound_Returns404() throws Exception {
+        // Arrange
+        final String siteId = "the-site-id";
+        when(siteService.findSiteById(eq(siteId))).thenThrow(new NotFoundException("not found", siteId));
+        // Act + Assert
+        this.mockMvc
+                .perform(get(SITES_ROUTE + "/" + siteId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isNotFound());
+    }
 
 }

@@ -34,9 +34,9 @@ public class SiteController {
     }
 
     /**
-     *
-     * @param site
-     * @return ResponseEntity
+     * Try and create a posted new site
+     * @param site site to post from request
+     * @return ResponseEntity CREATED if successful plus returns the site ID
      */
     @PostMapping()
     public ResponseEntity<Response> site(@RequestBody Site site) {

@@ -24,9 +24,6 @@ import java.util.Optional;
 @Component
 public class HapiFhirRepository implements FhirRepository {
 
-    private static final String ORGANIZATION_ENTITY_NAME = "Organization";
-    private static final String RESEARCHSTUDY_ENTITY_NAME = "ResearchStudy";
-
     private final FhirContextWrapper fhirContextWrapper;
     private final Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
 
@@ -40,6 +37,7 @@ public class HapiFhirRepository implements FhirRepository {
     /**
      * Return the list of all organizations. Note this may include organizations that are
      * not {uk.ac.ox.ndph.mts.site_service.model.Site}s - caller must filter.
+     *
      * @return all organization instances in the store, might be empty, not null
      */
     public Collection<Organization> findOrganizations() {
@@ -55,33 +53,37 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     /**
-     * @param organization the organization to save.
-     * @return id of the saved organization
+     * Save a single resource of any type to the FHIR API, returning the allocated ID
+     *
+     * @param resource the resource to create
+     * @return id of the created resource
      */
-    public String saveOrganization(Organization organization) {
-        // Log the request
-        logger.info(Repositorys.REQUEST_PAYLOAD.message(),
-                    fhirContextWrapper.prettyPrint(organization));
-
+    private String saveResource(final Resource resource) {
+        logger.info(Repositorys.REQUEST_PAYLOAD.message(), fhirContextWrapper.prettyPrint(resource));
         Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
-                bundle(organization, ORGANIZATION_ENTITY_NAME));
+                    bundle(resource, resource.getResourceType().name()));
         } catch (FhirServerResponseException e) {
             logger.warn(Repositorys.UPDATE_ERROR.message(), e);
             throw new RestException(Repositorys.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
-
-        // Log the response
-        logger.info(Repositorys.RESPONSE_PAYLOAD.message(),
-                    fhirContextWrapper.prettyPrint(responseElement));
-
+        logger.info(Repositorys.RESPONSE_PAYLOAD.message(), fhirContextWrapper.prettyPrint(responseElement));
         return responseElement.getIdElement().getIdPart();
     }
 
     /**
+     * @param organization the organization to save.
+     * @return id of the saved organization
+     */
+    public String saveOrganization(final Organization organization) {
+        return saveResource(organization);
+    }
+
+    /**
      * Exact search on name
+     *
      * @param name of the organization to search.
      * @return org with that name or none() if not found
      */
@@ -108,37 +110,16 @@ public class HapiFhirRepository implements FhirRepository {
      * @param researchStudy the researchStudy to save.
      * @return ResearchStudy
      */
-    public String saveResearchStudy(ResearchStudy researchStudy) {
-        // Log the request
-        logger.info(Repositorys.REQUEST_PAYLOAD.message(),
-                    fhirContextWrapper.prettyPrint(researchStudy));
-
-        Bundle responseBundle;
-        try {
-            responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
-                    bundle(researchStudy, RESEARCHSTUDY_ENTITY_NAME));
-        } catch (FhirServerResponseException e) {
-            logger.warn(Repositorys.UPDATE_ERROR.message(), e);
-            throw new RestException(Repositorys.UPDATE_ERROR.message(), e);
-        }
-        IBaseResource responseElement = extractResponseResource(responseBundle);
-
-        // Log the response
-        logger.info(Repositorys.RESPONSE_PAYLOAD.message(),
-                    fhirContextWrapper.prettyPrint(responseElement));
-
-        return responseElement.getIdElement().getIdPart();
+    public String saveResearchStudy(final ResearchStudy researchStudy) {
+        return saveResource(researchStudy);
     }
 
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
-        var resp = fhirContextWrapper.toListOfResources(bundle);
-        
+        final var resp = fhirContextWrapper.toListOfResources(bundle);
         if (resp.size() != 1) {
             logger.info(Repositorys.BAD_RESPONSE_SIZE.message(), resp.size());
-
             throw new RestException(String.format(
-                Repositorys.BAD_RESPONSE_SIZE.message(), resp.size()));
-
+                    Repositorys.BAD_RESPONSE_SIZE.message(), resp.size()));
         }
         return resp.get(0);
     }
@@ -154,6 +135,7 @@ public class HapiFhirRepository implements FhirRepository {
 
     /**
      * Return an organization by ID in an Optional
+     *
      * @param id organization ID to search for
      * @return optional with the organization or empty() if not found
      */
@@ -163,6 +145,28 @@ public class HapiFhirRepository implements FhirRepository {
             return Optional.of(fhirContextWrapper.readById(fhirUri, Organization.class, id));
         } catch (ResourceNotFoundException ex) {
             return Optional.empty();
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
+    }
+
+    /**
+     * Return an organizations with given parent ID, or Optional.none() if not found
+     *
+     * @param id parent organization ID to search for, null is allowed (will return orgs with no parent)
+     * @return collection of organizations with the given parent, might be empty
+     */
+    @Override
+    public Collection<Organization> findOrganizationsByPartOf(final String id) {
+        final var criterion = (id == null)
+                ? Organization.PARTOF.isMissing(true)
+                : Organization.PARTOF.hasId(id);
+        try {
+            final Bundle responseBundle = fhirContextWrapper.search(fhirUri, Organization.class)
+                    .where(criterion)
+                    .returnBundle(Bundle.class)
+                    .execute();
+            return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
             throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
         }

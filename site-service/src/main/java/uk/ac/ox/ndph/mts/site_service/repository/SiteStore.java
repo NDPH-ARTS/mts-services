@@ -98,4 +98,16 @@ public class SiteStore implements EntityStore<String, Site> {
                 .map(fromOrgConverter::convert);
     }
 
+    /**
+     * Find the root entity.  There should be at most one, or zero for an uninitialized trial.
+     * @return entity or empty() if no root present or undefined for this type
+     */
+    @Override
+    public Optional<Site> findRoot() {
+        return this.repository.findOrganizationsByPartOf(null)
+                .stream()
+                .findFirst()
+                .map(fromOrgConverter::convert);
+    }
+
 }

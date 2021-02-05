@@ -1,22 +1,25 @@
 package uk.ac.ox.ndph.mts.site_service.validation;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.converter.ConvertWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.when;
-import java.util.List;
-import org.mockito.Mock;
 import org.junit.jupiter.api.Assertions;
-import uk.ac.ox.ndph.mts.site_service.model.Site;
-import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.site_service.NullableConverter;
 import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
+import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SiteValidationTests {
@@ -24,18 +27,18 @@ class SiteValidationTests {
     @Mock
     private SiteConfigurationProvider configurationProvider;
 
-    private static List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
+    private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
         new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
 
-    private static List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
+    private static final List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", ""),
         new SiteAttributeConfiguration("alias", "Alias", ""));
 
-    private static List<SiteAttributeConfiguration> INCOMNPLETE_MAP = List.of(
+    private static final List<SiteAttributeConfiguration> INCOMNPLETE_MAP = List.of(
                 new SiteAttributeConfiguration("name", "Name", ""));
 
-    private static List<SiteAttributeConfiguration> ERROR_MAP = List.of(
+    private static final List<SiteAttributeConfiguration> ERROR_MAP = List.of(
         new SiteAttributeConfiguration("wrongname", "WrongName",""),
         new SiteAttributeConfiguration("alias", "Alias",""));
     

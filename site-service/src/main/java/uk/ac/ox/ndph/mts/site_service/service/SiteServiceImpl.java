@@ -41,10 +41,8 @@ public class SiteServiceImpl implements SiteService {
         if (entityValidation == null) {
             throw new InitialisationError("entity validation cannot be null");
         }
-
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
-
         logger.info(Services.STARTUP.message());
     }
 
@@ -53,7 +51,7 @@ public class SiteServiceImpl implements SiteService {
      * @return The id of the new site
      */
     @Override
-    public String save(Site site) {
+    public String save(final Site site) {
         var validationResponse = entityValidation.validate(site);
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
@@ -61,7 +59,11 @@ public class SiteServiceImpl implements SiteService {
         if (findSiteByName(site.getName()).isPresent()) {
             throw new ValidationException(Services.SITE_EXISTS.message());
         }
-        if (site.getParentSiteId() != null) {
+        if (site.getParentSiteId() == null) {
+            if (isRootSitePresent()) {
+                throw new ValidationException(Services.ONE_ROOT_SITE.message());
+            }
+        } else {
             validationResponse = validateParentSiteExists(site.getParentSiteId());
             if (!validationResponse.isValid()) {
                 throw new ValidationException(validationResponse.getErrorMessage());
@@ -100,7 +102,6 @@ public class SiteServiceImpl implements SiteService {
      * @param siteName the Site to search.
      * @return site The Site being searched, or none() if not found
      */
-    @Override
     public Optional<Site> findSiteByName(String siteName) {
         return siteStore.findByName(siteName);
     }
@@ -118,5 +119,30 @@ public class SiteServiceImpl implements SiteService {
                 .orElseThrow(() -> new NotFoundException(Services.SITE_NOT_FOUND.message(), id));
 
     }
+
+    /**
+     * Test if the root node is present. If not, then the site service cannot be safely used,
+     * since the trial has not yet been initialized.
+     *
+     * @return true if a root site node is present
+     */
+    private boolean isRootSitePresent() {
+        return this.siteStore
+                .findRoot()
+                .isPresent();
+    }
+
+    /**
+     * Return the root node, throwing if not present
+     *
+     * @return site if found
+     * @throws NotFoundException if no root site (bad trial initialization)
+     */
+    public Site findRootSite() throws NotFoundException {
+        return this.siteStore
+                .findRoot()
+                .orElseThrow(() -> new NotFoundException(Services.NO_ROOT_SITE.message(), ""));
+    }
+
 
 }

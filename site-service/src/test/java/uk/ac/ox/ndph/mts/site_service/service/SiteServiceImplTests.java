@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -10,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
+import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,6 +53,7 @@ class SiteServiceImplTests {
         Site siteWithParent = new Site(name, alias, parent);
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findById(eq("parent"))).thenReturn(Optional.of(new Site()));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
 
         //Act
@@ -91,7 +93,7 @@ class SiteServiceImplTests {
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(false, "name"));
         //Act + Assert
-        Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
+        assertThrows(ValidationException.class, () -> siteService.save(site),
                 "Expecting save to throw validation exception");
         Mockito.verify(siteStore, Mockito.times(0)).saveEntity(any(Site.class));
     }
@@ -99,9 +101,9 @@ class SiteServiceImplTests {
     @Test
     void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
-        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteValidation),
+        assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteValidation),
                 "null store should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(siteStore, null),
+        assertThrows(InitialisationError.class, () -> new SiteServiceImpl(siteStore, null),
                 "null validation should throw");
     }
 
@@ -111,7 +113,7 @@ class SiteServiceImplTests {
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteStore.findAll()).thenReturn(Collections.emptyList());
         // act + assert
-        Assertions.assertThrows(InvariantException.class, () -> siteService.findSites(),
+        assertThrows(InvariantException.class, siteService::findSites,
                 "Expecting getSites to throw invariant exception");
     }
 
@@ -125,11 +127,13 @@ class SiteServiceImplTests {
         final List<Site> sites = siteService.findSites();
         // assert
         assertThat(sites, is(not(empty())));
-
-        // TODO: find fix for
-        // java.lang.NoSuchMethodError:
-        // 'boolean org.hamcrest.beans.SamePropertyValuesAs.isNotNull(java.lang.Object, org.hamcrest.Description)'
-        //assertThat(sites, hasItem(samePropertyValuesAs(site)));
+        assertThat(sites.size(), equalTo(1));
+        final Site found = sites.get(0);
+        assertThat(found.getName(), equalTo(site.getName()));
+        assertThat(found.getAlias(), equalTo(site.getAlias()));
+        assertThat(found.getParentSiteId(), equalTo(site.getParentSiteId()));
+        // was using assertThat(sites, hasItem(samePropertyValuesAs(site)));
+        // but got weird NoSuchMethodError, possible classpath issue
     }
 
     @Test
@@ -156,7 +160,7 @@ class SiteServiceImplTests {
         when(siteStore.findByName(eq(site.getName()))).thenReturn(Optional.of(site));
 
         // assert
-        Assertions.assertThrows(ValidationException.class, () -> siteService.save(site),
+        assertThrows(ValidationException.class, () -> siteService.save(site),
                 "Site Already Exists");
     }
 
@@ -169,6 +173,50 @@ class SiteServiceImplTests {
         String siteName = "CCO";
         final Optional<Site> siteFound = siteService.findSiteByName(siteName);
         assertThat(siteFound.isEmpty(), is(true));
+    }
+
+    @Test
+    void TestFindSiteById_WhenStoreHasSite_ReturnsSite() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        final var site = new Site("my-site-id", "CCO", "Root", null);
+        when(siteStore.findById(eq(site.getSiteId()))).thenReturn(Optional.of(site));
+        // act
+        final Site siteFound = siteService.findSiteById(site.getSiteId());
+        // assert
+        assertThat(siteFound.getName(), equalTo(site.getName()));
+        assertThat(siteFound.getAlias(), equalTo(site.getAlias()));
+    }
+
+    @Test
+    void TestFindSiteById_WhenStoreHasNoSite_ThrowsNotFoundException() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        when(siteStore.findById(anyString())).thenReturn(Optional.empty());
+        // act and assert
+        assertThrows(NotFoundException.class, () -> siteService.findSiteById("the-id"));
+    }
+
+    @Test
+    void TestFindRootSite_WhenStoreHasRoot_ReturnsRoot() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        final var root = new Site("my-root-id", "CCO", "Root", null);
+        when(siteStore.findRoot()).thenReturn(Optional.of(root));
+        // act
+        final Site siteFound = siteService.findRootSite();
+        // assert
+        assertThat(siteFound.getName(), equalTo(root.getName()));
+        assertThat(siteFound.getAlias(), equalTo(root.getAlias()));
+    }
+
+    @Test
+    void TestFindRootSite_WhenStoreHasNoRoot_ThrowsNotFoundException() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        when(siteStore.findRoot()).thenReturn(Optional.empty());
+        // act and assert
+        assertThrows(NotFoundException.class, siteService::findRootSite);
     }
 
 }
