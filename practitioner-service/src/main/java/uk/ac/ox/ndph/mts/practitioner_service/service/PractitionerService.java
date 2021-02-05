@@ -73,11 +73,11 @@ public class PractitionerService implements EntityService {
         return practitionerStore.saveEntity(practitioner);
     }
 
-    // TODO consider adding a new type to distinguish these String parameters (otherwise it's prone to
+    // TODO (archiem) consider adding a new type to distinguish these String parameters (otherwise it's prone to
     //  errors from accidental argument swapping).
     @Override
     public void linkPractitioner(final String userAccountId, final String practitionerId) {
-        // TODO add a LinkPractitionerValidator object
+        // TODO (archiem) add a LinkPractitionerValidator object
         if (StringUtils.isBlank(userAccountId)) {
             throw new BadRequestException("User Account ID must not be blank");
         }

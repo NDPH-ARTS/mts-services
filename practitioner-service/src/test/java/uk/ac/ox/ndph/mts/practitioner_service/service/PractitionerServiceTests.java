@@ -200,7 +200,6 @@ class PractitionerServiceTests {
         assertThat(practitioner.getUserAccountId(), equalTo(USER_ACCOUNT_ID));
     }
 
-
     // RoleAssignment tests
 
     @Test
