@@ -6,9 +6,6 @@ import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
-/**
- * Implement an EntityConverter for Site
- */
 @Component
 public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir.r4.model.Organization> {
 
@@ -38,4 +35,5 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
             fhirOrganization.setPartOf(new Reference("Organization/" + site.getParentSiteId()));
         }
     }
+
 }
