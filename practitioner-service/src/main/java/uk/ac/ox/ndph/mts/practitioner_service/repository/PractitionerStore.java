@@ -30,12 +30,12 @@ public class PractitionerStore implements EntityStore<Practitioner> {
     }
 
     @Override
-    public uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner getEntity(String id) {
-        return fhirToModelConverter.convert(repository.getPractitioner(id));
+    public uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner getEntity(String practitionerId) {
+        return fhirToModelConverter.convert(repository.getPractitioner(practitionerId));
     }
     
     @Override
-    public String saveEntity(Practitioner entity) {
-        return repository.savePractitioner(modelToFhirConverter.convert(entity));
+    public String saveEntity(Practitioner practitioner) {
+        return repository.savePractitioner(modelToFhirConverter.convert(practitioner));
     }
 }
