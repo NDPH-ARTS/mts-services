@@ -22,7 +22,9 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
     public org.hl7.fhir.r4.model.Organization convert(Site input) {
         org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
         fhirOrganization.setName(input.getName());
-        fhirOrganization.addAlias(input.getAlias());
+        if (input.getAlias() != null) {
+            fhirOrganization.addAlias(input.getAlias());
+        }
         if (input.getSiteId() != null) {
             fhirOrganization.setId(new IdType(input.getSiteId()));
         }

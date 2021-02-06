@@ -99,6 +99,21 @@ class SiteServiceImplTests {
     }
 
     @Test
+    void TestSaveSite_WhenValidSiteWithValidParent_SavesToStore() {
+        // Arrange
+        final var root = new Site("root-id","Root", "root", null);
+        final var site = new Site(null, "name", "alias", root.getSiteId());
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findById(eq(root.getSiteId()))).thenReturn(Optional.of(root));
+        //when(siteStore.findRoot()).thenReturn(Optional.of(root));
+        when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+        //Act + Assert
+        assertThat(siteService.save(site), equalTo("123"));
+        Mockito.verify(siteStore, Mockito.times(1)).saveEntity(any(Site.class));
+    }
+
+    @Test
     void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
         assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteValidation),
