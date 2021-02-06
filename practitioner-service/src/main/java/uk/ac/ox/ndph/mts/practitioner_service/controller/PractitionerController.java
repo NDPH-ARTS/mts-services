@@ -49,7 +49,7 @@ public class PractitionerController {
     @PostMapping(path = "/link")
     @Consumes(APPLICATION_JSON_VALUE)
     @Produces(APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> practitionerLink(
+    public ResponseEntity<Response> linkPractitioner(
             @RequestParam String userAccountId,
             @RequestParam String practitionerId) {
         entityService.linkPractitioner(userAccountId, practitionerId);
