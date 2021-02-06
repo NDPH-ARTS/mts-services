@@ -8,7 +8,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class EntityStoreTests {
+class EntityStoreTests {
 
     @Test
     void TestDefaultEntityStore_FindRoot_ReturnsEmpty() {

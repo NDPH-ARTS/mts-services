@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +52,7 @@ class SiteServiceImplTests {
         Site siteWithParent = new Site(name, alias, parent);
         var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
-        when(siteStore.findById(eq("parent"))).thenReturn(Optional.of(new Site()));
+        when(siteStore.findById("parent")).thenReturn(Optional.of(new Site()));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
 
         //Act
@@ -105,7 +104,7 @@ class SiteServiceImplTests {
         final var site = new Site(null, "name", "alias", root.getSiteId());
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
-        when(siteStore.findById(eq(root.getSiteId()))).thenReturn(Optional.of(root));
+        when(siteStore.findById(root.getSiteId())).thenReturn(Optional.of(root));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
         //Act + Assert
         assertThat(siteService.save(site), equalTo("123"));
@@ -181,7 +180,7 @@ class SiteServiceImplTests {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         final var site = new Site("CCO", "Root", null);
-        when(siteStore.findByName(eq(site.getName()))).thenReturn(Optional.of(site));
+        when(siteStore.findByName(site.getName())).thenReturn(Optional.of(site));
         // act
         String siteName = "CCO";
         final Optional<Site> siteFound = siteService.findSiteByName(siteName);
@@ -199,7 +198,7 @@ class SiteServiceImplTests {
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         final var site = new Site("CCO", "Root", null);
         when(siteValidation.validate(site)).thenReturn(new ValidationResponse(true, ""));
-        when(siteStore.findByName(eq(site.getName()))).thenReturn(Optional.of(site));
+        when(siteStore.findByName(site.getName())).thenReturn(Optional.of(site));
 
         // assert
         assertThrows(ValidationException.class, () -> siteService.save(site),
@@ -222,7 +221,7 @@ class SiteServiceImplTests {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         final var site = new Site("my-site-id", "CCO", "Root", null);
-        when(siteStore.findById(eq(site.getSiteId()))).thenReturn(Optional.of(site));
+        when(siteStore.findById(site.getSiteId())).thenReturn(Optional.of(site));
         // act
         final Site siteFound = siteService.findSiteById(site.getSiteId());
         // assert

@@ -21,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = { "server.error.include-message=always" })
+@SpringBootTest(properties = {"server.error.include-message=always"})
 @AutoConfigureMockMvc
 class SiteControllerTests {
 
@@ -139,7 +138,7 @@ class SiteControllerTests {
     void TestGetSite_WhenIdFound_Returns200AndSite() throws Exception {
         // Arrange
         final String siteId = "the-site-id";
-        when(siteService.findSiteById(eq(siteId))).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId"));
+        when(siteService.findSiteById(siteId)).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId"));
         // Act + Assert
         final String result = this.mockMvc
                 .perform(get(SITES_ROUTE + "/" + siteId)
@@ -156,7 +155,7 @@ class SiteControllerTests {
     void TestGetSite_WhenIdNotFound_Returns404() throws Exception {
         // Arrange
         final String siteId = "the-site-id";
-        when(siteService.findSiteById(eq(siteId))).thenThrow(new NotFoundException("not found", siteId));
+        when(siteService.findSiteById(siteId)).thenThrow(new NotFoundException("not found", siteId));
         // Act + Assert
         this.mockMvc
                 .perform(get(SITES_ROUTE + "/" + siteId)

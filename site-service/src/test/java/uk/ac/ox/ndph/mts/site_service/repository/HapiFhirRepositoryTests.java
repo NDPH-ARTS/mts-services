@@ -20,11 +20,14 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link HapiFhirRepository}.
@@ -80,7 +83,7 @@ class HapiFhirRepositoryTests {
         final var exception = new FhirClientConnectionException("message");
         final var mockQuery = mockQuery();
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
-        when(mockQuery.returnBundle(eq(Bundle.class))).thenReturn(mockQuery);
+        when(mockQuery.returnBundle(Bundle.class)).thenReturn(mockQuery);
         when(mockQuery.execute()).thenThrow(exception);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
@@ -202,7 +205,7 @@ class HapiFhirRepositoryTests {
         final var mockQuery = mockQuery();
         when(mockQuery.execute()).thenReturn(responseBundle);
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
-        when(mockQuery.returnBundle(eq(Bundle.class))).thenReturn(mockQuery);
+        when(mockQuery.returnBundle(Bundle.class)).thenReturn(mockQuery);
         return mockQuery;
     }
 
@@ -289,7 +292,7 @@ class HapiFhirRepositoryTests {
         final var mockQuery = mockQuery();
         when(mockQuery.execute()).thenReturn(responseBundle);
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
-        when(mockQuery.returnBundle(eq(Bundle.class))).thenReturn(mockQuery);
+        when(mockQuery.returnBundle(Bundle.class)).thenReturn(mockQuery);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(Collections.emptyList());
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
@@ -317,7 +320,7 @@ class HapiFhirRepositoryTests {
         final var mockQuery = mockQuery();
         when(mockQuery.execute()).thenReturn(responseBundle);
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
-        when(mockQuery.returnBundle(eq(Bundle.class))).thenReturn(mockQuery);
+        when(mockQuery.returnBundle(Bundle.class)).thenReturn(mockQuery);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(List.of(child));
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
@@ -355,7 +358,7 @@ class HapiFhirRepositoryTests {
         final var exception = new FhirClientConnectionException("message");
         final var mockQuery = mockQuery();
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
-        when(mockQuery.returnBundle(eq(Bundle.class))).thenReturn(mockQuery);
+        when(mockQuery.returnBundle(Bundle.class)).thenReturn(mockQuery);
         when(mockQuery.execute()).thenThrow(exception);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);

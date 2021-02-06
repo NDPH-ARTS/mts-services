@@ -21,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -48,7 +47,7 @@ class SiteServiceImplIntegrationTests {
         final String rootSiteId = "root-site-id";
         final Organization root = new Organization();
         root.setId(rootSiteId);
-        when(repository.findOrganizationById(eq(rootSiteId))).thenReturn(Optional.of(root));
+        when(repository.findOrganizationById(rootSiteId)).thenReturn(Optional.of(root));
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
@@ -88,7 +87,7 @@ class SiteServiceImplIntegrationTests {
     @Test
     void TestPostSite_WhenValidParentInput_Returns201AndId() throws Exception {
         // Arrange
-        when(repository.findOrganizationById(eq("parentSiteId"))).thenReturn(Optional.of(new Organization()));
+        when(repository.findOrganizationById(("parentSiteId"))).thenReturn(Optional.of(new Organization()));
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
@@ -132,7 +131,7 @@ class SiteServiceImplIntegrationTests {
                 .setName("CCO")
                 .addAlias("Root");
         org.setId(id);
-        when(repository.findOrganizationById(eq(org.getId()))).thenReturn(Optional.of(org));
+        when(repository.findOrganizationById(org.getId())).thenReturn(Optional.of(org));
         // Act + Assert
         this.mockMvc
                 .perform(get(SITES_ROUTE + "/" + org.getId()).contentType(MediaType.APPLICATION_JSON))

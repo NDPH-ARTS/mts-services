@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * FHIR API server being up
  */
 @Disabled
-public class FhirContextWrapperTests {
+class FhirContextWrapperTests {
 
     private static final String FHIR_URL = "http://localhost:8080"; // danger! dependency on external server
 
@@ -22,7 +22,7 @@ public class FhirContextWrapperTests {
         final var wrapper = new FhirContextWrapper();
         // act
         // assert
-        assertThrows(ResourceNotFoundException.class,() -> wrapper.readById(FHIR_URL, Organization.class, "better-not-exist"));
+        assertThrows(ResourceNotFoundException.class, () -> wrapper.readById(FHIR_URL, Organization.class, "better-not-exist"));
     }
 
 }
