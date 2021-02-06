@@ -50,9 +50,24 @@ class OrganizationConverterTest {
     }
 
     @Test
-    void TestConvert_NotPartof_returnsOrgWithNoParent() {
+    void TestConvert_NullParentId_returnsOrgWithNoParent() {
         // arrange
         final var site = new Site(ORG_ID, NAME, ALIAS, null);
+        // act
+        final Organization org = orgConverter.convert(site);
+        // assert
+        assertThat(org.getName(), equalTo(site.getName()));
+        assertThat(org.getIdElement().getIdPart(), equalTo(ORG_ID));
+        assertThat(org.getAlias().size(), equalTo(1));
+        final String alias = org.getAlias().get(0).getValueAsString();
+        assertThat(alias, containsString(ALIAS));
+        assertThat(org.getPartOf().isEmpty(), equalTo(true));
+    }
+
+    @Test
+    void TestConvert_EmptyParentId_returnsOrgWithNoParent() {
+        // arrange
+        final var site = new Site(ORG_ID, NAME, ALIAS, "");
         // act
         final Organization org = orgConverter.convert(site);
         // assert
