@@ -106,11 +106,36 @@ class SiteServiceImplTests {
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.findById(eq(root.getSiteId()))).thenReturn(Optional.of(root));
-        //when(siteStore.findRoot()).thenReturn(Optional.of(root));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
         //Act + Assert
         assertThat(siteService.save(site), equalTo("123"));
         Mockito.verify(siteStore, Mockito.times(1)).saveEntity(any(Site.class));
+    }
+
+    @Test
+    void TestSaveSite_WhenValidSiteWithNoParentAndNoRoot_SavesToStore() {
+        // Arrange
+        final var site = new Site(null, "name", "alias", null);
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findRoot()).thenReturn(Optional.empty());
+        when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+        //Act + Assert
+        assertThat(siteService.save(site), equalTo("123"));
+        Mockito.verify(siteStore, Mockito.times(1)).saveEntity(any(Site.class));
+    }
+
+    @Test
+    void TestSaveSite_WhenValidSiteWithNoParentAndHasRoot_ThrowsValidationException_DoesntSavesToStore() {
+        // Arrange
+        final var site = new Site(null, "name", "alias", null);
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findRoot()).thenReturn(Optional.of(new Site()));
+        //Act + Assert
+        assertThrows(ValidationException.class, () -> siteService.save(site),
+                "Root site already exists");
+        Mockito.verify(siteStore, Mockito.times(0)).saveEntity(any(Site.class));
     }
 
     @Test
@@ -162,8 +187,10 @@ class SiteServiceImplTests {
         final Optional<Site> siteFound = siteService.findSiteByName(siteName);
         // assert
         assertThat(siteFound.isPresent(), is(true));
-        assertThat(siteFound.get().getName(), equalTo(site.getName()));
-        assertThat(siteFound.get().getAlias(), equalTo(site.getAlias()));
+        if(siteFound.isPresent()) {
+            assertThat(siteFound.get().getName(), equalTo(site.getName()));
+            assertThat(siteFound.get().getAlias(), equalTo(site.getAlias()));
+        }
     }
 
     @Test

@@ -10,12 +10,6 @@ public enum Repositorys {
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
     SEARCH_ERROR("error while searching for resource: %s"),
     PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s");
-    /*
-    wrong place for these ones
-    SITE_EXISTS("Site Already Exists"),
-    SITE_DOESNT_MATCH_PARENT("Site Exists But Doesn't Match Parent");;
-    */
-
 
     private String message;
  
