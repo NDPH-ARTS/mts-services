@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
@@ -42,10 +41,10 @@ public class PractitionerService implements EntityService {
                                ModelEntityValidation<Practitioner> practitionerValidator,
                                EntityStore<RoleAssignment> roleAssignmentStore,
                                ModelEntityValidation<RoleAssignment> roleAssignmentValidator) {
-        Objects.requireNonNull(practitionerStore,"practitioner store cannot be null");
+        Objects.requireNonNull(practitionerStore, "practitioner store cannot be null");
         Objects.requireNonNull(practitionerValidator, "practitioner entity validation cannot be null");
-        Objects.requireNonNull(roleAssignmentStore,"RoleAssignment store cannot be null");
-        Objects.requireNonNull(roleAssignmentValidator,"RoleAssignment entity validation cannot be null");
+        Objects.requireNonNull(roleAssignmentStore, "RoleAssignment store cannot be null");
+        Objects.requireNonNull(roleAssignmentValidator, "RoleAssignment entity validation cannot be null");
         this.practitionerStore = practitionerStore;
         this.practitionerValidator = practitionerValidator;
         this.roleAssignmentStore = roleAssignmentStore;
