@@ -1,5 +1,5 @@
 docker-compose pull -q
-docker-compose up --scale init-service=0 --scale trial-config-service=0 -d --no-build
+docker-compose up --scale init-service=0 -d --no-build
 
 echo "Waiting for docker compose services..."
 
