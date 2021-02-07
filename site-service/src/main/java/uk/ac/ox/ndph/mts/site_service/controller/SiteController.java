@@ -55,7 +55,7 @@ public class SiteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Site> findSiteById(@PathVariable String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSiteById(id));
+        return ResponseEntity.ok(siteService.findSiteById(id));
     }
 
 }
