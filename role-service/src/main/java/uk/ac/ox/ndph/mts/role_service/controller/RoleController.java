@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/roles")
+@RequestMapping(path = "/roles", consumes = "application/json", produces = "application/json")
 public class RoleController {
 
     private final RoleRepository roleRepository;

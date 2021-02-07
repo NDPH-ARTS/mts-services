@@ -1,10 +1,20 @@
 package uk.ac.ox.ndph.mts.sample_service.security.authroisation;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import java.util.Arrays;
-import java.util.Collections;
+import uk.ac.ox.ndph.mts.sample_service.client.practitioner_service.PractitionerServiceClient;
+import uk.ac.ox.ndph.mts.sample_service.client.role_service.RoleServiceClient;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.PermissionDTO;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleAssignmentDTO;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
+import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The service which performs the authorisation flow
@@ -12,31 +22,55 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorisationService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
+
+    private final SecurityContextService securityContextService;
+
+    private final PractitionerServiceClient practitionerServiceClient;
+    private final RoleServiceClient roleServiceClientImpl;
+
+    @Autowired
+    public AuthorisationService(final SecurityContextService securityContextService,
+                                final PractitionerServiceClient practitionerServiceClient,
+                                final RoleServiceClient roleServiceClientImpl) {
+        this.securityContextService = securityContextService;
+        this.practitionerServiceClient = practitionerServiceClient;
+        this.roleServiceClientImpl = roleServiceClientImpl;
+    }
+
+
     /**
      * Authorise request
      * @return true if authorised
      */
-    @SuppressWarnings("squid:S2589") //allow using method that always return true, currently a stub algorithm
-    public boolean authorise(String requiredPermission) {
-        //currently
-        String userId = "stubUserId";
+    public boolean authorise(String requiredPermission)  {
 
-        //get practitioner assignment role
-        List<String> participantRoles = getParticipantRoles(userId);
+        try {
+            //Get Azure Active Directory user object id
+            String userId = getUserIdFromContext();
 
-        //get permissions for the the practitioner assignment roles
-        List<String> permissions = participantRoles.stream().flatMap(role ->
-                getRolePermissions(role).stream()).collect(Collectors.toList());
+            //get practitioner assignment role
+            RoleAssignmentDTO[] participantRoles = practitionerServiceClient.getUserAssignmentRoles(userId);
 
-        //validate the required permission is present
-        if (!permissions.contains(requiredPermission)) {
+            if (participantRoles == null || participantRoles.length == 0) {
+                LOGGER.info("User with id {} has no assignment Roles and therefore is unauthorised.", userId);
+                return false;
+            }
+
+            //get permissions for the the practitioner assignment roles
+            //and filter assignment roles to be only those which have the required permission in them
+            var rolesWithPermission = Stream.of(participantRoles)
+                    .map(role -> roleServiceClientImpl.getRolesById(role.getRoleId()))
+                    .filter(roleDto -> hasRoleRequiredPermission(roleDto, requiredPermission))
+                    .collect(Collectors.toList());
+
+            //validate the required permission is present
+            if (rolesWithPermission.isEmpty()) {
+                return false;
+            }
+        } catch (Exception e) {
             return false;
         }
-
-        //we will also update the practitioner roles to be only those who have the permissions to perform the action
-        //currently just a stub to show we filtered them out
-
-        List<String> updatedParticipantRoles = participantRoles.subList(0, 1);
 
         //Get entity site. Currently just a stub
         String entitySite = "stubSite";
@@ -55,24 +89,18 @@ public class AuthorisationService {
         return isSiteAuthorised(entitySite, "stubRole");
     }
 
-    /**
-     * Get participant roles
-     * @param userId - user id on the token
-     * @return true - currently it is a stub/infra until the implementation will be added
-     */
-    @SuppressWarnings("squid:S1172") //suppress unused parameter
-    private List<String> getParticipantRoles(String userId) {
-        return Arrays.asList("stubRole1", "stubRole2");
+    private String getUserIdFromContext() throws AuthorisationException {
+        try {
+            return securityContextService.getUserPrincipal().getClaim("oid").toString();
+        } catch (Exception e) {
+            throw new AuthorisationException("Invalid user.");
+        }
     }
 
-    /**
-     * Get user permissions
-     * @param userRole - participant role
-     * @return true - currently it is a stub/infra until the implementation will be added
-     */
-    @SuppressWarnings("squid:S1172") //suppress unused parameter
-    private List<String> getRolePermissions(String userRole) {
-        return Collections.singletonList("stubPermission");
+    private boolean hasRoleRequiredPermission(RoleDTO role, String requiredPermission) {
+        List<String> permissionIds = role.getPermissions().stream()
+                .map(PermissionDTO::getId).collect(Collectors.toList());
+        return permissionIds.contains(requiredPermission);
     }
 
     /**
@@ -81,8 +109,17 @@ public class AuthorisationService {
      * @param entitySite - the requested entity site
      * @return true - currently it is a stub/infra until the implementation will be added
      */
-    @SuppressWarnings("squid:S1172") //suppress unused parameter
+    @SuppressWarnings("squid:S1172") //suppress unused parameterך
     private boolean isSiteAuthorised(String entitySite, String userRole) {
         return true;
+    }
+
+    private HttpEntity getHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        return entity;
     }
 }
