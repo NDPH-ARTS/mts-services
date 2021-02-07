@@ -14,7 +14,7 @@
     <name>discovery-server</name>
     <description>Discovery server</description>
     <properties>
-        <spring-cloud.version>2020.0.0</spring-cloud.version>
+        <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
     </properties>
     <dependencies>
         <dependency>

@@ -9,6 +9,7 @@ COPY ./pom.xml pom.xml
 COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml
 COPY ./sample-service/pom.xml ./sample-service/pom.xml
 COPY ./config-server/pom.xml ./config-server/pom.xml
+COPY ./discovery-server/pom.xml ./discovery-server/pom.xml
 COPY ./role-service/pom.xml ./role-service/pom.xml
 COPY ./init-service/pom.xml ./init-service/pom.xml
 COPY ./site-service/pom.xml ./site-service/pom.xml
