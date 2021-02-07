@@ -118,8 +118,8 @@ services:
         SVC: config-server
     environment:
       SERVER_PORT: "8888"
-      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/spring-config-server.git"
-      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "practitioner-service"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/mts-trial-deployment-config.git"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "sample_trial/services, sample_trial/services/*"
     image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
     restart: on-failure
     ports:
