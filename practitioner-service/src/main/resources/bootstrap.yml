@@ -3,4 +3,22 @@ spring:
     name: practitioner-service
   cloud:
     config:
-      uri: http://placeholder:1234
+      fail-fast: true
+      discovery:
+        enabled: true
+        service-id: CONFIGSERVER
+      retry:
+        initialInterval: 2000
+        multiplier: 1.5
+        maxInterval: 60000
+        maxAttempts: 100
+      label: main
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOSTNAME:localhost}:8761/eureka/
