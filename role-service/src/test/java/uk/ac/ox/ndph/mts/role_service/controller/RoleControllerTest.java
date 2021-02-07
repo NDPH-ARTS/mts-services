@@ -102,7 +102,7 @@ class RoleControllerTest {
     @Test
     void whenGetRolesPaged_thenReceiveSuccess() throws Exception {
 
-        mvc.perform(get(URI_ROLES + "?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
+        mvc.perform(get(URI_ROLES + "?page=0&size=10").contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
 
     @Test
@@ -113,14 +113,14 @@ class RoleControllerTest {
         dummyRole.setId(dummyId);
 
         when(roleRepo.findById(dummyId)).thenReturn(Optional.of(dummyRole));
-        mvc.perform(get(String.format(URI_ROLE, dummyId))).andDo(MockMvcResultHandlers.print())
+        mvc.perform(get(String.format(URI_ROLE, dummyId)).contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk()).andExpect(content().string(containsString(dummyId)));
     }
 
     @Test
     void whenGetNonExistentRole_thenReceive404() throws Exception {
 
-        mvc.perform(get(String.format(URI_ROLE, "/nonexistentrole"))).andDo(MockMvcResultHandlers.print())
+        mvc.perform(get(String.format(URI_ROLE, "/nonexistentrole")).contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
 
     }
@@ -137,7 +137,7 @@ class RoleControllerTest {
         dummyRole.setPermissions(Collections.singletonList(dummyPermission));
 
         when(roleRepo.findById(dummyRoleId)).thenReturn(Optional.of(dummyRole));
-        mvc.perform(get(String.format(URI_ROLE, dummyRoleId))).andDo(MockMvcResultHandlers.print())
+        mvc.perform(get(String.format(URI_ROLE, dummyRoleId)).contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk()).andExpect(content().string(containsString(dummyRoleId)))
                 .andExpect(content().string(containsString(dummyPermissionId)));
     }
