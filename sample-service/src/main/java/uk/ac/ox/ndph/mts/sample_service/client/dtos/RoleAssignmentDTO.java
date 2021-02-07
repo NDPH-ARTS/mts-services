@@ -10,12 +10,6 @@ public class RoleAssignmentDTO {
     @JsonProperty(value = "roleId")
     private String roleId;
 
-    public RoleAssignmentDTO(String siteId, String roleId) {
-        this.siteId = siteId;
-
-        this.roleId = roleId;
-    }
-
     public RoleAssignmentDTO() { }
 
     public String getSiteId() {

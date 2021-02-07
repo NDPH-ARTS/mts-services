@@ -7,10 +7,6 @@ public class PermissionDTO {
     @JsonProperty(value = "id")
     private String id;
 
-    public PermissionDTO(String id) {
-        this.id = id;
-    }
-
     public PermissionDTO() { }
 
     public String getId() {

@@ -81,7 +81,10 @@ class AuthorisationServiceTests {
         when(securityContextService.getUserPrincipal()).thenReturn(userPrincipal);
 
 
-        RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO("siteId", "roleId");
+        RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
+        roleAssignmentDTO.setRoleId("roleId");
+        roleAssignmentDTO.setSiteId("siteId");
+
         RoleAssignmentDTO[] roleAssignmentDtos = { roleAssignmentDTO };
         when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(roleAssignmentDtos);
 
@@ -95,11 +98,19 @@ class AuthorisationServiceTests {
 
         when(securityContextService.getUserPrincipal()).thenReturn(userPrincipal);
 
-        RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO("siteId", "roleId");
+        RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
+        roleAssignmentDTO.setRoleId("roleId");
+        roleAssignmentDTO.setSiteId("siteId");
+
         RoleAssignmentDTO[] roleAssignmentDtos = { roleAssignmentDTO };
         when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(roleAssignmentDtos);
 
-        RoleDTO roleDto = new RoleDTO("roleID", Collections.singletonList(new PermissionDTO("another_permission")));
+        PermissionDTO permissionDTO = new PermissionDTO();
+        permissionDTO.setId("another_permission");
+        RoleDTO roleDto = new RoleDTO();
+        roleDto.setId("roleID");
+        roleDto.setPermissions(Collections.singletonList(permissionDTO));
+
         when(roleServiceClientImpl.getRolesById(roleAssignmentDTO.getRoleId())).thenReturn(roleDto);
 
         Assertions.assertFalse(authorisationService.authorise("some-permission"));
@@ -110,11 +121,19 @@ class AuthorisationServiceTests {
 
         when(securityContextService.getUserPrincipal()).thenReturn(userPrincipal);
 
-        RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO("siteId", "roleId");
+        RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
+        roleAssignmentDTO.setRoleId("roleId");
+        roleAssignmentDTO.setSiteId("siteId");
+
         RoleAssignmentDTO[] roleAssignmentDtos = { roleAssignmentDTO };
         when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(roleAssignmentDtos);
 
-        RoleDTO roleDto = new RoleDTO("roleID", Collections.singletonList(new PermissionDTO("some_permission")));
+        PermissionDTO permissionDTO = new PermissionDTO();
+        permissionDTO.setId("some_permission");
+        RoleDTO roleDto = new RoleDTO();
+        roleDto.setId("roleID");
+        roleDto.setPermissions(Collections.singletonList(permissionDTO));
+
         when(roleServiceClientImpl.getRolesById(roleAssignmentDTO.getRoleId())).thenReturn(roleDto);
 
         Assertions.assertTrue(authorisationService.authorise("some_permission"));

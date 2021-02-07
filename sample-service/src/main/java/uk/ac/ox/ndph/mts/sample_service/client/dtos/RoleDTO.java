@@ -13,11 +13,6 @@ public class RoleDTO {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<PermissionDTO> permissions;
 
-    public RoleDTO(String id, List<PermissionDTO> permissions) {
-        this.id = id;
-        this.permissions = permissions;
-    }
-
     public RoleDTO() { }
 
     public String getId() {
