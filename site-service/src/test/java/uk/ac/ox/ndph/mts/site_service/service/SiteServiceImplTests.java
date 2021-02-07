@@ -14,21 +14,25 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
+import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
+import java.util.Collections;
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 class SiteServiceImplTests {
-    
+
     @Mock
     private EntityStore<Site> siteStore;
 
     @Mock
     private ModelEntityValidation<Site> siteValidation;
-    
+
     @Captor
     ArgumentCaptor<Site> siteCaptor;
 
@@ -55,7 +59,7 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestSaveSite_WhenValidSite_SavesToStore(){
+    void TestSaveSite_WhenValidSite_SavesToStore() {
         // Arrange
         String name = "name";
         String alias = "alias";
@@ -73,7 +77,7 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestSaveSite_WhenInvalidSite_ThrowsValidationException_DoesntSavesToStore(){
+    void TestSaveSite_WhenInvalidSite_ThrowsValidationException_DoesntSavesToStore() {
         // Arrange
         String name = "name";
         String alias = "alias";
@@ -87,11 +91,35 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError(){
+    void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
         Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteValidation),
                 "null store should throw");
         Assertions.assertThrows(InitialisationError.class, () -> new SiteServiceImpl(siteStore, null),
                 "null validation should throw");
     }
+
+    @Test
+    void TestGetSites_WhenEmpty_ThrowsInvariantException() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        when(siteStore.findAll()).thenReturn(Collections.emptyList());
+        // act + assert
+        Assertions.assertThrows(InvariantException.class, () -> siteService.findSites(),
+                "Expecting getSites to throw invariant exception");
+    }
+
+    @Test
+    void TestGetSites_WhenStoreHasSites_ReturnsSites() {
+        // arrange
+        final var siteService = new SiteServiceImpl(siteStore, siteValidation);
+        final var site = new Site("CCO", "Root", null);
+        when(siteStore.findAll()).thenReturn(Collections.singletonList(site));
+        // act
+        final List<Site> sites = siteService.findSites();
+        // assert
+        assertThat(sites, is(not(empty())));
+        assertThat(sites, hasItem(samePropertyValuesAs(site)));
+    }
+
 }

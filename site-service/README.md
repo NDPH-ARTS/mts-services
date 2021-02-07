@@ -27,7 +27,7 @@ Creates a new site entity.
 
 #### Success Response
 
-**Condition** : If site was created succesfully in the FHIR store.
+**Condition** : If site was created successfully in the FHIR store.
 
 **Code** : `201 CREATED`
 
@@ -73,6 +73,55 @@ Creates a new site entity.
     "error": "Fhir store connection failed with error..."
 }
 ```
+
+**Method** : `GET`
+
+**Parameters**: none
+
+#### Success Response
+
+**Condition** : If at least one site exists in the FHIR store
+
+**Code** : `200 OK`
+
+**Content example**
+
+```json
+[
+    {
+        "name": "CCO",
+        "alias": "CCO",
+        "parentSiteId": null,
+        "siteId":  "01ced0b1-a6e6-4408-9701-0ced2fff9a26"
+    }, 
+    {
+        "name": "UK",
+        "alias": "UK RCC",
+        "parentSiteId": "01ced0b1-a6e6-4408-9701-0ced2fff9a26",
+        "siteId": "02dfe1c2-a6e6-4408-9701-0ced2000ab37"
+    } 
+]
+```
+
+#### Or
+
+**Condition** : If FHIR store is unavailable.
+
+**Code** : `502 Bad Gateway`
+
+**Content** :
+
+#### Or
+
+**Condition** : If no sites.
+
+**Code** : `501 Not Implemented`
+
+**Content** :
+
+**Notes** : Means there are no sites in the store, so the invariant condition that there is always a root site
+is violated - but this may be a temporary condition so client may retry later.
+
 ___
 
 ## Service Dependecies
