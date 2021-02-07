@@ -10,12 +10,12 @@ services:
     restart: on-failure
     depends_on:
       - fhir-api
-      - config-server
       - role-service
       - site-service
     environment:
       SERVER_PORT: "80"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      SPRING_PROFILES_ACTIVE: "local"
+      FHIR_URI: "http://fhir-api:8080"
       ROLE_SERVICE_URI: "http://role-service:82"
       SITE_SERVICE_URI: "http://site-service:83"
     healthcheck:
@@ -77,7 +77,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-          - sql-fhir
+      - sql-fhir
 
   role-service:
     build:

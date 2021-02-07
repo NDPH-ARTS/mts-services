@@ -70,7 +70,7 @@ Creates a new practitioner entity.
 **Content** :
 
 ```json
-{   
+{
     "error": "Fhir store connection failed with error..."
 }
 ```
@@ -94,3 +94,28 @@ Sets the validation rules for practitioner's name attributes using regex.
 Note: In this iteration, the field names are hard-coded, and the service will validate the existence of all three attributes (prefix, given name and family name) in the configuration file. Adding more attributes to the json configuration file will not dynamically add them to the validation process.
 Empty or null validation regex is converted to a "validate-any" expression.
 The current json file allows up to 35 characters for any field, and specifies only "family name" as mandatory (minimum characters = 1).
+
+## Running the service
+
+### Local profile (for local debugging)
+when running locally, the config server is not required. setup the following env vars and run the project:
+
+```sh
+SPRING_PROFILES_ACTIVE=local
+FHIR_URI=<some-uri>
+ROLE_SERVICE_URI=<some-uri>
+SITE_SERVICE_URI=<some-uri>
+```
+
+### Other profiles (either deployed or locally)
+When not using the local profile, the config server is needed.
+To run, setup the following env args:
+
+```sh
+SPRING_PROFILES_ACTIVE=dev/prod/etc
+SPRING_CLOUD_CONFIG_LABEL=main
+SPRING_CLOUD_CONFIG_URI=<some-uri>
+```
+
+note that when running with any profile other than 'local' the micro-services URIs are not needed as it will automatically be fetched using the discovery service.
+Instead the information such as the config server uri, profile and label are needed.
