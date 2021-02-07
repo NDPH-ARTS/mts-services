@@ -1,11 +1,13 @@
 spring:
   application:
-    name: configserver
+    name: config-server
   cloud:
     config:
       server:
         git:
+          #TODO: placeholder
           uri: https://github.com/NDPH-ARTS/spring-config-server.git
+          #TODO: placeholder
           search-paths: practitioner-service
 
 server:
@@ -14,4 +16,4 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${EUREKA_HOSTNAME:localhost}:15000/eureka/
+      defaultZone: http://${EUREKA_HOSTNAME:localhost}:8761/eureka/
