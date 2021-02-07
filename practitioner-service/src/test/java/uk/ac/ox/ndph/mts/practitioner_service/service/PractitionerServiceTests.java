@@ -119,22 +119,45 @@ class PractitionerServiceTests {
     @Test
     void TestPractitionerService_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(null, practitionerValidator
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
                         , roleAssignmentStore, roleAssignmentValidator),
                 "null store should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(practitionerStore, null,
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, null,
                         roleAssignmentStore, roleAssignmentValidator),
                 "null validation should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(practitionerStore,
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore,
                         practitionerValidator, null, roleAssignmentValidator),
                 "null store should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
                         roleAssignmentStore, null),
                 "null validation should throw");
     }
 
 
     // RoleAssignment tests
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WhenNonNullIdentity_ReturnListOfRoleAssignments()
+    {
+        // Arrange
+        List<RoleAssignment> expectedResult = Collections.singletonList(
+                new RoleAssignment("practitionerId", "siteId", "roleId"));
+        when(service.getRoleAssignmentsByUserIdentity(anyString())).thenReturn(expectedResult);
+
+        //Act
+        List<RoleAssignment> result = service.getRoleAssignmentsByUserIdentity(anyString());
+
+        //Assert
+        assertThat(expectedResult, equalTo(result));
+    }
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WhenNullIdentity_ThrowsNullException()
+    {
+        //Act+Assert
+        Assertions.assertThrows(NullPointerException.class, () -> service.getRoleAssignmentsByUserIdentity(null),
+                "Null user identifier should throw.");
+    }
 
     @Test
     void TestSaveRoleAssignment_WhenValidEntity_ValidatesEntity() {

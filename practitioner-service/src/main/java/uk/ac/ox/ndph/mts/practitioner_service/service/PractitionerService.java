@@ -42,25 +42,14 @@ public class PractitionerService implements EntityService {
                                ModelEntityValidation<Practitioner> practitionerValidator,
                                EntityStore<RoleAssignment> roleAssignmentStore,
                                ModelEntityValidation<RoleAssignment> roleAssignmentValidator) {
-        if (practitionerStore == null) {
-            throw new InitialisationError("practitioner store cannot be null");
-        }
-        if (practitionerValidator == null) {
-            throw new InitialisationError("practitioner entity validation cannot be null");
-        }
-        if (roleAssignmentStore == null) {
-            throw new InitialisationError("RoleAssignment store cannot be null");
-        }
-        if (roleAssignmentValidator == null) {
-            throw new InitialisationError("RoleAssignment entity validation cannot be null");
-        }
-
+        Objects.requireNonNull(practitionerStore,"practitioner store cannot be null");
+        Objects.requireNonNull(practitionerValidator, "practitioner entity validation cannot be null");
+        Objects.requireNonNull(roleAssignmentStore,"RoleAssignment store cannot be null");
+        Objects.requireNonNull(roleAssignmentValidator,"RoleAssignment entity validation cannot be null");
         this.practitionerStore = practitionerStore;
         this.practitionerValidator = practitionerValidator;
-
         this.roleAssignmentStore = roleAssignmentStore;
         this.roleAssignmentValidator = roleAssignmentValidator;
-
         logger.info(Services.STARTUP.message());
     }
 
@@ -88,7 +77,7 @@ public class PractitionerService implements EntityService {
 
     @Override
     public List<RoleAssignment> getRoleAssignmentsByUserIdentity(@NotNull String userIdentity) {
-        Objects.requireNonNull(userIdentity, "Identifier can not be null.");
+        Objects.requireNonNull(userIdentity, "User identifier can not be null.");
         return roleAssignmentStore.listEntitiesByUserIdentity(userIdentity);
     }
 }
