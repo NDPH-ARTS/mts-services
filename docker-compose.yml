@@ -18,6 +18,7 @@ services:
       FHIR_URI: "http://fhir-api:8080"
       ROLE_SERVICE_URI: "http://role-service:82"
       SITE_SERVICE_URI: "http://site-service:83"
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED: "false"
     healthcheck:
       test: curl http://localhost/
@@ -37,6 +38,7 @@ services:
       SERVER_PORT: "8888"
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/spring-config-server.git"
       SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "practitioner-service"
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED: "false"
     image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
     restart: on-failure
@@ -58,6 +60,7 @@ services:
       - fhir-api
     environment:
       SERVER_PORT: "83"
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED: "false"
     healthcheck:
       test: curl http://localhost:83
@@ -144,6 +147,7 @@ services:
         SITE_SERVICE: "http://site-service:83"
         PRACTITIONER_SERVICE: "http://practitioner-service:80"
         CONFIG_JSON: config-init.json
+        SPRING_CLOUD_CONFIG_ENABLED: "false"
         SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED: "false"
       depends_on:
         - practitioner-service
