@@ -42,7 +42,7 @@ services:
       SERVER_PORT: "8082"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
-      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: "local"
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -62,6 +62,7 @@ services:
       - fhir-api
     environment:
       SERVER_PORT: "8083"
+      SPRING_PROFILES_ACTIVE: "local"
     healthcheck:
       test: curl http://localhost:8083
       interval: 10s
@@ -86,7 +87,7 @@ services:
       ROLE_SERVICE: "http://role-service:8082"
       SITE_SERVICE: "http://site-service:8083"
       CONFIG_JSON: config-init.json
-      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: "local"
     depends_on:
       - practitioner-service
       - role-service
@@ -120,6 +121,7 @@ services:
       SERVER_PORT: "8888"
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/mts-trial-deployment-config.git"
       SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "sample_trial/services, sample_trial/services/*"
+      SPRING_PROFILES_ACTIVE: "local"
     image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
     restart: on-failure
     ports:
