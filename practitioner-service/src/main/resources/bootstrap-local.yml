@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: practitioner-service
+  profiles: local
   cloud:
     config:
       enabled: false

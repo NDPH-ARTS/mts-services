@@ -1,17 +1,5 @@
 spring:
-  application:
-    name: config-server
-  cloud:
-    config:
-      server:
-        git:
-          #TODO: placeholder
-          uri: https://github.com/NDPH-ARTS/spring-config-server.git
-          #TODO: placeholder
-          search-paths: practitioner-service
-
-server:
-  port: 8888
+  profiles: default
 
 eureka:
   client:

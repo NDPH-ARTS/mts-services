@@ -1,6 +1,5 @@
 spring:
-  application:
-    name: init-service
+  profiles: default
   cloud:
     config:
       # If cannot connect to config server, don't start the application

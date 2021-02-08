@@ -1,6 +1,5 @@
 spring:
-  application:
-    name: site-service
+  profiles: default
   cloud:
     config:
       # If cannot connect to config server, don't start the application
@@ -20,3 +19,5 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: http://${EUREKA_HOSTNAME:localhost}:${EUREKA_PORT:8761}/eureka/
+
+

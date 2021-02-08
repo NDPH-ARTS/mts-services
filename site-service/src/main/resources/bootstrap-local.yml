@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: site-service
+  profiles: local
   cloud:
     config:
       enabled: false
