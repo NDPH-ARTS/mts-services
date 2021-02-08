@@ -3,17 +3,17 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 /**
  * String constants
  */
-public enum Repositorys {
+public enum Repository {
     REQUEST_PAYLOAD("request to FHIR: %s"),
     RESPONSE_PAYLOAD("response from FHIR: %s"),
     UPDATE_ERROR("error while updating FHIR store"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
     SEARCH_ERROR("error while searching for resource: %s"),
-    PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s");
+    TRANSACTION_ERROR("Problem executing transaction with bundle at: %s");
 
     private String message;
  
-    Repositorys(String message) {
+    Repository(String message) {
         this.message = message;
     }
 

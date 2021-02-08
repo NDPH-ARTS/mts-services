@@ -48,7 +48,7 @@ public class HapiFhirRepository implements FhirRepository {
                     .execute();
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
+            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
 
@@ -59,16 +59,16 @@ public class HapiFhirRepository implements FhirRepository {
      * @return id of the created resource
      */
     private String saveResource(final Resource resource) {
-        logger.info(Repositorys.REQUEST_PAYLOAD.message(), fhirContextWrapper.prettyPrint(resource));
+        logger.info(Repository.REQUEST_PAYLOAD.message(), fhirContextWrapper.prettyPrint(resource));
         Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                     bundle(resource, resource.getResourceType().name()));
         } catch (FhirServerResponseException e) {
-            throw new RestException(Repositorys.UPDATE_ERROR.message(), e);
+            throw new RestException(Repository.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
-        logger.info(Repositorys.RESPONSE_PAYLOAD.message(), fhirContextWrapper.prettyPrint(responseElement));
+        logger.info(Repository.RESPONSE_PAYLOAD.message(), fhirContextWrapper.prettyPrint(responseElement));
         return responseElement.getIdElement().getIdPart();
     }
 
@@ -101,7 +101,7 @@ public class HapiFhirRepository implements FhirRepository {
                     .filter(r -> r.getResourceType().equals(ResourceType.Organization))
                     .map(Organization.class::cast);
         } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
+            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
 
@@ -116,9 +116,8 @@ public class HapiFhirRepository implements FhirRepository {
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
         final var resp = fhirContextWrapper.toListOfResources(bundle);
         if (resp.size() != 1) {
-            logger.info(Repositorys.BAD_RESPONSE_SIZE.message(), resp.size());
             throw new RestException(String.format(
-                    Repositorys.BAD_RESPONSE_SIZE.message(), resp.size()));
+                    Repository.BAD_RESPONSE_SIZE.message(), resp.size()));
         }
         return resp.get(0);
     }
@@ -145,7 +144,7 @@ public class HapiFhirRepository implements FhirRepository {
         } catch (ResourceNotFoundException ex) {
             return Optional.empty();
         } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
+            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
 
@@ -167,7 +166,7 @@ public class HapiFhirRepository implements FhirRepository {
                     .execute();
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
+            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
 
