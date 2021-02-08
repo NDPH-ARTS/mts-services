@@ -79,11 +79,11 @@ public class FhirContextWrapper {
         var resultsBundle = client.search()
                 .forResource(resourceClass)
                 .where(criterion)
-                .returnBundle(org.hl7.fhir.r4.model.Bundle.class)
+                .returnBundle(Bundle.class)
                 .execute();
 
                 // extract first page
-        List<IBaseResource> searchResults = new ArrayList<>(BundleUtil.toListOfResources(fhirContext, resultsBundle));
+        List<IBaseResource> searchResults = this.toListOfResources(resultsBundle);
 
         // loop on next pages
         while (resultsBundle.getLink().size() > 1) {
