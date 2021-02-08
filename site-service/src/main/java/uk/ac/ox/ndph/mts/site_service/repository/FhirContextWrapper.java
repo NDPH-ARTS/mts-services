@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uhn.fhir.rest.gclient.IQuery;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class FhirContextWrapper {
      * @param input the Bundle to save
      * @return the returned Bundle object from FHIR endpoint
      */
-    public Bundle executeTrasaction(String uri, Bundle input) {
+    public Bundle executeTransaction(String uri, Bundle input) {
         return fhirContext.newRestfulGenericClient(uri).transaction()
                     .withBundle(input).execute();
     }
@@ -50,8 +51,26 @@ public class FhirContextWrapper {
      * @return the list of resources in the bundle
      */
     public List<IBaseResource> toListOfResources(Bundle bundle) {
-        List<IBaseResource> resp = new ArrayList<>();
-        resp.addAll(BundleUtil.toListOfResources(fhirContext, bundle));
-        return resp;
+        return new ArrayList<>(BundleUtil.toListOfResources(fhirContext, bundle));
     }
+
+    /**
+     * Typed version of to list of resources
+     */
+    public <T extends IBaseResource> List<T> toListOfResourcesOfType(Bundle bundle, Class<T> resourceClass) {
+        return new ArrayList<>(BundleUtil.toListOfResourcesOfType(this.fhirContext, bundle, resourceClass));
+    }
+
+    /**
+     * Return a search instance which can be configured and executed, returning a single type of resource
+     * @param uri FHIR endpoint URI
+     * @param resourceClass class of resource to return in bundle
+     */
+    public IQuery<Bundle> search(final String uri, final Class<? extends IBaseResource> resourceClass) {
+        return fhirContext.newRestfulGenericClient(uri)
+                .search()
+                .forResource(resourceClass)
+                .returnBundle(Bundle.class);
+    }
+
 }

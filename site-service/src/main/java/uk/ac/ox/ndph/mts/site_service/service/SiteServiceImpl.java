@@ -4,12 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.bind.annotation.GetMapping;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
+import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
+
+import java.util.List;
 
 /**
  * Implement an SiteServiceInterface interface.
@@ -56,4 +59,21 @@ public class SiteServiceImpl implements SiteService {
         }
         return siteStore.saveEntity(site);
     }
+
+    /**
+     * Get complete sites list.  Note the list should never be empty if the trial has been initialized, and
+     * this method should not be called if the trial has not been initialized. So throws an exception if the
+     * store returns an empty sites list.
+     * @return list of sites, never empty
+     * @throws InvariantException if the list from the store is empty
+     */
+    @GetMapping
+    public List<Site> findSites() {
+        final List<Site> sites = this.siteStore.findAll();
+        if (sites.isEmpty()) {
+            throw new InvariantException(Services.NO_ROOT_SITE.message());
+        }
+        return sites;
+    }
+
 }

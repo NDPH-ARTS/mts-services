@@ -24,7 +24,7 @@ public class Site {
     }
 
     /**
-     * Site Constructor with two parameters
+     * Site Constructor with name alias and parent
      *
      * @param name the Site name
      * @param alias the Site alias
@@ -37,8 +37,23 @@ public class Site {
         this.parentSiteId = parentSiteId;
     }
 
+
+    /**
+     * Site Constructor with siteId name alias and parent
+     * @param siteId site ID
+     * @param name the Site name
+     * @param alias the Site alias
+     * @param parentSiteId the Site parentSiteId
+     *
+     */
+    public Site(final String siteId, String name, String alias, String parentSiteId) {
+        this(name, alias, parentSiteId);
+        this.siteId = siteId;
+    }
+
     private String name;
     private String alias;
+    private String siteId;
     private String parentSiteId;
 
     /**
@@ -92,5 +107,13 @@ public class Site {
      */
     public void setParentSiteId(String parentSiteId) {
         this.parentSiteId = parentSiteId;
+    }
+
+    public String getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
     }
 }
