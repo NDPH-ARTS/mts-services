@@ -7,7 +7,6 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
 import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,7 +97,6 @@ public class HapiFhirRepository implements FhirRepository {
                     .stream()
                     .findFirst()
                     .map(Bundle.BundleEntryComponent::getResource)
-                    .filter(r -> r.getResourceType().equals(ResourceType.Organization))
                     .map(Organization.class::cast);
         } catch (BaseServerResponseException e) {
             throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
