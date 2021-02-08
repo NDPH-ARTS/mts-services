@@ -37,7 +37,8 @@ services:
         SVC: role-service
     image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
     depends_on:
-      - sql-mts-data
+      sql-mts-data:
+        condition: service_healthy
     environment:
       SERVER_PORT: "8082"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -88,9 +89,12 @@ services:
       CONFIG_JSON: config-init-bootstrap-roles.json
       SPRING_CLOUD_CONFIG_ENABLED: "false"
     depends_on:
-      - practitioner-service
-      - role-service
-      - site-service
+      practitioner-service:
+        condition: service_healthy
+      role-service:
+        condition: service_healthy
+      site-service:
+        condition: service_healthy
 
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"

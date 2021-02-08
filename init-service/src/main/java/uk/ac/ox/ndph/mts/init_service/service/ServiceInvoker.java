@@ -11,7 +11,14 @@ public abstract class ServiceInvoker {
 
     protected abstract String create(Entity entity) throws DependentServiceException;
 
-    protected WebClient webClient;
+    private WebClient webClient;
+
+    public ServiceInvoker() {
+        this.webClient = WebClient.create();
+    }
+    public ServiceInvoker(WebClient webClient) {
+        this.webClient = webClient;
+    }
 
     protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected) {
         return webClient.post()

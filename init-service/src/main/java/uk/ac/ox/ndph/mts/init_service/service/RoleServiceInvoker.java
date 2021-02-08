@@ -19,12 +19,8 @@ public class RoleServiceInvoker extends ServiceInvoker {
     @Value("${role.service}")
     private String roleService;
 
-    public RoleServiceInvoker() {
-        this.webClient = WebClient.create(roleService);
-    }
-    public RoleServiceInvoker(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    public RoleServiceInvoker() { }
+    public RoleServiceInvoker(WebClient webClient) { super(webClient); }
 
     @Override
     protected String create(Entity role) throws DependentServiceException {

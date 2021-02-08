@@ -21,12 +21,8 @@ public class SiteServiceInvoker extends ServiceInvoker {
     @Value("${site.service}")
     private String siteService;
 
-    public SiteServiceInvoker() {
-        this.webClient = WebClient.create(siteService);
-    }
-    public SiteServiceInvoker(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    public SiteServiceInvoker() { }
+    public SiteServiceInvoker(WebClient webClient) { super(webClient); }
 
     protected String create(Entity site) throws DependentServiceException {
 

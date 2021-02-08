@@ -21,13 +21,9 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     @Value("${practitioner.service}")
     private String practitionerService;
 
-    public PractitionerServiceInvoker() {
-        this.webClient = WebClient.create(practitionerService);
-    }
+    public PractitionerServiceInvoker() { }
 
-    public PractitionerServiceInvoker(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    public PractitionerServiceInvoker(WebClient webClient) { super(webClient); }
 
     @Override
     protected String create(Entity practitioner) throws DependentServiceException {
