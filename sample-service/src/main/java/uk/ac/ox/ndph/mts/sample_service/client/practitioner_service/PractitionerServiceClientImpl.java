@@ -3,17 +3,17 @@ package uk.ac.ox.ndph.mts.sample_service.client.practitioner_service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.sample_service.client.ClientResponse;
-import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleAssignmentDTO;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.AssignmentRoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
 
+/**
+ * Practitioner service client implementation
+ */
 @Service
 public class PractitionerServiceClientImpl implements PractitionerServiceClient {
-
-    static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
     private final WebClient webClient;
 
@@ -28,12 +28,12 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
     }
 
     /**
-     * Get participant roles
+     * Get practitioner assignment roles by user id
      * @param userId - user id on the token
-     * @return true - currently it is a stub/infra until the implementation will be added
+     * @return  AssignmentRoleDTO[] array of assignment roles
      */
     @Override
-    public RoleAssignmentDTO[] getUserAssignmentRoles(String userId) {
+    public AssignmentRoleDTO[] getUserAssignmentRoles(String userId) {
 
         return webClient.get().uri(uriBuilder ->
                 uriBuilder
@@ -48,7 +48,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
                             new RestException(
                                         String.format(ClientResponse.CLIENT_ERROR_RESPONSE.message(),
                                                 SERVICE_NAME, resp.statusCode(), userId))))
-                .bodyToMono(RoleAssignmentDTO[].class)
+                .bodyToMono(AssignmentRoleDTO[].class)
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block();
     }

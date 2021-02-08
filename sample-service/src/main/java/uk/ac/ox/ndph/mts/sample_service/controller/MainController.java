@@ -44,7 +44,7 @@ public class MainController {
      *
      * @return a message as a string.
      */
-    @PreAuthorize("@authorisationService.authorise('view-person')") //NOSONAR
+    @PreAuthorize("@authorisationService.authorise('stubPermission')") //NOSONAR
     @GetMapping("/hello")
     public String hello() {
         return message;

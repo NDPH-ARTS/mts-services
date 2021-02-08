@@ -5,8 +5,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Security context service to get data from the security context
+ */
 @Component
-public class SecurityContextService {
+public class SecurityContextComponent {
 
     public UserPrincipal getUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

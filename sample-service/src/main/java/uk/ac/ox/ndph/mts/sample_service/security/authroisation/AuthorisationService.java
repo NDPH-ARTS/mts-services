@@ -1,13 +1,11 @@
 package uk.ac.ox.ndph.mts.sample_service.security.authroisation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.sample_service.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.client.role_service.RoleServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.PermissionDTO;
-import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleAssignmentDTO;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.AssignmentRoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
 import org.slf4j.Logger;
@@ -24,20 +22,19 @@ public class AuthorisationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
-    private final SecurityContextService securityContextService;
+    private final SecurityContextComponent securityContextComponent;
 
     private final PractitionerServiceClient practitionerServiceClient;
-    private final RoleServiceClient roleServiceClientImpl;
+    private final RoleServiceClient roleServiceClient;
 
     @Autowired
-    public AuthorisationService(final SecurityContextService securityContextService,
+    public AuthorisationService(final SecurityContextComponent securityContextComponent,
                                 final PractitionerServiceClient practitionerServiceClient,
-                                final RoleServiceClient roleServiceClientImpl) {
-        this.securityContextService = securityContextService;
+                                final RoleServiceClient roleServiceClient) {
+        this.securityContextComponent = securityContextComponent;
         this.practitionerServiceClient = practitionerServiceClient;
-        this.roleServiceClientImpl = roleServiceClientImpl;
+        this.roleServiceClient = roleServiceClient;
     }
-
 
     /**
      * Authorise request
@@ -50,7 +47,7 @@ public class AuthorisationService {
             String userId = getUserIdFromContext();
 
             //get practitioner assignment role
-            RoleAssignmentDTO[] participantRoles = practitionerServiceClient.getUserAssignmentRoles(userId);
+            AssignmentRoleDTO[] participantRoles = practitionerServiceClient.getUserAssignmentRoles(userId);
 
             if (participantRoles == null || participantRoles.length == 0) {
                 LOGGER.info("User with id {} has no assignment Roles and therefore is unauthorised.", userId);
@@ -60,7 +57,7 @@ public class AuthorisationService {
             //get permissions for the the practitioner assignment roles
             //and filter assignment roles to be only those which have the required permission in them
             var rolesWithPermission = Stream.of(participantRoles)
-                    .map(role -> roleServiceClientImpl.getRolesById(role.getRoleId()))
+                    .map(role -> roleServiceClient.getRolesById(role.getRoleId()))
                     .filter(roleDto -> hasRoleRequiredPermission(roleDto, requiredPermission))
                     .collect(Collectors.toList());
 
@@ -69,6 +66,7 @@ public class AuthorisationService {
                 return false;
             }
         } catch (Exception e) {
+            LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
             return false;
         }
 
@@ -89,14 +87,25 @@ public class AuthorisationService {
         return isSiteAuthorised(entitySite, "stubRole");
     }
 
+    /**
+     * Get user id from security context
+     * @return string user id
+     * @throws AuthorisationException if there was an error while extracting user from the context
+     */
     private String getUserIdFromContext() throws AuthorisationException {
         try {
-            return securityContextService.getUserPrincipal().getClaim("oid").toString();
+            return securityContextComponent.getUserPrincipal().getClaim("oid").toString();
         } catch (Exception e) {
-            throw new AuthorisationException("Invalid user.");
+            throw new AuthorisationException("Invalid user.", e);
         }
     }
 
+    /**
+     * Check if a required permission exists in role
+     * @param role with permissions
+     * @param requiredPermission required permission
+     * @return true if permission exists in role
+     */
     private boolean hasRoleRequiredPermission(RoleDTO role, String requiredPermission) {
         List<String> permissionIds = role.getPermissions().stream()
                 .map(PermissionDTO::getId).collect(Collectors.toList());
@@ -112,14 +121,5 @@ public class AuthorisationService {
     @SuppressWarnings("squid:S1172") //suppress unused parameterך
     private boolean isSiteAuthorised(String entitySite, String userRole) {
         return true;
-    }
-
-    private HttpEntity getHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-
-        HttpEntity entity = new HttpEntity(headers);
-
-        return entity;
     }
 }

@@ -9,6 +9,9 @@ import uk.ac.ox.ndph.mts.sample_service.client.ClientResponse;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
 
+/**
+ * Role service client implementation
+ */
 @Service
 public class RoleServiceClientImpl implements RoleServiceClient {
 
@@ -25,9 +28,9 @@ public class RoleServiceClientImpl implements RoleServiceClient {
     }
 
     /**
-     * Get user permissions
+     * Get role with permissions by participant role id
      * @param roleId - participant role id
-     * @return true - currently it is a stub/infra until the implementation will be added
+     * @return RoleDTO - role with permissions
      */
     @Override
     public RoleDTO getRolesById(String roleId) {
