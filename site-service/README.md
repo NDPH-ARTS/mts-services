@@ -122,9 +122,44 @@ Creates a new site entity.
 **Notes** : Means there are no sites in the store, so the invariant condition that there is always a root site
 is violated - but this may be a temporary condition so client may retry later.
 
+**URL** : `GET /sites/{siteId}`
+
+#### Success Response
+
+**Condition** : If the given site ID exists in the store
+
+**Code** : `200 OK`
+
+**Content example**
+
+```json
+{
+    "name": "UK",
+    "alias": "UK RCC",
+    "parentSiteId": "01ced0b1-a6e6-4408-9701-0ced2fff9a26",
+    "siteId": "02dfe1c2-a6e6-4408-9701-0ced2000ab37"
+} 
+```
+
+#### Or
+
+**Condition** : If FHIR store is unavailable.
+
+**Code** : `502 Bad Gateway`
+
+**Content** :
+
+#### Or
+
+**Condition** : If site with given ID not found
+
+**Code** : `404 not found`
+
+**Content** : -
+
 ___
 
-## Service Dependecies
+## Service Dependencies
 
 ### FHIR Store and HL7 Model
 Site service is backed up by a FHIR store which is accessible as an HTTP/S endpoint and configurable by the "fhir.uri" application property.
