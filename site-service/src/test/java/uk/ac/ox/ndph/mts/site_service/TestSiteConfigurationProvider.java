@@ -1,15 +1,17 @@
 package uk.ac.ox.ndph.mts.site_service;
 
-import static org.mockito.Mockito.when;
-import java.util.List;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
-import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
+
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 @Profile("test-all-required")
 @Primary
