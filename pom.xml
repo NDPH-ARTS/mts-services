@@ -32,11 +32,11 @@
         <!--        <module>build-tools</module>-->
         <module>sample-service</module>
         <module>practitioner-service</module>
-        <module>config-server</module>
-        <module>discovery-server</module>
         <module>role-service</module>
         <module>init-service</module>
         <module>site-service</module>
+        <module>config-server</module>
+        <module>discovery-server</module>
     </modules>
 
     <dependencies>
