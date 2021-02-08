@@ -3,7 +3,7 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResearchStudy;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,7 +29,8 @@ public interface FhirRepository {
 
     /**
      * Creates a new ResearchStudy resource.
-     * @param researchStudy  study to create
+     *
+     * @param researchStudy study to create
      * @return ResearchStudy
      */
     String saveResearchStudy(ResearchStudy researchStudy);
@@ -37,12 +38,14 @@ public interface FhirRepository {
     /**
      * Return the list of all organizations. Note this may include organizations that are
      * not {uk.ac.ox.ndph.mts.site_service.model.Site}s - caller must filter.
+     *
      * @return all organization instances in the store, might be empty, not null
      */
-    Collection<Organization> findOrganizations();
+    List<Organization> findOrganizations();
 
     /**
      * Return an organization by ID, or Optional.none() if not found
+     *
      * @param id organization ID to search for
      * @return optional with the organization or none if not found
      */
@@ -50,9 +53,10 @@ public interface FhirRepository {
 
     /**
      * Return an organizations with given parent ID, or Optional.none() if not found
+     *
      * @param id parent organization ID to search for, null is allowed (will return orgs with no parent)
      * @return collection of organizations with the given parent, might be empty
      */
-    Collection<Organization> findOrganizationsByPartOf(String id);
+    List<Organization> findOrganizationsByPartOf(String id);
 
 }

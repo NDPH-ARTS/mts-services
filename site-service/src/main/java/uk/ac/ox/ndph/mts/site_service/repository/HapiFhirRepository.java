@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -40,12 +40,12 @@ public class HapiFhirRepository implements FhirRepository {
      *
      * @return all organization instances in the store, might be empty, not null
      */
-    public Collection<Organization> findOrganizations() {
+    public List<Organization> findOrganizations() {
         try {
             // TODO (alexb siteType): filter organizations by the extension element that identifies them as sites
             final Bundle responseBundle = fhirContextWrapper
                     .search(fhirUri, Organization.class)
-                    .execute(); // TODO (alexb paged): needs to handle paged response
+                    .execute();
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
             throw new RestException(String.format(Repositorys.SEARCH_ERROR.message(), e.getMessage()), e);
@@ -156,7 +156,7 @@ public class HapiFhirRepository implements FhirRepository {
      * @return collection of organizations with the given parent, might be empty
      */
     @Override
-    public Collection<Organization> findOrganizationsByPartOf(final String id) {
+    public List<Organization> findOrganizationsByPartOf(final String id) {
         final var criterion = (id == null)
                 ? Organization.PARTOF.isMissing(true)
                 : Organization.PARTOF.hasId(id);
