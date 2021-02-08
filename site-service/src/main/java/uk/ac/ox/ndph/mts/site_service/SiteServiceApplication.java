@@ -14,9 +14,7 @@ public class SiteServiceApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceApplication.class);
 
     public static void main(String[] args) {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(Application.STARTUP.message());
-        }
+        LOGGER.info(Application.STARTUP.message());
         SpringApplication.run(SiteServiceApplication.class, args);
     }
 

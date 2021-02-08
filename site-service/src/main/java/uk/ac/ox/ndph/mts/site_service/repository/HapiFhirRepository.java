@@ -59,23 +59,16 @@ public class HapiFhirRepository implements FhirRepository {
      * @return id of the created resource
      */
     private String saveResource(final Resource resource) {
-        if (logger.isInfoEnabled()) {
-            logger.info(Repositorys.REQUEST_PAYLOAD.message(), fhirContextWrapper.prettyPrint(resource));
-        }
+        logger.info(Repositorys.REQUEST_PAYLOAD.message(), fhirContextWrapper.prettyPrint(resource));
         Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
                     bundle(resource, resource.getResourceType().name()));
         } catch (FhirServerResponseException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(Repositorys.UPDATE_ERROR.message(), e);
-            }
             throw new RestException(Repositorys.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
-        if (logger.isInfoEnabled()) {
-            logger.info(Repositorys.RESPONSE_PAYLOAD.message(), fhirContextWrapper.prettyPrint(responseElement));
-        }
+        logger.info(Repositorys.RESPONSE_PAYLOAD.message(), fhirContextWrapper.prettyPrint(responseElement));
         return responseElement.getIdElement().getIdPart();
     }
 
@@ -123,9 +116,7 @@ public class HapiFhirRepository implements FhirRepository {
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
         final var resp = fhirContextWrapper.toListOfResources(bundle);
         if (resp.size() != 1) {
-            if (logger.isInfoEnabled()) {
-                logger.info(Repositorys.BAD_RESPONSE_SIZE.message(), resp.size());
-            }
+            logger.info(Repositorys.BAD_RESPONSE_SIZE.message(), resp.size());
             throw new RestException(String.format(
                     Repositorys.BAD_RESPONSE_SIZE.message(), resp.size()));
         }
