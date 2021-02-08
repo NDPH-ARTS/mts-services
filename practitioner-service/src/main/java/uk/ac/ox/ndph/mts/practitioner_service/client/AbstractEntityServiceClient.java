@@ -4,7 +4,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public abstract class AbstractEntityServiceClient implements EntityServiceClient {
@@ -15,7 +14,7 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean entityIdExists(@NotNull String id) throws RestException {
+    public boolean entityIdExists(String id) throws RestException {
         Objects.requireNonNull(id, "id must be non-null");
         return webClient.get()
                 .uri(serviceExistsRoute, id)

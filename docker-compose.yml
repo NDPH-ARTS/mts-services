@@ -1,5 +1,8 @@
 version: "3"
 services:
+  #################
+  # CORE SERVICES #
+  #################
   practitioner-service:
     build:
       context: .
@@ -13,38 +16,40 @@ services:
       - role-service
       - site-service
     environment:
-      SERVER_PORT: "80"
+      SERVER_PORT: "8081"
       SPRING_PROFILES_ACTIVE: "local"
       FHIR_URI: "http://fhir-api:8080"
-      ROLE_SERVICE_URI: "http://role-service:82"
-      SITE_SERVICE_URI: "http://site-service:83"
+      ROLE_SERVICE_URI: "http://role-service:8082"
+      SITE_SERVICE_URI: "http://site-service:8083"
     healthcheck:
-      test: curl http://localhost/
+      test: curl http://localhost:8081
       interval: 10s
       timeout: 10s
       retries: 6
     ports:
-      - "80:80"
+      - "8081:8081"
 
-  config-server:
+  role-service:
     build:
       context: .
-      dockerfile: config-server/Dockerfile
+      dockerfile: role-service/Dockerfile
       args:
-        SVC: config-server
+        SVC: role-service
+    image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
+    depends_on:
+      - sql-mts-data
     environment:
-      SERVER_PORT: "8888"
-      SPRING_PROFILES_ACTIVE: "local"
-      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/spring-config-server.git"
-      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "practitioner-service"
-    image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
-    restart: on-failure
-    ports:
-      - "8888:8888"
+      SERVER_PORT: "8082"
+      JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
     healthcheck:
-      test: curl http://localhost:8888/
+      test: curl http://localhost:8082
       interval: 10s
       timeout: 10s
+      retries: 12
+    ports:
+      - "8082:8082"
 
   site-service:
     build:
@@ -56,15 +61,36 @@ services:
     depends_on:
       - fhir-api
     environment:
-      SERVER_PORT: "83"
-      SPRING_PROFILES_ACTIVE: "local"
+      SERVER_PORT: "8083"
     healthcheck:
-      test: curl http://localhost:83
+      test: curl http://localhost:8083
       interval: 10s
       timeout: 10s
       retries: 6
     ports:
-      - "83:83"
+      - "8083:8083"
+
+  #######################
+  # SUPPORTING SERVICES #
+  #######################
+  init-service:
+    build:
+      context: .
+      dockerfile: init-service/Dockerfile
+      args:
+        SVC: init-service
+    image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
+    restart: on-failure
+    environment:
+      PRACTITIONER_SERVICE: "http://practitioner-service:8081"
+      ROLE_SERVICE: "http://role-service:8082"
+      SITE_SERVICE: "http://site-service:8083"
+      CONFIG_JSON: config-init.json
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+    depends_on:
+      - practitioner-service
+      - role-service
+      - site-service
 
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
@@ -81,27 +107,31 @@ services:
     depends_on:
       - sql-fhir
 
-  role-service:
+  #########################
+  # SPRING CLOUD SERVICES #
+  #########################
+  config-server:
     build:
       context: .
-      dockerfile: role-service/Dockerfile
+      dockerfile: config-server/Dockerfile
       args:
-        SVC: role-service
-    image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
-    depends_on:
-      - sql-mts-data
+        SVC: config-server
     environment:
-      SERVER_PORT: "82"
-      JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD}
-      SPRING_PROFILES_ACTIVE: "local"
+      SERVER_PORT: "8888"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/mts-trial-deployment-config.git"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "sample_trial/services, sample_trial/services/*"
+    image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
+    restart: on-failure
+    ports:
+      - "8888:8888"
     healthcheck:
-      test: curl http://localhost:82
+      test: curl http://localhost:8888/
       interval: 10s
       timeout: 10s
-      retries: 12
-    ports:
-      - "82:82"
+
+  #############
+  # DATABASES #
+  #############
 
   sql-fhir:
     image: "mcr.microsoft.com/mssql/server"
@@ -109,7 +139,7 @@ services:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
+      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'" ]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -122,28 +152,11 @@ services:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"
     healthcheck:
-        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'"]
-        interval: 10s
-        timeout: 10s
-        retries: 6
+      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'" ]
+      interval: 10s
+      timeout: 10s
+      retries: 6
     ports:
       - "1434:1433"
 
-  init-service:
-      build:
-        context: .
-        dockerfile: init-service/Dockerfile
-        args:
-          SVC: init-service
-      image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
-      restart: on-failure
-      environment:
-        ROLE_SERVICE: "http://role-service:82"
-        SITE_SERVICE: "http://site-service:83"
-        PRACTITIONER_SERVICE: "http://practitioner-service:80"
-        CONFIG_JSON: config-init.json
-        SPRING_PROFILES_ACTIVE: "local"
-      depends_on:
-        - practitioner-service
-        - role-service
-        - site-service
+
