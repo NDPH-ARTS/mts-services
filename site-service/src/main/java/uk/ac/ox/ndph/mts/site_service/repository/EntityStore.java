@@ -5,10 +5,10 @@ import java.util.Optional;
 
 /**
  * Interface for a store of a data model entity
- *  @param <K> type of ID for entities
  *  @param <T> type of entity
+ *  @param <K> type of ID for entities
  */
-public interface EntityStore<K, T> {
+public interface EntityStore<T, K> {
 
     /**
      * save the entity

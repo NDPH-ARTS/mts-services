@@ -3,10 +3,11 @@ package uk.ac.ox.ndph.mts.site_service.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
-import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
@@ -24,7 +25,7 @@ import java.util.Optional;
 @Service
 public class SiteServiceImpl implements SiteService {
 
-    private final EntityStore<String, Site> siteStore;
+    private final EntityStore<Site, String> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
@@ -33,7 +34,7 @@ public class SiteServiceImpl implements SiteService {
      * @param entityValidation Site validation interface
      */
     @Autowired
-    public SiteServiceImpl(final EntityStore<String, Site> siteStore,
+    public SiteServiceImpl(final EntityStore<Site, String> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
@@ -43,7 +44,9 @@ public class SiteServiceImpl implements SiteService {
         }
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
-        logger.info(Services.STARTUP.message());
+        if (logger.isInfoEnabled()) {
+            logger.info(Services.STARTUP.message());
+        }
     }
 
     /**
@@ -102,7 +105,7 @@ public class SiteServiceImpl implements SiteService {
      * @param siteName the Site to search.
      * @return site The Site being searched, or none() if not found
      */
-    public Optional<Site> findSiteByName(String siteName) {
+    Optional<Site> findSiteByName(String siteName) {
         return siteStore.findByName(siteName);
     }
 
@@ -111,12 +114,13 @@ public class SiteServiceImpl implements SiteService {
      *
      * @param id site ID to search for
      * @return site if found
-     * @throws NotFoundException if not found
+     * @throws ResponseStatusException if not found
      */
-    public Site findSiteById(String id) throws NotFoundException {
+    public Site findSiteById(String id) throws ResponseStatusException {
         return this.siteStore
                 .findById(id)
-                .orElseThrow(() -> new NotFoundException(Services.SITE_NOT_FOUND.message(), id));
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, Services.SITE_NOT_FOUND.message()));
 
     }
 
@@ -136,12 +140,12 @@ public class SiteServiceImpl implements SiteService {
      * Return the root node, throwing if not present
      *
      * @return site if found
-     * @throws NotFoundException if no root site (bad trial initialization)
+     * @throws ResponseStatusException if no root site (bad trial initialization)
      */
-    public Site findRootSite() throws NotFoundException {
+    Site findRootSite() throws ResponseStatusException {
         return this.siteStore
                 .findRoot()
-                .orElseThrow(() -> new NotFoundException(Services.NO_ROOT_SITE.message(), ""));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Services.NO_ROOT_SITE.message()));
     }
 
 

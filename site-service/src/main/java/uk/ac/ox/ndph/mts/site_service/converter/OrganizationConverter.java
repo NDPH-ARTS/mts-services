@@ -5,10 +5,11 @@ import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 /**
- * Implement an EntityConverter for Site top rganization.
+ * Implement an EntityConverter for {@link Site} to {@link Organization}.
  */
 @Component
 public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir.r4.model.Organization> {
@@ -33,13 +34,9 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
     }
 
     private void setParentOrganization(Site site, Organization fhirOrganization) {
-        if (!isNullOrBlank(site.getParentSiteId())) {
+        if (StringUtils.hasText(site.getParentSiteId())) {
             fhirOrganization.setPartOf(new Reference("Organization/" + site.getParentSiteId()));
         }
-    }
-
-    private boolean isNullOrBlank(String str) {
-        return str == null || str.isBlank();
     }
 
 }

@@ -19,6 +19,8 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -133,9 +135,13 @@ class SiteServiceImplIntegrationTests {
         org.setId(id);
         when(repository.findOrganizationById(org.getId())).thenReturn(Optional.of(org));
         // Act + Assert
-        this.mockMvc
+        final var content = this.mockMvc
                 .perform(get(SITES_ROUTE + "/" + org.getId()).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().string(containsString(org.getId())));
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertThat(content, matchesPattern("^\\{[^\\}]+\\}$"));
+        assertThat(content, stringContainsInOrder("\"siteId\":", org.getId()));
+        assertThat(content, stringContainsInOrder("\"name\":", org.getName()));
+        assertThat(content, stringContainsInOrder("\"alias\":", org.getAlias().get(0).toString()));
     }
 
     @Test

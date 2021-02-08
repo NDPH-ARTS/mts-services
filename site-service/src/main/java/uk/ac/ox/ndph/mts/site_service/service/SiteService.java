@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
-import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 import java.util.List;
@@ -30,8 +30,8 @@ public interface SiteService {
      *
      * @param id site ID to search for
      * @return site if found
-     * @throws NotFoundException if not found
+     * @throws ResponseStatusException if not found
      */
-    Site findSiteById(String id) throws NotFoundException;
+    Site findSiteById(String id) throws ResponseStatusException;
 
 }

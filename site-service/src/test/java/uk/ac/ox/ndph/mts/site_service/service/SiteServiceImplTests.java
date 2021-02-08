@@ -7,9 +7,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
-import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 class SiteServiceImplTests {
 
     @Mock
-    private EntityStore<String, Site> siteStore;
+    private EntityStore<Site, String> siteStore;
 
     @Mock
     private ModelEntityValidation<Site> siteValidation;
@@ -230,12 +230,12 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestFindSiteById_WhenStoreHasNoSite_ThrowsNotFoundException() {
+    void TestFindSiteById_WhenStoreHasNoSite_ThrowResponseStatusException() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteStore.findById(anyString())).thenReturn(Optional.empty());
         // act and assert
-        assertThrows(NotFoundException.class, () -> siteService.findSiteById("the-id"));
+        assertThrows(ResponseStatusException.class, () -> siteService.findSiteById("the-id"));
     }
 
     @Test
@@ -252,12 +252,12 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestFindRootSite_WhenStoreHasNoRoot_ThrowsNotFoundException() {
+    void TestFindRootSite_WhenStoreHasNoRoot_ThrowsResponseStatusException() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteStore.findRoot()).thenReturn(Optional.empty());
         // act and assert
-        assertThrows(NotFoundException.class, siteService::findRootSite);
+        assertThrows(ResponseStatusException.class, siteService::findRootSite);
     }
 
 }

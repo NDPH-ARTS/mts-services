@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
-import uk.ac.ox.ndph.mts.site_service.exception.NotFoundException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
@@ -155,7 +156,7 @@ class SiteControllerTests {
     void TestGetSite_WhenIdNotFound_Returns404() throws Exception {
         // Arrange
         final String siteId = "the-site-id";
-        when(siteService.findSiteById(siteId)).thenThrow(new NotFoundException("not found", siteId));
+        when(siteService.findSiteById(siteId)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "site not found"));
         // Act + Assert
         this.mockMvc
                 .perform(get(SITES_ROUTE + "/" + siteId)

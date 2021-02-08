@@ -3,8 +3,6 @@ package uk.ac.ox.ndph.mts.site_service.repository;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResearchStudy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
@@ -18,31 +16,28 @@ import java.util.stream.Collectors;
  * Implement an EntityStore for Site.
  */
 @Component
-public class SiteStore implements EntityStore<String, Site> {
+public class SiteStore implements EntityStore<Site, String> {
 
     private final FhirRepository repository;
     private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter;
     private final EntityConverter<org.hl7.fhir.r4.model.Organization, Site> fromOrgConverter;
-    private final Logger logger = LoggerFactory.getLogger(SiteStore.class);
 
     /**
-     *
-     * @param repository - The fhir repository
+     * @param repository        - The fhir repository
      * @param fromSiteConverter - a model-entity to fhir-entity converter
-     * @param fromOrgConverter - a fhir-entity to model-entity converter
+     * @param fromOrgConverter  - a fhir-entity to model-entity converter
      */
     @Autowired
     public SiteStore(FhirRepository repository,
                      EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter,
                      EntityConverter<org.hl7.fhir.r4.model.Organization, Site> fromOrgConverter
-                     ) {
+    ) {
         this.repository = repository;
         this.fromSiteConverter = fromSiteConverter;
         this.fromOrgConverter = fromOrgConverter;
     }
 
     /**
-     *
      * @param entity - The Site entity
      * @return String
      */
@@ -52,6 +47,7 @@ public class SiteStore implements EntityStore<String, Site> {
         final String orgId = repository.saveOrganization(org);
         org.setId(orgId);
         // TODO (who): Add research study only when needed.
+        // TODO (alexb): attach research study to site properly
         createResearchStudy(org);
         return orgId;
     }
@@ -78,6 +74,7 @@ public class SiteStore implements EntityStore<String, Site> {
 
     /**
      * This should never actually be empty, but enforce that invariant at the service level not the store level
+     *
      * @return list of site entities
      */
     @Override
@@ -90,6 +87,7 @@ public class SiteStore implements EntityStore<String, Site> {
 
     /**
      * Find a site entity by ID
+     *
      * @return optional with site entity with given ID or none if not found
      */
     @Override
@@ -100,6 +98,7 @@ public class SiteStore implements EntityStore<String, Site> {
 
     /**
      * Find the root entity.  There should be at most one, or zero for an uninitialized trial.
+     *
      * @return entity or empty() if no root present or undefined for this type
      */
     @Override

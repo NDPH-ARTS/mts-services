@@ -133,14 +133,12 @@ is violated - but this may be a temporary condition so client may retry later.
 **Content example**
 
 ```json
-[
-    {
-        "name": "UK",
-        "alias": "UK RCC",
-        "parentSiteId": "01ced0b1-a6e6-4408-9701-0ced2fff9a26",
-        "siteId": "02dfe1c2-a6e6-4408-9701-0ced2000ab37"
-    } 
-]
+{
+    "name": "UK",
+    "alias": "UK RCC",
+    "parentSiteId": "01ced0b1-a6e6-4408-9701-0ced2fff9a26",
+    "siteId": "02dfe1c2-a6e6-4408-9701-0ced2000ab37"
+} 
 ```
 
 #### Or
