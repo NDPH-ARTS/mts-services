@@ -1,7 +1,7 @@
 package uk.ac.ox.ndph.mts.sample_service.security.authentication;
 
 // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
-import com.microsoft.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
+import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
