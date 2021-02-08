@@ -1,17 +1,13 @@
-package uk.ac.ox.ndph.mts.sample_service.security.authroisation;
+package uk.ac.ox.ndph.mts.sample_service.security.authorisation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.sample_service.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.client.role_service.RoleServiceClient;
-import uk.ac.ox.ndph.mts.sample_service.client.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.AssignmentRoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
-import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -44,7 +40,7 @@ public class AuthorisationService {
 
         try {
             //Get Azure Active Directory user object id
-            String userId = getUserIdFromContext();
+            String userId = securityContextComponent.getUserId();
 
             //get practitioner assignment role
             AssignmentRoleDTO[] participantRoles = practitionerServiceClient.getUserAssignmentRoles(userId);
@@ -56,15 +52,17 @@ public class AuthorisationService {
 
             //get permissions for the the practitioner assignment roles
             //and filter assignment roles to be only those which have the required permission in them
-            var rolesWithPermission = Stream.of(participantRoles)
+            var hasNoRoleWithPermission = Stream.of(participantRoles)
                     .map(role -> roleServiceClient.getRolesById(role.getRoleId()))
                     .filter(roleDto -> hasRoleRequiredPermission(roleDto, requiredPermission))
-                    .collect(Collectors.toList());
+                    .findFirst()
+                    .isEmpty();
 
             //validate the required permission is present
-            if (rolesWithPermission.isEmpty()) {
+            if (hasNoRoleWithPermission) {
                 return false;
             }
+
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
             return false;
@@ -88,28 +86,14 @@ public class AuthorisationService {
     }
 
     /**
-     * Get user id from security context
-     * @return string user id
-     * @throws AuthorisationException if there was an error while extracting user from the context
-     */
-    private String getUserIdFromContext() throws AuthorisationException {
-        try {
-            return securityContextComponent.getUserPrincipal().getClaim("oid").toString();
-        } catch (Exception e) {
-            throw new AuthorisationException("Invalid user.", e);
-        }
-    }
-
-    /**
      * Check if a required permission exists in role
      * @param role with permissions
      * @param requiredPermission required permission
      * @return true if permission exists in role
      */
     private boolean hasRoleRequiredPermission(RoleDTO role, String requiredPermission) {
-        List<String> permissionIds = role.getPermissions().stream()
-                .map(PermissionDTO::getId).collect(Collectors.toList());
-        return permissionIds.contains(requiredPermission);
+        return role.getPermissions().stream()
+                .anyMatch(permission -> permission.getId().equals(requiredPermission));
     }
 
     /**

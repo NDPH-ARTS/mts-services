@@ -1,7 +1,5 @@
 package uk.ac.ox.ndph.mts.sample_service.security.authorisation;
 
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
-import com.nimbusds.jwt.JWTClaimsSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +13,6 @@ import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.role_service.RoleServiceClientImpl;
 import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
-import uk.ac.ox.ndph.mts.sample_service.security.authroisation.AuthorisationService;
-import uk.ac.ox.ndph.mts.sample_service.security.authroisation.SecurityContextComponent;
 
 import java.util.Collections;
 
@@ -37,9 +33,6 @@ class AuthorisationServiceTests {
 
     private AuthorisationService authorisationService;
 
-    private UserPrincipal userPrincipal = new UserPrincipal(null,
-            (new JWTClaimsSet.Builder()).claim("oid", "123").build()) ;
-
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextComponent,
@@ -50,7 +43,7 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WithInvalidToken_ReturnsFalse(){
         //Arrange
-        when(securityContextComponent.getUserPrincipal()).thenThrow(new AuthorisationException("Any exception during getting user from token"));
+        when(securityContextComponent.getUserId()).thenThrow(new AuthorisationException("Any exception during getting user from token"));
 
         //Act
         //Assert
@@ -61,8 +54,9 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WithUserThatHasNullAssignmentRoles_ReturnsFalse(){
         //Arrange
-        when(securityContextComponent.getUserPrincipal()).thenReturn(userPrincipal);
-        when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(null);
+        String userId = "123";
+        when(securityContextComponent.getUserId()).thenReturn(userId);
+        when(practitionerServiceClient.getUserAssignmentRoles(userId)).thenReturn(null);
 
         //Act
         //Assert
@@ -72,8 +66,9 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WithUserThatHasEmptyAssignmentRoles_ReturnsFalse(){
         //Arrange
-        when(securityContextComponent.getUserPrincipal()).thenReturn(userPrincipal);
-        when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(new AssignmentRoleDTO[0]);
+        String userId = "123";
+        when(securityContextComponent.getUserId()).thenReturn(userId);
+        when(practitionerServiceClient.getUserAssignmentRoles(userId)).thenReturn(new AssignmentRoleDTO[0]);
 
         //Act
         //Assert
@@ -83,8 +78,9 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WhenGettingAssignmentRolesThrowsException_ReturnsFalse(){
         //Arrange
-        when(securityContextComponent.getUserPrincipal()).thenReturn(userPrincipal);
-        when(practitionerServiceClient.getUserAssignmentRoles("123")).thenThrow(new RestException("Any exception"));
+        String userId = "123";
+        when(securityContextComponent.getUserId()).thenReturn(userId);
+        when(practitionerServiceClient.getUserAssignmentRoles(userId)).thenThrow(new RestException("Any exception"));
 
         //Act
         //Assert
@@ -94,12 +90,13 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WhenGettingNoRolesWereFound_ReturnsFalse(){
         //Arrange
-        when(securityContextComponent.getUserPrincipal()).thenReturn(userPrincipal);
+        String userId = "123";
+        when(securityContextComponent.getUserId()).thenReturn(userId);
 
         String roleId = "roleId";
         AssignmentRoleDTO[] assignmentRoleDtos = getRoleAssignments(roleId);
 
-        when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(assignmentRoleDtos);
+        when(practitionerServiceClient.getUserAssignmentRoles(userId)).thenReturn(assignmentRoleDtos);
         when(roleServiceClient.getRolesById(roleId)).thenReturn(null);
 
         //Act
@@ -110,11 +107,12 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WhenFoundRoleDoesNotContainThePermission_ReturnsFalse(){
         //Arrange
-        when(securityContextComponent.getUserPrincipal()).thenReturn(userPrincipal);
+        String userId = "123";
+        when(securityContextComponent.getUserId()).thenReturn(userId);
 
         String roleId = "roleId";
         AssignmentRoleDTO[] assignmentRoleDtos = getRoleAssignments(roleId);
-        when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(assignmentRoleDtos);
+        when(practitionerServiceClient.getUserAssignmentRoles(userId)).thenReturn(assignmentRoleDtos);
 
         RoleDTO roleDto = getRoleWithPermissions(roleId, "another_permission");
         when(roleServiceClient.getRolesById(roleId)).thenReturn(roleDto);
@@ -127,11 +125,12 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WhenFoundRoleWithThePermission_ReturnsTrue(){
         //Arrange
-        when(securityContextComponent.getUserPrincipal()).thenReturn(userPrincipal);
+        String userId = "123";
+        when(securityContextComponent.getUserId()).thenReturn(userId);
 
         String roleId = "roleId";
         AssignmentRoleDTO[] assignmentRoleDtos = getRoleAssignments(roleId);
-        when(practitionerServiceClient.getUserAssignmentRoles("123")).thenReturn(assignmentRoleDtos);
+        when(practitionerServiceClient.getUserAssignmentRoles(userId)).thenReturn(assignmentRoleDtos);
 
         RoleDTO roleDto = getRoleWithPermissions(roleId, "some_permission");
         when(roleServiceClient.getRolesById(roleId)).thenReturn(roleDto);
