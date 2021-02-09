@@ -48,7 +48,7 @@ public class FhirContextWrapper {
             return fhirContext.newRestfulGenericClient(uri).transaction()
                     .withBundle(input).execute();
         } catch (BaseServerResponseException ex) {
-            final String message = String.format(Repositorys.PROBLEM_EXECUTING_TRANSACTION.message(), uri);
+            final String message = String.format(Repository.TRANSACTION_ERROR.message(), uri);
             throw new FhirServerResponseException(message, ex);
         }
     }

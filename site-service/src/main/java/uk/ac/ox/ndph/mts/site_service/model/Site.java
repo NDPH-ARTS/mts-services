@@ -51,26 +51,10 @@ public class Site {
         this.siteId = siteId;
     }
 
-    /**
-     * Site Constructor with siteId name alias parent siteType
-     * @param siteId site ID
-     * @param name the Site name
-     * @param alias the Site alias
-     * @param parentSiteId the Site parentSiteId
-     * @param siteType the Site siteType
-     *
-     */
-    public Site(final String siteId, String name, String alias, String parentSiteId, String siteType) {
-        this(name, alias, parentSiteId);
-        this.siteType = siteType;
-        this.siteId = siteId;
-    }
-
     private String name;
     private String alias;
     private String siteId;
     private String parentSiteId;
-    private String siteType;
 
     /**
      * Returns the name associated with the Site.
@@ -123,24 +107,6 @@ public class Site {
      */
     public void setParentSiteId(String parentSiteId) {
         this.parentSiteId = parentSiteId;
-    }
-
-    /**
-     * Returns the siteType associated with the Site.
-     * @return siteType the Site siteType.
-     *
-     */
-    public String getSiteType() {
-        return siteType;
-    }
-
-    /**
-     * Sets the siteType of the Site.
-     * @param siteType the Site siteType
-     *
-     */
-    public void setSiteType(String siteType) {
-        this.siteType = siteType;
     }
 
     /**

@@ -3,7 +3,7 @@ ARG SVC
 
 # copy common things
 COPY ./build-tools ./build-tools
-COPY ./pom.xml pom.xml
+COPY pom.xml pom.xml
 
 # copy poms of ALL services
 COPY ./practitioner-service/pom.xml ./practitioner-service/pom.xml

@@ -16,11 +16,6 @@
           "name": "parentSiteId",
           "displayName": "Parent Site Id",
           "validationRegex": ""
-        },
-        {
-          "name": "siteType",
-          "displayName": "Site Type",
-          "validationRegex": ""
         }
     ]
 }

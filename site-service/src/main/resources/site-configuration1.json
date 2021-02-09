@@ -1,0 +1,94 @@
+{
+  "name": "Organization",
+  "displayName": "site",
+  "type": "CCO",
+  "attributes": [
+    {
+      "name": "name",
+      "displayName": "Name",
+      "validationRegex": "^[a-zA-Z]{0,35}$"
+    },
+    {
+      "name": "alias",
+      "displayName": "Alias",
+      "validationRegex": "^[a-zA-Z]{0,35}$"
+    },
+    {
+      "name": "parentSiteId",
+      "displayName": "Parent Site Id",
+      "validationRegex": ""
+    }
+  ],
+  "child": [
+    {
+      "name": "Organization",
+      "displayName": "site",
+      "type": "REGION",
+      "attributes": [
+        {
+          "name": "name",
+          "displayName": "Name",
+          "validationRegex": "^[a-zA-Z]{0,35}$"
+        },
+        {
+          "name": "alias",
+          "displayName": "Alias",
+          "validationRegex": "^[a-zA-Z]{0,35}$"
+        },
+        {
+          "name": "parentSiteId",
+          "displayName": "Parent Site Id",
+          "validationRegex": ""
+        }
+      ],
+      "child": [
+        {
+          "name": "Organization",
+          "displayName": "site",
+          "type": "COUNTRY",
+          "attributes": [
+            {
+              "name": "name",
+              "displayName": "Name",
+              "validationRegex": "^[a-zA-Z]{0,35}$"
+            },
+            {
+              "name": "alias",
+              "displayName": "Alias",
+              "validationRegex": "^[a-zA-Z]{0,35}$"
+            },
+            {
+              "name": "parentSiteId",
+              "displayName": "Parent Site Id",
+              "validationRegex": ""
+            }
+          ],
+          "child": [
+            {
+              "name": "Organization",
+              "displayName": "site",
+              "type": "LCC",
+              "attributes": [
+                {
+                  "name": "name",
+                  "displayName": "Name",
+                  "validationRegex": "^[a-zA-Z]{0,35}$"
+                },
+                {
+                  "name": "alias",
+                  "displayName": "Alias",
+                  "validationRegex": "^[a-zA-Z]{0,35}$"
+                },
+                {
+                  "name": "parentSiteId",
+                  "displayName": "Parent Site Id",
+                  "validationRegex": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

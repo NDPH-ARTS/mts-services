@@ -12,8 +12,7 @@ public enum Attribute {
 
     NAME(AttributeNames.NAME.nameof(), Site::getName),
     ALIAS(AttributeNames.ALIAS.nameof(), Site::getAlias),
-    PARENT_SITE_ID(AttributeNames.PARENT_SITE_ID.nameof(), Site::getParentSiteId),
-    SITE_TYPE(AttributeNames.SITE_TYPE.nameof(), Site::getSiteType);
+    PARENT_SITE_ID(AttributeNames.PARENT_SITE_ID.nameof(), Site::getParentSiteId);
 
     private String attributeName;
     private Function<Site, String> getValue;
@@ -52,8 +51,6 @@ public enum Attribute {
             return ALIAS;
         } else if (AttributeNames.PARENT_SITE_ID.nameof().equals(input)) {
             return PARENT_SITE_ID;
-        } else if (AttributeNames.SITE_TYPE.nameof().equals(input)) {
-            return SITE_TYPE;
         }
         throw new InitialisationError(String.format(Models.STRING_PARSE_ERROR.error(), input));
     }

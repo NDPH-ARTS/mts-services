@@ -31,9 +31,29 @@ public class SiteConfiguration {
         this.attributes = attributes;
     }
 
+    /**
+     * Site Constructor with two parameters
+     *
+     * @param name the Site name
+     * @param displayName the Site displayName
+     * @param type the Site type
+     * @param attributes the List of SiteAttributeConfiguration attributes
+     * @param child the List of SiteAttributeConfiguration child / children.
+     *
+     */
+    public SiteConfiguration(String name, String displayName, String type,
+                             List<SiteAttributeConfiguration> attributes, List<SiteConfiguration> child) {
+        this.name = name;
+        this.displayName = displayName;
+        this.attributes = attributes;
+        this.child = child;
+    }
+
     private String name;
     private String displayName;
+    private String type;
     private List<SiteAttributeConfiguration> attributes;
+    private List<SiteConfiguration> child;
 
     /**
      * Returns the name associated with the SiteConfiguration.
@@ -70,6 +90,23 @@ public class SiteConfiguration {
     }
 
     /**
+     * Returns the type associated with the SiteConfiguration.
+     * @return type the SiteConfiguration displayName.
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the type of the SiteConfiguration.
+     * @param type the SiteConfiguration type
+     *
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
      * Returns the attributes associated with the SiteConfiguration.
      * @return attributes the SiteConfiguration List of attributes.
      */
@@ -87,6 +124,23 @@ public class SiteConfiguration {
     }
 
     /**
+     * Returns the child / children associated with the SiteConfiguration.
+     * @return child the SiteConfiguration List of child.
+     */
+    public List<SiteConfiguration> getChild() {
+        return child;
+    }
+
+    /**
+     * Sets the list of child of the SiteConfiguration.
+     * @param child the SiteConfiguration List of child.
+     *
+     */
+    public void setChild(List<SiteConfiguration> child) {
+        this.child = child;
+    }
+
+    /**
      * toString method
      *
      */
@@ -95,7 +149,9 @@ public class SiteConfiguration {
         return "SiteConfiguration{"
                 + "name='" + name + '\''
                 + ", displayName='" + displayName + '\''
+                + ", type='" + type + '\''
                 + ", attributes=" + attributes
+                + ", child=" + child
                 + '}';
     }
 
