@@ -49,8 +49,8 @@ class RoleServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(testRole))
                .addHeader("Content-Type", "application/json"));
-        Role returnedRole = roleServiceInvoker.send(testRole);
-        assertNotNull(returnedRole);
+        String returnedRoleId = roleServiceInvoker.create(testRole);
+        assertNotNull(returnedRoleId);
     }
 
     @Test
