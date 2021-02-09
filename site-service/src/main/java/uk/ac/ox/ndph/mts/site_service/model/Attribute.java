@@ -1,11 +1,12 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
-import java.util.function.Function;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
+
+import java.util.function.Function;
 
 /**
  * The known Site attributes.
- * TODO: These should be generated dynamically from the configuration json.
+ * TODO (who): These should be generated dynamically from the configuration json.
  */
 public enum Attribute {
 

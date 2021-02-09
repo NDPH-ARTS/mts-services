@@ -5,9 +5,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,17 +34,13 @@ public class PractitionerController {
         this.entityService = entityService;
     }
 
-    @PostMapping(path = "")
-    @Consumes(APPLICATION_JSON_VALUE)
-    @Produces(APPLICATION_JSON_VALUE)
+    @PostMapping(path = "", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Response> savePractitioner(@RequestBody Practitioner practitioner) {
         String practitionerId = entityService.savePractitioner(practitioner);
         return ResponseEntity.status(CREATED).body(new Response(practitionerId));
     }
 
-    @PostMapping(path = "/link")
-    @Consumes(APPLICATION_JSON_VALUE)
-    @Produces(APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/link", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Response> linkPractitioner(
             @RequestParam String userAccountId,
             @RequestParam String practitionerId) {

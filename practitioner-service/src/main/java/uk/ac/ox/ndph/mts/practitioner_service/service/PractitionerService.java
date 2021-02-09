@@ -1,11 +1,11 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.StringUtils;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.BadRequestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
@@ -78,10 +78,10 @@ public class PractitionerService implements EntityService {
     @Override
     public void linkPractitioner(final String userAccountId, final String practitionerId) {
         // TODO (archiem) add a LinkPractitionerValidator object
-        if (StringUtils.isBlank(userAccountId)) {
+        if (!StringUtils.hasText(userAccountId)) {
             throw new BadRequestException("User Account ID must not be blank");
         }
-        if (StringUtils.isBlank(practitionerId)) {
+        if (!StringUtils.hasText(practitionerId)) {
             throw new BadRequestException("Practitioner ID must not be blank");
         }
         

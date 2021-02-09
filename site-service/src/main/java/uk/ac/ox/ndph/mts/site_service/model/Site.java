@@ -109,10 +109,20 @@ public class Site {
         this.parentSiteId = parentSiteId;
     }
 
+    /**
+     * Returns the siteId associated with the Site.
+     * @return siteId the Site siteId.
+     *
+     */
     public String getSiteId() {
         return siteId;
     }
 
+    /**
+     * Sets the siteId of the Site.
+     * @param siteId the Site siteId
+     *
+     */
     public void setSiteId(String siteId) {
         this.siteId = siteId;
     }
