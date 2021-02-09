@@ -13,10 +13,10 @@ public abstract class ServiceInvoker {
 
     private WebClient webClient;
 
-    public ServiceInvoker() {
+    protected ServiceInvoker() {
         this.webClient = WebClient.create();
     }
-    public ServiceInvoker(WebClient webClient) {
+    protected ServiceInvoker(WebClient webClient) {
         this.webClient = webClient;
     }
 
