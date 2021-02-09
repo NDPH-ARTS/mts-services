@@ -1,18 +1,12 @@
 spring:
+  application:
+    name: role-service
   profiles: default
   cloud:
     config:
-      # If cannot connect to config server, don't start the application
-      fail-fast: true
       discovery:
         enabled: true
         service-id: CONFIG-SERVER
-      retry:
-        initialInterval: 2000
-        multiplier: 1.5
-        maxInterval: 60000
-        maxAttempts: 100
-      label: main
 
 eureka:
   client:

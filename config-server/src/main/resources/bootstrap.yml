@@ -1,7 +1,18 @@
 spring:
+  application:
+    name: config-server
   profiles: default
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://placeholder
+          search-paths: placeholder
+
+server:
+  port: 8888
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${EUREKA_HOSTNAME:localhost}:${EUREKA_PORT:8761}/eureka/
+      defaultZone: http://localhost:9999/eureka/

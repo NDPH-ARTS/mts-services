@@ -1,23 +1,15 @@
 spring:
   profiles: default
+  application:
+    name: site-service
   cloud:
     config:
-      # If cannot connect to config server, don't start the application
-      fail-fast: true
       discovery:
         enabled: true
         service-id: CONFIG-SERVER
-      retry:
-        initialInterval: 2000
-        multiplier: 1.5
-        maxInterval: 60000
-        maxAttempts: 100
-      label: main
 
 eureka:
   client:
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://${EUREKA_HOSTNAME:localhost}:${EUREKA_PORT:8761}/eureka/
-
-
+      defaultZone: http://${EUREKA_HOSTNAME:localhost}:9999/eureka/
