@@ -53,7 +53,7 @@ public class PractitionerStoreTest {
         //act and assert
         PractitionerStore practitionerStore = new PractitionerStore(repository, converter);
         Assertions.assertThrows(NotImplementedException.class,
-                ()-> practitionerStore.listEntitiesByUserIdentity(any(String.class)),
+                ()-> practitionerStore.listEntitiesByUserIdentity("123"),
                 "Expecting to throw an exception");
     }
 }
