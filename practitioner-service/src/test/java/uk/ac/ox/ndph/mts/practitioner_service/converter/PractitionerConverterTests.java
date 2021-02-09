@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
-public class PractitionerConverterTests {
+class PractitionerConverterTests {
     PractitionerConverter converter = new PractitionerConverter();
 
     @Test
@@ -26,11 +26,11 @@ public class PractitionerConverterTests {
 
         //assert
         Assertions.assertAll(
-                ()-> Assertions.assertEquals(fhirPractitioner.getName().size(), 1),
-                ()-> Assertions.assertEquals(fhirPractitioner.getName().get(0).getFamily(), practitioner.getFamilyName()),
-                ()-> Assertions.assertEquals(fhirPractitioner.getName().get(0).getGiven().get(0).getValue(), practitioner.getGivenName()),
-                ()-> Assertions.assertEquals(fhirPractitioner.getName().get(0).getPrefix().get(0).getValue(), practitioner.getPrefix()),
-                ()-> Assertions.assertEquals(fhirPractitioner.getGender(), Enumerations.AdministrativeGender.UNKNOWN),
+                ()-> Assertions.assertEquals(1, fhirPractitioner.getName().size()),
+                ()-> Assertions.assertEquals(practitioner.getFamilyName(), fhirPractitioner.getName().get(0).getFamily()),
+                ()-> Assertions.assertEquals(practitioner.getGivenName(), fhirPractitioner.getName().get(0).getGiven().get(0).getValue()),
+                ()-> Assertions.assertEquals(practitioner.getPrefix(), fhirPractitioner.getName().get(0).getPrefix().get(0).getValue()),
+                ()-> Assertions.assertEquals(Enumerations.AdministrativeGender.UNKNOWN, fhirPractitioner.getGender()),
                 ()-> Assertions.assertNotNull(fhirPractitioner.getId())
         );
     }
@@ -47,17 +47,17 @@ public class PractitionerConverterTests {
 
         //assert
         Assertions.assertAll(
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(0).getName().size(), 1),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(0).getName().get(0).getFamily(), practitionerList.get(0).getFamilyName()),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(0).getName().get(0).getGiven().get(0).getValue(), practitionerList.get(0).getGivenName()),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(0).getName().get(0).getPrefix().get(0).getValue(), practitionerList.get(0).getPrefix()),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(0).getGender(), Enumerations.AdministrativeGender.UNKNOWN),
+                ()-> Assertions.assertEquals(1, fhirPractitionerList.get(0).getName().size()),
+                ()-> Assertions.assertEquals(practitionerList.get(0).getFamilyName(), fhirPractitionerList.get(0).getName().get(0).getFamily()),
+                ()-> Assertions.assertEquals(practitionerList.get(0).getGivenName(), fhirPractitionerList.get(0).getName().get(0).getGiven().get(0).getValue()),
+                ()-> Assertions.assertEquals(practitionerList.get(0).getPrefix(), fhirPractitionerList.get(0).getName().get(0).getPrefix().get(0).getValue()),
+                ()-> Assertions.assertEquals(Enumerations.AdministrativeGender.UNKNOWN, fhirPractitionerList.get(0).getGender()),
                 ()-> Assertions.assertNotNull(fhirPractitionerList.get(0).getId()),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(1).getName().size(), 1),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(1).getName().get(0).getFamily(), practitionerList.get(1).getFamilyName()),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(1).getName().get(0).getGiven().get(0).getValue(), practitionerList.get(1).getGivenName()),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(1).getName().get(0).getPrefix().get(0).getValue(), practitionerList.get(1).getPrefix()),
-                ()-> Assertions.assertEquals(fhirPractitionerList.get(1).getGender(), Enumerations.AdministrativeGender.UNKNOWN),
+                ()-> Assertions.assertEquals(1, fhirPractitionerList.get(1).getName().size()),
+                ()-> Assertions.assertEquals(practitionerList.get(1).getFamilyName(), fhirPractitionerList.get(1).getName().get(0).getFamily()),
+                ()-> Assertions.assertEquals(practitionerList.get(1).getGivenName(), fhirPractitionerList.get(1).getName().get(0).getGiven().get(0).getValue()),
+                ()-> Assertions.assertEquals(practitionerList.get(1).getPrefix(), fhirPractitionerList.get(1).getName().get(0).getPrefix().get(0).getValue()),
+                ()-> Assertions.assertEquals(Enumerations.AdministrativeGender.UNKNOWN, fhirPractitionerList.get(1).getGender()),
                 ()-> Assertions.assertNotNull(fhirPractitionerList.get(1).getId())
         );
     }
