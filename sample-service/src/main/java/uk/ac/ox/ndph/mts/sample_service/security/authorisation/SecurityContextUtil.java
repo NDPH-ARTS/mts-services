@@ -1,7 +1,7 @@
 package uk.ac.ox.ndph.mts.sample_service.security.authorisation;
 
 // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.azure.spring.autoconfigure.aad.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
