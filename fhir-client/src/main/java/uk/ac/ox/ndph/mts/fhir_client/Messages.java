@@ -4,7 +4,7 @@ package uk.ac.ox.ndph.mts.fhir_client;
  * String constants
  */
 public enum Messages {
-    EXECUTING_TRANSACTION_EXCEPTION("Problem executing transaction with bundle at: %s"),
+    EXECUTING_TRANSACTION_EXCEPTION("Problem executing transaction with bundle."),
     STRING_BLANK_EXCEPTION("Value of '%s' is null or empty");
 
     private final String message;

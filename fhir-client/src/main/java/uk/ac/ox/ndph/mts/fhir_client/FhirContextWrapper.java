@@ -21,18 +21,11 @@ import java.util.List;
 @Component
 public class FhirContextWrapper {
     private final FhirContext fhirContext;
-    private IGenericClient client;
+    private final IGenericClient client;
 
-    @SuppressWarnings("FieldMayBeFinal") // Value injection shouldn't be final
-    @Value("${fhir.uri}")
-    private String fhirUri = "";
-
-    public FhirContextWrapper() {
-        fhirContext = FhirContext.forR4();
-    }
-
-    public FhirContextWrapper(FhirContext fhirContext) {
-        this.fhirContext = fhirContext;
+    public FhirContextWrapper(@Value("${fhir.uri}") String fhirUri) {
+        this.fhirContext = FhirContext.forR4();
+        this.client = fhirContext.newRestfulGenericClient(requireNonBlank(fhirUri, "fhirUri"));
     }
 
     /**
@@ -53,10 +46,10 @@ public class FhirContextWrapper {
      */
     public Bundle executeTransaction(Bundle input) throws FhirServerResponseException {
         try {
-            return getClient().transaction()
+            return client.transaction()
                     .withBundle(input).execute();
         } catch (BaseServerResponseException ex) {
-            final String message = Messages.EXECUTING_TRANSACTION_EXCEPTION.formatMessage(fhirUri);
+            final String message = Messages.EXECUTING_TRANSACTION_EXCEPTION.message();
             throw new FhirServerResponseException(message, ex);
         }
     }
@@ -86,8 +79,6 @@ public class FhirContextWrapper {
     public <T extends IBaseResource> List<T> search(Class<T> resourceClass,
                                                     ICriterion<?> criterion,
                                                     boolean allPages) {
-        IGenericClient client = getClient();
-
         IQuery<Bundle> query = client
                 .search()
                 .forResource(resourceClass)
@@ -124,21 +115,14 @@ public class FhirContextWrapper {
      * @throws ResourceNotFoundException When a resource with the type & id isn't found.
      */
     public <T extends IBaseResource> T readById(final Class<T> resourceClass,
-                                                final String id) throws ResourceNotFoundException {
-        var baseResource = getClient()
+                                                final String id) {
+        var baseResource = client
                 .read()
                 .resource(resourceClass)
                 .withId(requireNonBlank(id, "id"))
                 .execute();
 
         return resourceClass.cast(baseResource);
-    }
-
-    private IGenericClient getClient() {
-        if (this.client == null) {
-            client = fhirContext.newRestfulGenericClient(requireNonBlank(fhirUri, "fhirUri"));
-        }
-        return client;
     }
 
     private String requireNonBlank(String paramValue, String paramName) {
