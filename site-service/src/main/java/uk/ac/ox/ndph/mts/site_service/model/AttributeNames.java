@@ -6,7 +6,8 @@ package uk.ac.ox.ndph.mts.site_service.model;
 public enum AttributeNames {
     NAME("name"),
     ALIAS("alias"),
-    PARENT_SITE_ID("parentSiteId");
+    PARENT_SITE_ID("parentSiteId"),
+    SITE_TYPE("siteType");
 
     private String attributeName;
 

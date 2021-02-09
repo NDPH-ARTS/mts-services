@@ -16,7 +16,8 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
                 org.getIdElement().getIdPart(),
                 org.getName(),
                 (org.getAlias().isEmpty()) ? null : org.getAlias().get(0).getValueAsString(),
-                findParentSiteId(org)
+                findParentSiteId(org),
+                org.getImplicitRules()
         );
     }
 
