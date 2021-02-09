@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RoleAssignmentsStoreTest {
+class RoleAssignmentsStoreTest {
 
     @Mock
     private FhirRepository repository;

@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PractitionerStoreTest {
+class PractitionerStoreTest {
 
     @Mock
     private FhirRepository repository;
