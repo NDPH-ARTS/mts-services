@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
@@ -20,6 +21,7 @@ import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import static org.hamcrest.Matchers.containsString;
@@ -105,6 +107,8 @@ class RoleControllerTest {
         mvc.perform(get(URI_ROLES + "?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
 
+
+
     @Test
     void whenGetOneRole_thenReceiveSuccess() throws Exception {
 
@@ -156,6 +160,26 @@ class RoleControllerTest {
         mvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON).content(jsonPermDTO)
                 .accept(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
 
+    }
+
+    @Test
+    void whenGetMultipleRolesById_thenReceiveMultipleRoles() throws Exception {
+
+        Role dummyRole1 = new Role();
+        String id1 = "foo";
+        dummyRole1.setId(id1);
+        Role dummyRole2 = new Role();
+        String id2 = "bar";
+        dummyRole2.setId(id2);
+
+        when(roleRepo.findAllById(Arrays.asList(id1, id2)))
+                .thenReturn(Arrays.asList(dummyRole1, dummyRole2));
+
+        mvc.perform(get(URI_ROLES + "?ids=" + id1 + "," + id2))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(id1)))
+                .andExpect(content().string(containsString(id2)));
     }
 
 }
