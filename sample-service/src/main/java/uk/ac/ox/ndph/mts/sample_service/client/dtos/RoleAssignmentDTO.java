@@ -3,9 +3,9 @@ package uk.ac.ox.ndph.mts.sample_service.client.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Practitioner assignment role data transfer object
+ * Practitioner role assignment data transfer object
  */
-public class AssignmentRoleDTO {
+public class RoleAssignmentDTO {
 
     @JsonProperty(value = "siteId")
     private String siteId;
@@ -13,37 +13,37 @@ public class AssignmentRoleDTO {
     @JsonProperty(value = "roleId")
     private String roleId;
 
-    public AssignmentRoleDTO() {
+    public RoleAssignmentDTO() {
         //constructor used for deserialization
     }
 
     /**
-     * Get assignment site id
-     * @return string site id
+     * Get role assignment site id
+     * @return string role assignment site id
      */
     public String getSiteId() {
         return siteId;
     }
 
     /**
-     * Set assignment role site id
-     * @param siteId assignment role site id
+     * Set role assignment site id
+     * @param siteId role assignment site id
      */
     public void setSiteId(String siteId) {
         this.siteId = siteId;
     }
 
     /**
-     * Get assignment role id
-     * @return string assignment role id
+     * Get role assignment id
+     * @return string role assignment id
      */
     public String getRoleId() {
         return roleId;
     }
 
     /**
-     * Set assignment role id
-     * @param roleId string assignment role id
+     * Set role assignment id
+     * @param roleId string role assignment id
      */
     public void setRoleId(String roleId) {
         this.roleId = roleId;

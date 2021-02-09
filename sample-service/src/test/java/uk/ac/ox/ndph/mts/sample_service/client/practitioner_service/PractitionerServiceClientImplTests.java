@@ -8,9 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.sample_service.client.TestServiceBackend;
 import uk.ac.ox.ndph.mts.sample_service.client.WebClientConfig;
-import uk.ac.ox.ndph.mts.sample_service.client.dtos.AssignmentRoleDTO;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
 import java.net.HttpURLConnection;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,40 +47,38 @@ class PractitionerServiceClientImplTests {
     }
 
     @Test
-    void TestGetUserAssignmentRoles_WithValidResponse_ReturnsRoleAssignmentsAsExpected() {
+    void TestGetUserRoleAssignments_WithValidResponse_ReturnsRoleAssignmentsAsExpected() {
 
         // Arrange
 
-        AssignmentRoleDTO expectedRoleAssignment = new AssignmentRoleDTO();
+        RoleAssignmentDTO expectedRoleAssignment = new RoleAssignmentDTO();
         expectedRoleAssignment.setRoleId("roleId");
         expectedRoleAssignment.setSiteId("siteId");
-         AssignmentRoleDTO[] expectedResponse = {expectedRoleAssignment};
+        List<RoleAssignmentDTO> expectedResponse = Collections.singletonList(expectedRoleAssignment);
 
         final var userId = "userID";
         String expectedBodyResponse =
                 "[{\"practitionerId\":\"practitionerId\",\"siteId\":\"siteId\",\"roleId\":\"roleId\"}]";
         mockBackEnd.queueResponse(expectedBodyResponse);
 
-        AssignmentRoleDTO[] expectedRoleAssignments = { expectedRoleAssignment };
-
         // Act
-        AssignmentRoleDTO[] actualResponse = client.getUserAssignmentRoles(userId);
+        List<RoleAssignmentDTO> actualResponse = client.getUserRoleAssignments(userId);
 
         //Assert
         assertAll(
-                () -> assertEquals(expectedResponse.length, actualResponse.length ),
-                () -> assertEquals(expectedResponse[0].getRoleId() , actualResponse[0].getRoleId()),
-                () -> assertEquals(expectedResponse[0].getSiteId() , actualResponse[0].getSiteId())
+                () -> assertEquals(expectedResponse.size(), actualResponse.size() ),
+                () -> assertEquals(expectedResponse.get(0).getRoleId() , actualResponse.get(0).getRoleId()),
+                () -> assertEquals(expectedResponse.get(0).getSiteId() , actualResponse.get(0).getSiteId())
         );
     }
 
     @Test
-    void TestGetUserAssignmentRoles_WhenServiceFails_ThrowsRestException() {
+    void TestGetUserRoleAssignments_WhenServiceFails_ThrowsRestException() {
         // Arrange
         this.mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
         // Act
         // Assert
-        assertThrows(RestException.class, () -> client.getUserAssignmentRoles("userId"));
+        assertThrows(RestException.class, () -> client.getUserRoleAssignments("userId"));
     }
 
 }

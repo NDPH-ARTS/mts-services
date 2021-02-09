@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.sample_service.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.client.role_service.RoleServiceClient;
-import uk.ac.ox.ndph.mts.sample_service.client.dtos.AssignmentRoleDTO;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * The service which performs the authorisation flow
@@ -18,16 +18,16 @@ public class AuthorisationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
-    private final SecurityContextComponent securityContextComponent;
+    private final SecurityContextUtil securityContextUtil;
 
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
 
     @Autowired
-    public AuthorisationService(final SecurityContextComponent securityContextComponent,
+    public AuthorisationService(final SecurityContextUtil securityContextUtil,
                                 final PractitionerServiceClient practitionerServiceClient,
                                 final RoleServiceClient roleServiceClient) {
-        this.securityContextComponent = securityContextComponent;
+        this.securityContextUtil = securityContextUtil;
         this.practitionerServiceClient = practitionerServiceClient;
         this.roleServiceClient = roleServiceClient;
     }
@@ -39,22 +39,22 @@ public class AuthorisationService {
     public boolean authorise(String requiredPermission)  {
 
         try {
-            //Get Azure Active Directory user object id
-            String userId = securityContextComponent.getUserId();
+            //Get the user's object id
+            String userId = securityContextUtil.getUserId();
 
-            //get practitioner assignment role
-            AssignmentRoleDTO[] participantRoles = practitionerServiceClient.getUserAssignmentRoles(userId);
+            //get practitioner role assignment
+            List<RoleAssignmentDTO> participantRoles = practitionerServiceClient.getUserRoleAssignments(userId);
 
-            if (participantRoles == null || participantRoles.length == 0) {
-                LOGGER.info("User with id {} has no assignment Roles and therefore is unauthorised.", userId);
+            if (participantRoles == null || participantRoles.size() == 0) {
+                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
                 return false;
             }
 
-            //get permissions for the the practitioner assignment roles
-            //and filter assignment roles to be only those which have the required permission in them
-            var hasNoRoleWithPermission = Stream.of(participantRoles)
+            //get permissions for the the practitioner role assignments
+            //and filter role assignments to be only those which have the required permission in them
+            var hasNoRoleWithPermission = participantRoles.stream()
                     .map(role -> roleServiceClient.getRolesById(role.getRoleId()))
-                    .filter(roleDto -> hasRoleRequiredPermission(roleDto, requiredPermission))
+                    .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
                     .findFirst()
                     .isEmpty();
 
@@ -91,7 +91,7 @@ public class AuthorisationService {
      * @param requiredPermission required permission
      * @return true if permission exists in role
      */
-    private boolean hasRoleRequiredPermission(RoleDTO role, String requiredPermission) {
+    private boolean hasRequiredPermissionInRole(RoleDTO role, String requiredPermission) {
         return role.getPermissions().stream()
                 .anyMatch(permission -> permission.getId().equals(requiredPermission));
     }
@@ -102,7 +102,7 @@ public class AuthorisationService {
      * @param entitySite - the requested entity site
      * @return true - currently it is a stub/infra until the implementation will be added
      */
-    @SuppressWarnings("squid:S1172") //suppress unused parameterך
+    @SuppressWarnings("squid:S1172") //suppress unused parameter
     private boolean isSiteAuthorised(String entitySite, String userRole) {
         return true;
     }
