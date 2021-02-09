@@ -57,9 +57,11 @@ public class SiteServiceImpl implements SiteService {
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
+
         if (findSiteByName(site.getName()).isPresent()) {
             throw new ValidationException(Services.SITE_EXISTS.message());
         }
+
         if (site.getParentSiteId() == null) {
             if (isRootSitePresent()) {
                 throw new ValidationException(Services.ONE_ROOT_SITE.message());
@@ -69,6 +71,9 @@ public class SiteServiceImpl implements SiteService {
             if (!validationResponse.isValid()) {
                 throw new ValidationException(validationResponse.getErrorMessage());
             }
+            // Check if the Site has valid Parent
+            // (depending on structure whether the id is valid fo Child)
+
         }
         return siteStore.saveEntity(site);
     }

@@ -53,6 +53,11 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 
+    /**
+     * Get sites by id
+     * @param id site id to search for
+     * @return ResponseEntity
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Site> findSiteById(@PathVariable String id) {
         return ResponseEntity.ok(siteService.findSiteById(id));
