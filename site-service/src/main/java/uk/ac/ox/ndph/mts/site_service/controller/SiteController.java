@@ -54,7 +54,7 @@ public class SiteController {
     }
 
     /**
-     * Get sites by id
+     * Get site by id
      * @param id site id to search for
      * @return ResponseEntity
      */
