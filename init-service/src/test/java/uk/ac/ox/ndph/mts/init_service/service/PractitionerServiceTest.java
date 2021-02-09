@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTest {
@@ -109,6 +110,8 @@ class PractitionerServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(mockResponseBody))
                 .addHeader("Content-Type", "application/json"));
+
+        ReflectionTestUtils.setField(practitionerServiceInvoker, "assignRoleEndpoint", "dummy/%s/dummy");
         try {
             practitionerServiceInvoker.assignRoleToPractitioner(ra);
         } catch(Exception e) {

@@ -33,7 +33,7 @@ class LoaderTest {
     void testLoader() throws Exception {
         Loader loader = new Loader(trialService, practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
 
-        doNothing().when(roleServiceInvoker).execute(anyList());
+        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).execute(anyList());
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 

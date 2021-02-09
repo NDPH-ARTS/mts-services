@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
-import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
-
-import java.util.List;
 
 @Service
 public class RoleServiceInvoker extends ServiceInvoker {
@@ -19,31 +16,21 @@ public class RoleServiceInvoker extends ServiceInvoker {
     @Value("${role.service}")
     private String roleService;
 
+    @Value("${role.service.endpoint.create}")
+    private String createEndpoint;
+
+
     public RoleServiceInvoker() { }
-    public RoleServiceInvoker(WebClient webClient) { super(webClient); }
+    public RoleServiceInvoker(WebClient webClient) {
+        super(webClient);
+    }
 
     @Override
     protected String create(Entity role) throws DependentServiceException {
 
-        String uri = roleService + "/roles";
-        try {
-            Role returnedRole = sendBlockingPostRequest(uri, role, Role.class);
-            return returnedRole.getId();
-        } catch (Exception e) {
-            LOGGER.info("FAILURE roleService {}", e.getMessage());
-            throw new DependentServiceException("Error connecting to role service");
-        }
+        String uri = roleService + createEndpoint;
+        Role returnedRole = sendBlockingPostRequest(uri, role, Role.class);
+        return returnedRole.getId();
     }
 
-    public void execute(List<Role> roles) throws NullEntityException {
-        if (roles != null) {
-            for (Role role : roles) {
-                LOGGER.info("Starting to create role(s): {}", role);
-                create(role);
-                LOGGER.info("Finished creating {} role(s)", roles.size());
-            }
-        } else {
-            throw new NullEntityException("No Roles in payload");
-        }
-    }
 }

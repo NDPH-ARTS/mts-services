@@ -21,30 +21,28 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     @Value("${practitioner.service}")
     private String practitionerService;
 
+    @Value("${practitioner.service.endpoint.create}")
+    private String createEndpoint;
+
+    @Value("${practitioner.service.endpoint.assign.role}")
+    private String assignRoleEndpoint;
+
     public PractitionerServiceInvoker() { }
 
-    public PractitionerServiceInvoker(WebClient webClient) { super(webClient); }
+    public PractitionerServiceInvoker(WebClient webClient) {
+        super(webClient);
+    }
 
     @Override
     protected String create(Entity practitioner) throws DependentServiceException {
-        try {
-            String createEndpoint = practitionerService + "/practitioner";
-            IDResponse response = sendBlockingPostRequest(createEndpoint, practitioner, IDResponse.class);
-            return response.getId();
-        } catch (Exception e) {
-            LOGGER.info("FAILURE at practitionerService create endpoint {}", e.getMessage());
-            throw new DependentServiceException("Error connecting to practitioner service");
-        }
+        String uri = practitionerService + createEndpoint;
+        IDResponse response = sendBlockingPostRequest(uri, practitioner, IDResponse.class);
+        return response.getId();
     }
 
     protected void assignRoleToPractitioner(RoleAssignment roleAssignment) throws DependentServiceException {
-        try {
-            String uri = practitionerService + "/practitioner/" + roleAssignment.getPractitionerId() + "/roles";
-            sendBlockingPostRequest(uri, roleAssignment, IDResponse.class);
-        } catch (Exception e) {
-            LOGGER.info("FAILURE at practitionerService assign roles endpoint {}", e.getMessage());
-            throw new DependentServiceException("Error connecting to practitioner service to assign roles");
-        }
+        String uri = practitionerService + String.format(assignRoleEndpoint, roleAssignment.getPractitionerId());
+        sendBlockingPostRequest(uri, roleAssignment, IDResponse.class);
     }
 
 
