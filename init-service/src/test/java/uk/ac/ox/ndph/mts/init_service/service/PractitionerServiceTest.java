@@ -19,10 +19,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
