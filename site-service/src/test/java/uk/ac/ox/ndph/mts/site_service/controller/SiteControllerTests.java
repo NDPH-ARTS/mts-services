@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
@@ -19,6 +21,7 @@ import java.util.Collections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -123,11 +126,42 @@ class SiteControllerTests {
     @Test
     void TestGetSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
-        when(siteService.findSites()).thenThrow(RestException.class);
+        when(siteService.findSiteById(anyString())).thenThrow(RestException.class);
         // Act + Assert
         this.mockMvc
-                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
+                .perform(get(SITES_ROUTE + "/id-that-does-not-exist")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadGateway());
+    }
+
+
+    @Test
+    void TestGetSite_WhenIdFound_Returns200AndSite() throws Exception {
+        // Arrange
+        final String siteId = "the-site-id";
+        when(siteService.findSiteById(siteId)).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId"));
+        // Act + Assert
+        final String result = this.mockMvc
+                .perform(get(SITES_ROUTE + "/" + siteId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(result, stringContainsInOrder("\"siteId\":", "\"" + siteId + "\""));
+        assertThat(result, stringContainsInOrder("\"name\":", "\"TheSite\""));
+        assertThat(result, stringContainsInOrder("\"alias\":", "\"the-alias\""));
+        assertThat(result, stringContainsInOrder("\"parentSiteId\":", "\"parentId\""));
+    }
+
+    @Test
+    void TestGetSite_WhenIdNotFound_Returns404() throws Exception {
+        // Arrange
+        final String siteId = "the-site-id";
+        when(siteService.findSiteById(siteId)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "site not found"));
+        // Act + Assert
+        this.mockMvc
+                .perform(get(SITES_ROUTE + "/" + siteId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isNotFound());
     }
 
 }
