@@ -153,7 +153,7 @@ class PractitionerControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
 
-        assertThat(error, equalTo("Required String parameter 'userIdentity' is not blank"));
+        assertThat(error, equalTo("Required String parameter 'userIdentity' is blank"));
     }
 
     @Test
