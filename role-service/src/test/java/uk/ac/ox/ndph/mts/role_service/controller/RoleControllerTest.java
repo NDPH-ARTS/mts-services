@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(RoleController.class)
@@ -163,23 +164,31 @@ class RoleControllerTest {
     }
 
     @Test
-    void whenGetMultipleRolesById_thenReceiveMultipleRoles() throws Exception {
+    void whenGetMultipleRolesById_thenReceiveMultipleRolesAndPermissionsJson() throws Exception {
 
         Role dummyRole1 = new Role();
-        String id1 = "foo";
-        dummyRole1.setId(id1);
+        String roleId1 = "foo";
+        dummyRole1.setId(roleId1);
         Role dummyRole2 = new Role();
-        String id2 = "bar";
-        dummyRole2.setId(id2);
+        String roleId2 = "bar";
+        dummyRole2.setId(roleId2);
+        Permission dummyPermission = new Permission();
+        String permId = "baz";
+        dummyPermission.setId(permId);
+        dummyRole2.setPermissions(Collections.singletonList(dummyPermission));
 
-        when(roleRepo.findAllById(Arrays.asList(id1, id2)))
+        when(roleRepo.findAllById(Arrays.asList(roleId1, roleId2)))
                 .thenReturn(Arrays.asList(dummyRole1, dummyRole2));
 
-        mvc.perform(get(URI_ROLES + "?ids=" + id1 + "," + id2))
+        mvc.perform(get(URI_ROLES + "?ids=" + roleId1 + "," + roleId2))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(id1)))
-                .andExpect(content().string(containsString(id2)));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(roleId1))
+                .andExpect(jsonPath("$[1].id").value(roleId2))
+                .andExpect(jsonPath("$[1].permissions[0].id").value(permId));
+
+
     }
 
 }
