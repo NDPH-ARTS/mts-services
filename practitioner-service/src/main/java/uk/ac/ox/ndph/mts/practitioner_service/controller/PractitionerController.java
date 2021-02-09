@@ -59,7 +59,7 @@ public class PractitionerController {
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
             @NotBlank @NotNull @RequestParam String userIdentity) {
         if (userIdentity.isEmpty()) {
-            throw new RestException("Required String parameter 'userIdentity' is blank.");
+            throw new RestException("Required String parameter 'userIdentity' is blank");
         }
 
         List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(userIdentity);
