@@ -32,7 +32,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
     /**
      * Get practitioner role assignments by user id
      * @param userId - user id on the token
-     * @return  RoleAssignmentDTO[] array of role assignments
+     * @return  List<RoleAssignmentDTO> list of role assignments
      */
     @Override
     public List<RoleAssignmentDTO> getUserRoleAssignments(String userId) {
