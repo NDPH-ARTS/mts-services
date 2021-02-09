@@ -4,8 +4,13 @@ package uk.ac.ox.ndph.mts.site_service.service;
  * String constants
  */
 public enum Services {
+
     STARTUP("Loaded site service required dependencies"),
-    NO_ROOT_SITE("No root site found");
+    NO_ROOT_SITE("No root site found"),
+    SITE_NOT_FOUND("Site ID not found"),
+    PARENT_NOT_FOUND("Parent site ID not found"),
+    SITE_EXISTS("Site with given name exists"),
+    ONE_ROOT_SITE("Root site already exists");
 
     private String message;
  
