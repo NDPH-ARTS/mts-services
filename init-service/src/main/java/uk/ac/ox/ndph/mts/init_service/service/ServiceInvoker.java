@@ -47,16 +47,16 @@ public abstract class ServiceInvoker {
     }
 
     public List<String> execute(List<? extends Entity> entities) throws NullEntityException {
-        List<String> siteIDs = new ArrayList<>();
+        List<String> entityIds = new ArrayList<>();
         if (entities != null) {
             for (Entity entity : entities) {
                 LOGGER.info("Starting to create {}(s): {}", entity.getClass(), entities);
-                siteIDs.add(create(entity));
+                entityIds.add(create(entity));
                 LOGGER.info("Finished creating {} {}(s)", entities.size(), entity.getClass());
             }
         } else {
             throw new NullEntityException("No entities in payload.");
         }
-        return siteIDs;
+        return entityIds;
     }
 }
