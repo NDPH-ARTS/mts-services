@@ -24,15 +24,9 @@ public class PractitionerRoleConverter implements EntityConverter<org.hl7.fhir.r
     @Override
     public RoleAssignment convert(PractitionerRole input) {
         return new RoleAssignment(
-                extractReferenceId(input.getPractitioner()),
-                extractReferenceId(input.getOrganization()),
+                input.getPractitioner().getReferenceElement().getIdPart(),
+                input.getOrganization().getReferenceElement().getIdPart(),
                 input.getCode().get(0).getText());
-    }
-
-    private String extractReferenceId(Reference reference) {
-        var id = reference.getReference();
-        id = id.substring(id.lastIndexOf('/') + 1);
-        return id;
     }
 
     @Override

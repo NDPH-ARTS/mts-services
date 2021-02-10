@@ -77,6 +77,6 @@ public class PractitionerService implements EntityService {
     @Override
     public List<RoleAssignment> getRoleAssignmentsByUserIdentity(@NotNull String userIdentity) {
         Objects.requireNonNull(userIdentity, "User identifier can not be null.");
-        return roleAssignmentStore.listEntitiesByUserIdentity(userIdentity);
+        return roleAssignmentStore.findEntitiesByUserIdentity(userIdentity);
     }
 }

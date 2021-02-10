@@ -52,9 +52,14 @@ public class RoleController {
         return retrievedRole.get();
     }
 
-    @GetMapping("")
+    @GetMapping(params = {"page", "size"})
     public Page<Role> getPaged(@RequestParam int page, @RequestParam int size) {
         return roleRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @GetMapping(params = "ids")
+    public Iterable<Role> getByIds(@RequestParam List<String> ids) {
+        return roleRepository.findAllById(ids);
     }
 
 

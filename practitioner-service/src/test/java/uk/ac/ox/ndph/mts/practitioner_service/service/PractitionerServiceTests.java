@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
@@ -117,7 +116,7 @@ class PractitionerServiceTests {
     }
 
     @Test
-    void TestPractitionerService_WhenNullValues_ThrowsInitialisationError() {
+    void TestPractitionerService_WhenNullValues_ThrowsNullPointerException() {
         // Arrange + Act + Assert
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
                         , roleAssignmentStore, roleAssignmentValidator),
@@ -224,7 +223,7 @@ class PractitionerServiceTests {
                 "Identifier can not be null.");
 
         Mockito.verify(roleAssignmentStore,
-                Mockito.times(0)).listEntitiesByUserIdentity(anyString());
+                Mockito.times(0)).findEntitiesByUserIdentity(anyString());
     }
 
     @Test
@@ -233,7 +232,7 @@ class PractitionerServiceTests {
         String userIdentity = "userIdentity";
         List<RoleAssignment> expectedResult = Collections.singletonList(
                 new RoleAssignment("practitionerId", "siteId", "roleId"));
-        when(roleAssignmentStore.listEntitiesByUserIdentity(userIdentity)).thenReturn(expectedResult);
+        when(roleAssignmentStore.findEntitiesByUserIdentity(userIdentity)).thenReturn(expectedResult);
 
         List<RoleAssignment> actualResult = service.getRoleAssignmentsByUserIdentity(userIdentity);
 

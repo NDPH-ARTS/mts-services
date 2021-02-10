@@ -20,8 +20,10 @@ import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(RoleController.class)
@@ -105,6 +108,8 @@ class RoleControllerTest {
         mvc.perform(get(URI_ROLES + "?page=0&size=10")).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
 
+
+
     @Test
     void whenGetOneRole_thenReceiveSuccess() throws Exception {
 
@@ -155,6 +160,34 @@ class RoleControllerTest {
         String uri = String.format(URI_PERMISSIONS_FOR_ROLE, dummyRoleId);
         mvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON).content(jsonPermDTO)
                 .accept(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
+
+    }
+
+    @Test
+    void whenGetMultipleRolesById_thenReceiveMultipleRolesAndPermissionsJson() throws Exception {
+
+        Role dummyRole1 = new Role();
+        String roleId1 = "foo";
+        dummyRole1.setId(roleId1);
+        Role dummyRole2 = new Role();
+        String roleId2 = "bar";
+        dummyRole2.setId(roleId2);
+        Permission dummyPermission = new Permission();
+        String permId = "baz";
+        dummyPermission.setId(permId);
+        dummyRole2.setPermissions(Collections.singletonList(dummyPermission));
+
+        when(roleRepo.findAllById(Arrays.asList(roleId1, roleId2)))
+                .thenReturn(Arrays.asList(dummyRole1, dummyRole2));
+
+        mvc.perform(get(URI_ROLES + "?ids=" + roleId1 + "," + roleId2))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(roleId1))
+                .andExpect(jsonPath("$[1].id").value(roleId2))
+                .andExpect(jsonPath("$[1].permissions[0].id").value(permId));
+
 
     }
 
