@@ -12,8 +12,10 @@ import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.model.Attribute;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -37,6 +39,9 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     private static final String REGEX_ALL = ".*";
 
     private final Map<Attribute, AttributeData> validationMap;
+    private final Map<String, SiteConfiguration> validationSiteConfigMap = null;
+    private final Map<String, String> validationHierarchyMap = null;
+
     private final Logger logger = LoggerFactory.getLogger(SiteValidation.class);
 
     /**
