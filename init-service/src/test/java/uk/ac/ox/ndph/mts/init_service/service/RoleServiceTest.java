@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.fail;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,8 +49,8 @@ class RoleServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(testRole))
                .addHeader("Content-Type", "application/json"));
-        Role returnedRole = roleServiceInvoker.send(testRole);
-        assertNotNull(returnedRole);
+        String returnedRoleId = roleServiceInvoker.create(testRole);
+        assertNotNull(returnedRoleId);
     }
 
     @Test
