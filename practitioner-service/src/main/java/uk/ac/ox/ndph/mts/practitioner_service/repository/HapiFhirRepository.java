@@ -1,12 +1,12 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
+import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
@@ -86,12 +86,10 @@ public class HapiFhirRepository implements FhirRepository {
     @Override
     public List<PractitionerRole> getPractitionerRolesByUserIdentity(String userIdentity) {
         // Log the request
-        if (logger.isInfoEnabled()) {
-            logger.info(
-                    String.format(
-                            FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY.message(),
-                            userIdentity));
-        }
+        logger.info(
+                String.format(
+                        FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY.message(),
+                        userIdentity));
 
         List<PractitionerRole> practitionerRoles = new ArrayList<>();
 
@@ -100,16 +98,14 @@ public class HapiFhirRepository implements FhirRepository {
                 PractitionerRole.PRACTITIONER.hasChainedProperty(
                         Practitioner.IDENTIFIER.exactly().identifier(userIdentity)));
 
-        for (var result: results) {
+        for (var result : results) {
             practitionerRoles.add((PractitionerRole) result);
         }
 
-        if (logger.isInfoEnabled()) {
-            logger.info(
-                    String.format(
-                            FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE.message(),
-                            practitionerRoles.size()));
-        }
+        logger.info(
+                String.format(
+                        FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE.message(),
+                        practitionerRoles.size()));
 
         return practitionerRoles;
     }
