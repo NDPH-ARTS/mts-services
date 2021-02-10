@@ -6,15 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>uk.ac.ox.ndph.mts</groupId>
-        <artifactId>mts-services-parent</artifactId>
+        <artifactId>mts-services-web-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.web.xml</relativePath>
     </parent>
     <artifactId>practitioner-service</artifactId>
-    <name>practitioner-service</name>
-    <description>Spring Cloud microservice which validates the input practitioner details and adds
-        it as a FHIR practitioner entity to the FHIR store.
-    </description>
+    <description>CRUD service for practitioners and their role assignments</description>
     <properties>
         <hapifhir.version>5.0.2</hapifhir.version>
         <okhttp.version>4.9.0</okhttp.version>

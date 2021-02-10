@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.init_service.model;
 
+import java.util.List;
+
 /**
  * Practitioner Model
  */
@@ -8,6 +10,7 @@ public class Practitioner implements Entity {
     private String prefix;
     private String givenName;
     private String familyName;
+    private List<String> roles;
 
     public String getPrefix() {
         return prefix;
@@ -31,6 +34,14 @@ public class Practitioner implements Entity {
 
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     @Override
