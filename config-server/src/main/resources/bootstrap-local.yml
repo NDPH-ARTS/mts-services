@@ -1,5 +1,4 @@
 spring:
-  profiles: local
   cloud:
-    discovery:
+    config:
       enabled: false
