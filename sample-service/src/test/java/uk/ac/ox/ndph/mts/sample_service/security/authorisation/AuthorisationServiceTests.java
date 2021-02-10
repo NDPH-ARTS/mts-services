@@ -99,7 +99,7 @@ class AuthorisationServiceTests {
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId);
 
         when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
-        when(roleServiceClient.getRolesById(roleId)).thenReturn(null);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(null);
 
         //Act
         //Assert
@@ -116,8 +116,9 @@ class AuthorisationServiceTests {
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId);
         when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
 
-        RoleDTO roleDto = getRoleWithPermissions(roleId, "another_permission");
-        when(roleServiceClient.getRolesById(roleId)).thenReturn(roleDto);
+        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
+                "another_permission"));
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
 
         //Act
         //Assert
@@ -134,8 +135,9 @@ class AuthorisationServiceTests {
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId);
         when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
 
-        RoleDTO roleDto = getRoleWithPermissions(roleId, "some_permission");
-        when(roleServiceClient.getRolesById(roleId)).thenReturn(roleDto);
+        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
+                "some_permission"));
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
 
         //Act
         //Assert

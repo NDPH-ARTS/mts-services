@@ -20,9 +20,11 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
 
     private final WebClient webClient;
 
-    private static final String SERVICE_NAME = "practitioner-service";
+    @Value("${practitioner.service.name}")
+    private String serviceName;
 
-    private static final String ROLE_ASSIGNMENT_ROUTE = "/practitioner/roles";
+    @Value("${practitioner.service.endpoint.roles}")
+    private String roleAssignmentRoute;
 
     public PractitionerServiceClientImpl(final WebClient.Builder webClientBuilder,
                                          @Value("${practitioner.service.url}") String roleAssignmentsUrl) {
@@ -39,7 +41,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
 
         return webClient.get().uri(uriBuilder ->
                 uriBuilder
-                        .path(ROLE_ASSIGNMENT_ROUTE)
+                        .path(roleAssignmentRoute)
                         .queryParam("userIdentity", userId)
                         .build())
                 .header("Content-Type", "application/json")
@@ -49,7 +51,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
                     resp -> Mono.error(
                             new RestException(
                                         String.format(Response.CLIENT_ERROR_RESPONSE.message(),
-                                                SERVICE_NAME, resp.statusCode(), userId))))
+                                                serviceName, resp.statusCode(), userId))))
                 .bodyToMono(RoleAssignmentDTO[].class)
                 .map(Arrays::asList)
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))

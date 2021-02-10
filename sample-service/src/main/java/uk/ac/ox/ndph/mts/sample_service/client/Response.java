@@ -9,10 +9,6 @@ public enum Response {
         this.message = message;
     }
 
-    /**
-     * Returns the message associated with the enum variant.
-     * @return the message value of the enum variant
-     */
     public String message() {
         return message;
     }

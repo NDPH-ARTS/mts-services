@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.sample_service.client.Response;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Role service client implementation
@@ -17,9 +19,11 @@ public class RoleServiceClientImpl implements RoleServiceClient {
 
     private final WebClient webClient;
 
-    private static final String SERVICE_NAME = "role-service";
+    @Value("${role.service.name}")
+    private String serviceName;
 
-    private static final String ROLES_ROUTE = "/roles/{id}";
+    @Value("${role.service.endpoint.roles}")
+    private String rolesRoute;
 
     public RoleServiceClientImpl(final WebClient.Builder webClientBuilder,
                                  @Value("${role.service.url}") String roleServiceUrl) {
@@ -27,14 +31,20 @@ public class RoleServiceClientImpl implements RoleServiceClient {
     }
 
     /**
-     * Get role with permissions by participant role id
-     * @param roleId - participant role id
+     * Get role with permissions by role ids
+     * @param roleIds - role ids
      * @return RoleDTO - role with permissions
      */
     @Override
-    public RoleDTO getRolesById(String roleId) {
+    public List<RoleDTO> getRolesByIds(List<String> roleIds) {
 
-        return webClient.get().uri(ROLES_ROUTE, roleId)
+        String parsedRoleIds = String.join(",", roleIds);
+
+        return webClient.get().uri(uriBuilder ->
+                uriBuilder
+                        .path(rolesRoute)
+                        .queryParam("ids", parsedRoleIds)
+                        .build())
                 .header("Content-Type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -42,8 +52,9 @@ public class RoleServiceClientImpl implements RoleServiceClient {
                     httpStatus -> !httpStatus.is2xxSuccessful(),
                     resp -> Mono.error(new RestException(
                                         String.format(Response.CLIENT_ERROR_RESPONSE.message(),
-                                                SERVICE_NAME, resp.statusCode(), roleId))))
-                .bodyToMono(RoleDTO.class)
+                                                serviceName, resp.statusCode(), parsedRoleIds))))
+                .bodyToMono(RoleDTO[].class)
+                .map(Arrays::asList)
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block();
     }

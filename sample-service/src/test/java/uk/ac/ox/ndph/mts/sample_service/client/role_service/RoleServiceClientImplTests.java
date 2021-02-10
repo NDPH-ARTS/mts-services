@@ -13,6 +13,7 @@ import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
 import java.net.HttpURLConnection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,38 +56,40 @@ class RoleServiceClientImplTests {
 
         PermissionDTO permissionDTO = new PermissionDTO();
         permissionDTO.setId("some-permission");
-        RoleDTO expectedResponse = new RoleDTO();
-        expectedResponse.setId(roleId);
-        expectedResponse.setPermissions(Collections.singletonList(permissionDTO));
+        RoleDTO expectedRoleResponse = new RoleDTO();
+        expectedRoleResponse.setId(roleId);
+        expectedRoleResponse.setPermissions(Collections.singletonList(permissionDTO));
 
 
         String expectedBodyResponse =String.format(
-                "{\"createdDateTime\":\"2021-02-07T17:56:23.837542\",\"createdBy\":\"fake-id\"," +
+                "[{\"createdDateTime\":\"2021-02-07T17:56:23.837542\",\"createdBy\":\"fake-id\"," +
                         "\"modifiedDateTime\":\"2021-02-07T17:56:23.837542\",\"modifiedBy\":\"fake-id\"," +
                         "\"id\":\"%s\",\"permissions\":[{\"createdDateTime\":null,\"createdBy\":\"test\"," +
-                        "\"modifiedDateTime\":null,\"modifiedBy\":\"test\",\"id\":\"some-permission\"}]}", roleId);
+                        "\"modifiedDateTime\":null,\"modifiedBy\":\"test\",\"id\":\"some-permission\"}]}]", roleId);
 
         mockBackEnd.queueResponse(expectedBodyResponse);
 
         // Act
-        RoleDTO actualResponse = client.getRolesById(roleId);
+        List<RoleDTO> actualResponse = client.getRolesByIds(Collections.singletonList(roleId));
 
         //Assert
         assertAll(
-                () -> assertEquals(expectedResponse.getId() , actualResponse.getId()),
-                () -> assertEquals(expectedResponse.getPermissions().size() , actualResponse.getPermissions().size()),
-                () -> assertEquals(expectedResponse.getPermissions().get(0).getId() ,
-                        actualResponse.getPermissions().get(0).getId())
+                () -> assertEquals(1 , actualResponse.size()),
+                () -> assertEquals(expectedRoleResponse.getId() , actualResponse.get(0).getId()),
+                () -> assertEquals(expectedRoleResponse.getPermissions().size() ,
+                        actualResponse.get(0).getPermissions().size()),
+                () -> assertEquals(expectedRoleResponse.getPermissions().get(0).getId() ,
+                        actualResponse.get(0).getPermissions().get(0).getId())
         );
     }
 
     @Test
     void TestGetRolesById_WhenServiceFails_ThrowsRestException() {
         // Arrange
-        this.mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
+        mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
         // Act
         // Assert
-        assertThrows(RestException.class, () -> client.getRolesById("roleId"));
+        assertThrows(RestException.class, () -> client.getRolesByIds(Collections.singletonList("roleId")));
     }
 
 }
