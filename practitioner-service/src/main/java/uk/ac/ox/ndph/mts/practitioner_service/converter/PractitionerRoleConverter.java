@@ -1,7 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.converter;
 
 import org.hl7.fhir.r4.model.PractitionerRole;
-import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
