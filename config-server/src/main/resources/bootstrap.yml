@@ -7,6 +7,13 @@ spring:
         git:
           uri: https://placeholder
           search-paths: placeholder
+    inetutils:
+      ignored-interfaces:
+        - eth0
+        - eth1
+        - eth2
+        - eth3
+        - lo
 
 server:
   port: 8888
