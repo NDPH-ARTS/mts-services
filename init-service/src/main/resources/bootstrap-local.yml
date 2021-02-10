@@ -1,9 +1,6 @@
 spring:
-  application:
-    name: init-service
-  profiles: local
   cloud:
     config:
       enabled: false
-    discovery:
-      enabled: false
+      discovery:
+        enabled: false

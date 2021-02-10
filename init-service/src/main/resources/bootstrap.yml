@@ -1,7 +1,6 @@
 spring:
   application:
     name: init-service
-  profiles: default
   cloud:
     config:
       discovery:

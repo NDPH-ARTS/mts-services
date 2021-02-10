@@ -1,7 +1,6 @@
 spring:
   application:
     name: config-server
-  profiles: default
   cloud:
     config:
       server:
