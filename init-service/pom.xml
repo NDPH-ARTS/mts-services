@@ -8,27 +8,16 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-  <groupId>uk.ac.ox.ndph.mts</groupId>
   <artifactId>init-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>  
-  <name>init-service</name>
   <description>A process that prepare the different micro-services and populates them with initial configuration and data</description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
       <version>2.28.2</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.5</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
@@ -65,6 +54,17 @@
         <artifactId>mockwebserver</artifactId>
         <version>4.0.1</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-test</artifactId>
+          <version>5.3.3</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.assertj</groupId>
+          <artifactId>assertj-core</artifactId>
+          <scope>test</scope>
       </dependency>
   </dependencies>
 </project>
