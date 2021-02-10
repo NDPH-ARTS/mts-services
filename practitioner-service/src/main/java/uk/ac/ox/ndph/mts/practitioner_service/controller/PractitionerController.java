@@ -59,7 +59,7 @@ public class PractitionerController {
     @GetMapping(path = "/roles")
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
             @NotBlank @NotNull @RequestParam String userIdentity) {
-        if (StringUtils.hasText(userIdentity) == false) {
+        if (!StringUtils.hasText(userIdentity)) {
             throw new RestException("Required String parameter 'userIdentity' is blank");
         }
 
