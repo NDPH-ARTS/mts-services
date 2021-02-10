@@ -40,15 +40,17 @@ public class Site {
 
     /**
      * Site Constructor with siteId name alias and parent
-     * @param siteId site ID
      * @param name the Site name
      * @param alias the Site alias
      * @param parentSiteId the Site parentSiteId
+     * @param siteType the Site siteType
      *
      */
-    public Site(final String siteId, String name, String alias, String parentSiteId) {
-        this(name, alias, parentSiteId);
-        this.siteId = siteId;
+    public Site(String name, String alias, String parentSiteId, String siteType) {
+        this.name = name;
+        this.alias = alias;
+        this.parentSiteId = parentSiteId;
+        this.siteType = siteType;
     }
 
     /**
@@ -61,8 +63,7 @@ public class Site {
      *
      */
     public Site(final String siteId, String name, String alias, String parentSiteId, String siteType) {
-        this(name, alias, parentSiteId);
-        this.siteType = siteType;
+        this(name, alias, parentSiteId, siteType);
         this.siteId = siteId;
     }
 

@@ -47,13 +47,14 @@ class SiteServiceImplIntegrationTests {
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         final String rootSiteId = "root-site-id";
+        final String siteType = "site-type";
         final Organization root = new Organization();
         root.setId(rootSiteId);
         when(repository.findOrganizationById(rootSiteId)).thenReturn(Optional.of(root));
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"" + rootSiteId + "\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"" + rootSiteId + "\", \"siteType\": \"" + siteType + "\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -64,7 +65,7 @@ class SiteServiceImplIntegrationTests {
     void TestPostSite_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
-        String jsonString = "{\"name\": \"\", \"alias\": \"alias\"}";
+        String jsonString = "{\"name\": \"\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"siteType\"}";
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -78,7 +79,7 @@ class SiteServiceImplIntegrationTests {
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.findOrganizationById(anyString())).thenReturn(Optional.of(new Organization()));
         when(repository.saveOrganization(any(Organization.class))).thenThrow(new RestException("test error"));
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"siteType\"}";
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -93,7 +94,7 @@ class SiteServiceImplIntegrationTests {
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"siteType\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))

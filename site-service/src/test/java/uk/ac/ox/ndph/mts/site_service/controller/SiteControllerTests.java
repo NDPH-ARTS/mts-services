@@ -139,7 +139,7 @@ class SiteControllerTests {
     void TestGetSite_WhenIdFound_Returns200AndSite() throws Exception {
         // Arrange
         final String siteId = "the-site-id";
-        when(siteService.findSiteById(siteId)).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId"));
+        when(siteService.findSiteById(siteId)).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId", "the-siteType"));
         // Act + Assert
         final String result = this.mockMvc
                 .perform(get(SITES_ROUTE + "/" + siteId)

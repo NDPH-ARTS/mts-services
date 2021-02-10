@@ -29,11 +29,15 @@ class SiteValidationTests {
 
     private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
+        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"),
+        new SiteAttributeConfiguration("parentSiteId", "Parent SiteId", ""),
+        new SiteAttributeConfiguration("siteType", "Site Type", ""));
 
     private static final List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", ""),
-        new SiteAttributeConfiguration("alias", "Alias", ""));
+        new SiteAttributeConfiguration("alias", "Alias", ""),
+        new SiteAttributeConfiguration("parentSiteId", "Parent SiteId", ""),
+        new SiteAttributeConfiguration("siteType", "Site Type", ""));
 
     private static final List<SiteAttributeConfiguration> INCOMNPLETE_MAP = List.of(
                 new SiteAttributeConfiguration("name", "Name", ""));
@@ -44,15 +48,18 @@ class SiteValidationTests {
     
     
     @ParameterizedTest
-    @CsvSource({ ",,Name", ",test,Name", "test,,Alias", "test,null,Alias", "null,null,Name", "null,test,Name" })
+    @CsvSource({ ",,,testType,Name", ",test,,,Name", "test,,testId,testType,Alias",
+                "test,null,testId,testType,Alias", "null,null,testId,testType,Name", "null,test,testId,testType,Name" })
     void TestValidate_WhenFieldsAreEmptyOrNull_ThrowsValidationException(
             @ConvertWith(NullableConverter.class) String name,
             @ConvertWith(NullableConverter.class) String alias,
-			@ConvertWith(NullableConverter.class) String expectedField) {
+            @ConvertWith(NullableConverter.class) String parentSiteId,
+            @ConvertWith(NullableConverter.class) String siteType,
+            @ConvertWith(NullableConverter.class) String expectedField) {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
             "Site", ALL_REQUIRED_UNDER_35_MAP));
-        Site site = new Site(name, alias);
+        Site site = new Site(name, alias, parentSiteId, siteType);
         var siteValidation = new SiteValidation(configurationProvider); 
 
         // Act + Assert
@@ -104,10 +111,12 @@ class SiteValidationTests {
         // Arrange
         String name = "name";
         String alias = "alias";
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site", "Site",
+        String parentSiteId = "parentSiteId";
+        String siteType = "siteType";
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization", "site",
             ALL_EMPTY_REGEX_MAP));
         var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(name, alias);
+        Site site = new Site(name, alias, parentSiteId, siteType);
 
         // Act
         var result = siteValidation.validate(site);

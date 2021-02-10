@@ -100,8 +100,8 @@ class SiteServiceImplTests {
     @Test
     void TestSaveSite_WhenValidSiteWithValidParent_SavesToStore() {
         // Arrange
-        final var root = new Site("root-id","Root", "root", null);
-        final var site = new Site(null, "name", "alias", root.getSiteId());
+        final var root = new Site("root-id","Root", "root", null, "root");
+        final var site = new Site(null, "name", "alias", root.getSiteId(), "root");
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.findById(root.getSiteId())).thenReturn(Optional.of(root));
@@ -114,7 +114,7 @@ class SiteServiceImplTests {
     @Test
     void TestSaveSite_WhenValidSiteWithNoParentAndNoRoot_SavesToStore() {
         // Arrange
-        final var site = new Site(null, "name", "alias", null);
+        final var site = new Site(null, "name", "alias", null, "root");
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.findRoot()).thenReturn(Optional.empty());
@@ -127,7 +127,7 @@ class SiteServiceImplTests {
     @Test
     void TestSaveSite_WhenValidSiteWithNoParentAndHasRoot_ThrowsValidationException_DoesntSavesToStore() {
         // Arrange
-        final var site = new Site(null, "name", "alias", null);
+        final var site = new Site(null, "name", "alias", null, "root");
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.findRoot()).thenReturn(Optional.of(new Site()));
@@ -220,7 +220,7 @@ class SiteServiceImplTests {
     void TestFindSiteById_WhenStoreHasSite_ReturnsSite() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        final var site = new Site("my-site-id", "CCO", "Root", null);
+        final var site = new Site("my-site-id", "CCO", "Root", null, "CCO");
         when(siteStore.findById(site.getSiteId())).thenReturn(Optional.of(site));
         // act
         final Site siteFound = siteService.findSiteById(site.getSiteId());
@@ -242,7 +242,7 @@ class SiteServiceImplTests {
     void TestFindRootSite_WhenStoreHasRoot_ReturnsRoot() {
         // arrange
         final var siteService = new SiteServiceImpl(siteStore, siteValidation);
-        final var root = new Site("my-root-id", "CCO", "Root", null);
+        final var root = new Site("my-root-id", "CCO", "Root", null, "CCO");
         when(siteStore.findRoot()).thenReturn(Optional.of(root));
         // act
         final Site siteFound = siteService.findRootSite();

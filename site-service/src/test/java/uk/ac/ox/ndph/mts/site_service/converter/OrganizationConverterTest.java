@@ -16,13 +16,14 @@ class OrganizationConverterTest {
     private static final String PARENT_ID = "cccccccc-ccc-cccc-cccc-cccccccccccc";
     private static final String NAME = "The Organization";
     private static final String ALIAS = "aka-org";
+    private static final String SITE_TYPE = "site-type";
 
     private final OrganizationConverter orgConverter = new OrganizationConverter();
 
     @Test
     void TestConvert_AllPropertiesSpecified_returnsMatchingOrg() {
         // arrange
-        final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID);
+        final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, SITE_TYPE);
         // act
         final Organization org = orgConverter.convert(site);
         // assert
@@ -37,7 +38,7 @@ class OrganizationConverterTest {
     @Test
     void TestConvert_IdIsNull_returnsMatchingOrg() {
         // arrange
-        final var site = new Site(null, NAME, ALIAS, PARENT_ID);
+        final var site = new Site(null, NAME, ALIAS, PARENT_ID, SITE_TYPE);
         // act
         final Organization org = orgConverter.convert(site);
         // assert
@@ -52,7 +53,7 @@ class OrganizationConverterTest {
     @Test
     void TestConvert_NullParentId_returnsOrgWithNoParent() {
         // arrange
-        final var site = new Site(ORG_ID, NAME, ALIAS, null);
+        final var site = new Site(ORG_ID, NAME, ALIAS, null, SITE_TYPE);
         // act
         final Organization org = orgConverter.convert(site);
         // assert
@@ -67,7 +68,7 @@ class OrganizationConverterTest {
     @Test
     void TestConvert_EmptyParentId_returnsOrgWithNoParent() {
         // arrange
-        final var site = new Site(ORG_ID, NAME, ALIAS, "");
+        final var site = new Site(ORG_ID, NAME, ALIAS, "", SITE_TYPE);
         // act
         final Organization org = orgConverter.convert(site);
         // assert
@@ -82,7 +83,7 @@ class OrganizationConverterTest {
     @Test
     void TestConvert_NoAlias_returnsOrgWithoutAlias() {
         // arrange
-        final var site = new Site(ORG_ID, NAME, null, PARENT_ID);
+        final var site = new Site(ORG_ID, NAME, null, PARENT_ID, SITE_TYPE);
         // act
         final Organization org = orgConverter.convert(site);
         // assert

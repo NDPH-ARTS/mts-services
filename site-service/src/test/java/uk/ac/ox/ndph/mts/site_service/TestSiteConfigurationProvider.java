@@ -20,7 +20,9 @@ public class TestSiteConfigurationProvider {
     
     private static List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"));
+        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"),
+        new SiteAttributeConfiguration("parentSiteId", "Parent Site Id", ""),
+        new SiteAttributeConfiguration("siteType", "Site Type", ""));
 
     @Bean
     @Primary
