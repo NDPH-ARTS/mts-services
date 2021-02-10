@@ -47,9 +47,11 @@ class SiteServiceImplIntegrationTests {
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         final String rootSiteId = "root-site-id";
-        final String siteType = "site-type";
+        final String parentSiteType = "CCO";
+        final String siteType = "REGION";
         final Organization root = new Organization();
         root.setId(rootSiteId);
+        root.setImplicitRules(parentSiteType);
         when(repository.findOrganizationById(rootSiteId)).thenReturn(Optional.of(root));
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
@@ -76,10 +78,15 @@ class SiteServiceImplIntegrationTests {
     @Test
     void TestPostSite_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange
+        final String rootSiteId = "root-site-id";
+        final String parentSiteType = "CCO";
+        final Organization root = new Organization();
+        root.setId(rootSiteId);
+        root.setImplicitRules(parentSiteType);
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
-        when(repository.findOrganizationById(anyString())).thenReturn(Optional.of(new Organization()));
+        when(repository.findOrganizationById(anyString())).thenReturn(Optional.of(root));
         when(repository.saveOrganization(any(Organization.class))).thenThrow(new RestException("test error"));
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"siteType\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"REGION\"}";
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -90,11 +97,14 @@ class SiteServiceImplIntegrationTests {
     @Test
     void TestPostSite_WhenValidParentInput_Returns201AndId() throws Exception {
         // Arrange
-        when(repository.findOrganizationById(("parentSiteId"))).thenReturn(Optional.of(new Organization()));
+        final Organization root = new Organization();
+        root.setId("parentSiteId");
+        root.setImplicitRules("CCO");
+        when(repository.findOrganizationById(("parentSiteId"))).thenReturn(Optional.of(root));
         when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"siteType\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"REGION\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))

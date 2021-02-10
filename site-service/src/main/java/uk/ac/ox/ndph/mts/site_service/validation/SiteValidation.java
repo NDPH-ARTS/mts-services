@@ -12,11 +12,8 @@ import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.model.Attribute;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
-import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -40,10 +37,6 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     private static final String REGEX_ALL = ".*";
 
     private final Map<Attribute, AttributeData> validationMap;
-    private final Map<String, SiteConfiguration> sitesByType = new HashMap<>();
-    private final Map<String, String> parentTypeByChildType = new HashMap<>();
-    // not this private final Map<String, List<String>> childTypesByParentType = new HashMap<>();
-
     private final Logger logger = LoggerFactory.getLogger(SiteValidation.class);
 
     /**
@@ -55,27 +48,12 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         validationMap = configuration.getAttributes().stream()
                 .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
                 .collect(Collectors.toMap(Pair::getRight,
-                        pair -> new AttributeData(pair.getLeft().getDisplayName(),
+                    pair -> new AttributeData(pair.getLeft().getDisplayName(),
                                 Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
                                 pair.getRight().getGetValue())));
 
         validateMap();
-        initMaps(configuration);
         logger.info(Validations.STARTUP.message(), configuration);
-    }
-
-    private void initMaps(final SiteConfiguration configuration) {
-        addTypesToMap(configuration);
-    }
-
-    private void addTypesToMap(final SiteConfiguration configuration) {
-        this.sitesByType.put(configuration.getType(), configuration);
-        if(configuration.getChild() != null) {
-            for (final var childConfig : configuration.getChild()) {
-                addTypesToMap(childConfig);
-                this.parentTypeByChildType.put(childConfig.getType(), configuration.getType());
-            }
-        }
     }
 
     @Override

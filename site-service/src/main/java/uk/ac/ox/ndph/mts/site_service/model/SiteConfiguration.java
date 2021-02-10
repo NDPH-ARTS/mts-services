@@ -45,6 +45,7 @@ public class SiteConfiguration {
                              List<SiteAttributeConfiguration> attributes, List<SiteConfiguration> child) {
         this.name = name;
         this.displayName = displayName;
+        this.type = type;
         this.attributes = attributes;
         this.child = child;
     }

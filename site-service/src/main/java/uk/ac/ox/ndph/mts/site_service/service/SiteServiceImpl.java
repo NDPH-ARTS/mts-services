@@ -6,15 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,17 +29,22 @@ import java.util.Optional;
 @Service
 public class SiteServiceImpl implements SiteService {
 
+    private final Map<String, SiteConfiguration> sitesByType = new HashMap<>();
+    private final Map<String, String> parentTypeByChildType = new HashMap<>();
     private final EntityStore<Site, String> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
+     * @param configurationProvider provide Site Configuration
      * @param siteStore        Site store interface
      * @param entityValidation Site validation interface
      */
     @Autowired
-    public SiteServiceImpl(final EntityStore<Site, String> siteStore,
+    public SiteServiceImpl(SiteConfigurationProvider configurationProvider,
+                           final EntityStore<Site, String> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
+        var configuration = configurationProvider.getConfiguration();
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
         }
@@ -44,7 +53,22 @@ public class SiteServiceImpl implements SiteService {
         }
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
+        initMaps(configuration);
         logger.info(Services.STARTUP.message());
+    }
+
+    private void initMaps(final SiteConfiguration configuration) {
+        addTypesToMap(configuration);
+    }
+
+    private void addTypesToMap(final SiteConfiguration configuration) {
+        this.sitesByType.put(configuration.getType(), configuration);
+        if (configuration.getChild() != null) {
+            for (final var childConfig : configuration.getChild()) {
+                addTypesToMap(childConfig);
+                this.parentTypeByChildType.put(childConfig.getType(), configuration.getType());
+            }
+        }
     }
 
     /**
@@ -54,6 +78,7 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public String save(final Site site) {
         var validationResponse = entityValidation.validate(site);
+
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
@@ -70,10 +95,17 @@ public class SiteServiceImpl implements SiteService {
             validationResponse = validateParentSiteExists(site.getParentSiteId());
             if (!validationResponse.isValid()) {
                 throw new ValidationException(validationResponse.getErrorMessage());
+            } else {
+                Site siteParent = findSiteById(site.getParentSiteId());
+                String siteParentType = siteParent.getSiteType();
+                String allowedParentType = parentTypeByChildType.get(site.getSiteType());
+                if (!siteParentType.equalsIgnoreCase(allowedParentType)) {
+                    // valid parent(parent Id), invalid Child Type
+                    // diff  parent(parent Id), valid Child Type
+                    throw new ValidationException(Services.INVALID_PARENT_CHILD.message());
+                }
+                // valid parent(parent Id), valid Child Type
             }
-            // Check if the Site has valid Parent
-            // (depending on structure whether the id is valid fo Child)
-
         }
         return siteStore.saveEntity(site);
     }
