@@ -1,12 +1,9 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
-import jdk.jshell.spi.ExecutionControl;
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
@@ -18,7 +15,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +49,7 @@ class PractitionerStoreTest {
         //act and assert
         PractitionerStore practitionerStore = new PractitionerStore(repository, converter);
         Assertions.assertThrows(NotImplementedException.class,
-                ()-> practitionerStore.listEntitiesByUserIdentity("123"),
+                ()-> practitionerStore.findEntitiesByUserIdentity("123"),
                 "Expecting to throw an exception");
     }
 }

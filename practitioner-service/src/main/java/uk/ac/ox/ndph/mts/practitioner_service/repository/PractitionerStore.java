@@ -33,7 +33,7 @@ public class PractitionerStore implements EntityStore<Practitioner> {
     }
 
     @Override
-    public List<Practitioner> listEntitiesByUserIdentity(String userIdentity) {
+    public List<Practitioner> findEntitiesByUserIdentity(String userIdentity) {
         throw new NotImplementedException();
     }
 

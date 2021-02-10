@@ -16,33 +16,33 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
 
 
     private final FhirRepository repository;
-    private final EntityConverter<RoleAssignment, PractitionerRole> roleAssignmentPractitionerRoleEntityConverter;
-    private final EntityConverter<PractitionerRole, RoleAssignment> practitionerRoleRoleAssignmentEntityConverter;
+    private final EntityConverter<RoleAssignment, PractitionerRole> roleAssignmentPractitionerRoleConverter;
+    private final EntityConverter<PractitionerRole, RoleAssignment> practitionerRoleRoleAssignmentConverter;
 
     /**
      * @param repository - The fhir repository
-     * @param roleAssignmentPractitionerRoleEntityConverter - a model-entity to fhir-entity converter
-     * @param practitionerRoleRoleAssignmentEntityConverter - a fhir-entity to model-entity converter
+     * @param roleAssignmentPractitionerRoleConverter - a model-entity to fhir-entity converter
+     * @param practitionerRoleRoleAssignmentConverter - a fhir-entity to model-entity converter
      */
     @Autowired
     public RoleAssignmentStore(FhirRepository repository,
                                EntityConverter<RoleAssignment, PractitionerRole>
-                                       roleAssignmentPractitionerRoleEntityConverter,
+                                       roleAssignmentPractitionerRoleConverter,
                                EntityConverter<PractitionerRole, RoleAssignment>
-                                           practitionerRoleRoleAssignmentEntityConverter) {
+                                       practitionerRoleRoleAssignmentConverter) {
         this.repository = repository;
-        this.roleAssignmentPractitionerRoleEntityConverter = roleAssignmentPractitionerRoleEntityConverter;
-        this.practitionerRoleRoleAssignmentEntityConverter = practitionerRoleRoleAssignmentEntityConverter;
+        this.roleAssignmentPractitionerRoleConverter = roleAssignmentPractitionerRoleConverter;
+        this.practitionerRoleRoleAssignmentConverter = practitionerRoleRoleAssignmentConverter;
     }
 
     @Override
     public String saveEntity(RoleAssignment entity) {
-        return repository.savePractitionerRole(roleAssignmentPractitionerRoleEntityConverter.convert(entity));
+        return repository.savePractitionerRole(roleAssignmentPractitionerRoleConverter.convert(entity));
     }
 
     @Override
-    public List<RoleAssignment> listEntitiesByUserIdentity(String userIdentity) {
-        return practitionerRoleRoleAssignmentEntityConverter.convertList(
+    public List<RoleAssignment> findEntitiesByUserIdentity(String userIdentity) {
+        return practitionerRoleRoleAssignmentConverter.convertList(
                 repository.getPractitionerRolesByUserIdentity(userIdentity));
     }
 

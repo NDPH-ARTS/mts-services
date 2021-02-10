@@ -21,8 +21,8 @@ class RoleAssignmentConverterTests {
         var practitionerRole = roleAssignmentConverter.convert(roleAssignment);
 
         Assertions.assertAll(
-                ()-> Assertions.assertEquals(roleAssignment.getPractitionerId(), extractReferenceId(practitionerRole.getPractitioner())),
-                ()-> Assertions.assertEquals(roleAssignment.getSiteId(), extractReferenceId(practitionerRole.getOrganization())),
+                ()-> Assertions.assertEquals(roleAssignment.getPractitionerId(), practitionerRole.getPractitioner().getReferenceElement().getIdPart()),
+                ()-> Assertions.assertEquals(roleAssignment.getSiteId(), practitionerRole.getOrganization().getReferenceElement().getIdPart()),
                 ()-> Assertions.assertEquals(roleAssignment.getRoleId(), practitionerRole.getCode().get(0).getText())
         );
     }
@@ -37,20 +37,12 @@ class RoleAssignmentConverterTests {
         var practitionerRoleList = roleAssignmentConverter.convertList(roleAssignmentList);
 
         Assertions.assertAll(
-                ()-> Assertions.assertEquals(roleAssignmentList.get(0).getPractitionerId(), extractReferenceId(practitionerRoleList.get(0).getPractitioner())),
-                ()-> Assertions.assertEquals(roleAssignmentList.get(0).getSiteId(), extractReferenceId(practitionerRoleList.get(0).getOrganization())),
+                ()-> Assertions.assertEquals(roleAssignmentList.get(0).getPractitionerId(), practitionerRoleList.get(0).getPractitioner().getReferenceElement().getIdPart()),
+                ()-> Assertions.assertEquals(roleAssignmentList.get(0).getSiteId(), practitionerRoleList.get(0).getOrganization().getReferenceElement().getIdPart()),
                 ()-> Assertions.assertEquals(roleAssignmentList.get(0).getRoleId(), practitionerRoleList.get(0).getCode().get(0).getText()),
-                ()-> Assertions.assertEquals(roleAssignmentList.get(1).getPractitionerId(), extractReferenceId(practitionerRoleList.get(1).getPractitioner())),
-                ()-> Assertions.assertEquals(roleAssignmentList.get(1).getSiteId(), extractReferenceId(practitionerRoleList.get(1).getOrganization())),
+                ()-> Assertions.assertEquals(roleAssignmentList.get(1).getPractitionerId(), practitionerRoleList.get(1).getPractitioner().getReferenceElement().getIdPart()),
+                ()-> Assertions.assertEquals(roleAssignmentList.get(1).getSiteId(), practitionerRoleList.get(1).getOrganization().getReferenceElement().getIdPart()),
                 ()-> Assertions.assertEquals(roleAssignmentList.get(1).getRoleId(), practitionerRoleList.get(1).getCode().get(0).getText())
         );
     }
-
-    private String extractReferenceId(Reference reference) {
-        var id = reference.getReference();
-        id = id.substring(id.lastIndexOf('/') + 1);
-        return id;
-    }
-
-
 }
