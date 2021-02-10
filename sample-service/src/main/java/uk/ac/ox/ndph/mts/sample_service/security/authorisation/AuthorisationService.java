@@ -46,7 +46,7 @@ public class AuthorisationService {
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId);
 
-            if (roleAssignments == null || roleAssignments.size() == 0) {
+            if (roleAssignments == null || roleAssignments.isEmpty()) {
                 LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
                 return false;
             }
