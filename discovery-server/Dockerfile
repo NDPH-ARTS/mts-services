@@ -1,9 +1,14 @@
 FROM maven:3-openjdk-11 as builder
 ARG SVC
 
-# copy common things
-COPY ./build-tools ./build-tools
+# copy parent poms
 COPY ./pom*.xml ./
+
+# copy entire build-tools folder
+COPY ./build-tools ./build-tools
+
+# copy poms of shared modules
+COPY ./fhir-client/pom.xml ./fhir-client/
 
 # copy poms of ALL services
 COPY ./config-server/pom.xml ./config-server/
@@ -27,6 +32,6 @@ ARG SVC
 ARG JAR_FILE=${SVC}/target/*.jar
 COPY --from=builder ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
-EXPOSE 8080:80
+EXPOSE 8761:8761
 
 

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: practitioner-service
+    name: role-service
   cloud:
     config:
       discovery:

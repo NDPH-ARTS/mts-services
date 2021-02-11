@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This is a component like test for the practitioner-service.
  * It tests controller methods while mocking classes that communicate with external parties (fhir, other services).
  */
-@SpringBootTest(properties = {"spring.cloud.config.enabled=false", "server.error.include-message=always",
+@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always",
         "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc

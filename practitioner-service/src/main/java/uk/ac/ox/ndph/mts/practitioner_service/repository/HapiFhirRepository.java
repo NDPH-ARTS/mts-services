@@ -83,6 +83,7 @@ public class HapiFhirRepository implements FhirRepository {
         return responseElement.getIdElement().getIdPart();
     }
 
+    @SuppressWarnings("squid:S2629")
     @Override
     public List<PractitionerRole> getPractitionerRolesByUserIdentity(String userIdentity) {
         // Log the request
