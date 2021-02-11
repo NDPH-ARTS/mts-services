@@ -25,7 +25,7 @@ services:
       test: curl http://localhost:8081
       interval: 10s
       timeout: 10s
-      retries: 6
+      retries: 12
     ports:
       - "8081:8081"
 
@@ -68,7 +68,7 @@ services:
       test: curl http://localhost:8083
       interval: 10s
       timeout: 10s
-      retries: 6
+      retries: 6 # a quick service
     ports:
       - "8083:8083"
 
@@ -134,6 +134,7 @@ services:
       test: curl http://localhost:8888/
       interval: 10s
       timeout: 10s
+      retries: 6 # a quick service
 
   discovery-server:
     build:
@@ -154,6 +155,7 @@ services:
       test: curl http://discovery-server:8761/
       interval: 10s
       timeout: 10s
+      retries: 6 # a quick service
 
   #############
   # DATABASES #
