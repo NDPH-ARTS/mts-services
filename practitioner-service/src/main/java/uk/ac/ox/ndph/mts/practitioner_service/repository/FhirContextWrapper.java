@@ -1,7 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import ca.uhn.fhir.context.FhirContext;
-//import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -73,24 +72,6 @@ public class FhirContextWrapper {
             throw new FhirServerResponseException(message, ex);
         }
     }
-
-//    <T extends IBaseResource> MethodOutcome update(T resource) {
-//        var outcome = fhirContext.newRestfulGenericClient(fhirUri)
-//                .update()
-//                .resource(resource)
-//                .execute();
-//
-//        return outcome;
-//    }
-//
-//    <T extends IBaseResource> MethodOutcome create(T resource) {
-//        var outcome = fhirContext.newRestfulGenericClient(fhirUri)
-//                .create()
-//                .resource(resource)
-//                .execute();
-//
-//        return outcome;
-//    }
 
     /**
      * Extracts a list of resources from a bundle

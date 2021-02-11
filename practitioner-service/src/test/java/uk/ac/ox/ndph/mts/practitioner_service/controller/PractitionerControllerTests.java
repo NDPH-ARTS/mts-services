@@ -32,10 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
 
-//    private static final String PARAM_PRACTITIONER = "practitionerId";
-//    private static final String PARAM_USER = "userAccountId";
-//    private static final String USER_ACCOUNT_ID = "idOfUserAccount";
-//    private static final String PRACTITIONER_ID = "idOfPractitioner";
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
     @Autowired
@@ -124,52 +120,6 @@ class PractitionerControllerTests {
 
         assertThat(error, containsString("prefix"));
     }
-
-//    @ParameterizedTest
-//    @MethodSource("atLeastOneParamNotPresent")
-//    void linkPractitioner_whenParamsNotPresent_error(String userParam, String practitionerParam) throws Exception {
-//        // Act
-//        this.mockMvc.perform(post("/practitioner/link")
-//                        .param(userParam, USER_ACCOUNT_ID)
-//                        .param(practitionerParam, PRACTITIONER_ID)
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                        .andExpect(status().isBadRequest());
-//        // Assert
-//        verify(entityService, never()).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
-//    }
-//
-//    private static Stream<Arguments> atLeastOneParamNotPresent() {
-//        return Stream.of(
-//                Arguments.of("wrongUserParamName", PARAM_PRACTITIONER),
-//                Arguments.of(PARAM_USER, "wrongPractitionerParam"),
-//                Arguments.of("wrongUserParamName", "wrongPractitionerParam"));
-//    }
-//
-//    @Test
-//    void linkPractitioner_whenParamsPresent_callsEntityService() throws Exception {
-//        // Act
-//        this.mockMvc
-//                .perform(post("/practitioner/link")
-//                        .param(PARAM_USER, USER_ACCOUNT_ID)
-//                        .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
-//                        .contentType(MediaType.APPLICATION_JSON));
-//        // Assert
-//        verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
-//    }
-//
-//    @Test
-//    void linkPractitioner_whenLinkSucceeds_thenReturnCreatedStatus() throws Exception {
-//        // Arrange
-//        doNothing().when(entityService).linkPractitioner(anyString(), anyString());
-//
-//        // Act + Assert
-//        this.mockMvc
-//                .perform(post("/practitioner/link")
-//                                 .param(PARAM_USER, USER_ACCOUNT_ID)
-//                                 .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
-//                                 .contentType(MediaType.APPLICATION_JSON))
-//                                 .andExpect(status().isCreated());
-//    }
 
 
     // RoleAssignment Tests

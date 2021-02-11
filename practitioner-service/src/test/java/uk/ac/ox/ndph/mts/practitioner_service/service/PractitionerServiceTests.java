@@ -4,9 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.ConvertWith;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -14,8 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
-import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.BadRequestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
@@ -23,11 +18,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
-
 import java.util.Optional;
-import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
@@ -174,45 +166,6 @@ class PractitionerServiceTests {
         assertThrows(ResponseStatusException.class, () -> service.findPractitionerById("the-id"));
     }
 
-//    @ParameterizedTest
-//    @MethodSource("getBlankStrings")
-//    void linkPractitioner_whenBlankUserIdProvided_throwClientError(
-//            @ConvertWith(NullableConverter.class) String userAccountId) {
-//        // Act + Assert
-//        assertThatExceptionOfType(BadRequestException.class)
-//                .isThrownBy(
-//                        () -> practitionerService.linkPractitioner(userAccountId, PRACTITIONER_ID))
-//                .withMessageContainingAll("User", "blank");
-//    }
-//
-//    @ParameterizedTest
-//    @MethodSource("getBlankStrings")
-//    void linkPractitioner_whenBlankPractitionerIdProvided_throwClientError(
-//            @ConvertWith(NullableConverter.class) String practitionerId) {
-//        // Act + Assert
-//        assertThatExceptionOfType(BadRequestException.class)
-//                .isThrownBy(
-//                        () -> practitionerService.linkPractitioner(USER_ACCOUNT_ID, practitionerId))
-//                .withMessageContainingAll("Practitioner", "blank");
-//    }
-//
-//    private static Stream<String> getBlankStrings() {
-//        return Stream.of(null, "", "  ", "\t", "\n");
-//    }
-//
-//    @Test
-//    void linkPractitioner_whenValidPractitioner_thenSetUserAccountId() {
-//        // Arrange
-//        final Practitioner practitioner = new Practitioner("", "", "");
-//        practitioner.setUserAccountId("");
-//        when(practitionerStore.getEntity(anyString())).thenReturn(practitioner);
-//
-//        // Act
-//        practitionerService.linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
-//
-//        // Assert
-//        assertThat(practitioner.getUserAccountId(), equalTo(USER_ACCOUNT_ID));
-//    }
 
     // RoleAssignment tests
 

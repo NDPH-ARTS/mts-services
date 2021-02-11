@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
-//import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
-//import uk.ac.ox.ndph.mts.practitioner_service.model.UserIdentity;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
 import static org.springframework.http.HttpStatus.CREATED;
-//import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -34,7 +30,7 @@ public class PractitionerController {
         this.entityService = entityService;
     }
 
-    @PostMapping(path = "")
+    @PostMapping()
     public ResponseEntity<Response> savePractitioner(@RequestBody Practitioner practitioner) {
         String practitionerId = entityService.savePractitioner(practitioner);
         return ResponseEntity.status(CREATED).body(new Response(practitionerId));
@@ -42,15 +38,8 @@ public class PractitionerController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Practitioner> findPractitionerById(@PathVariable String id) {
-        return ResponseEntity.status(OK).body(entityService.findPractitionerById(id));
+        return ResponseEntity.ok(entityService.findPractitionerById(id));
     }
-
-    //    @PostMapping(path = "/{practitionerId}/link")
-//    public ResponseEntity<Response> linkUserIdentity(@PathVariable String practitionerId,
-//                                                     @RequestBody UserIdentity userIdentity) {
-//        entityService.linkPractitioner(userIdentity, practitionerId);
-//        return ResponseEntity.status(CREATED).build();
-//    }
 
     @PostMapping(path = "/{practitionerId}/roles")
     public ResponseEntity<Response> saveRoleAssignment(@PathVariable String practitionerId,

@@ -4,10 +4,8 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.assertj.core.api.Assertions;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Practitioner;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -33,19 +31,4 @@ class FhirContextWrapperTest {
                 .isNotInstanceOf(RuntimeException.class);
     }
 
-//    @Test
-//    void getUnqualifiedIdPart() {
-//        // Arrange
-//        FhirContext fhirContext = mock(FhirContext.class);
-//        FhirContextWrapper sut = new FhirContextWrapper(fhirContext);
-//        Practitioner resource = new Practitioner();
-//        resource.setId("345");
-//
-//        // Act
-//        String id = sut.getUnqualifiedIdPart(resource);
-//
-//        // Assert
-//        assertThat(id).isEqualTo("345");
-//    }
-    
 }

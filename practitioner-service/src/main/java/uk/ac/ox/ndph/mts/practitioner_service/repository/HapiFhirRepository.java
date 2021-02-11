@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-//import org.springframework.util.StringUtils;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 import java.util.Optional;
