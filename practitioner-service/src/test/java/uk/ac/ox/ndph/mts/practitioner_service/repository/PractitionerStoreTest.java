@@ -1,6 +1,5 @@
-package uk.ac.ox.ndph.mts.practitioner_service.service;
+package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,12 +7,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
-import uk.ac.ox.ndph.mts.practitioner_service.repository.PractitionerStore;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -24,19 +20,20 @@ class PractitionerStoreTest {
     private FhirRepository repository;
 
     @Mock
-    private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter;
+    private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter;
+    @Mock
+    private EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter;
 
     @Test
-    void TestSaveEntity_WhenValidEntity_SaveToRepositoryAndReturnGeneratedId()
-    {
+    void TestSaveEntity_WhenValidEntity_SaveToRepositoryAndReturnGeneratedId() {
         //arrange
-        var inputPractitioner = new Practitioner("prefix","givenName","familyName");
+        var inputPractitioner = new Practitioner("prefix", "givenName", "familyName");
         var outputPractitioner = new org.hl7.fhir.r4.model.Practitioner();
-        when(converter.convert(any(Practitioner.class))).thenReturn(outputPractitioner);
+        when(modelToFhirConverter.convert(any(Practitioner.class))).thenReturn(outputPractitioner);
         when(repository.savePractitioner(any(org.hl7.fhir.r4.model.Practitioner.class))).thenReturn("123");
 
         //act
-        PractitionerStore practitionerStore = new PractitionerStore(repository, converter);
+        PractitionerStore practitionerStore = new PractitionerStore(repository, modelToFhirConverter, fhirToModelConverter);
         var result = practitionerStore.saveEntity(inputPractitioner);
 
         //assert
@@ -44,12 +41,11 @@ class PractitionerStoreTest {
     }
 
     @Test
-    void TestListEntitiesByUserIdentity_WhenListByUserIdentity_ThrowsNotImplementedException()
-    {
+    void TestListEntitiesByUserIdentity_WhenListByUserIdentity_ThrowsNotImplementedException() {
         //act and assert
-        PractitionerStore practitionerStore = new PractitionerStore(repository, converter);
-        Assertions.assertThrows(NotImplementedException.class,
-                ()-> practitionerStore.findEntitiesByUserIdentity("123"),
+        PractitionerStore practitionerStore = new PractitionerStore(repository, modelToFhirConverter, fhirToModelConverter);
+        Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> practitionerStore.findEntitiesByUserIdentity("123"),
                 "Expecting to throw an exception");
     }
 }

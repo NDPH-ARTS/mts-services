@@ -1,45 +1,47 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
-import java.util.Collections;
-
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
+import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
-@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
+import java.util.Collections;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private EntityService entityService;
-
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
     private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
+    @Autowired
+    private MockMvc mockMvc;
+    @MockBean
+    private EntityService entityService;
 
     @Test
     void TestGetPractitioner_WithUnknownId_Returns404() throws Exception {
@@ -135,7 +137,7 @@ class PractitionerControllerTests {
         // We test that the controller doesn't do any logic
         // Arrange
         String returnedValue = "123";
-        when(entityService.saveRoleAssignment(Mockito.any(RoleAssignment.class))).thenReturn(returnedValue);
+        when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenReturn(returnedValue);
         String jsonString = "{}";
         // Act + Assert
         this.mockMvc
@@ -147,7 +149,7 @@ class PractitionerControllerTests {
     @Test
     void TestPostRoleAssignment_WhenServiceFails_Returns502() throws Exception {
         // Arrange
-        when(entityService.saveRoleAssignment(Mockito.any(RoleAssignment.class))).thenThrow(RestException.class);
+        when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenThrow(RestException.class);
         String jsonString = "{}";
 
         // Act + Assert

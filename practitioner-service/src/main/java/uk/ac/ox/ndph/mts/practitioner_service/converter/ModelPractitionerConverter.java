@@ -41,4 +41,9 @@ public class ModelPractitionerConverter implements EntityConverter<Practitioner,
         return fhirPractitioner;
     }
 
+    @Override
+    public List<org.hl7.fhir.r4.model.Practitioner> convertList(List<Practitioner> input) {
+        throw new UnsupportedOperationException();
+    }
+
 }
