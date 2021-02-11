@@ -1,5 +1,11 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
@@ -27,6 +34,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTests {
 
@@ -34,19 +44,17 @@ class PractitionerServiceTests {
     private EntityStore<Practitioner> practitionerStore;
     @Mock
     private ModelEntityValidation<Practitioner> practitionerValidator;
+
     @Captor
     ArgumentCaptor<Practitioner> practitionerCaptor;
 
-    private static final String PRACTITIONER_ID = "practitionerId";
-    private static final String USER_ACCOUNT_ID = "userAccountId";
-    
     @Mock
     private EntityStore<RoleAssignment> roleAssignmentStore;
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
     @Captor
     ArgumentCaptor<RoleAssignment> roleAssignmentCaptor;
-    
+
     private PractitionerService service;
 
     @BeforeEach
@@ -119,20 +127,20 @@ class PractitionerServiceTests {
     }
 
     @Test
-    void TestPractitionerService_WhenNullValues_ThrowsInitialisationError() {
+    void TestPractitionerService_WhenNullValues_ThrowsNullPointerException() {
         // Arrange + Act + Assert
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(null, practitionerValidator
-                                        , roleAssignmentStore, roleAssignmentValidator),
-                                "null store should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(practitionerStore, null,
-                                                                                         roleAssignmentStore, roleAssignmentValidator),
-                                "null validation should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(practitionerStore,
-                                                                                         practitionerValidator, null, roleAssignmentValidator),
-                                "null store should throw");
-        Assertions.assertThrows(InitialisationError.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
-                                                                                         roleAssignmentStore, null),
-                                "null validation should throw");
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
+                        , roleAssignmentStore, roleAssignmentValidator),
+                "null store should throw");
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, null,
+                        roleAssignmentStore, roleAssignmentValidator),
+                "null validation should throw");
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore,
+                        practitionerValidator, null, roleAssignmentValidator),
+                "null store should throw");
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
+                        roleAssignmentStore, null),
+                "null validation should throw");
     }
 
     @Test
@@ -168,6 +176,29 @@ class PractitionerServiceTests {
 
 
     // RoleAssignment tests
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WhenNonNullIdentity_ReturnListOfRoleAssignments()
+    {
+        // Arrange
+        List<RoleAssignment> expectedResult = Collections.singletonList(
+                new RoleAssignment("practitionerId", "siteId", "roleId"));
+        when(service.getRoleAssignmentsByUserIdentity(anyString())).thenReturn(expectedResult);
+
+        //Act
+        List<RoleAssignment> result = service.getRoleAssignmentsByUserIdentity(anyString());
+
+        //Assert
+        assertThat(expectedResult, equalTo(result));
+    }
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WhenNullIdentity_ThrowsNullException()
+    {
+        //Act+Assert
+        Assertions.assertThrows(NullPointerException.class, () -> service.getRoleAssignmentsByUserIdentity(null),
+                "Null user identifier should throw.");
+    }
 
     @Test
     void TestSaveRoleAssignment_WhenValidEntity_ValidatesEntity() {
@@ -224,5 +255,30 @@ class PractitionerServiceTests {
         Assertions.assertThrows(ValidationException.class, () -> service.saveRoleAssignment(entity),
                 "Expecting save to throw validation exception");
         Mockito.verify(roleAssignmentStore, Mockito.times(0)).saveEntity(any(RoleAssignment.class));
+    }
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WithNullUserIdentity_ThrowsException(){
+
+        Assertions.assertThrows(NullPointerException.class, () ->
+                        service.getRoleAssignmentsByUserIdentity(null),
+                "Identifier can not be null.");
+
+        Mockito.verify(roleAssignmentStore,
+                Mockito.times(0)).findEntitiesByUserIdentity(anyString());
+    }
+
+    @Test
+    void TestGetRoleAssignmentsByUserIdentity_WithUserIdentity_ReturnsAssignmentRolesAsExpected(){
+
+        String userIdentity = "userIdentity";
+        List<RoleAssignment> expectedResult = Collections.singletonList(
+                new RoleAssignment("practitionerId", "siteId", "roleId"));
+        when(roleAssignmentStore.findEntitiesByUserIdentity(userIdentity)).thenReturn(expectedResult);
+
+        List<RoleAssignment> actualResult = service.getRoleAssignmentsByUserIdentity(userIdentity);
+
+        //Assert
+        assertThat(expectedResult, equalTo(actualResult));
     }
 }

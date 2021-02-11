@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: site-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: CONFIG-SERVER
+
+eureka:
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://placeholder:8761/eureka/

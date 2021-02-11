@@ -1,43 +1,45 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
+import java.util.Collections;
+
+import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.server.ResponseStatusException;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
+import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest(properties = {"spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
 
-    private final String practitionerUri = "/practitioner";
-    private final String roleAssignmentUri = "/practitioner/987/roles";
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
     private EntityService entityService;
+
+    private final String practitionerUri = "/practitioner";
+    private final String roleAssignmentUri = "/practitioner/987/roles";
+    private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
 
     @Test
     void TestGetPractitioner_WithUnknownId_Returns404() throws Exception {
@@ -112,12 +114,9 @@ class PractitionerControllerTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
-        Exception ex = this.mockMvc
+        String error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException();
-        assert ex != null;
-        String error = ex.getMessage();
-
+                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("prefix"));
     }
 
@@ -155,6 +154,48 @@ class PractitionerControllerTests {
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isBadGateway());
+    }
+
+    @Test
+    void TestGetRoleAssignmentByUserIdentity_WithMissingUserIdentityParam_Returns500() throws Exception {
+        // We test that the endpoint requires user identity parameter
+        // Arrange
+        // Act + Assert
+        String error = this.mockMvc
+                .perform(get(roleAssignmentByUserIdentityUri).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError()).andReturn().getResolvedException().getMessage();
+
+        assertThat(error, equalTo("Required String parameter 'userIdentity' is not present"));
+    }
+
+    @Test
+    void TestGetRoleAssignmentByUserIdentity_WithNullUserIdentityParam_Returns500() throws Exception {
+        // We test that the endpoint requires user identity parameter
+        // Arrange
+        // Act + Assert
+        String error = this.mockMvc
+                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", Strings.EMPTY)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
+
+        assertThat(error, equalTo("Required String parameter 'userIdentity' is blank"));
+    }
+
+    @Test
+    void TestGetRoleAssignmentByUserIdentity_WithUserIdentityParam_ReturnsRoleAssignmentAsExpected() throws Exception {
+
+        // Arrange
+        RoleAssignment expectedRoleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
+        when(entityService.getRoleAssignmentsByUserIdentity("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
+
+        String jsonExpectedRoleAssignment = "[{\"practitionerId\":\"practitionerId\",\"siteId\":\"siteId\",\"roleId\":\"roleId\"}]";
+
+        // Act + Assert
+        this.mockMvc
+                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", "123").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(
+                        content().string(containsString(jsonExpectedRoleAssignment)));
     }
 
 }

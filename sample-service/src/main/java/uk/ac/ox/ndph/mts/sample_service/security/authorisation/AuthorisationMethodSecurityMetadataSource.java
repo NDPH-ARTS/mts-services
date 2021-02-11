@@ -13,14 +13,12 @@ import java.util.Collection;
 import static org.springframework.security.access.annotation.Jsr250SecurityConfig.DENY_ALL_ATTRIBUTE;
 
 /**
- * This class enforces authorisation annotations on every endpoint in
- * controllers.
+ * This class enforces authorisation annotations on every endpoint in controllers.
  */
 public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackMethodSecurityMetadataSource {
 
     /**
      * Class methods security
-     * 
      * @param clazz - class
      * @return attributes
      */
@@ -31,8 +29,7 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
 
     /**
      * Methods security
-     * 
-     * @param method      - method
+     * @param method - method
      * @param targetClass - target class
      * @return attributes
      */
@@ -41,8 +38,7 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
         Annotation[] annotations = method.getAnnotations();
         ArrayList<Object> attributes = new ArrayList<>();
 
-        // if the class is annotated as @Controller we should by default deny access to
-        // all methods
+        // if the class is annotated as @Controller we should by default deny access to all methods
         if (AnnotationUtils.findAnnotation(targetClass, Controller.class) != null) {
             attributes.add(DENY_ALL_ATTRIBUTE);
         }
@@ -60,7 +56,6 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
 
     /**
      * Get all configuration attributes
-     * 
      * @return configuration attributes
      */
     @Override

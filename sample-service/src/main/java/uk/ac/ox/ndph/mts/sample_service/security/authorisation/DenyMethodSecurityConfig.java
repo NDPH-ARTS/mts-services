@@ -9,17 +9,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 /**
  * Global method security
  */
-// The NOSONAR annotations in this class addresses a security hotspot which
-// requires a known RBAC or ACL mechanism
+// The NOSONAR annotations in this class addresses a security hotspot which requires a known RBAC or ACL mechanism
 // We have our custom authorisation mechanism which is not recognised by Sonar
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class DenyMethodSecurityConfig extends GlobalMethodSecurityConfiguration { // NOSONAR
+public class DenyMethodSecurityConfig extends GlobalMethodSecurityConfiguration { //NOSONAR
 
     /**
      * Enforce custom method security
-     * 
      * @return MethodSecurityMetadataSource - custom method security
      */
     @Override

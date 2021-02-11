@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -118,7 +117,7 @@ class PractitionerServiceTest {
     }
 
     @Test
-    void testExecute_UsesReturnedPractitionerId_inRoleAssignment() throws Exception {
+    void testExecute_UsesReturnedPractitionerId_inRoleAssignment() {
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");

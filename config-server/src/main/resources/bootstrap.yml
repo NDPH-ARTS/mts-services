@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://placeholder
+          search-paths: placeholder
+
+server:
+  port: 8888
+
+eureka:
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://placeholder:8761/eureka/

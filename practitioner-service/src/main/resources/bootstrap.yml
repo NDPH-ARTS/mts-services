@@ -3,4 +3,12 @@ spring:
     name: practitioner-service
   cloud:
     config:
-      uri: http://placeholder:1234
+      discovery:
+        enabled: true
+        service-id: CONFIG-SERVER
+
+eureka:
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://placeholder:8761/eureka/

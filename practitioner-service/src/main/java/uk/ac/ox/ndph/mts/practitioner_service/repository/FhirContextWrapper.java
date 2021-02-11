@@ -3,12 +3,12 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
+import ca.uhn.fhir.rest.gclient.ICriterion;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,5 +81,36 @@ public class FhirContextWrapper {
      */
     public List<IBaseResource> toListOfResources(Bundle bundle) {
         return new ArrayList<>(BundleUtil.toListOfResources(fhirContext, bundle));
+    }
+
+    /**
+     * Search for a list of resources by type and criterion
+     * @param resourceClass resource class to return
+     * @param criterion criterion to filter search results
+     * @return the list of resources by type and criterion
+     */
+    public <T extends IBaseResource> List<IBaseResource> searchResource(Class<T> resourceClass,
+                                                         ICriterion<?> criterion) {
+        var client = fhirContext.newRestfulGenericClient(fhirUri);
+
+        var resultsBundle = client.search()
+                .forResource(resourceClass)
+                .where(criterion)
+                .returnBundle(Bundle.class)
+                .execute();
+
+                // extract first page
+        List<IBaseResource> searchResults = this.toListOfResources(resultsBundle);
+
+        // loop on next pages
+        while (resultsBundle.getLink().size() > 1) {
+            resultsBundle =  client.loadPage()
+                    .next(resultsBundle)
+                    .execute();
+
+            searchResults.addAll(BundleUtil.toListOfResources(fhirContext, resultsBundle));
+        }
+
+        return  searchResults;
     }
 }

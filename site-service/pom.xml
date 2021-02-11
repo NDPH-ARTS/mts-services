@@ -6,15 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>uk.ac.ox.ndph.mts</groupId>
-        <artifactId>mts-services-parent</artifactId>
+        <artifactId>mts-services-web-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.web.xml</relativePath>
     </parent>
     <artifactId>site-service</artifactId>
-    <name>site-service</name>
-    <description>Spring microservice which validates the input site details and adds
-        it as a FHIR site entity to the FHIR store.
-    </description>
+    <description>CRUD service for sites.</description>
     <properties>
         <hapifhir.version>5.0.2</hapifhir.version>
     </properties>

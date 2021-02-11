@@ -1,10 +1,11 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,4 +40,11 @@ public class PractitionerStore implements EntityStore<Practitioner> {
     public String saveEntity(Practitioner practitioner) {
         return repository.savePractitioner(modelToFhirConverter.convert(practitioner));
     }
+
+    @Override
+    public List<Practitioner> findEntitiesByUserIdentity(String userIdentity) {
+        throw new NotImplementedException();
+    }
+
+
 }

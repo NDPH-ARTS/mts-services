@@ -6,14 +6,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>uk.ac.ox.ndph.mts</groupId>
-        <artifactId>mts-services-parent</artifactId>
+        <artifactId>mts-services-web-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.web.xml</relativePath>
     </parent>
     <artifactId>sample-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sample-service</name>
     <description>Sample service</description>
+
+    <properties>
+        <okhttp.version>4.9.0</okhttp.version>
+    </properties>
 
     <dependencies>
 
@@ -50,12 +53,29 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
+        <!--Security above-->
+
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
             <scope>test</scope>
         </dependency>
         <!--Security above-->
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

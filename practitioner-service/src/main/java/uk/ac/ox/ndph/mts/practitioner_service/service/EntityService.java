@@ -4,6 +4,8 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
+import java.util.List;
+
 /**
  * Interface for validating and saving an entity
  */
@@ -27,4 +29,6 @@ public interface EntityService {
      * @throws ResponseStatusException if not found
      */
     Practitioner findPractitionerById(String id) throws ResponseStatusException;
+
+    List<RoleAssignment> getRoleAssignmentsByUserIdentity(String userIdentity);
 }
