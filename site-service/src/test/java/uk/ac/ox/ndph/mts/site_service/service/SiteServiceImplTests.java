@@ -94,13 +94,20 @@ class SiteServiceImplTests {
         // Arrange
         String name = "name";
         String alias = "alias";
-        when(configurationProvider.getConfiguration()).thenReturn(
-                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, null));
+        String parent = "parent";
+        String siteType = "REGION";
+        String parentType = "CCO";
 
-        Site site = new Site(name, alias);
+        when(configurationProvider.getConfiguration()).thenReturn(
+                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP,
+                        SITE_CONFIGURATION_LIST));
+
+        Site site = new Site(name, alias, parent, siteType);
         var siteService = new SiteServiceImpl(configurationProvider, siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findById("parent")).thenReturn(Optional.of(new Site(name, alias, parent, parentType)));
         when(siteStore.saveEntity(any(Site.class))).thenReturn("123");
+
         //Act
         siteService.save(site);
 
@@ -149,9 +156,10 @@ class SiteServiceImplTests {
     void TestSaveSite_WhenValidSiteWithNoParentAndNoRoot_SavesToStore() {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(
-                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, null));
+                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP,
+                        SITE_CONFIGURATION_LIST));
 
-        final var site = new Site(null, "name", "alias", null, "root");
+        final var site = new Site(null, "name", "alias", null, "CCO");
         final var siteService = new SiteServiceImpl(configurationProvider, siteStore, siteValidation);
         when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
         when(siteStore.findRoot()).thenReturn(Optional.empty());
@@ -345,7 +353,7 @@ class SiteServiceImplTests {
         when(siteStore.findById("parent")).thenReturn(Optional.empty());
 
         // act and assert
-        assertThrows(ValidationException.class, () -> siteService.save(site), "Parent site ID not found");
+        assertThrows(ResponseStatusException.class, () -> siteService.save(site), "Site ID not found");
     }
 
     @Test
@@ -368,5 +376,21 @@ class SiteServiceImplTests {
 
         // act and assert
         assertThrows(ValidationException.class, () -> siteService.save(site), "Invalid Parent or type for trial site");
+    }
+
+    @Test
+    void TestSaveSite_WhenValidSiteWithNoParentAndNoRoot_ThrowsInvalidSiteTypeForRootException() {
+        // Arrange
+        when(configurationProvider.getConfiguration()).thenReturn(
+                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP,
+                        SITE_CONFIGURATION_LIST));
+
+        final var site = new Site(null, "name", "alias", null, "root");
+        final var siteService = new SiteServiceImpl(configurationProvider, siteStore, siteValidation);
+        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findRoot()).thenReturn(Optional.empty());
+
+        // act and assert
+        assertThrows(ValidationException.class, () -> siteService.save(site), "Invalid Site Type for Root");
     }
 }

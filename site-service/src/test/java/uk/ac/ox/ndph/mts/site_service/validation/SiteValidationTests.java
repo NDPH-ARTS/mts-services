@@ -14,6 +14,7 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,8 +46,13 @@ class SiteValidationTests {
     private static final List<SiteAttributeConfiguration> ERROR_MAP = List.of(
         new SiteAttributeConfiguration("wrongname", "WrongName",""),
         new SiteAttributeConfiguration("alias", "Alias",""));
-    
-    
+
+    private static final List<SiteConfiguration> SITE_CONFIGURATION_LIST  = List.of(
+            new SiteConfiguration("Organization", "site", "REGION", ALL_REQUIRED_UNDER_35_MAP,
+                    Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP,
+                            Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, null)
+                            )))));
+
     @ParameterizedTest
     @CsvSource({ ",,,testType,Name", ",test,,,Name", "test,,testId,testType,Alias",
                 "test,null,testId,testType,Alias", "null,null,testId,testType,Name", "null,test,testId,testType,Name",
@@ -59,7 +65,7 @@ class SiteValidationTests {
             @ConvertWith(NullableConverter.class) String expectedField) {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", ALL_REQUIRED_UNDER_35_MAP));
+            "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
         Site site = new Site(name, alias, parentSiteId, siteType);
         var siteValidation = new SiteValidation(configurationProvider); 
 
@@ -73,7 +79,7 @@ class SiteValidationTests {
     void TestSiteValidation_WhenInitWithIncompleteConfig_ThrowsRuntimeException() {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", INCOMNPLETE_MAP));
+            "Site", "CCO", INCOMNPLETE_MAP, SITE_CONFIGURATION_LIST));
 
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(configurationProvider),
@@ -84,7 +90,7 @@ class SiteValidationTests {
     void TestSiteValidation_WhenInitWithInvalidConfig_ThrowsRuntimeException() {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", ERROR_MAP));
+            "Site", "CCO", ERROR_MAP, SITE_CONFIGURATION_LIST));
 
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(configurationProvider),
@@ -100,7 +106,7 @@ class SiteValidationTests {
         String siteType = "siteType";
 
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", ALL_REQUIRED_UNDER_35_MAP));
+            "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
         var siteValidation = new SiteValidation(configurationProvider);
         Site site = new Site(name, alias, parentSiteId, siteType);
 
@@ -117,8 +123,8 @@ class SiteValidationTests {
         String alias = "alias";
         String parentSiteId = "parentSiteId";
         String siteType = "siteType";
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization", "site",
-            ALL_EMPTY_REGEX_MAP));
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
+            "site","CCO", ALL_EMPTY_REGEX_MAP, SITE_CONFIGURATION_LIST));
         var siteValidation = new SiteValidation(configurationProvider);
         Site site = new Site(name, alias, parentSiteId, siteType);
 

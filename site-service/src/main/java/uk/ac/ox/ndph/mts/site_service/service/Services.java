@@ -11,7 +11,8 @@ public enum Services {
     PARENT_NOT_FOUND("Parent site ID not found"),
     SITE_EXISTS("Site with given name exists"),
     ONE_ROOT_SITE("Root site already exists"),
-    INVALID_PARENT_CHILD("Invalid Parent or type for trial site");
+    INVALID_ROOT_SITE("Invalid Site Type for Root"),
+    INVALID_CHILD_SITE_TYPE("Invalid Child Site Type for Parent");
 
     private String message;
  

@@ -22,20 +22,6 @@ public class SiteConfiguration {
      *
      * @param name the Site name
      * @param displayName the Site displayName
-     * @param attributes the List of SiteAttributeConfiguration attributes
-     *
-     */
-    public SiteConfiguration(String name, String displayName, List<SiteAttributeConfiguration> attributes) {
-        this.name = name;
-        this.displayName = displayName;
-        this.attributes = attributes;
-    }
-
-    /**
-     * Site Constructor with two parameters
-     *
-     * @param name the Site name
-     * @param displayName the Site displayName
      * @param type the Site type
      * @param attributes the List of SiteAttributeConfiguration attributes
      * @param child the List of SiteAttributeConfiguration child / children.

@@ -42,9 +42,10 @@ public interface FhirRepository {
      * @return all organization instances in the store, might be empty, not null
      */
     List<Organization> findOrganizations();
-    
+
     /**
      * Return an organization by ID, or Optional.none() if not found
+     *
      * @param id organization ID to search for
      * @return optional with the organization or none if not found
      */
@@ -52,6 +53,7 @@ public interface FhirRepository {
 
     /**
      * Return an organizations with given parent ID, or Optional.none() if not found
+     *
      * @param id parent organization ID to search for, null is allowed (will return orgs with no parent)
      * @return collection of organizations with the given parent, might be empty
      */

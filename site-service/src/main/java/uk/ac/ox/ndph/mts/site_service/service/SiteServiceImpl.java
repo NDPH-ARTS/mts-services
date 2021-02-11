@@ -12,7 +12,6 @@ import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
-import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
@@ -53,12 +52,8 @@ public class SiteServiceImpl implements SiteService {
         }
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
-        initMaps(configuration);
-        logger.info(Services.STARTUP.message());
-    }
-
-    private void initMaps(final SiteConfiguration configuration) {
         addTypesToMap(configuration);
+        logger.info(Services.STARTUP.message());
     }
 
     private void addTypesToMap(final SiteConfiguration configuration) {
@@ -90,21 +85,18 @@ public class SiteServiceImpl implements SiteService {
         if (site.getParentSiteId() == null) {
             if (isRootSitePresent()) {
                 throw new ValidationException(Services.ONE_ROOT_SITE.message());
+            } else {
+                if (!sitesByType.containsKey(site.getSiteType())
+                        || parentTypeByChildType.containsKey(site.getSiteType())) {
+                    throw new ValidationException(Services.INVALID_ROOT_SITE.message());
+                }
             }
         } else {
-            validationResponse = validateParentSiteExists(site.getParentSiteId());
-            if (!validationResponse.isValid()) {
-                throw new ValidationException(validationResponse.getErrorMessage());
-            } else {
-                Site siteParent = findSiteById(site.getParentSiteId());
-                String siteParentType = siteParent.getSiteType();
-                String allowedParentType = parentTypeByChildType.get(site.getSiteType());
-                if (!siteParentType.equalsIgnoreCase(allowedParentType)) {
-                    // valid parent(parent Id), invalid Child Type
-                    // diff  parent(parent Id), valid Child Type
-                    throw new ValidationException(Services.INVALID_PARENT_CHILD.message());
-                }
-                // valid parent(parent Id), valid Child Type
+            Site siteParent = findSiteById(site.getParentSiteId());
+            String siteParentType = siteParent.getSiteType();
+            String allowedParentType = parentTypeByChildType.get(site.getSiteType());
+            if (!siteParentType.equalsIgnoreCase(allowedParentType)) {
+                throw new ValidationException(Services.INVALID_CHILD_SITE_TYPE.message());
             }
         }
         return siteStore.saveEntity(site);
@@ -125,13 +117,6 @@ public class SiteServiceImpl implements SiteService {
             throw new InvariantException(Services.NO_ROOT_SITE.message());
         }
         return sites;
-    }
-
-    private ValidationResponse validateParentSiteExists(final String parentSiteId) {
-        if (this.siteStore.findById(parentSiteId).isPresent()) {
-            return new ValidationResponse(true, "");
-        }
-        return new ValidationResponse(false, Services.PARENT_NOT_FOUND.message());
     }
 
     /**
