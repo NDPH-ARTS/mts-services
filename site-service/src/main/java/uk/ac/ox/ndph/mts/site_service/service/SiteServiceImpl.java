@@ -43,13 +43,16 @@ public class SiteServiceImpl implements SiteService {
     public SiteServiceImpl(SiteConfigurationProvider configurationProvider,
                            final EntityStore<Site, String> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
-        var configuration = configurationProvider.getConfiguration();
+        if (configurationProvider == null) {
+            throw new InitialisationError("site configuration provider cannot be null");
+        }
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
         }
         if (entityValidation == null) {
             throw new InitialisationError("entity validation cannot be null");
         }
+        var configuration = configurationProvider.getConfiguration();
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
         addTypesToMap(configuration);

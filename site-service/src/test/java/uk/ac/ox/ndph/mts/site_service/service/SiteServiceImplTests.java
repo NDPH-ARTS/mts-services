@@ -188,6 +188,8 @@ class SiteServiceImplTests {
     @Test
     void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
+        assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteStore, siteValidation),
+                "null configuration should throw");
         assertThrows(InitialisationError.class, () -> new SiteServiceImpl(configurationProvider, null, siteValidation),
                 "null store should throw");
         assertThrows(InitialisationError.class, () -> new SiteServiceImpl(configurationProvider, siteStore, null),
