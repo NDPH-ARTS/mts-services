@@ -40,6 +40,14 @@ public class FhirPractitionerConverterTest {
     }
 
     @Test
+    void TestConvert_WithInvalidFhirPractitioner_ThrowsAnException() {
+        Assertions.assertThrows(NullPointerException.class, () -> converter.convert(null));
+
+        Practitioner practitioner = new Practitioner();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> converter.convert(practitioner));
+    }
+
+    @Test
     void TestConvertList_WhenCalled_ReturnsException() {
         Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> converter.convertList(new ArrayList<>()));

@@ -17,12 +17,12 @@ public class Practitioner {
         this.familyName = familyName;
     }
 
-    public Practitioner(final String prefix, final String givenName, final String familyName) {
-        this.id = "";
-        this.prefix = prefix;
-        this.givenName = givenName;
-        this.familyName = familyName;
-    }
+//    public Practitioner(final String prefix, final String givenName, final String familyName) {
+//        this.id = "";
+//        this.prefix = prefix;
+//        this.givenName = givenName;
+//        this.familyName = familyName;
+//    }
 
     public String getFamilyName() {
         return familyName;

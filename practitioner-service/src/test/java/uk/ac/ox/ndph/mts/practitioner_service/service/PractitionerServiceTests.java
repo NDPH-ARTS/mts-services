@@ -58,7 +58,7 @@ class PractitionerServiceTests {
         String prefix = "prefix";
         String givenName = "givenName";
         String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
         //Act
@@ -76,7 +76,7 @@ class PractitionerServiceTests {
         String prefix = "prefix";
         String givenName = "givenName";
         String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
         //Act
@@ -94,7 +94,7 @@ class PractitionerServiceTests {
         String prefix = "prefix";
         String givenName = "givenName";
         String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> service.savePractitioner(practitioner),
@@ -107,7 +107,7 @@ class PractitionerServiceTests {
         String prefix = "prefix";
         String givenName = "givenName";
         String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> service.savePractitioner(practitioner),
