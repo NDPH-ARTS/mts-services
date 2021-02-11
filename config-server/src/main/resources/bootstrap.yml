@@ -1,11 +1,15 @@
 spring:
   application:
-    name: practitioner-service
+    name: config-server
   cloud:
     config:
-      discovery:
-        enabled: true
-        service-id: CONFIG-SERVER
+      server:
+        git:
+          uri: https://placeholder
+          search-paths: placeholder
+
+server:
+  port: 8888
 
 eureka:
   client:
