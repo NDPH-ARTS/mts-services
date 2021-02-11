@@ -10,17 +10,17 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FhirPractitionerConverterTest {
+class FhirPractitionerConverterTest {
 
     private FhirPractitionerConverter converter;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         converter = new FhirPractitionerConverter();
     }
 
     @Test
-    public void convert_ConvertsValidPractitioner() {
+    void convert_ConvertsValidPractitioner() {
         Practitioner practitioner = new Practitioner();
         HumanName humanName = new HumanName();
         humanName.addPrefix("Mr");
@@ -49,7 +49,8 @@ public class FhirPractitionerConverterTest {
 
     @Test
     void TestConvertList_WhenCalled_ReturnsException() {
+        var list = new ArrayList<Practitioner>();
         Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> converter.convertList(new ArrayList<>()));
+                () -> converter.convertList(list));
     }
 }

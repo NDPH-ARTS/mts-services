@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ModelPractitionerConverterTest {
+class ModelPractitionerConverterTest {
 
     private static final String USER_ACCOUNT_ID = "someUserAccountId";
     private ModelPractitionerConverter converter;
@@ -25,12 +25,12 @@ public class ModelPractitionerConverterTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         converter = new ModelPractitionerConverter();
     }
 
     @Test
-    public void convert_ConvertsValidPractitioner() {
+    void convert_ConvertsValidPractitioner() {
         Practitioner practitioner = new Practitioner("42", "prefix", "given", "family");
 
         var fhirPractitioner = converter.convert(practitioner);
@@ -44,7 +44,7 @@ public class ModelPractitionerConverterTest {
 
     @ParameterizedTest
     @MethodSource("getBlankStrings")
-    public void convert_whenModelHasBlankUserAccountId_thenFhirPractitionerHasNoIdentifiers(final String userAccountId) {
+    void convert_whenModelHasBlankUserAccountId_thenFhirPractitionerHasNoIdentifiers(final String userAccountId) {
         Practitioner practitioner = new Practitioner("42", "prefix", "given", "family");
         practitioner.setUserAccountId(userAccountId);
 
@@ -56,7 +56,7 @@ public class ModelPractitionerConverterTest {
     }
 
     @Test
-    public void convert_whenModelHasUserAccountId_thenFhirPractitionerHasIdentifierWithSameValue() {
+    void convert_whenModelHasUserAccountId_thenFhirPractitionerHasIdentifierWithSameValue() {
         Practitioner practitioner = new Practitioner("42", "prefix", "given", "family");
         practitioner.setUserAccountId(USER_ACCOUNT_ID);
 
@@ -71,7 +71,8 @@ public class ModelPractitionerConverterTest {
 
     @Test
     void TestConvertList_WhenCalled_ReturnsException() {
+        var list = new ArrayList<Practitioner>();
         Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> converter.convertList(new ArrayList<>()));
+                () -> converter.convertList(list));
     }
 }
