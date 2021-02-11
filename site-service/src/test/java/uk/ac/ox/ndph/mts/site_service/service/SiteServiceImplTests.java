@@ -327,4 +327,46 @@ class SiteServiceImplTests {
         assertThrows(ResponseStatusException.class, siteService::findRootSite);
     }
 
+    @Test
+    void TestFindParentSite_WhenStoreHasNoParent_ThrowsParentNotFoundException() {
+        // Arrange
+        String name = "name";
+        String alias = "alias";
+        String parent = "parent";
+        String type = "REGION";
+
+        when(configurationProvider.getConfiguration()).thenReturn(
+                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP,
+                        SITE_CONFIGURATION_LIST));
+
+        Site site = new Site(name, alias, parent, type);
+        var siteService = new SiteServiceImpl(configurationProvider, siteStore, siteValidation);
+        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findById("parent")).thenReturn(Optional.empty());
+
+        // act and assert
+        assertThrows(ValidationException.class, () -> siteService.save(site), "Parent site ID not found");
+    }
+
+    @Test
+    void TestSaveSite_WhenInCorrectSiteType_ThrowsInvalidParentOrTypeException() {
+        // Arrange
+        String name = "name";
+        String alias = "alias";
+        String parent = "parent";
+        String type = "LCC";
+        String parentType = "CCO";
+
+        when(configurationProvider.getConfiguration()).thenReturn(
+                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP,
+                        SITE_CONFIGURATION_LIST));
+
+        Site site = new Site(name, alias, parent, type);
+        var siteService = new SiteServiceImpl(configurationProvider, siteStore, siteValidation);
+        when(siteValidation.validate(any(Site.class))).thenReturn(new ValidationResponse(true, ""));
+        when(siteStore.findById("parent")).thenReturn(Optional.of(new Site(name, alias, parent, parentType)));
+
+        // act and assert
+        assertThrows(ValidationException.class, () -> siteService.save(site), "Invalid Parent or type for trial site");
+    }
 }

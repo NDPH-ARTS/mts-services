@@ -13,7 +13,7 @@ public enum Attribute {
     NAME(AttributeNames.NAME.nameof(), Site::getName),
     ALIAS(AttributeNames.ALIAS.nameof(), Site::getAlias),
     PARENT_SITE_ID(AttributeNames.PARENT_SITE_ID.nameof(), Site::getParentSiteId),
-    SITE_TYPE(AttributeNames.SITE_TYPE.nameof(), Site::getParentSiteId);
+    SITE_TYPE(AttributeNames.SITE_TYPE.nameof(), Site::getSiteType);
 
     private String attributeName;
     private Function<Site, String> getValue;

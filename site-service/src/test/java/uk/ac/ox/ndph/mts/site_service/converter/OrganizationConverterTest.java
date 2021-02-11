@@ -33,6 +33,7 @@ class OrganizationConverterTest {
         final String alias = org.getAlias().get(0).getValueAsString();
         assertThat(alias, containsString(ALIAS));
         assertThat(org.getPartOf().getReference(), containsString(PARENT_ID));
+        assertThat(org.getImplicitRules(), containsString(SITE_TYPE));
     }
 
     @Test
@@ -48,6 +49,7 @@ class OrganizationConverterTest {
         final String alias = org.getAlias().get(0).getValueAsString();
         assertThat(alias, containsString(ALIAS));
         assertThat(org.getPartOf().getReference(), containsString(PARENT_ID));
+        assertThat(org.getImplicitRules(), containsString(SITE_TYPE));
     }
 
     @Test
@@ -63,6 +65,7 @@ class OrganizationConverterTest {
         final String alias = org.getAlias().get(0).getValueAsString();
         assertThat(alias, containsString(ALIAS));
         assertThat(org.getPartOf().isEmpty(), equalTo(true));
+        assertThat(org.getImplicitRules(), containsString(SITE_TYPE));
     }
 
     @Test
@@ -78,6 +81,7 @@ class OrganizationConverterTest {
         final String alias = org.getAlias().get(0).getValueAsString();
         assertThat(alias, containsString(ALIAS));
         assertThat(org.getPartOf().isEmpty(), equalTo(true));
+        assertThat(org.getImplicitRules(), containsString(SITE_TYPE));
     }
 
     @Test
@@ -91,6 +95,22 @@ class OrganizationConverterTest {
         assertThat(org.getIdElement().getIdPart(), equalTo(ORG_ID));
         assertThat(org.getAlias().isEmpty(), equalTo(true));
         assertThat(org.getPartOf().getReference(), containsString(PARENT_ID));
+        assertThat(org.getImplicitRules(), containsString(SITE_TYPE));
     }
 
+    @Test
+    void TestConvert_EmptySiteType_returnsOrgWithNoSiteType() {
+        // arrange
+        final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, "");
+        // act
+        final Organization org = orgConverter.convert(site);
+        // assert
+        assertThat(org.getName(), equalTo(site.getName()));
+        assertThat(org.getIdElement().getIdPart(), equalTo(ORG_ID));
+        assertThat(org.getAlias().size(), equalTo(1));
+        final String alias = org.getAlias().get(0).getValueAsString();
+        assertThat(alias, containsString(ALIAS));
+        assertThat(org.getPartOf().getReference(), containsString(PARENT_ID));
+        assertThat(org.getImplicitRules(), equalTo(null));
+    }
 }
