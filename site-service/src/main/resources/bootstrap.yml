@@ -1,6 +1,6 @@
 spring:
   application:
-    name: practitioner-service
+    name: site-service
   cloud:
     config:
       discovery:

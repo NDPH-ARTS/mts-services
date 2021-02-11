@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-@SpringBootTest(properties = {"spring.cloud.config.enabled=false", "spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("test-all-required")
 public class RoleServiceClientTest {
 
