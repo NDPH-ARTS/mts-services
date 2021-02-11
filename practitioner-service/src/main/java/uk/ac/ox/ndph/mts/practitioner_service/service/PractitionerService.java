@@ -3,14 +3,17 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import org.springframework.util.StringUtils;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.BadRequestException;
+//import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
+//import uk.ac.ox.ndph.mts.practitioner_service.exception.BadRequestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
+//import uk.ac.ox.ndph.mts.practitioner_service.model.UserIdentity;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
@@ -73,26 +76,30 @@ public class PractitionerService implements EntityService {
         return practitionerStore.saveEntity(practitioner);
     }
 
-    // TODO (archiem) consider adding a new type to distinguish these String parameters (otherwise it's prone to
-    //  errors from accidental argument swapping).
-    @Override
-    public void linkPractitioner(final String userAccountId, final String practitionerId) {
-        // TODO (archiem) add a LinkPractitionerValidator object
-        if (!StringUtils.hasText(userAccountId)) {
-            throw new BadRequestException("User Account ID must not be blank");
-        }
-        if (!StringUtils.hasText(practitionerId)) {
-            throw new BadRequestException("Practitioner ID must not be blank");
-        }
-        
-        final Practitioner practitioner = practitionerStore.getEntity(practitionerId);
-        practitioner.setUserAccountId(userAccountId);
-        practitionerStore.saveEntity(practitioner);
-    }
+//    // TODO (archiem) consider adding a new type to distinguish these String parameters (otherwise it's prone to
+//    //  errors from accidental argument swapping).
+//    @Override
+//    public void linkPractitioner(final UserIdentity userIdentity, final String practitionerId) {
+//        // TODO (archiem) add a LinkPractitionerValidator object
+//        if (!StringUtils.hasText(userIdentity.getUserId())) {
+//            throw new BadRequestException("User Account ID must not be blank");
+//        }
+//        if (!StringUtils.hasText(practitionerId)) {
+//            throw new BadRequestException("Practitioner ID must not be blank");
+//        }
+//
+//        final Practitioner practitioner = practitionerStore.getEntity(practitionerId);
+//        practitioner.setUserAccountId(userIdentity.getUserId());
+//        practitionerStore.saveEntity(practitioner);
+//    }
     
     @Override
-    public Practitioner getPractitioner(String id) {
-        return practitionerStore.getEntity(id);
+    public Practitioner findPractitionerById(String id) throws ResponseStatusException {
+        return practitionerStore
+                .getEntity(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, Services.PRACTITIONER_NOT_FOUND.message()));
+
     }
 
     @Override

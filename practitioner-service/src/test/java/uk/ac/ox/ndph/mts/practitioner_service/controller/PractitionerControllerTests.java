@@ -1,86 +1,73 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
-@SpringBootTest(properties = { "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(properties = {"spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("test-all-required")
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
 
+//    private static final String PARAM_PRACTITIONER = "practitionerId";
+//    private static final String PARAM_USER = "userAccountId";
+//    private static final String USER_ACCOUNT_ID = "idOfUserAccount";
+//    private static final String PRACTITIONER_ID = "idOfPractitioner";
+    private final String practitionerUri = "/practitioner";
+    private final String roleAssignmentUri = "/practitioner/987/roles";
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private EntityService entityService;
 
-    private final String practitionerUri = "/practitioner";
-    private final String roleAssignmentUri = "/practitioner/987/roles";
-    private static final String PARAM_PRACTITIONER = "practitionerId";
-    private static final String PARAM_USER = "userAccountId";
-    private static final String USER_ACCOUNT_ID = "idOfUserAccount";
-    private static final String PRACTITIONER_ID = "idOfPractitioner";
-
     @Test
-    void TestGetPractitioner_WithInvalidId_ReturnsPractitioner() throws Exception {
+    void TestGetPractitioner_WithUnknownId_Returns404() throws Exception {
         // Arrange
         String practitionerId = "practitionerId";
-        when(entityService.getPractitioner(practitionerId))
-            .thenReturn(null);
+        when(entityService.findPractitionerById(practitionerId))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "site not found"));
         // Act + Assert
         this.mockMvc
-                .perform(get(practitionerUri + "/" + practitionerId)
-                    .contentType(MediaType.APPLICATION_JSON))
+                .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-    
+
     @Test
-    void TestGetPractitioner_WithValidId() throws Exception {
+    void TestGetPractitioner_WithValidId_Returns200AndPractitioner() throws Exception {
         // Arrange
         String practitionerId = "practitionerId";
-        when(entityService.getPractitioner(practitionerId))
-            .thenReturn(new Practitioner("42", "prefix", "given", "family"));
+        when(entityService.findPractitionerById(practitionerId))
+                .thenReturn(new Practitioner("42", "prefix", "given", "family"));
         // Act + Assert
         this.mockMvc
-                .perform(get(practitionerUri + "/" + practitionerId)
-                    .contentType(MediaType.APPLICATION_JSON))
+                .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("42"));
     }
-    
+
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
@@ -138,51 +125,51 @@ class PractitionerControllerTests {
         assertThat(error, containsString("prefix"));
     }
 
-    @ParameterizedTest
-    @MethodSource("atLeastOneParamNotPresent")
-    void linkPractitioner_whenParamsNotPresent_error(String userParam, String practitionerParam) throws Exception {
-        // Act
-        this.mockMvc.perform(post("/practitioner/link")
-                        .param(userParam, USER_ACCOUNT_ID)
-                        .param(practitionerParam, PRACTITIONER_ID)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-        // Assert
-        verify(entityService, never()).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
-    }
-
-    private static Stream<Arguments> atLeastOneParamNotPresent() {
-        return Stream.of(
-                Arguments.of("wrongUserParamName", PARAM_PRACTITIONER),
-                Arguments.of(PARAM_USER, "wrongPractitionerParam"),
-                Arguments.of("wrongUserParamName", "wrongPractitionerParam"));
-    }
-
-    @Test
-    void linkPractitioner_whenParamsPresent_callsEntityService() throws Exception {
-        // Act
-        this.mockMvc
-                .perform(post("/practitioner/link")
-                        .param(PARAM_USER, USER_ACCOUNT_ID)
-                        .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
-                        .contentType(MediaType.APPLICATION_JSON));
-        // Assert
-        verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
-    }
-
-    @Test
-    void linkPractitioner_whenLinkSucceeds_thenReturnCreatedStatus() throws Exception {
-        // Arrange
-        doNothing().when(entityService).linkPractitioner(anyString(), anyString());
-
-        // Act + Assert
-        this.mockMvc
-                .perform(post("/practitioner/link")
-                                 .param(PARAM_USER, USER_ACCOUNT_ID)
-                                 .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
-                                 .contentType(MediaType.APPLICATION_JSON))
-                                 .andExpect(status().isCreated());
-    }
+//    @ParameterizedTest
+//    @MethodSource("atLeastOneParamNotPresent")
+//    void linkPractitioner_whenParamsNotPresent_error(String userParam, String practitionerParam) throws Exception {
+//        // Act
+//        this.mockMvc.perform(post("/practitioner/link")
+//                        .param(userParam, USER_ACCOUNT_ID)
+//                        .param(practitionerParam, PRACTITIONER_ID)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                        .andExpect(status().isBadRequest());
+//        // Assert
+//        verify(entityService, never()).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
+//    }
+//
+//    private static Stream<Arguments> atLeastOneParamNotPresent() {
+//        return Stream.of(
+//                Arguments.of("wrongUserParamName", PARAM_PRACTITIONER),
+//                Arguments.of(PARAM_USER, "wrongPractitionerParam"),
+//                Arguments.of("wrongUserParamName", "wrongPractitionerParam"));
+//    }
+//
+//    @Test
+//    void linkPractitioner_whenParamsPresent_callsEntityService() throws Exception {
+//        // Act
+//        this.mockMvc
+//                .perform(post("/practitioner/link")
+//                        .param(PARAM_USER, USER_ACCOUNT_ID)
+//                        .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
+//                        .contentType(MediaType.APPLICATION_JSON));
+//        // Assert
+//        verify(entityService, times(1)).linkPractitioner(USER_ACCOUNT_ID, PRACTITIONER_ID);
+//    }
+//
+//    @Test
+//    void linkPractitioner_whenLinkSucceeds_thenReturnCreatedStatus() throws Exception {
+//        // Arrange
+//        doNothing().when(entityService).linkPractitioner(anyString(), anyString());
+//
+//        // Act + Assert
+//        this.mockMvc
+//                .perform(post("/practitioner/link")
+//                                 .param(PARAM_USER, USER_ACCOUNT_ID)
+//                                 .param(PARAM_PRACTITIONER, PRACTITIONER_ID)
+//                                 .contentType(MediaType.APPLICATION_JSON))
+//                                 .andExpect(status().isCreated());
+//    }
 
 
     // RoleAssignment Tests

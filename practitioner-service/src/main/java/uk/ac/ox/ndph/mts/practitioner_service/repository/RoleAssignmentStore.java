@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
+import java.util.Optional;
+
 /**
  * Implement an EntityStore for RoleAssignment.
  */
@@ -32,7 +34,7 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
     }
     
     @Override
-    public RoleAssignment getEntity(String id) {
+    public Optional<RoleAssignment> getEntity(String id) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
     

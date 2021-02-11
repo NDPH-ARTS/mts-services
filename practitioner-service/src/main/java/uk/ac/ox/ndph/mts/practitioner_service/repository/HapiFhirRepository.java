@@ -1,17 +1,21 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+//import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
+import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
+//import org.springframework.util.StringUtils;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+
+import java.util.Optional;
 
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
@@ -55,7 +59,7 @@ public class HapiFhirRepository implements FhirRepository {
             logger.info(FhirRepo.SAVE_RESPONSE.message(), fhirContextWrapper.prettyPrint(responseElement));
         }
 
-        return fhirContextWrapper.getUnqualifiedIdPart(responseElement);
+        return responseElement.getIdElement().getIdPart();
     }
 
     @Override
@@ -86,15 +90,15 @@ public class HapiFhirRepository implements FhirRepository {
      *
      * @param id of the practitioner to search.
      */
-    public Practitioner getPractitioner(String id) {
+    public Optional<Practitioner> getPractitioner(final String id) {
         try {
-            return fhirContextWrapper.getById(id);
+            return Optional.of(fhirContextWrapper.getById(id));
+        } catch (ResourceNotFoundException ex) {
+            return Optional.empty();
         } catch (BaseServerResponseException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(FhirRepo.SEARCH_ERROR.message(), e);
-            }
-            throw new RestException(e.getMessage(), e);
+            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
         }
+
     }
 
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {

@@ -1,17 +1,17 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import ca.uhn.fhir.context.FhirContext;
+//import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
+import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
-import ca.uhn.fhir.util.BundleUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Wrapper around a Fhir Context
@@ -36,18 +36,17 @@ public class FhirContextWrapper {
      * Execute a search bundle transaction on a FHIR endpoint to search for an
      * entity by an exact id match
      *
-     * @param uri the FHIR endpoint URI
-     * @param id  of the practitioner
+     * @param id of the practitioner
      * @return Organization searched by name.
      */
     public Practitioner getById(String id) {
         return fhirContext
-            .newRestfulGenericClient(fhirUri)
-            .read()
-            .resource(Practitioner.class)
-            .withId(id)
-            .encodedJson()
-            .execute();
+                .newRestfulGenericClient(fhirUri)
+                .read()
+                .resource(Practitioner.class)
+                .withId(id)
+                .encodedJson()
+                .execute();
     }
 
     /**
@@ -75,6 +74,24 @@ public class FhirContextWrapper {
         }
     }
 
+//    <T extends IBaseResource> MethodOutcome update(T resource) {
+//        var outcome = fhirContext.newRestfulGenericClient(fhirUri)
+//                .update()
+//                .resource(resource)
+//                .execute();
+//
+//        return outcome;
+//    }
+//
+//    <T extends IBaseResource> MethodOutcome create(T resource) {
+//        var outcome = fhirContext.newRestfulGenericClient(fhirUri)
+//                .create()
+//                .resource(resource)
+//                .execute();
+//
+//        return outcome;
+//    }
+
     /**
      * Extracts a list of resources from a bundle
      *
@@ -83,9 +100,5 @@ public class FhirContextWrapper {
      */
     public List<IBaseResource> toListOfResources(Bundle bundle) {
         return new ArrayList<>(BundleUtil.toListOfResources(fhirContext, bundle));
-    }
-
-    public String getUnqualifiedIdPart(final IBaseResource resource) {
-        return resource.getIdElement().toUnqualified().getIdPart();
     }
 }

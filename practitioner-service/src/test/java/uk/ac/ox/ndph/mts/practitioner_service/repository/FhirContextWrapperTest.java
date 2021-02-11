@@ -33,19 +33,19 @@ class FhirContextWrapperTest {
                 .isNotInstanceOf(RuntimeException.class);
     }
 
-    @Test
-    void getUnqualifiedIdPart() {
-        // Arrange
-        FhirContext fhirContext = mock(FhirContext.class);
-        FhirContextWrapper sut = new FhirContextWrapper(fhirContext);
-        Practitioner resource = new Practitioner();
-        resource.setId("345");
-
-        // Act
-        String id = sut.getUnqualifiedIdPart(resource);
-
-        // Assert
-        assertThat(id).isEqualTo("345");
-    }
+//    @Test
+//    void getUnqualifiedIdPart() {
+//        // Arrange
+//        FhirContext fhirContext = mock(FhirContext.class);
+//        FhirContextWrapper sut = new FhirContextWrapper(fhirContext);
+//        Practitioner resource = new Practitioner();
+//        resource.setId("345");
+//
+//        // Act
+//        String id = sut.getUnqualifiedIdPart(resource);
+//
+//        // Assert
+//        assertThat(id).isEqualTo("345");
+//    }
     
 }

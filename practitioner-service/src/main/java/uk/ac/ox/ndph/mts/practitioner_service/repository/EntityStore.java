@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import java.util.Optional;
+
 /**
  * Interface for a store of a data model entity
  */
@@ -15,8 +17,8 @@ public interface EntityStore<T> {
     /**
      *  Get an entity by id
      * 
-     *  @param entity the entity to store.
-     *  @return the entity stored id.
+     *  @param id the id of the entity to fetch
+     *  @return entity or none() if none found
      */
-    T getEntity(String id);
+    Optional<T> getEntity(String id);
 }
