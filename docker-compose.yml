@@ -43,7 +43,7 @@ services:
       SERVER_PORT: "8082"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
-      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: "local"
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -63,6 +63,7 @@ services:
       - fhir-api
     environment:
       SERVER_PORT: "8083"
+      SPRING_PROFILES_ACTIVE: "local"
     healthcheck:
       test: curl http://localhost:8083
       interval: 10s
@@ -86,8 +87,8 @@ services:
       PRACTITIONER_SERVICE: "http://practitioner-service:8081"
       ROLE_SERVICE: "http://role-service:8082"
       SITE_SERVICE: "http://site-service:8083"
-      CONFIG_JSON: config-init-bootstrap-roles.json
-      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      CONFIG_JSON: config-init.json
+      SPRING_PROFILES_ACTIVE: "local"
     depends_on:
       practitioner-service:
         condition: service_healthy
@@ -124,12 +125,33 @@ services:
       SERVER_PORT: "8888"
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/mts-trial-deployment-config.git"
       SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "sample_trial/services, sample_trial/services/*"
+      SPRING_PROFILES_ACTIVE: "local"
     image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
     restart: on-failure
     ports:
       - "8888:8888"
     healthcheck:
       test: curl http://localhost:8888/
+      interval: 10s
+      timeout: 10s
+
+  discovery-server:
+    build:
+      context: .
+      dockerfile: discovery-server/Dockerfile
+      args:
+        SVC: discovery-server
+    environment:
+      EUREKA_CLIENT_REGISTERWITHEUREKA: "false"
+      EUREKA_CLIENT_FETCHREGISTRY: "false"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_PROFILES_ACTIVE: "local"
+    image: ghcr.io/ndph-arts/discovery-server:${GITHUB_SHA}
+    restart: on-failure
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: curl http://discovery-server:8761/
       interval: 10s
       timeout: 10s
 
