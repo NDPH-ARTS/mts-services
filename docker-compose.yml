@@ -135,6 +135,26 @@ services:
       interval: 10s
       timeout: 10s
 
+  discovery-server:
+    build:
+      context: .
+      dockerfile: discovery-server/Dockerfile
+      args:
+        SVC: discovery-server
+    environment:
+      EUREKA_CLIENT_REGISTERWITHEUREKA: "false"
+      EUREKA_CLIENT_FETCHREGISTRY: "false"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_PROFILES_ACTIVE: "local"
+    image: ghcr.io/ndph-arts/discovery-server:${GITHUB_SHA}
+    restart: on-failure
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: curl http://discovery-server:8761/
+      interval: 10s
+      timeout: 10s
+
   #############
   # DATABASES #
   #############
