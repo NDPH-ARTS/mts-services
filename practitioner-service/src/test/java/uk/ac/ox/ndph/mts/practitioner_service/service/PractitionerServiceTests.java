@@ -1,11 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,45 +10,40 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.web.server.ResponseStatusException;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-import java.util.List;
-
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTests {
 
+    @Captor
+    ArgumentCaptor<Practitioner> practitionerCaptor;
+    @Captor
+    ArgumentCaptor<RoleAssignment> roleAssignmentCaptor;
     @Mock
     private EntityStore<Practitioner> practitionerStore;
     @Mock
     private ModelEntityValidation<Practitioner> practitionerValidator;
-
-    @Captor
-    ArgumentCaptor<Practitioner> practitionerCaptor;
-
     @Mock
     private EntityStore<RoleAssignment> roleAssignmentStore;
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
-    @Captor
-    ArgumentCaptor<RoleAssignment> roleAssignmentCaptor;
-
     private PractitionerService service;
 
     @BeforeEach
@@ -78,7 +67,7 @@ class PractitionerServiceTests {
         //Assert
         Mockito.verify(practitionerValidator).validate(practitionerCaptor.capture());
         var value = practitionerCaptor.getValue();
-        assertThat(practitioner, equalTo(value));
+        assertEquals(practitioner, value);
     }
 
     @Test
@@ -96,7 +85,7 @@ class PractitionerServiceTests {
         //Assert
         Mockito.verify(practitionerStore).saveEntity(practitionerCaptor.capture());
         var value = practitionerCaptor.getValue();
-        assertThat(practitioner, equalTo(value));
+        assertEquals(practitioner, value);
     }
 
     @Test
@@ -159,10 +148,9 @@ class PractitionerServiceTests {
         Practitioner practitioner = new Practitioner(id, "pref", "given", "family");
         when(practitionerStore.getEntity(id)).thenReturn(Optional.of(practitioner));
         // act
-        final Practitioner returnedPractitioner = service.findPractitionerById(practitioner.getId());
-        returnedPractitioner.setUserAccountId("aaa");
+       final Practitioner returnedPractitioner = service.findPractitionerById(practitioner.getId());
+
         // assert
-        //TODO: this doesn't work
         assertTrue(new ReflectionEquals(practitioner).matches(returnedPractitioner));
     }
 
@@ -178,8 +166,7 @@ class PractitionerServiceTests {
     // RoleAssignment tests
 
     @Test
-    void TestGetRoleAssignmentsByUserIdentity_WhenNonNullIdentity_ReturnListOfRoleAssignments()
-    {
+    void TestGetRoleAssignmentsByUserIdentity_WhenNonNullIdentity_ReturnListOfRoleAssignments() {
         // Arrange
         List<RoleAssignment> expectedResult = Collections.singletonList(
                 new RoleAssignment("practitionerId", "siteId", "roleId"));
@@ -189,12 +176,11 @@ class PractitionerServiceTests {
         List<RoleAssignment> result = service.getRoleAssignmentsByUserIdentity(anyString());
 
         //Assert
-        assertThat(expectedResult, equalTo(result));
+        assertEquals(expectedResult, result);
     }
 
     @Test
-    void TestGetRoleAssignmentsByUserIdentity_WhenNullIdentity_ThrowsNullException()
-    {
+    void TestGetRoleAssignmentsByUserIdentity_WhenNullIdentity_ThrowsNullException() {
         //Act+Assert
         Assertions.assertThrows(NullPointerException.class, () -> service.getRoleAssignmentsByUserIdentity(null),
                 "Null user identifier should throw.");
@@ -213,7 +199,7 @@ class PractitionerServiceTests {
         //Assert
         Mockito.verify(roleAssignmentValidator).validate(roleAssignmentCaptor.capture());
         var entityFromValidator = roleAssignmentCaptor.getValue();
-        assertThat(entity, equalTo(entityFromValidator));
+        assertEquals(entity, entityFromValidator);
     }
 
     @Test
@@ -229,7 +215,7 @@ class PractitionerServiceTests {
         //Assert
         Mockito.verify(roleAssignmentStore).saveEntity(roleAssignmentCaptor.capture());
         var entityFromValidator = roleAssignmentCaptor.getValue();
-        assertThat(entity, equalTo(entityFromValidator));
+        assertEquals(entity, entityFromValidator);
     }
 
     @Test
@@ -258,7 +244,7 @@ class PractitionerServiceTests {
     }
 
     @Test
-    void TestGetRoleAssignmentsByUserIdentity_WithNullUserIdentity_ThrowsException(){
+    void TestGetRoleAssignmentsByUserIdentity_WithNullUserIdentity_ThrowsException() {
 
         Assertions.assertThrows(NullPointerException.class, () ->
                         service.getRoleAssignmentsByUserIdentity(null),
@@ -269,7 +255,7 @@ class PractitionerServiceTests {
     }
 
     @Test
-    void TestGetRoleAssignmentsByUserIdentity_WithUserIdentity_ReturnsAssignmentRolesAsExpected(){
+    void TestGetRoleAssignmentsByUserIdentity_WithUserIdentity_ReturnsAssignmentRolesAsExpected() {
 
         String userIdentity = "userIdentity";
         List<RoleAssignment> expectedResult = Collections.singletonList(
@@ -279,6 +265,6 @@ class PractitionerServiceTests {
         List<RoleAssignment> actualResult = service.getRoleAssignmentsByUserIdentity(userIdentity);
 
         //Assert
-        assertThat(expectedResult, equalTo(actualResult));
+        assertEquals(expectedResult, actualResult);
     }
 }
