@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.sample_service.controllers;
 
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
 @AutoConfigureMockMvc
+@ActiveProfiles("no-authZ")
 class MainControllerTests {
 
     @Test
@@ -30,7 +31,7 @@ class MainControllerTests {
     @MockBean
     private ConfigService configService;
 
-    @WithMockUser(value = "testUser")
+    @WithMockUser
     @Test
     void TestGetSecret_WhenConfigServiceExists_CorrectValueReturned() throws Exception {
         // Arrange

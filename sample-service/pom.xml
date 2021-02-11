@@ -14,6 +14,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <description>Sample service</description>
 
+    <properties>
+        <okhttp.version>4.9.0</okhttp.version>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -50,6 +54,28 @@
             <artifactId>spring-security-core</artifactId>
         </dependency>
         <!--Security above-->
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Security above-->
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
