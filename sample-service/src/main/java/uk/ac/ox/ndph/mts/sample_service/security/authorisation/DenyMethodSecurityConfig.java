@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service.security.authroisation;
+package uk.ac.ox.ndph.mts.sample_service.security.authorisation;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.method.MethodSecurityMetadataSource;

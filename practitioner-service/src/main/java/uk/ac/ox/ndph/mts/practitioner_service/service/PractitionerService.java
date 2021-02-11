@@ -5,13 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Implement an EntityService interface.
@@ -38,25 +41,14 @@ public class PractitionerService implements EntityService {
                                ModelEntityValidation<Practitioner> practitionerValidator,
                                EntityStore<RoleAssignment> roleAssignmentStore,
                                ModelEntityValidation<RoleAssignment> roleAssignmentValidator) {
-        if (practitionerStore == null) {
-            throw new InitialisationError("practitioner store cannot be null");
-        }
-        if (practitionerValidator == null) {
-            throw new InitialisationError("practitioner entity validation cannot be null");
-        }
-        if (roleAssignmentStore == null) {
-            throw new InitialisationError("RoleAssignment store cannot be null");
-        }
-        if (roleAssignmentValidator == null) {
-            throw new InitialisationError("RoleAssignment entity validation cannot be null");
-        }
-
+        Objects.requireNonNull(practitionerStore, "practitioner store cannot be null");
+        Objects.requireNonNull(practitionerValidator, "practitioner entity validation cannot be null");
+        Objects.requireNonNull(roleAssignmentStore, "RoleAssignment store cannot be null");
+        Objects.requireNonNull(roleAssignmentValidator, "RoleAssignment entity validation cannot be null");
         this.practitionerStore = practitionerStore;
         this.practitionerValidator = practitionerValidator;
-
         this.roleAssignmentStore = roleAssignmentStore;
         this.roleAssignmentValidator = roleAssignmentValidator;
-
         logger.info(Services.STARTUP.message());
     }
 
@@ -80,5 +72,11 @@ public class PractitionerService implements EntityService {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
         return roleAssignmentStore.saveEntity(roleAssignment);
+    }
+
+    @Override
+    public List<RoleAssignment> getRoleAssignmentsByUserIdentity(@NotNull String userIdentity) {
+        Objects.requireNonNull(userIdentity, "User identifier can not be null.");
+        return roleAssignmentStore.findEntitiesByUserIdentity(userIdentity);
     }
 }

@@ -8,7 +8,9 @@ public enum FhirRepo {
     SAVE_RESPONSE("response from fhir: {}"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
     PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s"),
-    FAILED_TO_SAVE_PRACTITIONER("Failed to save practitioner");
+    FAILED_TO_SAVE_PRACTITIONER("Failed to save practitioner"),
+    GET_PRACTITIONER_ROLES_BY_USER_IDENTITY("get practitioner roles by user identity %s"),
+    GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE("found %d practitioner roles");
 
     private final String message;
  

@@ -1,8 +1,9 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
-import java.util.List;
+import java.util.Collections;
+
+import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,21 +12,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
-import org.mockito.Mockito;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
-import uk.ac.ox.ndph.mts.practitioner_service.configuration.PractitionerConfigurationProvider;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerAttributeConfiguration;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
@@ -42,6 +39,7 @@ class PractitionerControllerTests {
 
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
+    private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
 
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
@@ -131,6 +129,48 @@ class PractitionerControllerTests {
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isBadGateway());
+    }
+
+    @Test
+    void TestGetRoleAssignmentByUserIdentity_WithMissingUserIdentityParam_Returns500() throws Exception {
+        // We test that the endpoint requires user identity parameter
+        // Arrange
+        // Act + Assert
+        String error = this.mockMvc
+                .perform(get(roleAssignmentByUserIdentityUri).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError()).andReturn().getResolvedException().getMessage();
+
+        assertThat(error, equalTo("Required String parameter 'userIdentity' is not present"));
+    }
+
+    @Test
+    void TestGetRoleAssignmentByUserIdentity_WithNullUserIdentityParam_Returns500() throws Exception {
+        // We test that the endpoint requires user identity parameter
+        // Arrange
+        // Act + Assert
+        String error = this.mockMvc
+                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", Strings.EMPTY)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
+
+        assertThat(error, equalTo("Required String parameter 'userIdentity' is blank"));
+    }
+
+    @Test
+    void TestGetRoleAssignmentByUserIdentity_WithUserIdentityParam_ReturnsRoleAssignmentAsExpected() throws Exception {
+
+        // Arrange
+        RoleAssignment expectedRoleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
+        when(entityService.getRoleAssignmentsByUserIdentity("123")).thenReturn(Collections.singletonList(expectedRoleAssignment));
+
+        String jsonExpectedRoleAssignment = "[{\"practitionerId\":\"practitionerId\",\"siteId\":\"siteId\",\"roleId\":\"roleId\"}]";
+
+        // Act + Assert
+        this.mockMvc
+                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", "123").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(
+                        content().string(containsString(jsonExpectedRoleAssignment)));
     }
 
 }
