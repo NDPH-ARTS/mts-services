@@ -3,6 +3,8 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
+import java.util.List;
+
 /**
  * Interface for validating and saving an entity
  */
@@ -17,4 +19,6 @@ public interface EntityService {
     String savePractitioner(Practitioner practitioner);
 
     String saveRoleAssignment(RoleAssignment roleAssignment);
+
+    List<RoleAssignment> getRoleAssignmentsByUserIdentity(String userIdentity);
 }

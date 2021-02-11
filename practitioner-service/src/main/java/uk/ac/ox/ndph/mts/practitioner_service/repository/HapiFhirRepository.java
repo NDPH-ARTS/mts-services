@@ -1,15 +1,18 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
+import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
@@ -80,6 +83,34 @@ public class HapiFhirRepository implements FhirRepository {
         return responseElement.getIdElement().getIdPart();
     }
 
+    @SuppressWarnings("squid:S2629")
+    @Override
+    public List<PractitionerRole> getPractitionerRolesByUserIdentity(String userIdentity) {
+        // Log the request
+        logger.info(
+                String.format(
+                        FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY.message(),
+                        userIdentity));
+
+        List<PractitionerRole> practitionerRoles = new ArrayList<>();
+
+        var results = fhirContextWrapper.searchResource(
+                PractitionerRole.class,
+                PractitionerRole.PRACTITIONER.hasChainedProperty(
+                        Practitioner.IDENTIFIER.exactly().identifier(userIdentity)));
+
+        for (var result : results) {
+            practitionerRoles.add((PractitionerRole) result);
+        }
+
+        logger.info(
+                String.format(
+                        FhirRepo.GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE.message(),
+                        practitionerRoles.size()));
+
+        return practitionerRoles;
+    }
+
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
         var resp = fhirContextWrapper.toListOfResources(bundle);
 
@@ -101,6 +132,7 @@ public class HapiFhirRepository implements FhirRepository {
                 .getRequest()
                 .setUrl(resource.fhirType())
                 .setMethod(Bundle.HTTPVerb.POST);
+
         return bundle;
     }
 
