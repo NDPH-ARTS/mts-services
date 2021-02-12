@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerIdProviderLink;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
@@ -44,23 +45,24 @@ class PractitionerServiceTests {
     private EntityStore<RoleAssignment> roleAssignmentStore;
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
+    @Mock
+    private ModelEntityValidation<PractitionerIdProviderLink> directoryLinkValidator;
+
     private PractitionerService service;
 
     @BeforeEach
     void init() {
         this.service = new PractitionerService(practitionerStore, practitionerValidator,
-                roleAssignmentStore, roleAssignmentValidator);
+                roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator);
     }
 
     @Test
     void TestSavePractitioner_WithPractitioner_ValidatesPractitioner() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
+
         //Act
         service.savePractitioner(practitioner);
 
@@ -73,10 +75,7 @@ class PractitionerServiceTests {
     @Test
     void TestSavePractitioner_WhenValidPractitioner_SavesToStore() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
         //Act
@@ -91,10 +90,7 @@ class PractitionerServiceTests {
     @Test
     void TestSavePractitioner_WhenInvalidPractitioner_ThrowsValidationException() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> service.savePractitioner(practitioner),
@@ -104,10 +100,7 @@ class PractitionerServiceTests {
     @Test
     void TestSavePractitioner_WhenInvalidPractitioner_DoesntSavesToStore() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> service.savePractitioner(practitioner),
@@ -119,23 +112,26 @@ class PractitionerServiceTests {
     void TestPractitionerService_WhenNullValues_ThrowsNullPointerException() {
         // Arrange + Act + Assert
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
-                        , roleAssignmentStore, roleAssignmentValidator),
+                        , roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, null,
-                        roleAssignmentStore, roleAssignmentValidator),
+                        roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator),
                 "null validation should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore,
-                        practitionerValidator, null, roleAssignmentValidator),
+                        practitionerValidator, null, roleAssignmentValidator, directoryLinkValidator),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
-                        roleAssignmentStore, null),
+                        roleAssignmentStore, null, directoryLinkValidator),
+                "null validation should throw");
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
+                        roleAssignmentStore, roleAssignmentValidator, null),
                 "null validation should throw");
     }
 
     @Test
     void TestGetPractitioner_CallsEntityStore() {
         String id = "42";
-        Practitioner practitioner = new Practitioner(id, "pref", "given", "family");
+        Practitioner practitioner = new Practitioner(id, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerStore.getEntity(id)).thenReturn(java.util.Optional.of(practitioner));
 
         assertEquals(practitioner, service.findPractitionerById(id));
@@ -145,7 +141,7 @@ class PractitionerServiceTests {
     void TestGetPractitioner_WhenStoreHasPractitioner_ReturnsPractitioner() {
         // arrange
         String id = "42";
-        Practitioner practitioner = new Practitioner(id, "pref", "given", "family");
+        Practitioner practitioner = new Practitioner(id, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerStore.getEntity(id)).thenReturn(Optional.of(practitioner));
         // act
        final Practitioner returnedPractitioner = service.findPractitionerById(practitioner.getId());

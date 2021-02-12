@@ -6,6 +6,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Implement an EntityConverter for Practitioner
@@ -24,13 +26,20 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
         if (input.getName().isEmpty()) {
             throw new IllegalArgumentException("FHIR Practitioner must have a name");
         }
-
+        
+        String idpIdentity = input.getIdentifier().stream()
+                                    .filter((id) -> id.getId().equals("IDP_IDENTITY"))
+                                    .map((id) -> id.getValue())
+                                    .findAny()
+                                    .orElse("");
+                                    
         HumanName humanName = input.getName().get(0);
 
         return new Practitioner(input.getIdElement().getIdPart(),
                 humanName.getPrefixAsSingleString(),
                 humanName.getGivenAsSingleString(),
-                humanName.getFamily());
+                humanName.getFamily(),
+                idpIdentity);
     }
 
     @Override

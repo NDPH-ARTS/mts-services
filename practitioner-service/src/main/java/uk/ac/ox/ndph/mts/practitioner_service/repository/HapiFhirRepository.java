@@ -7,10 +7,14 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.StringType;
+import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -142,13 +146,21 @@ public class HapiFhirRepository implements FhirRepository {
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION); // we use a single resource bundle, do we need this?
 
-        // Add the resource as an entry.
+        String url = resource.fhirType();
+        HTTPVerb httpMethod = Bundle.HTTPVerb.POST;
+        
+        if (StringUtils.hasText(resource.getId())) {
+            url += "/" + resource.getId();
+            httpMethod = Bundle.HTTPVerb.PUT;
+        }
+        
         bundle.addEntry()
-                .setFullUrl(resource.getIdElement().getValue())
-                .setResource(resource)
-                .getRequest()
-                .setUrl(resource.fhirType())
-                .setMethod(Bundle.HTTPVerb.POST);
+            .setFullUrl(resource.getIdElement().getValue())
+            .setResource(resource)
+            .getRequest()
+            .setUrl(url)
+            .setMethod(httpMethod)
+            .setIdElement(new StringType(resource.getId()));
 
         return bundle;
     }

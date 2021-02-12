@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
 
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerIdProviderLink;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface EntityService {
      * @return the id of the created entity.
      */
     String savePractitioner(Practitioner practitioner);
+
+    void linkPractitioner(PractitionerIdProviderLink link);
 
     String saveRoleAssignment(RoleAssignment roleAssignment);
 

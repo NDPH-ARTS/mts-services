@@ -60,7 +60,7 @@ class PractitionerControllerTests {
         // Arrange
         String practitionerId = "practitionerId";
         when(entityService.findPractitionerById(practitionerId))
-                .thenReturn(new Practitioner("42", "prefix", "given", "family"));
+                .thenReturn(new Practitioner("42", "prefix", "given", "family", "userAccountId"));
         // Act + Assert
         this.mockMvc
                 .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))

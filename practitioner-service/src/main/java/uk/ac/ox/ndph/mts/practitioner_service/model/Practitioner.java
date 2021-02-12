@@ -10,11 +10,13 @@ public class Practitioner {
     private String userAccountId;
 
     @JsonCreator
-    public Practitioner(final String id, final String prefix, final String givenName, final String familyName) {
+    public Practitioner(final String id, final String prefix, final String givenName, final String familyName, 
+        final String userAccountId) {
         this.id = id;
         this.prefix = prefix;
         this.givenName = givenName;
         this.familyName = familyName;
+        this.userAccountId = userAccountId;
     }
 
     public String getFamilyName() {
