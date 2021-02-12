@@ -4,9 +4,10 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
  * String constants
  */
 public enum Services {
-    STARTUP("Loaded practitioner service required dependencies");
+    STARTUP("Loaded practitioner service required dependencies"),
+    PRACTITIONER_NOT_FOUND("Practitioner Id not found");
 
-    private String message;
+    private final String message;
  
     Services(String message) {
         this.message = message;

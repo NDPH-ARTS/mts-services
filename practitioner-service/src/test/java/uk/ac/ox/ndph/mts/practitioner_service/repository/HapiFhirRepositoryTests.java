@@ -1,8 +1,9 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -26,8 +27,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.PractitionerRoleConverter;
+import ca.uhn.fhir.rest.server.exceptions.UnclassifiedServerFailureException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
@@ -50,6 +53,21 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
+    void TestGetEntity_When_IdValid() {
+        String id = "42";
+		Practitioner practitioner = new Practitioner();
+        when(fhirContextWrapper.getById(id)).thenReturn(practitioner);
+        assertEquals(practitioner, repository.getPractitioner(id).get());
+    }
+
+    @Test
+    void TestGetEntity_When_FhirException() {
+        String id = "22";
+        when(fhirContextWrapper.getById(id)).thenThrow(new UnclassifiedServerFailureException(500, "Error"));
+        assertThrows(RestException.class, () -> repository.getPractitioner(id));
+    }
+
+    @Test
     void TestHapiRepository_WhenSavePractitioner_SendsBundleWithTransactionType() throws FhirServerResponseException {
         // Arrange
         var responseBundle = new Bundle();
@@ -65,22 +83,6 @@ class HapiFhirRepositoryTests {
         var value = bundleCaptor.getValue();
         var type = value.getType();
         assertThat(type, equalTo(Bundle.BundleType.TRANSACTION));
-    }
-
-    @Test
-    void TestHapiRepository_WhenSavePractitioner_ReturnsCorrectId() throws FhirServerResponseException {
-        // Arrange
-        var responseBundle = new Bundle();
-        when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
-        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
-        var practitioner = new Practitioner();
-        practitioner.setId("123");
-
-        // Act
-        var value = repository.savePractitioner(practitioner);
-
-        // Assert
-        assertThat(value, equalTo("123"));
     }
 
     @Test

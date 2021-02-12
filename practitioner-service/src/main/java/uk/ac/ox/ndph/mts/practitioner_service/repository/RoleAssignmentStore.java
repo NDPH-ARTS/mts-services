@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
+import java.util.Optional;
+
 import java.util.List;
 
 /**
@@ -39,6 +41,12 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
     public String saveEntity(RoleAssignment entity) {
         return repository.savePractitionerRole(roleAssignmentPractitionerRoleConverter.convert(entity));
     }
+
+    @Override
+    public Optional<RoleAssignment> getEntity(String id) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
 
     @Override
     public List<RoleAssignment> findEntitiesByUserIdentity(String userIdentity) {

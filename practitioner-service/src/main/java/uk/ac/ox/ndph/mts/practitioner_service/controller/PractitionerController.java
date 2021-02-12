@@ -1,7 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +16,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.List;
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
-@RequestMapping(path = "/practitioner", consumes = "application/json", produces = "application/json")
+@RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
     private final EntityService entityService;
@@ -45,7 +47,12 @@ public class PractitionerController {
     @PostMapping()
     public ResponseEntity<Response> savePractitioner(@RequestBody Practitioner practitioner) {
         String practitionerId = entityService.savePractitioner(practitioner);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Response(practitionerId));
+        return ResponseEntity.status(CREATED).body(new Response(practitionerId));
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Practitioner> findPractitionerById(@PathVariable String id) {
+        return ResponseEntity.ok(entityService.findPractitionerById(id));
     }
 
     @PostMapping(path = "/{practitionerId}/roles")
@@ -53,7 +60,7 @@ public class PractitionerController {
                                                        @RequestBody RoleAssignment roleAssignment) {
         roleAssignment.setPractitionerId(practitionerId);
         String roleAssignmentId = entityService.saveRoleAssignment(roleAssignment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Response(roleAssignmentId));
+        return ResponseEntity.status(CREATED).body(new Response(roleAssignmentId));
     }
 
     @GetMapping(path = "/roles")

@@ -8,20 +8,22 @@ public enum FhirRepo {
     SAVE_RESPONSE("response from fhir: {}"),
     BAD_RESPONSE_SIZE("bad response size from FHIR: %d"),
     PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s"),
+    SEARCH_ERROR("Failed to search repository"),
     FAILED_TO_SAVE_PRACTITIONER("Failed to save practitioner"),
     GET_PRACTITIONER_ROLES_BY_USER_IDENTITY("get practitioner roles by user identity %s"),
     GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE("found %d practitioner roles");
 
     private final String message;
- 
+
     FhirRepo(String message) {
         this.message = message;
     }
 
     /**
-    * Returns the message associated with the enum variant.
-    * @return the message value of the enum variant
-    */
+     * Returns the message associated with the enum variant.
+     *
+     * @return the message value of the enum variant
+     */
     public String message() {
         return message;
     }

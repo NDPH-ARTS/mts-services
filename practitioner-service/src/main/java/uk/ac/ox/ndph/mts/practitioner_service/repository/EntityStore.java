@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import java.util.Optional;
+
 import java.util.List;
 
 /**
@@ -16,5 +18,11 @@ public interface EntityStore<T> {
 
     List<T> findEntitiesByUserIdentity(String userIdentity);
 
-
+    /**
+     *  Get an entity by id
+     *
+     *  @param id the id of the entity to fetch
+     *  @return entity or none() if none found
+     */
+    Optional<T> getEntity(String id);
 }

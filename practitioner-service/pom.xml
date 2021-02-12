@@ -79,14 +79,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.5</version>
-            <scope>compile</scope>
-        </dependency>
-
-
     </dependencies>
 
 </project>

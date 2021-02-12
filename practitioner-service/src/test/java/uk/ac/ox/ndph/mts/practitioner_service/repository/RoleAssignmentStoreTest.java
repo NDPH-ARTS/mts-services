@@ -1,14 +1,13 @@
-package uk.ac.ox.ndph.mts.practitioner_service.service;
+package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import org.hl7.fhir.r4.model.PractitionerRole;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
-import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
-import uk.ac.ox.ndph.mts.practitioner_service.repository.RoleAssignmentStore;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RoleAssignmentsStoreTest {
+class RoleAssignmentStoreTest {
 
     @Mock
     private FhirRepository repository;
@@ -30,11 +29,10 @@ class RoleAssignmentsStoreTest {
     private EntityConverter<PractitionerRole, RoleAssignment> practitionerRoleRoleAssignmentConverter;
 
     @Test
-    void TestSaveEntity_WhenValidEntity_SaveToRepositoryAndReturnGeneratedId()
-    {
+    void TestSaveEntity_WhenValidEntity_SaveToRepositoryAndReturnGeneratedId() {
         //arrange
-        var inputRoleAssignment = new RoleAssignment("practitionerId","siteId","roleId");
-        var outputPractitioner = new org.hl7.fhir.r4.model.Practitioner();
+        var inputRoleAssignment = new RoleAssignment("practitionerId", "siteId", "roleId");
+//        var outputPractitioner = new org.hl7.fhir.r4.model.Practitioner();
         when(roleAssignmentPractitionerRoleConverter.convert(any(RoleAssignment.class))).thenReturn(new PractitionerRole());
         when(repository.savePractitionerRole(any(org.hl7.fhir.r4.model.PractitionerRole.class))).thenReturn("123");
 
@@ -47,11 +45,10 @@ class RoleAssignmentsStoreTest {
     }
 
     @Test
-    void TestListEntitiesByUserIdentity_WhenListByUserIdentity_ReturnsListOfRoleAssignments()
-    {
+    void TestListEntitiesByUserIdentity_WhenListByUserIdentity_ReturnsListOfRoleAssignments() {
         //arrange
         List<PractitionerRole> practitionerRoleList = List.of(new PractitionerRole());
-        List<RoleAssignment> roleAssignmentList = List.of(new RoleAssignment("practitionerId","siteId","roleId"));
+        List<RoleAssignment> roleAssignmentList = List.of(new RoleAssignment("practitionerId", "siteId", "roleId"));
         RoleAssignmentStore roleAssignmentStore = new RoleAssignmentStore(repository, roleAssignmentPractitionerRoleConverter, practitionerRoleRoleAssignmentConverter);
         when(repository.getPractitionerRolesByUserIdentity(any(String.class))).thenReturn(practitionerRoleList);
         when(practitionerRoleRoleAssignmentConverter.convertList(practitionerRoleList)).thenReturn(roleAssignmentList);
@@ -62,5 +59,12 @@ class RoleAssignmentsStoreTest {
         //assert
         assertThat(result, equalTo(roleAssignmentList));
 
+    }
+
+    @Test
+    void TestGetById_WhenCalled_ReturnsException() {
+        RoleAssignmentStore roleAssignmentStore = new RoleAssignmentStore(repository, roleAssignmentPractitionerRoleConverter, practitionerRoleRoleAssignmentConverter);
+        Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> roleAssignmentStore.getEntity("123"));
     }
 }
