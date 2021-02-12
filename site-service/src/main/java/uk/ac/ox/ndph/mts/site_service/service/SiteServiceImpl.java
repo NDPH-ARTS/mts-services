@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,11 +63,9 @@ public class SiteServiceImpl implements SiteService {
 
     private void addTypesToMap(final SiteConfiguration configuration) {
         this.sitesByType.put(configuration.getType(), configuration);
-        if (configuration.getChild() != null) {
-            for (final var childConfig : configuration.getChild()) {
-                addTypesToMap(childConfig);
-                this.parentTypeByChildType.put(childConfig.getType(), configuration.getType());
-            }
+        for (final var childConfig : CollectionUtils.emptyIfNull(configuration.getChild())) {
+            addTypesToMap(childConfig);
+            this.parentTypeByChildType.put(childConfig.getType(), configuration.getType());
         }
     }
 
@@ -76,28 +76,27 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public String save(final Site site) {
         var validationResponse = entityValidation.validate(site);
-
+        String siteTypeForSite = StringUtils.defaultString(site.getSiteType());
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
 
         if (findSiteByName(site.getName()).isPresent()) {
-            throw new ValidationException(Services.SITE_EXISTS.message());
+            throw new ValidationException(Services.SITE_NAME_EXISTS.message());
         }
 
         if (site.getParentSiteId() == null) {
             if (isRootSitePresent()) {
-                throw new ValidationException(Services.ONE_ROOT_SITE.message());
+                throw new ValidationException(Services.ROOT_SITE_EXISTS.message());
             } else {
-                if (!sitesByType.containsKey(site.getSiteType())
-                        || parentTypeByChildType.containsKey(site.getSiteType())) {
+                if (!sitesByType.containsKey(siteTypeForSite) || parentTypeByChildType.containsKey(siteTypeForSite)) {
                     throw new ValidationException(Services.INVALID_ROOT_SITE.message());
                 }
             }
         } else {
             Site siteParent = findSiteById(site.getParentSiteId());
             String siteParentType = siteParent.getSiteType();
-            String allowedParentType = parentTypeByChildType.get(site.getSiteType());
+            String allowedParentType = parentTypeByChildType.get(siteTypeForSite);
             if (!siteParentType.equalsIgnoreCase(allowedParentType)) {
                 throw new ValidationException(Services.INVALID_CHILD_SITE_TYPE.message());
             }

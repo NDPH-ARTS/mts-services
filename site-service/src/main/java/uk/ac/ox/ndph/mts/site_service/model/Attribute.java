@@ -16,11 +16,11 @@ public enum Attribute {
     SITE_TYPE(AttributeNames.SITE_TYPE.nameof(), Site::getSiteType);
 
     private String attributeName;
-    private Function<Site, String> getValue;
+    private Function<Site, String> value;
 
-    Attribute(String attributeName, Function<Site, String> getValue) {
+    Attribute(String attributeName, Function<Site, String> value) {
         this.attributeName = attributeName;
-        this.getValue = getValue;
+        this.value = value;
     }
     
     /**
@@ -35,8 +35,8 @@ public enum Attribute {
      * gets the getter function for this attribute
      * @return a function that returns value from site
      */
-    public Function<Site, String> getGetValue() {
-        return getValue;
+    public Function<Site, String> getValue() {
+        return value;
     }
 
     /**

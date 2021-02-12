@@ -31,7 +31,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     static class AttributeData {
         private String description;
         private Pattern regex;
-        private Function<Site, String> getValue;
+        private Function<Site, String> value;
     }
 
     private static final String REGEX_ALL = ".*";
@@ -50,7 +50,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
                 .collect(Collectors.toMap(Pair::getRight,
                     pair -> new AttributeData(pair.getLeft().getDisplayName(),
                                 Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
-                                pair.getRight().getGetValue())));
+                                pair.getRight().getValue())));
 
         validateMap();
         logger.info(Validations.STARTUP.message(), configuration);
@@ -79,7 +79,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
 
     private ValidationResponse validateArgument(Attribute attribute, Site site) {
         var validation = validationMap.get(attribute);
-        var value = validation.getGetValue().apply(site);
+        var value = validation.getValue().apply(site);
         if (value == null) {
             value = "";
         }
