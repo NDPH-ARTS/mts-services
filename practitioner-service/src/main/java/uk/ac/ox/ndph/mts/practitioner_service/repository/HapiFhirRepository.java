@@ -101,7 +101,6 @@ public class HapiFhirRepository implements FhirRepository {
         } catch (BaseServerResponseException e) {
             throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
         }
-
     }
 
     @SuppressWarnings("squid:S2629")

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerIdProviderLink;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
@@ -52,8 +52,8 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(practitionerId));
     }
 
-    @PostMapping(path = "/link", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> linkPractitioner(@RequestBody PractitionerIdProviderLink link) {
+    @PostMapping(path = "/link")
+    public ResponseEntity<Response> linkPractitioner(@RequestBody PractitionerUserAccount link) {
         entityService.linkPractitioner(link);
         return ResponseEntity.status(OK).build();
     }

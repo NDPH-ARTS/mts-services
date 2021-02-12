@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerIdProviderLink;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
@@ -47,7 +47,7 @@ class PractitionerServiceTests {
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
     @Mock
-    private ModelEntityValidation<PractitionerIdProviderLink> directoryLinkValidator;
+    private ModelEntityValidation<PractitionerUserAccount> directoryLinkValidator;
 
     private PractitionerService service;
     private PractitionerService serviceSpy;

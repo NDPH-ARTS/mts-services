@@ -26,8 +26,8 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
             throw new IllegalArgumentException("FHIR Practitioner must have a name");
         }
         
-        String idpIdentity = input.getIdentifier().stream()
-                                    .filter((id) -> id.getId().equals("IDP_IDENTITY"))
+        String userAccountId = input.getIdentifier().stream()
+                                    .filter((id) -> id.getId().equals(Practitioner.USERACCOUNTID_IDENTIFIER_NAME))
                                     .map((id) -> id.getValue())
                                     .findAny()
                                     .orElse("");
@@ -38,7 +38,7 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
                 humanName.getPrefixAsSingleString(),
                 humanName.getGivenAsSingleString(),
                 humanName.getFamily(),
-                idpIdentity);
+                userAccountId);
     }
 
     @Override

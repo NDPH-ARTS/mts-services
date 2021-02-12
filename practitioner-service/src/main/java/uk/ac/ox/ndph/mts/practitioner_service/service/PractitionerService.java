@@ -10,11 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerIdProviderLink;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
@@ -35,7 +36,7 @@ public class PractitionerService implements EntityService {
 
     private final EntityStore<RoleAssignment> roleAssignmentStore;
     private final ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
-    private final ModelEntityValidation<PractitionerIdProviderLink> directoryLinkValidator;
+    private final ModelEntityValidation<PractitionerUserAccount> practitionerUserAccountValidator;
 
     /**
      * @param practitionerStore Practitioner store interface
@@ -46,13 +47,13 @@ public class PractitionerService implements EntityService {
                                ModelEntityValidation<Practitioner> practitionerValidator,
                                EntityStore<RoleAssignment> roleAssignmentStore,
                                ModelEntityValidation<RoleAssignment> roleAssignmentValidator,
-                               ModelEntityValidation<PractitionerIdProviderLink> directoryLinkValidator) {
+                               ModelEntityValidation<PractitionerUserAccount> directoryLinkValidator) {
         this.practitionerStore =
                 Objects.requireNonNull(practitionerStore, "practitioner store cannot be null");
         this.practitionerValidator =
                 Objects.requireNonNull(practitionerValidator, "practitioner entity validation cannot be null");
-        this.directoryLinkValidator =
-                Objects.requireNonNull(directoryLinkValidator, "directory link validation cannot be null");
+        this.practitionerUserAccountValidator =
+                Objects.requireNonNull(directoryLinkValidator, "user practitioner account validation cannot be null");
         this.roleAssignmentStore =
                 Objects.requireNonNull(roleAssignmentStore, "RoleAssignment store cannot be null");
         this.roleAssignmentValidator =
@@ -84,16 +85,19 @@ public class PractitionerService implements EntityService {
     }
 
     @Override
-    public void linkPractitioner(PractitionerIdProviderLink link) {
-        ValidationResponse validationResponse = directoryLinkValidator.validate(link);
+    public void linkPractitioner(PractitionerUserAccount userAccount) {
+        ValidationResponse validationResponse = practitionerUserAccountValidator.validate(userAccount);
 
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
         
-        final Practitioner practitioner = practitionerStore.getEntity(link.getPractitionerId()).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, Services.PRACTITIONER_NOT_FOUND.message()));
-        practitioner.setUserAccountId(link.getUserAccountId());
+        Practitioner practitioner = findPractitionerById(userAccount.getPractitionerId());
+        
+        if (StringUtils.hasText(practitioner.getId())) {
+            throw new ValidationException("Practitioner already has a user account id");
+        }
+        practitioner.setUserAccountId(userAccount.getUserAccountId());
         
         practitionerStore.saveEntity(practitioner);
     }

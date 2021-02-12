@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class Practitioner {
+    public static final String USERACCOUNTID_IDENTIFIER_NAME = "ID_PROVIDER_USER_ACCOUNT_IDENTIFIER";
     private final String id;
     private final String prefix;
     private final String givenName;

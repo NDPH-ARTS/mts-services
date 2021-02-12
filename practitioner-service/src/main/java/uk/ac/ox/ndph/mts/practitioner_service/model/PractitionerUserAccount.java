@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-public class PractitionerIdProviderLink {
+public class PractitionerUserAccount {
     private String practitionerId;
     private String userAccountId;
 
@@ -20,9 +20,9 @@ public class PractitionerIdProviderLink {
         this.userAccountId = directoryId;
     }
 
-    public PractitionerIdProviderLink(String practitionerId, String directoryId) {
+    public PractitionerUserAccount(String practitionerId, String userAccountId) {
         this.practitionerId = practitionerId;
-        this.userAccountId = directoryId;
+        this.userAccountId = userAccountId;
     }
 }
 
