@@ -47,7 +47,7 @@ class PractitionerServiceTests {
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
     @Mock
-    private ModelEntityValidation<PractitionerUserAccount> directoryLinkValidator;
+    private ModelEntityValidation<PractitionerUserAccount> practitionerUserAccountValidator;
 
     private PractitionerService service;
     private PractitionerService serviceSpy;
@@ -56,7 +56,7 @@ class PractitionerServiceTests {
     @BeforeEach
     void init() {
         this.service = new PractitionerService(practitionerStore, practitionerValidator,
-                roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator);
+                roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator);
         this.serviceSpy = Mockito.spy(service);
     }
 
@@ -116,16 +116,16 @@ class PractitionerServiceTests {
     void TestPractitionerService_WhenNullInConstructor_ThrowsNullPointerException() {
         // Arrange + Act + Assert
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
-                        , roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator),
+                        , roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, null,
-                        roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator),
+                        roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator),
                 "null validation should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore,
-                        practitionerValidator, null, roleAssignmentValidator, directoryLinkValidator),
+                        practitionerValidator, null, roleAssignmentValidator, practitionerUserAccountValidator),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
-                        roleAssignmentStore, null, directoryLinkValidator),
+                        roleAssignmentStore, null, practitionerUserAccountValidator),
                 "null validation should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
                         roleAssignmentStore, roleAssignmentValidator, null),
@@ -186,6 +186,21 @@ class PractitionerServiceTests {
                 "Null user identifier should throw.");
     }
 
+    @Test
+    void TestLinkParticipant_WhenValidEntity_ValidatesEntity() {
+        // Arrange
+        String practitionerId = "practitionerId";
+        PractitionerUserAccount entity = new PractitionerUserAccount("practitionerId", "userAccountId");
+        var foundPractitioner = new Practitioner(practitionerId, "prefix", "given", "family", "");
+        doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
+        when(practitionerUserAccountValidator.validate(any(PractitionerUserAccount.class))).thenReturn(new ValidationResponse(true, ""));
+        when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn(practitionerId);
+
+        //Act
+        serviceSpy.linkPractitioner(entity);
+        verify(practitionerUserAccountValidator).validate(entity);
+    }
+    
     @Test
     void TestSaveRoleAssignment_WhenValidEntity_ValidatesEntity() {
         // Arrange

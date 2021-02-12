@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
@@ -93,10 +92,6 @@ public class PractitionerService implements EntityService {
         }
         
         Practitioner practitioner = findPractitionerById(userAccount.getPractitionerId());
-        
-        if (StringUtils.hasText(practitioner.getId())) {
-            throw new ValidationException("Practitioner already has a user account id");
-        }
         practitioner.setUserAccountId(userAccount.getUserAccountId());
         
         practitionerStore.saveEntity(practitioner);
