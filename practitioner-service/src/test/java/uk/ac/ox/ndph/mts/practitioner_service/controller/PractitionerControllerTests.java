@@ -2,10 +2,6 @@ package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +21,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
 import java.util.Collections;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +30,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,10 +45,6 @@ class PractitionerControllerTests {
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
     private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
-    private static final String PARAM_PRACTITIONER = "practitionerId";
-    private static final String PARAM_USER = "userAccountId";
-    private static final String USER_ACCOUNT_ID = "idOfUserAccount";
-    private static final String PRACTITIONER_ID = "idOfPractitioner";
 
     @Autowired
     private MockMvc mockMvc;
@@ -140,35 +130,14 @@ class PractitionerControllerTests {
         assertThat(error, containsString("prefix"));
     }
 
-    @ParameterizedTest
-    @MethodSource("atLeastOneParamNotPresent")
-    void linkPractitioner_whenParamsNotPresent_error(String userParam, String practitionerParam) throws Exception {
+    @Test
+    void TestLinkPractitioner_whenParamsNotPresent_error() throws Exception {
         // Act
-        this.mockMvc.perform(post("/practitioner/link")
-                        .param(userParam, USER_ACCOUNT_ID)
-                        .param(practitionerParam, PRACTITIONER_ID)
+        this.mockMvc.perform(post("/practitioner/6/link")
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());
         // Assert
         verify(entityService, never()).linkPractitioner((any(PractitionerUserAccount.class)));
-    }
-
-    private static Stream<Arguments> atLeastOneParamNotPresent() {
-        return Stream.of(
-                Arguments.of("wrongUserParamName", PARAM_PRACTITIONER),
-                Arguments.of(PARAM_USER, "wrongPractitionerParam"),
-                Arguments.of("wrongUserParamName", "wrongPractitionerParam"));
-    }
-
-    @Test
-    void linkPractitioner_whenParamsPresent_callsEntityService() throws Exception {
-        // Act
-        this.mockMvc
-                .perform(post("/practitioner/link")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(new PractitionerUserAccount("practitionerid", "userAccountId"))));
-                        // Assert
-        verify(entityService, times(1)).linkPractitioner((any(PractitionerUserAccount.class)));
     }
 
     @Test
@@ -178,9 +147,9 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post("/practitioner/link")
+                .perform(post("/practitioner/56/link")
                                  .contentType(MediaType.APPLICATION_JSON)
-                                 .content(new ObjectMapper().writeValueAsString(new PractitionerUserAccount("practitionerid", "directoryId"))))
+                                 .content(new ObjectMapper().writeValueAsString(new PractitionerUserAccount("", "directoryId"))))
                                  .andExpect(status().isOk());
     }
 

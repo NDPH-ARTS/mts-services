@@ -52,8 +52,10 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(practitionerId));
     }
 
-    @PostMapping(path = "/link")
-    public ResponseEntity<Response> linkPractitioner(@RequestBody PractitionerUserAccount link) {
+    @PostMapping(path = "/{practitionerId}/link")
+    public ResponseEntity<Response> linkPractitioner(@PathVariable String practitionerId, 
+                                                    @RequestBody PractitionerUserAccount link) {
+        link.setPractitionerId(practitionerId);
         entityService.linkPractitioner(link);
         return ResponseEntity.status(OK).build();
     }
