@@ -65,6 +65,7 @@ public class PractitionerService implements EntityService {
      * @param practitioner the Practitioner to save.
      * @return The id of the new practitioner
      */
+    @Override
     public String savePractitioner(Practitioner practitioner) {
         var validationResponse = practitionerValidator.validate(practitioner);
         if (!validationResponse.isValid()) {
@@ -99,10 +100,22 @@ public class PractitionerService implements EntityService {
     
     @Override
     public String saveRoleAssignment(RoleAssignment roleAssignment) {
+        // check if the practitioner id exist in the system.
+        try {
+            findPractitionerById(roleAssignment.getPractitionerId());
+        } catch (ResponseStatusException ex) {
+            if (ex.getStatus() == HttpStatus.NOT_FOUND) {
+                throw new ValidationException(ex.getMessage());
+            }
+
+            throw ex;
+        }
+
         ValidationResponse validationResponse = roleAssignmentValidator.validate(roleAssignment);
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
+
         return roleAssignmentStore.saveEntity(roleAssignment);
     }
 

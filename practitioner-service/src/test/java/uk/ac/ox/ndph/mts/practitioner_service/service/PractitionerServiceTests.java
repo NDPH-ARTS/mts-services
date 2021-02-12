@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
@@ -23,12 +24,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTests {
@@ -49,11 +50,14 @@ class PractitionerServiceTests {
     private ModelEntityValidation<PractitionerIdProviderLink> directoryLinkValidator;
 
     private PractitionerService service;
+    private PractitionerService serviceSpy;
+
 
     @BeforeEach
     void init() {
         this.service = new PractitionerService(practitionerStore, practitionerValidator,
                 roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator);
+        this.serviceSpy = Mockito.spy(service);
     }
 
     @Test
@@ -109,7 +113,7 @@ class PractitionerServiceTests {
     }
 
     @Test
-    void TestPractitionerService_WhenNullValues_ThrowsNullPointerException() {
+    void TestPractitionerService_WhenNullInConstructor_ThrowsNullPointerException() {
         // Arrange + Act + Assert
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
                         , roleAssignmentStore, roleAssignmentValidator, directoryLinkValidator),
@@ -144,7 +148,7 @@ class PractitionerServiceTests {
         Practitioner practitioner = new Practitioner(id, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerStore.getEntity(id)).thenReturn(Optional.of(practitioner));
         // act
-       final Practitioner returnedPractitioner = service.findPractitionerById(practitioner.getId());
+        final Practitioner returnedPractitioner = service.findPractitionerById(practitioner.getId());
 
         // assert
         assertTrue(new ReflectionEquals(practitioner).matches(returnedPractitioner));
@@ -185,12 +189,15 @@ class PractitionerServiceTests {
     @Test
     void TestSaveRoleAssignment_WhenValidEntity_ValidatesEntity() {
         // Arrange
-        RoleAssignment entity = new RoleAssignment("practitionerId", "siteId", "roleId");
+        String practitionerId = "myPractitioner";
+        RoleAssignment entity = new RoleAssignment(practitionerId, "siteId", "roleId");
+        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4", "userAccountId");
+        doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
         when(roleAssignmentValidator.validate(any(RoleAssignment.class))).thenReturn(new ValidationResponse(true, ""));
         when(roleAssignmentStore.saveEntity(any(RoleAssignment.class))).thenReturn("123");
 
         //Act
-        service.saveRoleAssignment(entity);
+        serviceSpy.saveRoleAssignment(entity);
 
         //Assert
         Mockito.verify(roleAssignmentValidator).validate(roleAssignmentCaptor.capture());
@@ -201,12 +208,17 @@ class PractitionerServiceTests {
     @Test
     void TestSaveRoleAssignment_WhenValidEntity_SavesToStore() {
         // Arrange
-        RoleAssignment entity = new RoleAssignment("practitionerId", "siteId", "roleId");
+        String practitionerId = "myPractitioner";
+
+        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4", "userAccountId");
+        doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
+
+        RoleAssignment entity = new RoleAssignment(practitionerId, "siteId", "roleId");
         when(roleAssignmentValidator.validate(any(RoleAssignment.class))).thenReturn(new ValidationResponse(true, ""));
         when(roleAssignmentStore.saveEntity(any(RoleAssignment.class))).thenReturn("123");
 
         //Act
-        service.saveRoleAssignment(entity);
+        serviceSpy.saveRoleAssignment(entity);
 
         //Assert
         Mockito.verify(roleAssignmentStore).saveEntity(roleAssignmentCaptor.capture());
@@ -215,26 +227,56 @@ class PractitionerServiceTests {
     }
 
     @Test
-    void TestSaveRoleAssignment_WhenInvalidEntity_ThrowsValidationException() {
+    void TestSaveRoleAssignment_WhenPractitionerNotExist_ThrowsValidationException() {
         // Arrange
-        RoleAssignment entity = new RoleAssignment(null, null, null);
-        when(roleAssignmentValidator.validate(any(RoleAssignment.class))).thenReturn(new ValidationResponse(false,
-                "err"));
+        String practitionerId = "unknown";
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .when(serviceSpy).findPractitionerById(practitionerId);
+
+        RoleAssignment entity = new RoleAssignment(practitionerId, "siteId", "roleId");
 
         //Act + Assert
-        Assertions.assertThrows(ValidationException.class, () -> service.saveRoleAssignment(entity),
-                "Expecting save to throw validation exception");
+        Assertions.assertThrows(ValidationException.class, () -> serviceSpy.saveRoleAssignment(entity));
     }
 
     @Test
-    void TestSaveRoleAssignment_WhenInvalidEntity_DoesntSavesToStore() {
+    void TestSaveRoleAssignment_WhenGetPractitionerReturnsOtherException_ThrowsThatException() {
         // Arrange
-        RoleAssignment entity = new RoleAssignment(null, null, null);
+        var ex = new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        String practitionerId = "unknown";
+        doThrow(ex).when(serviceSpy).findPractitionerById(practitionerId);
+
+        RoleAssignment entity = new RoleAssignment(practitionerId, "siteId", "roleId");
+
+        //Act + Assert
+        Assertions.assertThrows(ex.getClass(), () -> serviceSpy.saveRoleAssignment(entity));
+    }
+
+    @Test
+    void TestSaveRoleAssignment_WhenInvalidPractitioner_DoesntSaveToStore() {
+        // Arrange
+        RoleAssignment entity = new RoleAssignment(null, "site", "role");
+
+        //Act + Assert
+        var thrown = Assertions.assertThrows(ValidationException.class, () -> service.saveRoleAssignment(entity),
+                "Expecting save to throw validation exception");
+        Mockito.verify(roleAssignmentStore, Mockito.times(0)).saveEntity(any(RoleAssignment.class));
+        assertThat(thrown.getMessage(), containsString("Practitioner"));
+    }
+
+    @Test
+    void TestSaveRoleAssignment_WhenInvalidRole_DoesntSaveToStore() {
+        // Arrange
+        String practitionerId = "myPractitioner";
+        RoleAssignment entity = new RoleAssignment(practitionerId, "site", null);
+
+        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4", "userAccountId");
+        doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
         when(roleAssignmentValidator.validate(any(RoleAssignment.class))).thenReturn(new ValidationResponse(false,
                 "err"));
 
         //Act + Assert
-        Assertions.assertThrows(ValidationException.class, () -> service.saveRoleAssignment(entity),
+        Assertions.assertThrows(ValidationException.class, () -> serviceSpy.saveRoleAssignment(entity),
                 "Expecting save to throw validation exception");
         Mockito.verify(roleAssignmentStore, Mockito.times(0)).saveEntity(any(RoleAssignment.class));
     }
