@@ -40,7 +40,7 @@ public class PractitionerUserAccountValidation implements ModelEntityValidation<
             return new ValidationResponse(false, "Invalid participant id");
         }
         
-        if (StringUtils.hasText(practitioner.get().getId())) {
+        if (StringUtils.hasText(practitioner.get().getUserAccountId().trim())) {
             return new ValidationResponse(false, "This person already has a user account id registered.");
         }
         

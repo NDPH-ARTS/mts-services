@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,29 +35,8 @@ public class PractitionerUserAccountValidationTests {
          this.validator = new PractitionerUserAccountValidation(entityStore);
     }
     
-    @ParameterizedTest
-    @CsvSource({"practitionerId,,userAccountId",
-                ",userAccountId,practitionerId",
-                "null,null,practitionerId",
-                "null,userAccountId,practitionerId",
-                "practitionerId,null,userAccountId"
-    })
     @Test
-    void TestPractitionerUserAccountValidation_WhenFieldsAreEmptyOrNull_ThrowsValidationException(
-        @ConvertWith(NullableConverter.class) String practitionerId,
-        @ConvertWith(NullableConverter.class) String userAccountId,
-        String expectedField) {
-        // Arrange
-        PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, userAccountId);
-        
-        // Act + Assert
-        var result = validator.validate(userAccount);
-        assertThat(result.isValid(), is(false));
-        assertThat(result.getErrorMessage(), containsString(expectedField));
-    }
-    
-    @Test
-    void TestPractitionerUserAccoountValidation_WhenPractitionerHasAccount_ThrowsValidationException() {
+    void TestPractitionerUserAccoountValidation_WhenPractitionerHasAccount_FailsValidation() {
         String practitionerId = "practitionerId";
         PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, "userAccountId");
         Practitioner practitioner = new Practitioner("id", "prefix", "given", "family", "anotherAccountId");
@@ -69,7 +48,7 @@ public class PractitionerUserAccountValidationTests {
     }    
     
     @Test
-    void TestPractitionerUserAccoountValidation_WhenPractitionerHasAccount_ThrowsNoException() {
+    void TestPractitionerUserAccoountValidation_WhenPractitionerHasNoAccount_PassesValidation() {
         String practitionerId = "practitionerId";
         PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, "userAccountId");
         Practitioner practitioner = new Practitioner("id", "prefix", "given", "family", "");
@@ -80,14 +59,33 @@ public class PractitionerUserAccountValidationTests {
     }
         
     @Test
-    void TestPractitionerUserAccoountValidation_WhenPractitionerDoesNotExist_ThrowsException() {
+    void TestPractitionerUserAccoountValidation_WhenPractitionerDoesNotExist_FailsValidation() {
         String practitionerId = "practitionerId";
         PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, "userAccountId");
-        Practitioner practitioner = new Practitioner("id", "prefix", "given", "family", "");
                
-        when(entityStore.getEntity(practitionerId)).thenReturn(Optional.of(practitioner));
+        when(entityStore.getEntity(practitionerId)).thenReturn(Optional.empty());
         var result = validator.validate(userAccount);
         assertThat(result.isValid(), is(false));
-        assertThat(result.getErrorMessage(), containsString("id invalid"));
+        assertThat(result.getErrorMessage(), containsString("Invalid participant id"));
     }
+
+    @ParameterizedTest
+    @CsvSource({"practitionerId,,userAccountId",
+                ",userAccountId,practitionerId",
+                "null,null,practitionerId",
+                "null,userAccountId,practitionerId",
+                "practitionerId,null,userAccountId"
+    })
+    void TestPractitionerUserAccountValidation_WhenFieldsAreEmptyOrNull_ThrowsValidationException(
+        @ConvertWith(NullableConverter.class) String practitionerId,
+        @ConvertWith(NullableConverter.class) String userAccountId,
+        String expectedField) {
+        // Arrange
+        PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, userAccountId);
+        
+        // Act + Assert
+        var result = validator.validate(userAccount);
+        assertThat(result.isValid(), is(false));
+        assertThat(result.getErrorMessage(), containsString(expectedField));
+    }    
 }
