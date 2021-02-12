@@ -45,7 +45,6 @@ class PractitionerServiceTests {
     private EntityStore<RoleAssignment> roleAssignmentStore;
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
-
     private PractitionerService service;
     private PractitionerService serviceSpy;
 
