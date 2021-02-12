@@ -37,11 +37,20 @@ class SiteValidationTests {
     private static final List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", ""),
         new SiteAttributeConfiguration("alias", "Alias", ""),
-        new SiteAttributeConfiguration("parentSiteId", "Parent SiteId", ""),
+        new SiteAttributeConfiguration("parentSiteId", "Parent Site Id", ""),
         new SiteAttributeConfiguration("siteType", "Site Type", ""));
 
-    private static final List<SiteAttributeConfiguration> INCOMNPLETE_MAP = List.of(
+    private static final List<SiteAttributeConfiguration> INCOMPLETE_MAP = List.of(
                 new SiteAttributeConfiguration("name", "Name", ""));
+
+    private static final List<SiteAttributeConfiguration> INCOMPLETE_MAP_A = List.of(
+            new SiteAttributeConfiguration("name", "Name", ""),
+            new SiteAttributeConfiguration("alias", "Alias", ""));
+
+    private static final List<SiteAttributeConfiguration> INCOMPLETE_MAP_B = List.of(
+            new SiteAttributeConfiguration("name", "Name", ""),
+            new SiteAttributeConfiguration("alias", "Alias", ""),
+            new SiteAttributeConfiguration("parentSiteId", "Parent Site Id", ""));
 
     private static final List<SiteAttributeConfiguration> ERROR_MAP = List.of(
         new SiteAttributeConfiguration("wrongname", "WrongName",""),
@@ -79,7 +88,23 @@ class SiteValidationTests {
     void TestSiteValidation_WhenInitWithIncompleteConfig_ThrowsRuntimeException() {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
-            "Site", "CCO", INCOMNPLETE_MAP, SITE_CONFIGURATION_LIST));
+            "Site", "CCO", INCOMPLETE_MAP, SITE_CONFIGURATION_LIST));
+
+        // Act + Assert
+        Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(configurationProvider),
+                "Expecting incomplete configuration to throw");
+
+        // Arrange
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
+                "Site", "CCO", INCOMPLETE_MAP_A, SITE_CONFIGURATION_LIST));
+
+        // Act + Assert
+        Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(configurationProvider),
+                "Expecting incomplete configuration to throw");
+
+        // Arrange
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("site",
+                "Site", "CCO", INCOMPLETE_MAP_B, SITE_CONFIGURATION_LIST));
 
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(configurationProvider),
