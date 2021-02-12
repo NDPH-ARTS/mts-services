@@ -1,20 +1,25 @@
 package uk.ac.ox.ndph.mts.site_service.service;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
-import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
+import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,26 +30,43 @@ import java.util.Optional;
 @Service
 public class SiteServiceImpl implements SiteService {
 
+    private final Map<String, SiteConfiguration> sitesByType = new HashMap<>();
+    private final Map<String, String> parentTypeByChildType = new HashMap<>();
     private final EntityStore<Site, String> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
+     * @param configurationProvider provide Site Configuration
      * @param siteStore        Site store interface
      * @param entityValidation Site validation interface
      */
     @Autowired
-    public SiteServiceImpl(final EntityStore<Site, String> siteStore,
+    public SiteServiceImpl(SiteConfigurationProvider configurationProvider,
+                           final EntityStore<Site, String> siteStore,
                            ModelEntityValidation<Site> entityValidation) {
+        if (configurationProvider == null) {
+            throw new InitialisationError("site configuration provider cannot be null");
+        }
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
         }
         if (entityValidation == null) {
             throw new InitialisationError("entity validation cannot be null");
         }
+        var configuration = configurationProvider.getConfiguration();
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
+        addTypesToMap(configuration);
         logger.info(Services.STARTUP.message());
+    }
+
+    private void addTypesToMap(final SiteConfiguration configuration) {
+        this.sitesByType.put(configuration.getType(), configuration);
+        for (final var childConfig : CollectionUtils.emptyIfNull(configuration.getChild())) {
+            addTypesToMap(childConfig);
+            this.parentTypeByChildType.put(childConfig.getType(), configuration.getType());
+        }
     }
 
     /**
@@ -54,20 +76,29 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public String save(final Site site) {
         var validationResponse = entityValidation.validate(site);
+        String siteTypeForSite = StringUtils.defaultString(site.getSiteType());
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
+
         if (findSiteByName(site.getName()).isPresent()) {
-            throw new ValidationException(Services.SITE_EXISTS.message());
+            throw new ValidationException(Services.SITE_NAME_EXISTS.message());
         }
+
         if (site.getParentSiteId() == null) {
             if (isRootSitePresent()) {
-                throw new ValidationException(Services.ONE_ROOT_SITE.message());
+                throw new ValidationException(Services.ROOT_SITE_EXISTS.message());
+            } else {
+                if (!sitesByType.containsKey(siteTypeForSite) || parentTypeByChildType.containsKey(siteTypeForSite)) {
+                    throw new ValidationException(Services.INVALID_ROOT_SITE.message());
+                }
             }
         } else {
-            validationResponse = validateParentSiteExists(site.getParentSiteId());
-            if (!validationResponse.isValid()) {
-                throw new ValidationException(validationResponse.getErrorMessage());
+            Site siteParent = findSiteById(site.getParentSiteId());
+            String siteParentType = siteParent.getSiteType();
+            String allowedParentType = parentTypeByChildType.get(siteTypeForSite);
+            if (!siteParentType.equalsIgnoreCase(allowedParentType)) {
+                throw new ValidationException(Services.INVALID_CHILD_SITE_TYPE.message());
             }
         }
         return siteStore.saveEntity(site);
@@ -88,13 +119,6 @@ public class SiteServiceImpl implements SiteService {
             throw new InvariantException(Services.NO_ROOT_SITE.message());
         }
         return sites;
-    }
-
-    private ValidationResponse validateParentSiteExists(final String parentSiteId) {
-        if (this.siteStore.findById(parentSiteId).isPresent()) {
-            return new ValidationResponse(true, "");
-        }
-        return new ValidationResponse(false, Services.PARENT_NOT_FOUND.message());
     }
 
     /**

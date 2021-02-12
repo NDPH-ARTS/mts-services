@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.configuration;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 @Component
 public class SiteConfigurationProvider {
 
-    @Value("classpath:site-configuration.json")
+    @Value("classpath:site-configuration1.json")
     Resource configurationFile;
 
     private SiteConfiguration configuration;
@@ -27,8 +28,11 @@ public class SiteConfigurationProvider {
     public SiteConfiguration getConfiguration() {
         if (configuration == null) {
             try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
                 String jsonString = new String(configurationFile.getInputStream().readAllBytes());
-                configuration = new ObjectMapper().readValue(jsonString, SiteConfiguration.class);
+                configuration = objectMapper.readValue(jsonString, SiteConfiguration.class);
             } catch (Exception e) {
                 throw new InitialisationError(Configurations.ERROR.message(), e);
             }

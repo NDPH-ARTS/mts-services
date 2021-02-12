@@ -31,7 +31,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     static class AttributeData {
         private String description;
         private Pattern regex;
-        private Function<Site, String> getValue;
+        private Function<Site, String> value;
     }
 
     private static final String REGEX_ALL = ".*";
@@ -50,7 +50,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
                 .collect(Collectors.toMap(Pair::getRight,
                     pair -> new AttributeData(pair.getLeft().getDisplayName(),
                                 Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
-                                pair.getRight().getGetValue())));
+                                pair.getRight().getValue())));
 
         validateMap();
         logger.info(Validations.STARTUP.message(), configuration);
@@ -66,12 +66,20 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         if (!validation.isValid()) {
             return validation;
         }
+        validation = validateArgument(Attribute.PARENT_SITE_ID, entity);
+        if (!validation.isValid()) {
+            return validation;
+        }
+        validation = validateArgument(Attribute.SITE_TYPE, entity);
+        if (!validation.isValid()) {
+            return validation;
+        }
         return new ValidationResponse(true, "");
     }
 
     private ValidationResponse validateArgument(Attribute attribute, Site site) {
         var validation = validationMap.get(attribute);
-        var value = validation.getGetValue().apply(site);
+        var value = validation.getValue().apply(site);
         if (value == null) {
             value = "";
         }
@@ -84,7 +92,9 @@ public class SiteValidation implements ModelEntityValidation<Site> {
 
     private void validateMap() {
         if (validationMap.get(Attribute.NAME) == null
-                || validationMap.get(Attribute.ALIAS) == null) {
+                || validationMap.get(Attribute.ALIAS) == null
+                    || validationMap.get(Attribute.PARENT_SITE_ID) == null
+                        || validationMap.get(Attribute.SITE_TYPE) == null) {
             throw new InitialisationError("Configuration field cannot be missing");
         }
     }
