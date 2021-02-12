@@ -92,6 +92,7 @@ public class FhirContextWrapper {
     /**
      * Execute a query read for the given resource type and ID
      *
+     * @param <T>           The resource type to support
      * @param uri           FHIR endpoint URI
      * @param resourceClass resource class to return
      * @param id            ID to lookup

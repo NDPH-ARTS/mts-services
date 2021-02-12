@@ -11,14 +11,16 @@ import java.util.function.Function;
 public enum Attribute {
 
     NAME(AttributeNames.NAME.nameof(), Site::getName),
-    ALIAS(AttributeNames.ALIAS.nameof(), Site::getAlias);
+    ALIAS(AttributeNames.ALIAS.nameof(), Site::getAlias),
+    PARENT_SITE_ID(AttributeNames.PARENT_SITE_ID.nameof(), Site::getParentSiteId),
+    SITE_TYPE(AttributeNames.SITE_TYPE.nameof(), Site::getSiteType);
 
     private String attributeName;
-    private Function<Site, String> getValue;
+    private Function<Site, String> value;
 
-    Attribute(String attributeName, Function<Site, String> getValue) {
+    Attribute(String attributeName, Function<Site, String> value) {
         this.attributeName = attributeName;
-        this.getValue = getValue;
+        this.value = value;
     }
     
     /**
@@ -33,8 +35,8 @@ public enum Attribute {
      * gets the getter function for this attribute
      * @return a function that returns value from site
      */
-    public Function<Site, String> getGetValue() {
-        return getValue;
+    public Function<Site, String> getValue() {
+        return value;
     }
 
     /**
@@ -48,6 +50,10 @@ public enum Attribute {
             return NAME;
         } else if (AttributeNames.ALIAS.nameof().equals(input)) {
             return ALIAS;
+        } else if (AttributeNames.PARENT_SITE_ID.nameof().equals(input)) {
+            return PARENT_SITE_ID;
+        } else if (AttributeNames.SITE_TYPE.nameof().equals(input)) {
+            return SITE_TYPE;
         }
         throw new InitialisationError(String.format(Models.STRING_PARSE_ERROR.error(), input));
     }
