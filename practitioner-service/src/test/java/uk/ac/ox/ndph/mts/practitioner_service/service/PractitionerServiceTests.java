@@ -245,6 +245,19 @@ class PractitionerServiceTests {
     }
 
     @Test
+    void TestSaveRoleAssignment_WhenGetPractitionerReturnsOtherException_ThrowsThatException() {
+        // Arrange
+        var ex = new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        String practitionerId = "unknown";
+        doThrow(ex).when(serviceSpy).findPractitionerById(practitionerId);
+
+        RoleAssignment entity = new RoleAssignment(practitionerId, "siteId", "roleId");
+
+        //Act + Assert
+        Assertions.assertThrows(ex.getClass(), () -> serviceSpy.saveRoleAssignment(entity));
+    }
+
+    @Test
     void TestSaveRoleAssignment_WhenInvalidPractitioner_DoesntSaveToStore() {
         // Arrange
         RoleAssignment entity = new RoleAssignment(null, "site", "role");

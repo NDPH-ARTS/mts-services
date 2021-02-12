@@ -83,9 +83,9 @@ public class PractitionerService implements EntityService {
         } catch (ResponseStatusException ex) {
             if (ex.getStatus() == HttpStatus.NOT_FOUND) {
                 throw new ValidationException(ex.getMessage());
-            } else {
-                throw ex;
             }
+
+            throw ex;
         }
 
         ValidationResponse validationResponse = roleAssignmentValidator.validate(roleAssignment);
