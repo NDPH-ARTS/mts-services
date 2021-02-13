@@ -33,6 +33,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
       - name: Build & publish runtime image
+        env:
+          DOCKER_BUILDKIT: 1
         run: |
           set -o errexit
           set -o nounset
@@ -83,3 +85,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: 'api-tests/api-test-results.xml'
           fail_on_test_failures: true
+          fail_if_no_tests: true
