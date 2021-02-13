@@ -25,27 +25,10 @@ docker-compose pull -q
 docker-compose up --no-build -d practitioner-service role-service site-service
 
 echo "Waiting for docker compose services..."
-
 while ! is_healthy site-service; do sleep 10; done
 while ! is_healthy role-service; do sleep 10; done
 while ! is_healthy practitioner-service; do sleep 10; done
-
 echo "Services started."
-
-    if [ "$health_status" = "healthy" ]; then
-        echo "$1 is healthy"
-        return 0
-    else
-        echo "Waiting for $1"
-        return 1
-    fi
-}
-
-while ! is_healthy site-service; do sleep 10; done
-while ! is_healthy role-service; do sleep 10; done
-while ! is_healthy practitioner-service; do sleep 10; done
-
-echo "Core services started."
 
 
 echo "Running init-service..."
@@ -60,6 +43,6 @@ then
   echo "init-service completed successfully."
   exit 0
 else
-  echo "init-service failure! exit code was: $RUN_EXIT_CODE" >&2
+  echo "init-service failure!" >&2
   exit 1
 fi

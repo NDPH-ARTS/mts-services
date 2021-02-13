@@ -78,10 +78,11 @@ jobs:
           ./.ci/docker/check-docker-compose-services.sh
           npm run --prefix api-tests api-test-ci
           docker-compose down
-      - name: Publish API Test Report
+      - name: Process API Tests Report
         if: always()
         uses: scacap/action-surefire-report@v1
         with:
+          check_name: API Tests Report Check
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: 'api-tests/api-test-results.xml'
           fail_on_test_failures: true
