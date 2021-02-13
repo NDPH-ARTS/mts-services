@@ -1,7 +1,11 @@
-docker-compose pull -q
-docker-compose up --scale init-service=0 -d --no-build
+#!/usr/bin/env bash
+#
+# This is an lite integration script that bring the services up, and init the system.
 
-echo "Waiting for docker compose services..."
+set -o errexit
+set -o pipefail
+set -o nounset
+# set -o xtrace
 
 is_healthy() {
     service="$1"
@@ -17,8 +21,45 @@ is_healthy() {
     fi
 }
 
-while ! is_healthy site-service; do sleep 10; done
-while ! is_healthy practitioner-service; do sleep 10; done
-while ! is_healthy role-service; do sleep 10; done
+docker-compose pull -q
+docker-compose up --no-build -d practitioner-service role-service site-service
 
-echo "Compose services started."
+echo "Waiting for docker compose services..."
+
+while ! is_healthy site-service; do sleep 10; done
+while ! is_healthy role-service; do sleep 10; done
+while ! is_healthy practitioner-service; do sleep 10; done
+
+echo "Services started."
+
+    if [ "$health_status" = "healthy" ]; then
+        echo "$1 is healthy"
+        return 0
+    else
+        echo "Waiting for $1"
+        return 1
+    fi
+}
+
+while ! is_healthy site-service; do sleep 10; done
+while ! is_healthy role-service; do sleep 10; done
+while ! is_healthy practitioner-service; do sleep 10; done
+
+echo "Core services started."
+
+
+echo "Running init-service..."
+set +o errexit # the run might fail and we'd like to continue the script
+docker-compose run --no-deps init-service
+run_exit_code=$?
+set -o errexit
+
+# check the run command exit code
+if [ $run_exit_code -eq 0 ]
+then
+  echo "init-service completed successfully."
+  exit 0
+else
+  echo "init-service failure! exit code was: $RUN_EXIT_CODE" >&2
+  exit 1
+fi
