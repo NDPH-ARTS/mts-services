@@ -62,7 +62,7 @@ jobs:
 
   test:
     name: API Integration Tests
-    if: github.event_name == 'pull_request'
+    if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     needs: build
     runs-on: ubuntu-latest
     steps:
