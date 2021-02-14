@@ -1,12 +1,10 @@
 spring:
   cloud:
     config:
+      enabled: false
       discovery:
         enabled: false
 
 eureka:
   client:
-    fetch-registry: true
-    registerWithEureka: true
-    serviceUrl:
-      defaultZone: http://placeholder:8761/eureka/
+    fetch-registry: false
