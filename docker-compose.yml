@@ -67,6 +67,7 @@ services:
     environment:
       SERVER_PORT: "8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      FHIR_URI: "http://fhir-api:8080"
     healthcheck:
       test: curl http://localhost:8083
       interval: 10s
