@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# This is an lite integration script that bring the services up, and init the system.
+# This is an lite integration script that brings the services up, and init the system.
 
 set -o errexit
 set -o pipefail
@@ -24,7 +24,7 @@ is_healthy() {
 docker-compose pull -q
 docker-compose up --no-build -d practitioner-service role-service site-service
 
-echo "Waiting for docker compose services..."
+echo "Waiting for services to become healthy..."
 while ! is_healthy site-service; do sleep 10; done
 while ! is_healthy role-service; do sleep 10; done
 while ! is_healthy practitioner-service; do sleep 10; done
