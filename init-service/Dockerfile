@@ -13,6 +13,7 @@ COPY ./fhir-client/pom.xml ./fhir-client/
 # copy poms of ALL services
 COPY ./config-server/pom.xml ./config-server/
 COPY ./discovery-server/pom.xml ./discovery-server/
+COPY ./gateway-server/pom.xml ./gateway-server/
 COPY ./sample-service/pom.xml ./sample-service/
 COPY ./init-service/pom.xml ./init-service/
 COPY ./practitioner-service/pom.xml ./practitioner-service/

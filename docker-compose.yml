@@ -21,6 +21,7 @@ services:
       FHIR_URI: "http://fhir-api:8080"
       ROLE_SERVICE_URI: "http://role-service:8082"
       SITE_SERVICE_URI: "http://site-service:8083"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
     healthcheck:
       test: curl http://localhost:8081
       interval: 10s
@@ -153,6 +154,25 @@ services:
       - "8761:8761"
     healthcheck:
       test: curl http://discovery-server:8761/
+      interval: 10s
+      timeout: 10s
+      retries: 6 # a quick service
+
+  gateway-server:
+    build:
+      context: .
+      dockerfile: gateway-server/Dockerfile
+      args:
+        SVC: gateway-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_PROFILES_ACTIVE: "local"
+    image: ghcr.io/ndph-arts/gateway-server:${GITHUB_SHA}
+    restart: on-failure
+    ports:
+      - "8072:8072"
+    healthcheck:
+      test: curl http://gateway-server:8761/
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
