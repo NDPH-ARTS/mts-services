@@ -87,7 +87,7 @@ services:
       PRACTITIONER_SERVICE: "http://practitioner-service:8081"
       ROLE_SERVICE: "http://role-service:8082"
       SITE_SERVICE: "http://site-service:8083"
-      CONFIG_JSON: config-init.json
+      CONFIG_JSON: config.json
       SPRING_PROFILES_ACTIVE: "local"
     depends_on:
       practitioner-service:

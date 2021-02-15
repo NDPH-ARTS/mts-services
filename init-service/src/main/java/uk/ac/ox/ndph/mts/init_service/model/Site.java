@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.init_service.model;
 public class Site implements Entity {
     private String name;
     private String alias;
+    private String siteType;
 
     public String getName() {
         return name;
@@ -20,8 +21,17 @@ public class Site implements Entity {
         this.alias = alias;
     }
 
+    public String getSiteType() {
+        return siteType;
+    }
+
+    public void setSiteType(String siteType) {
+        this.siteType = siteType;
+    }
+
     @Override
     public String toString() {
-        return String.format("Site{name='%s', alias='%s'}", name, alias);
+        return String.format("Site{name='%s', alias='%s', type='%s'}", name, alias, siteType);
     }
+
 }
