@@ -4,5 +4,7 @@ spring:
       enabled: false
       discovery:
         enabled: false
-    discovery:
-      enabled: false
+
+eureka:
+  client:
+    fetch-registry: false
