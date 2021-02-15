@@ -45,6 +45,7 @@ class PractitionerControllerTests {
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
     private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
+    private final String practitionerLinkUri = "/practitioner/6/link";
 
     @Autowired
     private MockMvc mockMvc;
@@ -133,7 +134,7 @@ class PractitionerControllerTests {
     @Test
     void TestLinkPractitioner_whenParamsNotPresent_error() throws Exception {
         // Act
-        this.mockMvc.perform(post("/practitioner/6/link")
+        this.mockMvc.perform(post(practitionerLinkUri)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());
         // Assert
@@ -147,7 +148,7 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post("/practitioner/56/link")
+                .perform(post(practitionerLinkUri)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .content(new ObjectMapper().writeValueAsString(new PractitionerUserAccount("", "directoryId"))))
                                  .andExpect(status().isOk());

@@ -3,7 +3,6 @@ package uk.ac.ox.ndph.mts.practitioner_service.converter;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.StringType;
 import org.springframework.stereotype.Component;
 
 import org.springframework.util.StringUtils;
