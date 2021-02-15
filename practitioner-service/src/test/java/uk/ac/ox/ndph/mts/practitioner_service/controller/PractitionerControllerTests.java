@@ -12,18 +12,25 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
+
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +45,8 @@ class PractitionerControllerTests {
     private final String practitionerUri = "/practitioner";
     private final String roleAssignmentUri = "/practitioner/987/roles";
     private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
+    private final String practitionerLinkUri = "/practitioner/6/link";
+
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -60,7 +69,7 @@ class PractitionerControllerTests {
         // Arrange
         String practitionerId = "practitionerId";
         when(entityService.findPractitionerById(practitionerId))
-                .thenReturn(new Practitioner("42", "prefix", "given", "family"));
+                .thenReturn(new Practitioner("42", "prefix", "given", "family", "userAccountId"));
         // Act + Assert
         this.mockMvc
                 .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))
@@ -122,6 +131,28 @@ class PractitionerControllerTests {
         assertThat(error, containsString("prefix"));
     }
 
+    @Test
+    void TestLinkPractitioner_whenParamsNotPresent_error() throws Exception {
+        // Act
+        this.mockMvc.perform(post(practitionerLinkUri)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest());
+        // Assert
+        verify(entityService, never()).linkPractitioner((any(PractitionerUserAccount.class)));
+    }
+
+    @Test
+    void linkPractitioner_whenLinkSucceeds_thenReturnCreatedStatus() throws Exception {
+        // Arrange
+        doNothing().when(entityService).linkPractitioner(any(PractitionerUserAccount.class));
+
+        // Act + Assert
+        this.mockMvc
+                .perform(post(practitionerLinkUri)
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .content(new ObjectMapper().writeValueAsString(new PractitionerUserAccount("", "directoryId"))))
+                                 .andExpect(status().isOk());
+    }
 
     // RoleAssignment Tests
 

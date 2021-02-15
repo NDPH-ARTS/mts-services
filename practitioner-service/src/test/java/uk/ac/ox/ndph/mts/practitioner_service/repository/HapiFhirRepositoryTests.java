@@ -3,8 +3,8 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,14 +12,12 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uhn.fhir.model.api.Include;
-import ca.uhn.fhir.rest.gclient.ICriterion;
-import com.jayway.jsonpath.Criteria;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,13 +26,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import uk.ac.ox.ndph.mts.practitioner_service.converter.PractitionerRoleConverter;
 import ca.uhn.fhir.rest.server.exceptions.UnclassifiedServerFailureException;
+import uk.ac.ox.ndph.mts.practitioner_service.converter.PractitionerRoleConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
-
-import javax.naming.Name;
 
 @ExtendWith(MockitoExtension.class)
 class HapiFhirRepositoryTests {
@@ -83,6 +80,28 @@ class HapiFhirRepositoryTests {
         var value = bundleCaptor.getValue();
         var type = value.getType();
         assertThat(type, equalTo(Bundle.BundleType.TRANSACTION));
+    }
+    
+    @Test
+    void TestHapiRepository_WhenSaveExistingPractitioner_SendsBundleWithPUTMethod() throws FhirServerResponseException {
+        // Arrange
+        var responseBundle = new Bundle();
+        when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(responseBundle);
+        when(fhirContextWrapper.toListOfResources(any(Bundle.class))).thenReturn(List.of(new Practitioner()));
+        var practitioner = new Practitioner();
+
+        practitioner.setId("theId");
+        
+        // Act
+        repository.savePractitioner(practitioner);
+
+        // Assert
+        verify(fhirContextWrapper).executeTransaction(bundleCaptor.capture());
+        var value = bundleCaptor.getValue();
+        var request = value.getEntry().get(0).getRequest();
+        var type = value.getType();
+        assertThat(type, equalTo(Bundle.BundleType.TRANSACTION));
+        assertThat(request.getMethod(), equalTo(HTTPVerb.PUT));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.converter;
 
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Identifier;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +35,10 @@ public class ModelPractitionerConverter implements EntityConverter<Practitioner,
 
         if (StringUtils.hasText(input.getUserAccountId())) {
             final Identifier identifier = new Identifier();
-            identifier.setValue(input.getUserAccountId());
-            fhirPractitioner.setIdentifier(List.of(identifier));
+            identifier.setUse(IdentifierUse.OFFICIAL);
+            identifier.setId(Practitioner.USERACCOUNTID_IDENTIFIER_NAME);
+            identifier.setValue(input.getUserAccountId());            
+            fhirPractitioner.addIdentifier(identifier);
         }
 
         return fhirPractitioner;
