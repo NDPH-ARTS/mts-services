@@ -63,8 +63,8 @@ class SiteValidationTests {
                             )))));
 
     @ParameterizedTest
-    @CsvSource({ ",,,testType,Name", ",test,,,Name", "test,,testId,testType,Alias",
-                "test,null,testId,testType,Alias", "null,null,testId,testType,Name", "null,test,testId,testType,Name",
+    @CsvSource({ ",,,testType,Name", ",test,,,Name", "test,,testId,testType,Alias", "test,null,testId,testType,Alias",
+                "null,null,testId,testType,Name", "null,test,testId,testType,Name",
                 "test,test,null,testType,Parent Site Id", "test,test,testId,null,Site Type" })
     void TestValidate_WhenFieldsAreEmptyOrNull_ThrowsValidationException(
             @ConvertWith(NullableConverter.class) String name,
@@ -178,55 +178,22 @@ class SiteValidationTests {
         assertThat(result.isValid(), is(true));
     }
 
-    @Test
-    void TestValidate_WhenSiteWithFieldEmptySpaces_ThrowsException() {
+    @ParameterizedTest
+    @CsvSource({"name,   ,parentSiteId,siteType,failed validation",
+                "name,LongLongLongLongLongLongLongLongLongLongLongLongLong,parentSiteId,siteType,failed validation"
+    })
+    void TestValidate_WhenSiteWithField_EmptySpaces_LessThanMinLength_ExceedMaxLength_ThrowsException(
+            @ConvertWith(NullableConverter.class) String name,
+            @ConvertWith(NullableConverter.class) String alias,
+            @ConvertWith(NullableConverter.class) String parentSiteId,
+            @ConvertWith(NullableConverter.class) String siteType,
+            @ConvertWith(NullableConverter.class) String failedValidation) {
+
         // Arrange
-        String name = "name";
-        String alias = "   ";
-        String parentSiteId = "parentSiteId";
-        String siteType = "siteType";
-        String failedValidation = "failed validation";
         when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
                 "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
         var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(name, alias, parentSiteId, siteType);
 
-        // Act + Assert
-        var result = siteValidation.validate(site);
-        assertThat(result.isValid(), is(false));
-        assertThat(result.getErrorMessage(), containsString(failedValidation));
-    }
-
-    @Test
-    void TestValidate_WhenSiteWithFieldLessThanMinLength_ThrowsException() {
-        // Arrange
-        String name = "name";
-        String alias = "";
-        String parentSiteId = "parentSiteId";
-        String siteType = "siteType";
-        String failedValidation = "failed validation";
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
-                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
-        var siteValidation = new SiteValidation(configurationProvider);
-        Site site = new Site(name, alias, parentSiteId, siteType);
-
-        // Act + Assert
-        var result = siteValidation.validate(site);
-        assertThat(result.isValid(), is(false));
-        assertThat(result.getErrorMessage(), containsString(failedValidation));
-    }
-
-    @Test
-    void TestValidate_WhenSiteWithFieldExceedMaxLength_ThrowsException() {
-        // Arrange
-        String name = "name";
-        String alias = "LongLongLongLongLongLongLongLongLongLongLongLongLong";
-        String parentSiteId = "parentSiteId";
-        String siteType = "siteType";
-        String failedValidation = "failed validation";
-        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
-                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
-        var siteValidation = new SiteValidation(configurationProvider);
         Site site = new Site(name, alias, parentSiteId, siteType);
 
         // Act + Assert
