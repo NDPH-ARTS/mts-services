@@ -164,24 +164,24 @@ services:
       timeout: 10s
       retries: 6 # a quick service
 
-  #gateway-server:
-  #  build:
-  #    context: .
-  #    dockerfile: gateway-server/Dockerfile
-  #    args:
-  #      SVC: gateway-server
-  #  environment:
-  #    EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-  #    SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
-  #  image: ghcr.io/ndph-arts/gateway-server:${GITHUB_SHA}
-  #  restart: on-failure
-  #  ports:
-  #    - "8072:8072"
-  #  healthcheck:
-  #    test: curl http://gateway-server:8072/
-  #    interval: 10s
-  #    timeout: 10s
-  #    retries: 6 # a quick service
+  gateway-server:
+    build:
+      context: .
+      dockerfile: gateway-server/Dockerfile
+      args:
+        SVC: gateway-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+    image: ghcr.io/ndph-arts/gateway-server:${GITHUB_SHA}
+    restart: on-failure
+    ports:
+      - "8072:8072"
+    healthcheck:
+      test: curl http://gateway-server:8072/
+      interval: 10s
+      timeout: 10s
+      retries: 6 # a quick service
 
   #############
   # DATABASES #
