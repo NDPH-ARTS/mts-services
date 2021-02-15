@@ -29,10 +29,10 @@ class SiteValidationTests {
     private SiteConfigurationProvider configurationProvider;
 
     private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
-        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("parentSiteId", "Parent Site Id", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("siteType", "Site Type", "^[a-zA-Z]{1,35}$"));
+        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z\\s]{1,35}$"),
+        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z\\s]{1,35}$"),
+        new SiteAttributeConfiguration("parentSiteId", "Parent Site Id", "^[a-zA-Z\\s]{1,35}$"),
+        new SiteAttributeConfiguration("siteType", "Site Type", "^[a-zA-Z\\s]{1,35}$"));
 
     private static final List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", ""),
@@ -159,4 +159,79 @@ class SiteValidationTests {
         assertThat(result.isValid(), is(true));
     }
 
+    @Test
+    void TestValidate_WhenSiteWithFieldMaxLength_ReturnsValidReponse() {
+        // Arrange
+        String name = "name";
+        String alias = "Long LongLongLongLongLong Long Long";
+        String parentSiteId = "parentSiteId";
+        String siteType = "siteType";
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
+                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
+        var siteValidation = new SiteValidation(configurationProvider);
+        Site site = new Site(name, alias, parentSiteId, siteType);
+
+        // Act
+        var result = siteValidation.validate(site);
+
+        // Assert
+        assertThat(result.isValid(), is(true));
+    }
+
+    @Test
+    void TestValidate_WhenSiteWithFieldEmptySpaces_ThrowsException() {
+        // Arrange
+        String name = "name";
+        String alias = "   ";
+        String parentSiteId = "parentSiteId";
+        String siteType = "siteType";
+        String failedValidation = "failed validation";
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
+                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
+        var siteValidation = new SiteValidation(configurationProvider);
+        Site site = new Site(name, alias, parentSiteId, siteType);
+
+        // Act + Assert
+        var result = siteValidation.validate(site);
+        assertThat(result.isValid(), is(false));
+        assertThat(result.getErrorMessage(), containsString(failedValidation));
+    }
+
+    @Test
+    void TestValidate_WhenSiteWithFieldLessThanMinLength_ThrowsException() {
+        // Arrange
+        String name = "name";
+        String alias = "";
+        String parentSiteId = "parentSiteId";
+        String siteType = "siteType";
+        String failedValidation = "failed validation";
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
+                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
+        var siteValidation = new SiteValidation(configurationProvider);
+        Site site = new Site(name, alias, parentSiteId, siteType);
+
+        // Act + Assert
+        var result = siteValidation.validate(site);
+        assertThat(result.isValid(), is(false));
+        assertThat(result.getErrorMessage(), containsString(failedValidation));
+    }
+
+    @Test
+    void TestValidate_WhenSiteWithFieldExceedMaxLength_ThrowsException() {
+        // Arrange
+        String name = "name";
+        String alias = "LongLongLongLongLongLongLongLongLongLongLongLongLong";
+        String parentSiteId = "parentSiteId";
+        String siteType = "siteType";
+        String failedValidation = "failed validation";
+        when(configurationProvider.getConfiguration()).thenReturn(new SiteConfiguration("Organization",
+                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
+        var siteValidation = new SiteValidation(configurationProvider);
+        Site site = new Site(name, alias, parentSiteId, siteType);
+
+        // Act + Assert
+        var result = siteValidation.validate(site);
+        assertThat(result.isValid(), is(false));
+        assertThat(result.getErrorMessage(), containsString(failedValidation));
+    }
 }
