@@ -5,7 +5,10 @@ spring:
     gateway:
       discovery:
         locator:
+          # https://cloud.spring.io/spring-cloud-gateway/reference/html/appendix.html
+          # Flag that enables DiscoveryClient gateway integration.
           enabled: true
+          # Option to lower case serviceId in predicates and filters, defaults to false. Useful with eureka when it automatically uppercases serviceId. so MYSERIVCE, would match /myservice/**
           lower-case-service-id: true
 
 server:
@@ -14,6 +17,5 @@ server:
 eureka:
   client:
     registerWithEureka: false
-    fetch-registry: true
     serviceUrl:
       defaultZone: http://placeholder:8761/eureka/
