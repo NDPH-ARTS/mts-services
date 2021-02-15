@@ -21,7 +21,7 @@ const createPerson = {
 const createSite = {
     "name": utils.getRandomString(5),
     "alias": utils.getRandomString(3),
-    "parentSiteId": "5d01f252-d41c-40f8-b3c1-4bd7282fb28e",
+    "parentSiteId": "",
     "siteType": "REGION"
 }
 
