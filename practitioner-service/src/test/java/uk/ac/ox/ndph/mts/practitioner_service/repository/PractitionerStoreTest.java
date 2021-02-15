@@ -27,7 +27,7 @@ class PractitionerStoreTest {
     @Test
     void TestSaveEntity_WhenValidEntity_SaveToRepositoryAndReturnGeneratedId() {
         //arrange
-        var inputPractitioner = new Practitioner(null, "prefix", "givenName", "familyName");
+        Practitioner inputPractitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         var outputPractitioner = new org.hl7.fhir.r4.model.Practitioner();
         when(modelToFhirConverter.convert(any(Practitioner.class))).thenReturn(outputPractitioner);
         when(repository.savePractitioner(any(org.hl7.fhir.r4.model.Practitioner.class))).thenReturn("123");

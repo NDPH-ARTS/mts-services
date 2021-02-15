@@ -31,7 +31,7 @@ class ModelPractitionerConverterTest {
 
     @Test
     void convert_ConvertsValidPractitioner() {
-        Practitioner practitioner = new Practitioner("42", "prefix", "given", "family");
+        Practitioner practitioner = new Practitioner("42", "prefix", "given", "family", "userAccountId");
 
         var fhirPractitioner = converter.convert(practitioner);
         HumanName practitionerName = fhirPractitioner.getName().get(0);
@@ -45,8 +45,8 @@ class ModelPractitionerConverterTest {
     @ParameterizedTest
     @MethodSource("getBlankStrings")
     void convert_whenModelHasBlankUserAccountId_thenFhirPractitionerHasNoIdentifiers(final String userAccountId) {
-        Practitioner practitioner = new Practitioner("42", "prefix", "given", "family");
-        practitioner.setUserAccountId(userAccountId);
+        Practitioner practitioner = new Practitioner("42", "prefix", "given", "family", userAccountId);
+
 
         // Act
         org.hl7.fhir.r4.model.Practitioner fhirPractitioner = converter.convert(practitioner);
@@ -57,8 +57,7 @@ class ModelPractitionerConverterTest {
 
     @Test
     void convert_whenModelHasUserAccountId_thenFhirPractitionerHasIdentifierWithSameValue() {
-        Practitioner practitioner = new Practitioner("42", "prefix", "given", "family");
-        practitioner.setUserAccountId(USER_ACCOUNT_ID);
+        Practitioner practitioner = new Practitioner("42", "prefix", "given", "family", USER_ACCOUNT_ID);
 
         // Act
         org.hl7.fhir.r4.model.Practitioner fhirPractitioner = converter.convert(practitioner);
