@@ -38,7 +38,6 @@ public class ModelPractitionerConverter implements EntityConverter<Practitioner,
             final Identifier identifier = new Identifier();
             identifier.setUse(IdentifierUse.OFFICIAL);
             identifier.setId(Practitioner.USERACCOUNTID_IDENTIFIER_NAME);
-            identifier.setValueElement(new StringType(input.getUserAccountId()));
             identifier.setValue(input.getUserAccountId());            
             fhirPractitioner.addIdentifier(identifier);
         }
