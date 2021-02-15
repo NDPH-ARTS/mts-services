@@ -6,12 +6,12 @@
     {
       "name": "name",
       "displayName": "Name",
-      "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+      "validationRegex": "^[a-zA-Z\\s]{1,35}$"
     },
     {
       "name": "alias",
       "displayName": "Alias",
-      "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+      "validationRegex": "^[a-zA-Z\\s]{1,35}$"
     },
     {
       "name": "parentSiteId",
@@ -33,12 +33,12 @@
         {
           "name": "name",
           "displayName": "Name",
-          "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+          "validationRegex": "^[a-zA-Z\\s]{1,35}$"
         },
         {
           "name": "alias",
           "displayName": "Alias",
-          "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+          "validationRegex": "^[a-zA-Z\\s]{1,35}$"
         },
         {
           "name": "parentSiteId",
@@ -60,12 +60,12 @@
             {
               "name": "name",
               "displayName": "Name",
-              "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+              "validationRegex": "^[a-zA-Z\\s]{1,35}$"
             },
             {
               "name": "alias",
               "displayName": "Alias",
-              "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+              "validationRegex": "^[a-zA-Z\\s]{1,35}$"
             },
             {
               "name": "parentSiteId",
@@ -87,12 +87,12 @@
                 {
                   "name": "name",
                   "displayName": "Name",
-                  "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+                  "validationRegex": "^[a-zA-Z\\s]{1,35}$"
                 },
                 {
                   "name": "alias",
                   "displayName": "Alias",
-                  "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+                  "validationRegex": "^[a-zA-Z\\s]{1,35}$"
                 },
                 {
                   "name": "parentSiteId",
@@ -114,12 +114,12 @@
                     {
                       "name": "name",
                       "displayName": "Name",
-                      "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+                      "validationRegex": "^[a-zA-Z\\s]{1,35}$"
                     },
                     {
                       "name": "alias",
                       "displayName": "Alias",
-                      "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+                      "validationRegex": "^[a-zA-Z\\s]{1,35}$"
                     },
                     {
                       "name": "parentSiteId",
@@ -141,12 +141,12 @@
                         {
                           "name": "name",
                           "displayName": "Name",
-                          "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+                          "validationRegex": "^[a-zA-Z\\s]{1,35}$"
                         },
                         {
                           "name": "alias",
                           "displayName": "Alias",
-                          "validationRegex": "^[^\\s]+[-a-zA-Z\\s]{1,35}$"
+                          "validationRegex": "^[a-zA-Z\\s]{1,35}$"
                         },
                         {
                           "name": "parentSiteId",

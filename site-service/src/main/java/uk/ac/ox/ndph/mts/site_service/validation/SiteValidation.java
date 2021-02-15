@@ -83,7 +83,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         if (value == null) {
             value = "";
         }
-        if (!validation.getRegex().matcher(value).matches()) {
+        if (!validation.getRegex().matcher(value.trim()).matches()) {
             return new ValidationResponse(false,
                     String.format(Validations.ERROR.message(), validation.getDescription()));
         }
