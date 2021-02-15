@@ -72,10 +72,13 @@ jobs:
         timeout-minutes: 5
         env:
           SAPASSWORD: $(openssl rand -base64 12)
-          BASE_URL: http://localhost
           GITHUB_SHA: ${{github.sha}}
         run: |
           ./.ci/docker/check-docker-compose-services.sh
+      - name: Run API Tests
+        env:
+          BASE_URL: http://localhost
+        run: |
           npm run --prefix api-tests api-test-ci
           docker-compose down
       - name: Process API Tests Report
