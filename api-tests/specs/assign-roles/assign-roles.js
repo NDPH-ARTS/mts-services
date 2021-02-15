@@ -33,8 +33,7 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         let parseRoleResponseData = JSON.parse(captureRoleResponseData)
         roleId = parseRoleResponseData.id
 
-
-
+        //assign roles to a person
         let assignRoleJSON = requests.assignRole
         assignRoleJSON.siteId = siteId
         assignRoleJSON.roleId = roleId
