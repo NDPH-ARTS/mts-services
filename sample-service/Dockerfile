@@ -22,14 +22,14 @@ COPY ./role-service/pom.xml ./role-service/
 COPY ./site-service/pom.xml ./site-service/
 
 # cache most dependencies as a layer to be used in other builds while POMs don't change
-RUN mvn compile dependency:go-offline --batch-mode -q -amd --projects :${SVC},:security
+RUN mvn compile dependency:go-offline --batch-mode -Dmaven.wagon.http.retryHandler.count=3 -q -amd --projects :${SVC},:security
 
 # copy current service source
 COPY ./${SVC}/src ${SVC}/src
 
 RUN mvn package --batch-mode -q --projects :${SVC},:security
 
-FROM openjdk:11.0.9.1-jre-buster
+FROM adoptopenjdk/openjdk11:jre-11.0.10_9-debianslim
 ARG SVC
 ARG JAR_FILE=${SVC}/target/*.jar
 COPY --from=builder ${JAR_FILE} app.jar
