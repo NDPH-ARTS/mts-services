@@ -1,15 +1,11 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
@@ -21,14 +17,17 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
@@ -82,5 +81,25 @@ public class PractitionerController {
 
         List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(userIdentity);
         return ResponseEntity.ok(roleAssignments);
+    }
+
+    @GetMapping(path = "/profile/{oid}", consumes = MediaType.ALL_VALUE) // Overrides consumes=json at class level.
+    public ResponseEntity<Practitioner> profile(@PathVariable String oid) { // Will come from token once auth in place
+        Logger.getAnonymousLogger().info("Call to profile endpoint " );
+        Practitioner dummy = new Practitioner(
+                oid,
+                "dummy-prefix",
+                "dummy-given-name",
+                "dummy-family-name",
+                "dummy-account-id");
+        return ResponseEntity.ok(dummy);
+    }
+
+    // This won't be needed once authentication module is in place
+    @RequestMapping(value = "/profile/{oid}", method = RequestMethod.OPTIONS, consumes = MediaType.ALL_VALUE) 
+    public ResponseEntity options(HttpServletResponse response, @PathVariable String oid) {
+        Logger.getAnonymousLogger().info("Call to OPTIONS " );
+        response.setHeader("Allow", "GET,OPTIONS");
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
