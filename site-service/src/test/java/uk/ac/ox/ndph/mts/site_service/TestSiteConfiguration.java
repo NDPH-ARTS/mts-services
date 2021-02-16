@@ -1,25 +1,20 @@
 package uk.ac.ox.ndph.mts.site_service;
 
-import org.mockito.Mockito;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-
 @Profile("test-all-required")
-@Primary
-@Configuration
-public class TestSiteConfigurationProvider {
+@SpringBootConfiguration
+public class TestSiteConfiguration {
     
-    private static List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
+    private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
         new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
         new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"),
         new SiteAttributeConfiguration("parentSiteId", "Parent Site Id", ""),
@@ -31,12 +26,12 @@ public class TestSiteConfigurationProvider {
                             Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, null)
                             )))));
 
-    @Bean
+    // use this site config for all tests unless they define their own one
     @Primary
-    public SiteConfigurationProvider siteConfigurationProvider() {
-        var mock = Mockito.mock(SiteConfigurationProvider.class);
-        when(mock.getConfiguration()).thenReturn(new SiteConfiguration("site",
-                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST));
-        return mock;
+    @Bean
+    public SiteConfiguration getSiteConfiguration() {
+        return new SiteConfiguration("site",
+                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST);
     }
+
 }

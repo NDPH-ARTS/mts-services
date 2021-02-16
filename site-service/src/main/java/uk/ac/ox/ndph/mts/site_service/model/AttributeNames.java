@@ -9,7 +9,7 @@ public enum AttributeNames {
     PARENT_SITE_ID("parentSiteId"),
     SITE_TYPE("siteType");
 
-    private String attributeName;
+    private final String attributeName;
 
     AttributeNames(String attributeName) {
         this.attributeName = attributeName;

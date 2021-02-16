@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
@@ -37,16 +36,16 @@ public class SiteServiceImpl implements SiteService {
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 
     /**
-     * @param configurationProvider provide Site Configuration
+     * @param configuration    injected site configuration
      * @param siteStore        Site store interface
      * @param entityValidation Site validation interface
      */
     @Autowired
-    public SiteServiceImpl(SiteConfigurationProvider configurationProvider,
+    public SiteServiceImpl(final SiteConfiguration configuration,
                            final EntityStore<Site, String> siteStore,
-                           ModelEntityValidation<Site> entityValidation) {
-        if (configurationProvider == null) {
-            throw new InitialisationError("site configuration provider cannot be null");
+                           final ModelEntityValidation<Site> entityValidation) {
+        if (configuration == null) {
+            throw new InitialisationError("site configuration cannot be null");
         }
         if (siteStore == null) {
             throw new InitialisationError("site store cannot be null");
@@ -54,7 +53,6 @@ public class SiteServiceImpl implements SiteService {
         if (entityValidation == null) {
             throw new InitialisationError("entity validation cannot be null");
         }
-        var configuration = configurationProvider.getConfiguration();
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
         addTypesToMap(configuration);
