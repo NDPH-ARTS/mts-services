@@ -65,6 +65,33 @@ public class SiteTreeUtilTests {
         );
     }
 
+    @Test
+    public void TestGetSiteTrees_WithChildrenAndRandomOrder_ReturnsTreeWithChildrenAsExpectef(){
+
+        SiteDTO parentSiteDto = getSiteDto("parentSiteId", null);
+        SiteDTO childSiteDto = getSiteDto("childSiteId", "parentSiteId");
+        SiteDTO childSiteDto2 = getSiteDto("childSiteId2", "parentSiteId");
+
+        List<SiteDTO> sites = List.of(childSiteDto, parentSiteDto, childSiteDto2);
+
+        var actualTrees = siteTreeUtil.getSiteSubTrees(sites);
+
+        assertAll(
+                //The tree contains all subtrees
+                ()-> assertEquals(3, actualTrees.size()),
+                // Parent tree contains itself and it's children
+                ()-> assertEquals(3, actualTrees.get("parentSiteId").size()),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto)),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto)),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto2)),
+                // The child subtree contains only itself
+                ()-> assertEquals(1, actualTrees.get("childSiteId").size()),
+                ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto)),
+                ()-> assertEquals(1, actualTrees.get("childSiteId2").size()),
+                ()-> assertTrue(actualTrees.get("childSiteId2").contains(childSiteDto2))
+        );
+    }
+
     private SiteDTO getSiteDto(String siteId, String parentSiteId){
         SiteDTO siteDTO = new SiteDTO();
         siteDTO.setSiteId(siteId);

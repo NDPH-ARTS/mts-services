@@ -53,7 +53,7 @@ public class SiteTreeUtil {
                                      HashMap<String, ArrayList<SiteDTO>> sitesSubTrees) {
         if (parentSite.getSiteId() != null) {
             if (!sitesSubTrees.containsKey(parentSite.getSiteId())) {
-                sitesSubTrees.put(parentSite.getSiteId(), new ArrayList<>());
+                sitesSubTrees.put(parentSite.getSiteId(), Lists.newArrayList(parentSite));
             }
             sitesSubTrees.get(parentSite.getSiteId()).add(siteToAdd);
         }

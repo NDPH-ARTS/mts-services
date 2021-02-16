@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.SiteDTO;
@@ -20,8 +23,15 @@ import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -234,6 +244,73 @@ class AuthorisationServiceTests {
         assertTrue(authorisationService.authorise("some_permission", List.of(authorisedSiteId)));
     }
 
+
+    @Test
+    void TestAuthorise_WithAuthorisedListOfEntitiesObjects_ReturnTrue() {
+        //Arrange
+        String userId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+
+        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
+                "some_permission"));
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+
+        var siteDto = new SiteDTO();
+        siteDto.setSiteId(authorisedSiteId);
+        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+
+        List<Object> entitiesList = Collections.singletonList(new TestEntityObject("siteId"));
+        String getSiteIdMethodName = "getSiteId";
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
+    }
+
+    @Test
+    void TestAuthorise_WithUnauthorisedListOfEntitiesObjects_ReturnsFalse() {
+        //Arrange
+        String userId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+
+        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
+                "some_permission"));
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+
+        var siteDto = new SiteDTO();
+        siteDto.setSiteId(authorisedSiteId);
+        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+
+        List<Object> entitiesList = List.of(new TestEntityObject("siteId"),
+                new TestEntityObject("unauthorisedSiteId"));
+        String getSiteIdMethodName = "getSiteId";
+
+        //Act
+        //Assert
+        assertFalse(authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
+    }
+
+    @Test
+    void TestAuthorise_WithListOfEntitiesObjectsAndInvalidMethod_ThrowsException() {
+        //Arrange
+        List<Object> entitiesList = Collections.singletonList(new TestEntityObject("siteId"));
+        String getSiteIdMethodName = "nonExistingMethod";
+
+        //Act
+        //Assert
+        assertThrows(AuthorisationException.class, () -> authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
+    }
+
     private RoleDTO getRoleWithPermissions(String roleId, String permission){
         PermissionDTO permissionDTO = new PermissionDTO();
         permissionDTO.setId(permission);
@@ -252,5 +329,18 @@ class AuthorisationServiceTests {
         List<RoleAssignmentDTO> roleAssignmentDTOS = Collections.singletonList(roleAssignmentDTO);
 
         return roleAssignmentDTOS;
+    }
+
+    private class TestEntityObject{
+
+        private String siteId;
+
+        public TestEntityObject(String siteId) {
+            this.siteId = siteId;
+        }
+
+        public String getSiteId() {
+            return this.siteId;
+        }
     }
 }
