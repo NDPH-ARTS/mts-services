@@ -139,6 +139,7 @@ services:
       SERVER_PORT: "8888"
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/mts-trial-deployment-config.git"
       SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "sample_trial/services, sample_trial/services/*"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
     image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
     restart: on-failure
