@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,10 +11,19 @@ import java.util.Objects;
 @Component
 public abstract class AbstractEntityServiceClient implements EntityServiceClient {
 
-    @Autowired
-    protected WebClient.Builder webClientBuilder;
+    protected final WebClient.Builder webClientBuilder;
     protected String serviceUrlBase;
     protected String serviceExistsRoute;
+
+    public AbstractEntityServiceClient(String serviceUrlBase, WebClient.Builder webClientBuilder, String serviceExistsRoute) {
+        this.serviceUrlBase = serviceUrlBase;
+        this.webClientBuilder = webClientBuilder;
+        this.serviceExistsRoute = serviceExistsRoute;
+    }
+
+    protected AbstractEntityServiceClient(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
+    }
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -28,6 +36,7 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
+                        System.out.println(clientResponse.bodyToMono(Void.class));
                         return Mono.just(false);
                     } else if (clientResponse.statusCode().is2xxSuccessful()) {
                         return Mono.just(true);
