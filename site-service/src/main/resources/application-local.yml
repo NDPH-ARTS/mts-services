@@ -1,0 +1,7 @@
+# for local work we specify the uri's manually using env vars
+server:
+  port: 8083
+  error:
+    include-message: always
+fhir:
+  uri: http://localhost:8080

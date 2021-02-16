@@ -18,7 +18,6 @@
     </properties>
 
     <dependencies>
-
         <!-- This dependency includes the core HAPI-FHIR classes -->
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
