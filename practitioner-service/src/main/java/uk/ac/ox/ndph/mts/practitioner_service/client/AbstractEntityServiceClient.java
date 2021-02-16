@@ -15,7 +15,9 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
     protected String serviceUrlBase;
     protected String serviceExistsRoute;
 
-    public AbstractEntityServiceClient(String serviceUrlBase, WebClient.Builder webClientBuilder, String serviceExistsRoute) {
+    protected AbstractEntityServiceClient(String serviceUrlBase,
+                                          WebClient.Builder webClientBuilder,
+                                          String serviceExistsRoute) {
         this.serviceUrlBase = serviceUrlBase;
         this.webClientBuilder = webClientBuilder;
         this.serviceExistsRoute = serviceExistsRoute;
@@ -36,7 +38,6 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
-                        System.out.println(clientResponse.bodyToMono(Void.class));
                         return Mono.just(false);
                     } else if (clientResponse.statusCode().is2xxSuccessful()) {
                         return Mono.just(true);
