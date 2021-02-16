@@ -6,7 +6,7 @@ package uk.ac.ox.ndph.mts.practitioner_service;
 public enum Application {
 
     // TODO: take static strings from resource file
-    STARTUP("Staring practitioner service...");
+    STARTUP("Starting practitioner service...");
 
     private final String message;
 

@@ -1,16 +1,22 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.StringType;
+import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import org.springframework.util.StringUtils;
 
+import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +42,7 @@ public class HapiFhirRepository implements FhirRepository {
      * @param practitioner the practitioner to save.
      * @return id of the saved practitioner
      */
-    public String savePractitioner(Practitioner practitioner) {
+    public String savePractitioner(final Practitioner practitioner) {
         // Log the request
         if (logger.isInfoEnabled()) {
             logger.info(FhirRepo.SAVE_REQUEST.message(), fhirContextWrapper.prettyPrint(practitioner));
@@ -56,8 +62,7 @@ public class HapiFhirRepository implements FhirRepository {
             logger.info(FhirRepo.SAVE_RESPONSE.message(), fhirContextWrapper.prettyPrint(responseElement));
         }
 
-        //TODO: replace with the actual id return
-        return practitioner.getIdElement().getValue();
+        return responseElement.getIdElement().getIdPart();
     }
 
     @Override
@@ -81,6 +86,21 @@ public class HapiFhirRepository implements FhirRepository {
         }
 
         return responseElement.getIdElement().getIdPart();
+    }
+
+    /**
+     * Search for a fhir practitioner by fhir id
+     *
+     * @param id of the practitioner to search.
+     */
+    public Optional<Practitioner> getPractitioner(final String id) {
+        try {
+            return Optional.of(fhirContextWrapper.getById(id));
+        } catch (ResourceNotFoundException ex) {
+            return Optional.empty();
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
     }
 
     @SuppressWarnings("squid:S2629")
@@ -125,13 +145,21 @@ public class HapiFhirRepository implements FhirRepository {
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION); // we use a single resource bundle, do we need this?
 
-        // Add the resource as an entry.
+        String url = resource.fhirType();
+        HTTPVerb httpMethod = Bundle.HTTPVerb.POST;
+        
+        if (StringUtils.hasText(resource.getId())) {
+            url += "/" + resource.getId();
+            httpMethod = Bundle.HTTPVerb.PUT;
+        }
+        
         bundle.addEntry()
-                .setFullUrl(resource.getIdElement().getValue())
-                .setResource(resource)
-                .getRequest()
-                .setUrl(resource.fhirType())
-                .setMethod(Bundle.HTTPVerb.POST);
+            .setFullUrl(resource.getIdElement().getValue())
+            .setResource(resource)
+            .getRequest()
+            .setUrl(url)
+            .setMethod(httpMethod)
+            .setIdElement(new StringType(resource.getId()));
 
         return bundle;
     }
