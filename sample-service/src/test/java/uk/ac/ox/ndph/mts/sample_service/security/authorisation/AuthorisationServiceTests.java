@@ -7,11 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.practitioner_service.PractitionerServiceClientImpl;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.role_service.RoleServiceClientImpl;
+import uk.ac.ox.ndph.mts.sample_service.client.site_service.SiteServiceClientImpl;
 import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.sample_service.exception.RestException;
 
@@ -19,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,15 +34,22 @@ class AuthorisationServiceTests {
     private PractitionerServiceClientImpl practitionerServiceClient;
 
     @Mock
+    private SiteServiceClientImpl siteServiceClient;
+
+    @Mock
     private SecurityContextUtil securityContextUtil;
+
+    private SiteTreeUtil siteTreeUtil;
 
     private AuthorisationService authorisationService;
 
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
+                new SiteTreeUtil(),
                 practitionerServiceClient,
-                roleServiceClient);
+                roleServiceClient,
+                siteServiceClient);
     }
 
     @Test
@@ -96,7 +106,7 @@ class AuthorisationServiceTests {
         when(securityContextUtil.getUserId()).thenReturn(userId);
 
         String roleId = "roleId";
-        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId);
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, "siteId");
 
         when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
         when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(null);
@@ -113,7 +123,7 @@ class AuthorisationServiceTests {
         when(securityContextUtil.getUserId()).thenReturn(userId);
 
         String roleId = "roleId";
-        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId);
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, "siteId");
         when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
@@ -132,7 +142,7 @@ class AuthorisationServiceTests {
         when(securityContextUtil.getUserId()).thenReturn(userId);
 
         String roleId = "roleId";
-        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId);
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, "siteId");
         when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
@@ -141,7 +151,87 @@ class AuthorisationServiceTests {
 
         //Act
         //Assert
-        Assertions.assertTrue(authorisationService.authorise("some_permission"));
+        assertTrue(authorisationService.authorise("some_permission"));
+    }
+
+    @Test
+    void TestAuthorise_WithUnauthorisedSite_ReturnsFalse(){
+        //Arrange
+        String userId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+
+        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
+                "some_permission"));
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+
+        var siteDto = new SiteDTO();
+        siteDto.setSiteId(authorisedSiteId);
+
+        var unauthorisedSiteDto = new SiteDTO();
+        unauthorisedSiteDto.setSiteId("unauthorizedSiteId");
+        when(siteServiceClient.getAllSites()).thenReturn(List.of(siteDto, unauthorisedSiteDto));
+
+        //Act
+        //Assert
+        assertFalse(authorisationService.authorise("some_permission", "unauthorizedSiteId" ));
+    }
+
+    @Test
+    void TestAuthorise_WithUnauthorisedSiteInList_ReturnsFalse(){
+        //Arrange
+        String userId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+
+        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
+                "some_permission"));
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+
+        var siteDto = new SiteDTO();
+        siteDto.setSiteId(authorisedSiteId);
+
+        String unauthorizedSiteId = "unauthorizedSiteId";
+        var unauthorisedSiteDto = new SiteDTO();
+        unauthorisedSiteDto.setSiteId(unauthorizedSiteId);
+
+        when(siteServiceClient.getAllSites()).thenReturn(List.of(siteDto, unauthorisedSiteDto));
+
+        //Act
+        //Assert
+        assertFalse(authorisationService.authorise("some_permission", List.of(authorisedSiteId, unauthorizedSiteId )));
+    }
+
+    @Test
+    void TestAuthorise_WithAllAuthorisedSiteInList_ReturnsTrue(){
+        //Arrange
+        String userId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+
+        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
+                "some_permission"));
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+
+        var siteDto = new SiteDTO();
+        siteDto.setSiteId(authorisedSiteId);
+        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authorise("some_permission", List.of(authorisedSiteId)));
     }
 
     private RoleDTO getRoleWithPermissions(String roleId, String permission){
@@ -154,10 +244,10 @@ class AuthorisationServiceTests {
         return roleDto;
     }
 
-    private List<RoleAssignmentDTO> getRoleAssignments(String roleId){
+    private List<RoleAssignmentDTO> getRoleAssignments(String roleId, String siteId){
         RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
-        roleAssignmentDTO.setRoleId("roleId");
-        roleAssignmentDTO.setSiteId("siteId");
+        roleAssignmentDTO.setRoleId(roleId);
+        roleAssignmentDTO.setSiteId(siteId);
 
         List<RoleAssignmentDTO> roleAssignmentDTOS = Collections.singletonList(roleAssignmentDTO);
 

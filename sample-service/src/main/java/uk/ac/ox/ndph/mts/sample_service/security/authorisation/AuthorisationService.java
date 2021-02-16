@@ -1,13 +1,22 @@
 package uk.ac.ox.ndph.mts.sample_service.security.authorisation;
 
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.ac.ox.ndph.mts.sample_service.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.client.role_service.RoleServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.RoleDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.ox.ndph.mts.sample_service.client.site_service.SiteServiceClient;
+import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,24 +29,46 @@ public class AuthorisationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
     private final SecurityContextUtil securityContextUtil;
+    private final SiteTreeUtil siteTreeUtil;
 
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
+    private final SiteServiceClient siteServiceClient;
 
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityContextUtil,
+                                final SiteTreeUtil siteTreeUtil,
                                 final PractitionerServiceClient practitionerServiceClient,
-                                final RoleServiceClient roleServiceClient) {
+                                final RoleServiceClient roleServiceClient,
+                                final SiteServiceClient siteServiceClient) {
         this.securityContextUtil = securityContextUtil;
+        this.siteTreeUtil = siteTreeUtil;
         this.practitionerServiceClient = practitionerServiceClient;
         this.roleServiceClient = roleServiceClient;
+        this.siteServiceClient = siteServiceClient;
     }
+
+    public boolean authorise(String requiredPermissions, List<Object> sites, String methodName) {
+        List<String> siteIds = sites.stream()
+                .map(site -> getSiteIdFromObj(site, methodName))
+                .collect(Collectors.toList());
+        return authorise(requiredPermissions, siteIds);
+    }
+
+    public boolean authorise(String requiredPermissions, String siteId) {
+        return authorise(requiredPermissions, Collections.singletonList(siteId));
+    }
+
+    public boolean authorise(String requiredPermissions) {
+        return authorise(requiredPermissions, Lists.newArrayList());
+    }
+
 
     /**
      * Authorise request
      * @return true if authorised
      */
-    public boolean authorise(String requiredPermission)  {
+    public boolean authorise(String requiredPermission, List<String> entitiesSiteIds)  {
 
         try {
             //Get the user's object id
@@ -55,13 +86,14 @@ public class AuthorisationService {
                 return false;
             }
 
+            List<SiteDTO> sites = siteServiceClient.getAllSites();
+
+            return isAuthorisedToAllSites(sites, roleAssignments, entitiesSiteIds);
+
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
             return false;
         }
-
-        //The next step will be to validate the site (ARTS-360). Currently just a stub.
-        return isSiteAuthorised("stubSite", "stubRole");
     }
 
     /**
@@ -109,14 +141,29 @@ public class AuthorisationService {
                 .anyMatch(permission -> permission.getId().equals(requiredPermission));
     }
 
-    /**
-     * Validate user site trees allowed the entity site
-     * @param userRole - participant role which includes the site property
-     * @param entitySite - the requested entity site
-     * @return true - currently it is a stub/infra until the implementation will be added
-     */
-    @SuppressWarnings("squid:S1172") //suppress unused parameter
-    private boolean isSiteAuthorised(String entitySite, String userRole) {
-        return true;
+    private boolean isAuthorisedToAllSites(List<SiteDTO> sites,
+                                          List<RoleAssignmentDTO> roleAssignments,
+                                          List<String> entitiesSiteIds) {
+
+        HashMap<String, ArrayList<SiteDTO>> tree = siteTreeUtil.getSiteSubTrees(sites);
+
+        var hasAnUnauthorisedSite = entitiesSiteIds.stream().anyMatch(siteId ->
+                roleAssignments.stream()
+                        .map(RoleAssignmentDTO::getSiteId).distinct()
+                        .noneMatch(roleSiteId ->
+                                tree.get(roleSiteId).stream()
+                                        .anyMatch(siteDTO -> siteDTO.getSiteId().equals(siteId)))
+        );
+
+        return !hasAnUnauthorisedSite;
+    }
+
+    private String getSiteIdFromObj(Object obj, String methodName) {
+        try {
+            Method getSiteMethod = obj.getClass().getMethod(methodName);
+            return getSiteMethod.invoke(obj).toString();
+        } catch (Exception e) {
+            throw new AuthorisationException("Error parsing sites from request body.", e);
+        }
     }
 }
