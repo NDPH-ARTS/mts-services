@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: practitioner-service
+          uri: 'http://practitioner-service:8081'
+          predicates:
+            - Path=/api/practitioner/**
+          filters:
+            - StripPrefix=1
+        - id: site-service
+          uri: 'http://site-service:8082'
+          predicates:
+            - Path=/api/site/**
+          filters:
+            - StripPrefix=1
+        - id: role-service
+          uri: 'http://role-service:8083'
+          predicates:
+            - Path=/api/role/**
+          filters:
+            - StripPrefix=1
