@@ -8,7 +8,7 @@ const assignRoleEndpointUri = ':8081/practitioner/{personId}/roles'
 
 describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
 
-    it.only('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
+    it('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
 
         //get parent site Id from sites endpoint
         const getSitesResponse = await baseRequest.get(sitesEndpointUri);
