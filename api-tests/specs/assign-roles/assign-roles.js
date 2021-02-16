@@ -35,8 +35,12 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         //assign roles to a person
         let assignRoleJSON = requests.assignRole
         assignRoleJSON.siteId = parentSiteId
+        console.log('parentsiteId taken in the request is' + parentSiteId)
         assignRoleJSON.roleId = roleId
+        console.log('roleId taken in the request is' + roleId)
+        console.log('the post uri is' + assignRoleEndpointUri)
         const response = await baseRequest.post(assignRoleEndpointUri).send(assignRoleJSON)
+        console.log('the final response status is' + response.status)
         expect(response.status).to.equal(HttpStatus.CREATED)
     });
 });
