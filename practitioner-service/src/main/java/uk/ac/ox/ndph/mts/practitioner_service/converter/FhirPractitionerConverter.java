@@ -1,11 +1,12 @@
 package uk.ac.ox.ndph.mts.practitioner_service.converter;
 
-import org.hl7.fhir.r4.model.HumanName;
-import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
-
 import java.util.List;
 import java.util.Objects;
+
+import org.hl7.fhir.r4.model.HumanName;
+import org.springframework.stereotype.Component;
+
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 
 /**
  * Implement an EntityConverter for Practitioner
@@ -24,13 +25,20 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
         if (input.getName().isEmpty()) {
             throw new IllegalArgumentException("FHIR Practitioner must have a name");
         }
-
+        
+        String userAccountId = input.getIdentifier().stream()
+                                    .filter((id) -> id.getId().equals(Practitioner.USERACCOUNTID_IDENTIFIER_NAME))
+                                    .map((id) -> id.getValue())
+                                    .findAny()
+                                    .orElse("");
+                                    
         HumanName humanName = input.getName().get(0);
 
         return new Practitioner(input.getIdElement().getIdPart(),
                 humanName.getPrefixAsSingleString(),
                 humanName.getGivenAsSingleString(),
-                humanName.getFamily());
+                humanName.getFamily(),
+                userAccountId);
     }
 
     @Override

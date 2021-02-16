@@ -33,6 +33,7 @@
 
         <module>config-server</module>
         <module>discovery-server</module>
+        <module>gateway-server</module>
 
         <module>sample-service</module>
         <module>practitioner-service</module>

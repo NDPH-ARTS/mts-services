@@ -21,6 +21,10 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/*
+ * TODO this test is meaningless because it defines a mock site-service API that does not match the site-service.
+ *  May as well remove it.
+ */
 @ExtendWith(MockitoExtension.class)
 class SiteServiceTest {
 

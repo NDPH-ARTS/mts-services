@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
@@ -45,6 +46,9 @@ class PractitionerServiceTests {
     private EntityStore<RoleAssignment> roleAssignmentStore;
     @Mock
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
+    @Mock
+    private ModelEntityValidation<PractitionerUserAccount> practitionerUserAccountValidator;
+
     private PractitionerService service;
     private PractitionerService serviceSpy;
 
@@ -52,19 +56,17 @@ class PractitionerServiceTests {
     @BeforeEach
     void init() {
         this.service = new PractitionerService(practitionerStore, practitionerValidator,
-                roleAssignmentStore, roleAssignmentValidator);
+                roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator);
         this.serviceSpy = Mockito.spy(service);
     }
 
     @Test
     void TestSavePractitioner_WithPractitioner_ValidatesPractitioner() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
+
         //Act
         service.savePractitioner(practitioner);
 
@@ -77,10 +79,7 @@ class PractitionerServiceTests {
     @Test
     void TestSavePractitioner_WhenValidPractitioner_SavesToStore() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(true, ""));
         when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn("123");
         //Act
@@ -95,10 +94,7 @@ class PractitionerServiceTests {
     @Test
     void TestSavePractitioner_WhenInvalidPractitioner_ThrowsValidationException() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> service.savePractitioner(practitioner),
@@ -108,10 +104,7 @@ class PractitionerServiceTests {
     @Test
     void TestSavePractitioner_WhenInvalidPractitioner_DoesntSavesToStore() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerValidator.validate(any(Practitioner.class))).thenReturn(new ValidationResponse(false, "prefix"));
         //Act + Assert
         Assertions.assertThrows(ValidationException.class, () -> service.savePractitioner(practitioner),
@@ -123,23 +116,26 @@ class PractitionerServiceTests {
     void TestPractitionerService_WhenNullInConstructor_ThrowsNullPointerException() {
         // Arrange + Act + Assert
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
-                        , roleAssignmentStore, roleAssignmentValidator),
+                        , roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, null,
-                        roleAssignmentStore, roleAssignmentValidator),
+                        roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator),
                 "null validation should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore,
-                        practitionerValidator, null, roleAssignmentValidator),
+                        practitionerValidator, null, roleAssignmentValidator, practitionerUserAccountValidator),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
-                        roleAssignmentStore, null),
+                        roleAssignmentStore, null, practitionerUserAccountValidator),
+                "null validation should throw");
+        Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
+                        roleAssignmentStore, roleAssignmentValidator, null),
                 "null validation should throw");
     }
 
     @Test
     void TestGetPractitioner_CallsEntityStore() {
         String id = "42";
-        Practitioner practitioner = new Practitioner(id, "pref", "given", "family");
+        Practitioner practitioner = new Practitioner(id, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerStore.getEntity(id)).thenReturn(java.util.Optional.of(practitioner));
 
         assertEquals(practitioner, service.findPractitionerById(id));
@@ -149,7 +145,7 @@ class PractitionerServiceTests {
     void TestGetPractitioner_WhenStoreHasPractitioner_ReturnsPractitioner() {
         // arrange
         String id = "42";
-        Practitioner practitioner = new Practitioner(id, "pref", "given", "family");
+        Practitioner practitioner = new Practitioner(id, "prefix", "givenName", "familyName", "userAccountId");
         when(practitionerStore.getEntity(id)).thenReturn(Optional.of(practitioner));
         // act
         final Practitioner returnedPractitioner = service.findPractitionerById(practitioner.getId());
@@ -191,11 +187,26 @@ class PractitionerServiceTests {
     }
 
     @Test
+    void TestLinkParticipant_WhenValidEntity_ValidatesEntity() {
+        // Arrange
+        String practitionerId = "practitionerId";
+        PractitionerUserAccount entity = new PractitionerUserAccount("practitionerId", "userAccountId");
+        var foundPractitioner = new Practitioner(practitionerId, "prefix", "given", "family", "");
+        doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
+        when(practitionerUserAccountValidator.validate(any(PractitionerUserAccount.class))).thenReturn(new ValidationResponse(true, ""));
+        when(practitionerStore.saveEntity(any(Practitioner.class))).thenReturn(practitionerId);
+
+        //Act
+        serviceSpy.linkPractitioner(entity);
+        verify(practitionerUserAccountValidator).validate(entity);
+    }
+    
+    @Test
     void TestSaveRoleAssignment_WhenValidEntity_ValidatesEntity() {
         // Arrange
         String practitionerId = "myPractitioner";
         RoleAssignment entity = new RoleAssignment(practitionerId, "siteId", "roleId");
-        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4");
+        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4", "userAccountId");
         doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
         when(roleAssignmentValidator.validate(any(RoleAssignment.class))).thenReturn(new ValidationResponse(true, ""));
         when(roleAssignmentStore.saveEntity(any(RoleAssignment.class))).thenReturn("123");
@@ -214,7 +225,7 @@ class PractitionerServiceTests {
         // Arrange
         String practitionerId = "myPractitioner";
 
-        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4");
+        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4", "userAccountId");
         doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
 
         RoleAssignment entity = new RoleAssignment(practitionerId, "siteId", "roleId");
@@ -274,7 +285,7 @@ class PractitionerServiceTests {
         String practitionerId = "myPractitioner";
         RoleAssignment entity = new RoleAssignment(practitionerId, "site", null);
 
-        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4");
+        var foundPractitioner = new Practitioner(practitionerId, "2", "3", "4", "userAccountId");
         doReturn(foundPractitioner).when(serviceSpy).findPractitionerById(practitionerId);
         when(roleAssignmentValidator.validate(any(RoleAssignment.class))).thenReturn(new ValidationResponse(false,
                 "err"));

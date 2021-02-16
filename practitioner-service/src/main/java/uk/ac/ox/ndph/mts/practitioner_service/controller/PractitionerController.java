@@ -14,11 +14,13 @@ import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import javax.validation.constraints.NotBlank;
@@ -59,6 +61,14 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(practitionerId));
     }
 
+    @PostMapping(path = "/{practitionerId}/link")
+    public ResponseEntity<Response> linkPractitioner(@PathVariable String practitionerId, 
+                                                    @RequestBody PractitionerUserAccount link) {
+        link.setPractitionerId(practitionerId);
+        entityService.linkPractitioner(link);
+        return ResponseEntity.status(OK).build();
+    }
+    
     @GetMapping(path = "/{id}")
     public ResponseEntity<Practitioner> findPractitionerById(@PathVariable String id) {
         return ResponseEntity.ok(entityService.findPractitionerById(id));

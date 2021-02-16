@@ -40,7 +40,7 @@ class PermissionControllerTest {
         String dummyId="dummy-permission";
         dummyPermission.setId(dummyId);
 
-        when(permissionRepo.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl(Collections.singletonList(dummyPermission)));
+        when(permissionRepo.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(Collections.singletonList(dummyPermission)));
         mvc.perform(get(URI_PERMISSIONS + "?page=0&size=10"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())

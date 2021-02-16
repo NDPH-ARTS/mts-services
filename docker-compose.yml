@@ -17,10 +17,13 @@ services:
       - site-service
     environment:
       SERVER_PORT: "8081"
-      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
       FHIR_URI: "http://fhir-api:8080"
       ROLE_SERVICE_URI: "http://role-service:8082"
       SITE_SERVICE_URI: "http://site-service:8083"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
     healthcheck:
       test: curl http://localhost:8081
       interval: 10s
@@ -43,7 +46,7 @@ services:
       SERVER_PORT: "8082"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql-mts-data:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
-      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -63,7 +66,11 @@ services:
       - fhir-api
     environment:
       SERVER_PORT: "8083"
-      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      FHIR_URI: "http://fhir-api:8080"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
     healthcheck:
       test: curl http://localhost:8083
       interval: 10s
@@ -87,8 +94,8 @@ services:
       PRACTITIONER_SERVICE: "http://practitioner-service:8081"
       ROLE_SERVICE: "http://role-service:8082"
       SITE_SERVICE: "http://site-service:8083"
-      CONFIG_JSON: config-init.json
-      SPRING_PROFILES_ACTIVE: "local"
+      CONFIG_JSON: config.json
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
     depends_on:
       practitioner-service:
         condition: service_healthy
@@ -125,7 +132,7 @@ services:
       SERVER_PORT: "8888"
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/mts-trial-deployment-config.git"
       SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "sample_trial/services, sample_trial/services/*"
-      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
     image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
     restart: on-failure
     ports:
@@ -146,13 +153,32 @@ services:
       EUREKA_CLIENT_REGISTERWITHEUREKA: "false"
       EUREKA_CLIENT_FETCHREGISTRY: "false"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
     image: ghcr.io/ndph-arts/discovery-server:${GITHUB_SHA}
     restart: on-failure
     ports:
       - "8761:8761"
     healthcheck:
       test: curl http://discovery-server:8761/
+      interval: 10s
+      timeout: 10s
+      retries: 6 # a quick service
+
+  gateway-server:
+    build:
+      context: .
+      dockerfile: gateway-server/Dockerfile
+      args:
+        SVC: gateway-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+    image: ghcr.io/ndph-arts/gateway-server:${GITHUB_SHA}
+    restart: on-failure
+    ports:
+      - "8072:8072"
+    healthcheck:
+      test: curl http://gateway-server:8072/
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
