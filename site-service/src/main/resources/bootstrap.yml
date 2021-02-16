@@ -9,6 +9,5 @@ spring:
 
 eureka:
   client:
-    fetch-registry: true
     serviceUrl:
       defaultZone: http://placeholder:8761/eureka/

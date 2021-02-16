@@ -30,6 +30,9 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
             fhirOrganization.setId(new IdType(input.getSiteId()));
         }
         setParentOrganization(input, fhirOrganization);
+        if (input.getSiteType() != null) {
+            fhirOrganization.setImplicitRules(input.getSiteType());
+        }
         return fhirOrganization;
     }
 

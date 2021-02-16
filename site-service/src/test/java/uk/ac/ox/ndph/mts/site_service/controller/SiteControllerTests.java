@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+@SpringBootTest(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8080" })
 @AutoConfigureMockMvc
 class SiteControllerTests {
 
@@ -139,7 +139,7 @@ class SiteControllerTests {
     void TestGetSite_WhenIdFound_Returns200AndSite() throws Exception {
         // Arrange
         final String siteId = "the-site-id";
-        when(siteService.findSiteById(siteId)).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId"));
+        when(siteService.findSiteById(siteId)).thenReturn(new Site(siteId, "TheSite", "the-alias", "parentId", "the-siteType"));
         // Act + Assert
         final String result = this.mockMvc
                 .perform(get(SITES_ROUTE + "/" + siteId)

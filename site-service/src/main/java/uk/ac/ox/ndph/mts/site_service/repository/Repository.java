@@ -12,15 +12,16 @@ public enum Repository {
     TRANSACTION_ERROR("Problem executing transaction with bundle at: %s");
 
     private String message;
- 
+
     Repository(String message) {
         this.message = message;
     }
 
     /**
-    * Returns the message associated with the enum variant.
-    * @return the message value of the enum variant
-    */
+     * Returns the message associated with the enum variant.
+     *
+     * @return the message value of the enum variant
+     */
     public String message() {
         return message;
     }

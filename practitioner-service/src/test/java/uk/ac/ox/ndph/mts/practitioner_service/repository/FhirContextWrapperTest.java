@@ -30,4 +30,5 @@ class FhirContextWrapperTest {
                 .isThrownBy(() -> sut.executeTransaction(DUMMY_BUNDLE))
                 .isNotInstanceOf(RuntimeException.class);
     }
+
 }

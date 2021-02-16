@@ -41,7 +41,8 @@ public abstract class ServiceInvoker {
                     .block();
 
         } catch (Exception e) {
-            LOGGER.info("FAILURE connecting to dependent service {} {}", uri, e.getMessage());
+            LOGGER.warn("FAILURE connecting to dependent service {} {}", uri, e.getMessage());
+            LOGGER.warn("Exception", e);
             throw new DependentServiceException("FAILURE connecting to " + uri);
         }
     }

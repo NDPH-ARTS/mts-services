@@ -1,40 +1,48 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implement an EntityStore for Practitioner.
  */
 @Component
 public class PractitionerStore implements EntityStore<Practitioner> {
-    private FhirRepository repository;
-    private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter;
+    private final FhirRepository repository;
+    private final EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter;
+    private final EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter;
 
     /**
-     *
      * @param repository - The fhir repository
-     * @param converter - a model-entity to fhir-entity converter
+     * @param modelToFhirConverter - a model-entity to fhir-entity converter
      */
     @Autowired
     public PractitionerStore(FhirRepository repository,
-            EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> converter) {
+                             EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter,
+                             EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter) {
         this.repository = repository;
-        this.converter = converter;
+        this.modelToFhirConverter = modelToFhirConverter;
+        this.fhirToModelConverter = fhirToModelConverter;
     }
 
     @Override
-    public String saveEntity(Practitioner entity) {
-        return repository.savePractitioner(converter.convert(entity));
+    public Optional<Practitioner> getEntity(String practitionerId) {
+        return repository.getPractitioner(practitionerId)
+                .map(fhirToModelConverter::convert);
+    }
+
+    @Override
+    public String saveEntity(Practitioner practitioner) {
+        return repository.savePractitioner(modelToFhirConverter.convert(practitioner));
     }
 
     @Override
     public List<Practitioner> findEntitiesByUserIdentity(String userIdentity) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 
