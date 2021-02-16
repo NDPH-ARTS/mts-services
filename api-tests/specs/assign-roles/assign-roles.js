@@ -3,7 +3,7 @@ const conf = require('../../config/conf')
 const sitesEndpointUri = ':8083/sites';
 const rolesEndpointUri = ':8082/roles';
 const practitionerEndpointUri = ':8081/practitioner'
-const assignRoleEndpointUri = ':8081/practitioner/{personId}/roles'
+let assignRoleEndpointUri = ':8081/practitioner/{personId}/roles'
 
 
 describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
@@ -38,6 +38,7 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         console.log('parentsiteId taken in the request is' + parentSiteId)
         assignRoleJSON.roleId = roleId
         console.log('roleId taken in the request is' + roleId)
+        assignRoleEndpointUri = assignRoleEndpointUri.replace("{personId}", personId);
         console.log('the post uri is' + assignRoleEndpointUri)
         const response = await baseRequest.post(assignRoleEndpointUri).send(assignRoleJSON)
         console.log('the final response status is' + response.status)
