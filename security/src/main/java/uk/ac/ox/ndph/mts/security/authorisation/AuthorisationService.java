@@ -31,7 +31,6 @@ public class AuthorisationService {
         this.securityContextUtil = securityContextUtil;
         this.practitionerServiceClient = practitionerServiceClient;
         this.roleServiceClient = roleServiceClient;
-        System.out.println("Autho wake up");
     }
 
     /**

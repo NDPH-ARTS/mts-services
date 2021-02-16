@@ -32,9 +32,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
     private AADAppRoleStatelessAuthenticationFilter aadAuthFilter;
-    public AADWebSecurityConfig() {
-        System.out.println("AADWAKEUP ----------------------> ");
-    }
+
     /**
      * Http security configuration
      * @param http - http security

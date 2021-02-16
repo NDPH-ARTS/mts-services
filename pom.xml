@@ -30,12 +30,10 @@
     <modules>
         <!--        <module>build-tools</module>-->
         <module>fhir-client</module>
-
+        <module>security</module>
         <module>config-server</module>
         <module>discovery-server</module>
-        <module>security</module>
         <module>gateway-server</module>
-
         <module>sample-service</module>
         <module>practitioner-service</module>
         <module>role-service</module>
