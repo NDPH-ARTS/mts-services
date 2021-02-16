@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
-import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
@@ -36,19 +34,12 @@ public class PractitionerController {
 
     private final EntityService entityService;
 
-    private SiteServiceClient siteServiceClient;
-
-    private RoleServiceClient roleServiceClient;
-
     /**
      * @param entityService validate and save the practitioner
      */
     @Autowired
-    public PractitionerController(EntityService entityService, SiteServiceClient siteServiceClient, RoleServiceClient roleServiceClient) {
+    public PractitionerController(EntityService entityService) {
         this.entityService = entityService;
-
-        this.roleServiceClient = roleServiceClient;
-        this.siteServiceClient = siteServiceClient;
     }
 
     /**
@@ -72,16 +63,6 @@ public class PractitionerController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<Practitioner> findPractitionerById(@PathVariable String id) {
         return ResponseEntity.ok(entityService.findPractitionerById(id));
-    }
-
-    @GetMapping(path = "/test/{id}")
-    public ResponseEntity<Boolean> testClientSite(@PathVariable String id) {
-        return ResponseEntity.ok(siteServiceClient.entityIdExists(id));
-    }
-
-    @GetMapping(path = "/test2/{id}")
-    public ResponseEntity<Boolean> testClientRole(@PathVariable String id) {
-        return ResponseEntity.ok(roleServiceClient.entityIdExists(id));
     }
 
     @PostMapping(path = "/{practitionerId}/roles")
