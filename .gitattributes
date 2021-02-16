@@ -1,0 +1,14 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Java
+*.java          text diff=java
+*.class         binary
+*.war           binary
+
+# Other text files
+*.xml           text
+*.yml           text
+*.properties    text
+*.md            text
+*.sh            text
