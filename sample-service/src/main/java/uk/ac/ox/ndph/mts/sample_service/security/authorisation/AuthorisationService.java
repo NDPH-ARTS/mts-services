@@ -12,12 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ox.ndph.mts.sample_service.client.site_service.SiteServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -145,7 +144,7 @@ public class AuthorisationService {
                                           List<RoleAssignmentDTO> roleAssignments,
                                           List<String> entitiesSiteIds) {
 
-        HashMap<String, ArrayList<SiteDTO>> tree = siteTreeUtil.getSiteSubTrees(sites);
+        Map<String, ArrayList<SiteDTO>> tree = siteTreeUtil.getSiteSubTrees(sites);
 
         var hasAnUnauthorisedSite = entitiesSiteIds.stream().anyMatch(siteId ->
                 roleAssignments.stream()

@@ -4,15 +4,13 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import uk.ac.ox.ndph.mts.sample_service.client.dtos.SiteDTO;
-
 import java.util.Collections;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SiteTreeUtilTests {
+class SiteTreeUtilTests {
 
     private SiteTreeUtil siteTreeUtil;
 
@@ -22,7 +20,7 @@ public class SiteTreeUtilTests {
     }
 
     @Test
-    public void TestGetSiteTrees_WithEmptyList_ReturnsEmptyTrees(){
+    void TestGetSiteTrees_WithEmptyList_ReturnsEmptyTrees(){
 
         List<SiteDTO> sites = Lists.emptyList();
 
@@ -30,7 +28,7 @@ public class SiteTreeUtilTests {
     }
 
     @Test
-    public void TestGetSiteTrees_WithSingleSite_ReturnsSingleTreeWithItself(){
+    void TestGetSiteTrees_WithSingleSite_ReturnsSingleTreeWithItself(){
 
         SiteDTO expectedSiteDto = getSiteDto("siteId", "parentSiteId");
         List<SiteDTO> sites = Collections.singletonList(expectedSiteDto);
@@ -44,7 +42,7 @@ public class SiteTreeUtilTests {
     }
 
     @Test
-    public void TestGetSiteTrees_WithChild_ReturnsTreeWithChildren(){
+    void TestGetSiteTrees_WithChild_ReturnsTreeWithChildren(){
 
         SiteDTO parentSiteDto = getSiteDto("parentSiteId", null);
         SiteDTO childSiteDto = getSiteDto("childSiteId", "parentSiteId");
@@ -66,7 +64,7 @@ public class SiteTreeUtilTests {
     }
 
     @Test
-    public void TestGetSiteTrees_WithChildrenAndRandomOrder_ReturnsTreeWithChildrenAsExpectef(){
+    void TestGetSiteTrees_WithChildrenAndRandomOrder_ReturnsTreeWithChildrenAsExpectef(){
 
         SiteDTO parentSiteDto = getSiteDto("parentSiteId", null);
         SiteDTO childSiteDto = getSiteDto("childSiteId", "parentSiteId");

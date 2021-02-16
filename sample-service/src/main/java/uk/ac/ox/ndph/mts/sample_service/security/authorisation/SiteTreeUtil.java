@@ -18,7 +18,7 @@ public class SiteTreeUtil {
      * @param sites list of sites in tree
      * @return HashMap with siteId as key with value list of SiteDTO in it's subtree
      */
-    public HashMap<String, ArrayList<SiteDTO>> getSiteSubTrees(List<SiteDTO> sites) {
+    public Map<String, ArrayList<SiteDTO>> getSiteSubTrees(List<SiteDTO> sites) {
 
         Map<String, SiteDTO> sitesMap = sites.stream()
                 .collect(Collectors.toMap(SiteDTO::getSiteId, Function.identity()));
