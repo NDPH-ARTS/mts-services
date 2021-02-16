@@ -23,13 +23,13 @@ spring:
         - id: site-service
           uri: 'lb://site-service'
           predicates:
-            - Path=/api/site/**
+            - Path=/api/sites/**
           filters:
             - StripPrefix=1
         - id: role-service
           uri: 'lb://role-service'
           predicates:
-            - Path=/api/role/**
+            - Path=/api/roles/**
           filters:
             - StripPrefix=1
 

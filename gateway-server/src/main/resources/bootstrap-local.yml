@@ -11,12 +11,12 @@ spring:
         - id: site-service
           uri: 'http://site-service:8082'
           predicates:
-            - Path=/api/site/**
+            - Path=/api/sites/**
           filters:
             - StripPrefix=1
         - id: role-service
           uri: 'http://role-service:8083'
           predicates:
-            - Path=/api/role/**
+            - Path=/api/roles/**
           filters:
             - StripPrefix=1
