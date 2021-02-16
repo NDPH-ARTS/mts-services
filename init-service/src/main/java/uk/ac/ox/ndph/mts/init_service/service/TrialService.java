@@ -46,6 +46,7 @@ public class TrialService {
 
     @PostConstruct
     public void init() throws InvalidConfigException {
+        LOGGER.info("Loading config: {}", config);
         this.trial = createTrialFromGitRepo(config);
         LOGGER.info("Trial : {}", this.trial);
     }

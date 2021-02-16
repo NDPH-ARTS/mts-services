@@ -62,7 +62,7 @@ class PractitionerValidationTests {
         // Arrange
         when(configurationProvider.getConfiguration()).thenReturn(new PractitionerConfiguration("person",
             "Practitioner", ALL_REQUIRED_UNDER_35_MAP));
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName, "userAccountId");
         var practitionerValidation = new PractitionerValidation(configurationProvider);
 
         // Act + Assert
@@ -96,13 +96,10 @@ class PractitionerValidationTests {
     @Test
     void TestValidate_WhenValidPractitioner_ReturnsValidResponse() {
         // Arrange
-        String prefix = "prefix";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        when(configurationProvider.getConfiguration()).thenReturn(new PractitionerConfiguration("person",
-            "Practitioner", ALL_REQUIRED_UNDER_35_MAP));
+        when(configurationProvider.getConfiguration())
+                .thenReturn(new PractitionerConfiguration("person", "Practitioner", ALL_REQUIRED_UNDER_35_MAP));
         var practitionerValidation = new PractitionerValidation(configurationProvider);
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
 
         // Act
         var result = practitionerValidation.validate(practitioner);
@@ -113,13 +110,10 @@ class PractitionerValidationTests {
     @Test
     void TestValidate_WhenPractitionerWithEmptyPrefix_ReturnsValidResponse() {
         // Arrange
-        String prefix = "";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        when(configurationProvider.getConfiguration()).thenReturn(new PractitionerConfiguration("person",
-        "Practitioner", PREFIX_NOT_REQUIRED_REGEX_MAP));
+        when(configurationProvider.getConfiguration())
+                .thenReturn(new PractitionerConfiguration("person", "Practitioner", PREFIX_NOT_REQUIRED_REGEX_MAP));
         var practitionerValidation = new PractitionerValidation(configurationProvider);
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "", "givenName", "familyName", "userAccountId");
 
         // Act
         var result = practitionerValidation.validate(practitioner);
@@ -130,13 +124,10 @@ class PractitionerValidationTests {
     @Test
     void TestValidate_WhenPractitionerWithEmptyPrefixAndNullRegex_ReturnsValidResponse() {
         // Arrange
-        String prefix = "";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        when(configurationProvider.getConfiguration()).thenReturn(new PractitionerConfiguration("person",
-            "Practitioner", PREFIX_EMPTY_REGEX_MAP));
+        when(configurationProvider.getConfiguration())
+                .thenReturn(new PractitionerConfiguration("person", "Practitioner", PREFIX_EMPTY_REGEX_MAP));
         var practitionerValidation = new PractitionerValidation(configurationProvider);
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "", "givenName", "familyName", "userAccountId");
 
         // Act
         var result = practitionerValidation.validate(practitioner);
@@ -147,13 +138,10 @@ class PractitionerValidationTests {
     @Test
     void TestValidate_WhenPractitionerWithEmptyPrefixAndAllNullRegex_ReturnsValidResponse() {
         // Arrange
-        String prefix = "";
-        String givenName = "givenName";
-        String familyName = "familyName";
-        when(configurationProvider.getConfiguration()).thenReturn(new PractitionerConfiguration("person", "Practitioner",
-            ALL_EMPTY_REGEX_MAP));
+        when(configurationProvider.getConfiguration())
+                .thenReturn(new PractitionerConfiguration("person", "Practitioner", ALL_EMPTY_REGEX_MAP));
         var practitionerValidation = new PractitionerValidation(configurationProvider);
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, "", "givenName", "familyName", "userAccountId");
 
         // Act
         var result = practitionerValidation.validate(practitioner);
@@ -164,13 +152,10 @@ class PractitionerValidationTests {
     @Test
     void TestValidate_WhenPractitionerWithNullPrefix_ReturnsValidResponse() {
         // Arrange
-        String prefix = null;
-        String givenName = "givenName";
-        String familyName = "familyName";
-        when(configurationProvider.getConfiguration()).thenReturn(new PractitionerConfiguration("person",
-        "Practitioner", PREFIX_NOT_REQUIRED_REGEX_MAP));
+        when(configurationProvider.getConfiguration())
+                .thenReturn(new PractitionerConfiguration("person", "Practitioner", PREFIX_NOT_REQUIRED_REGEX_MAP));
         var practitionerValidation = new PractitionerValidation(configurationProvider);
-        Practitioner practitioner = new Practitioner(null, prefix, givenName, familyName);
+        Practitioner practitioner = new Practitioner(null, null, "givenName", "familyName", "userAccountId");
 
         // Act
         var result = practitionerValidation.validate(practitioner);

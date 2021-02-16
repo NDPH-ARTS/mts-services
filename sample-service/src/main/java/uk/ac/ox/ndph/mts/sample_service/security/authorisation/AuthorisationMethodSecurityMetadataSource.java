@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.sample_service.security.authorisation;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.method.AbstractFallbackMethodSecurityMetadataSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,7 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
      * @return attributes
      */
     @Override
-    protected Collection findAttributes(Class<?> clazz) {
+    protected Collection<ConfigAttribute> findAttributes(Class<?> clazz) {
         return new ArrayList<>();
     }
 
@@ -34,9 +35,9 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
      * @return attributes
      */
     @Override
-    protected Collection findAttributes(Method method, Class<?> targetClass) {
+    protected Collection<ConfigAttribute> findAttributes(Method method, Class<?> targetClass) {
         Annotation[] annotations = method.getAnnotations();
-        ArrayList<Object> attributes = new ArrayList<>();
+        ArrayList<ConfigAttribute> attributes = new ArrayList<>();
 
         // if the class is annotated as @Controller we should by default deny access to all methods
         if (AnnotationUtils.findAnnotation(targetClass, Controller.class) != null) {
@@ -59,7 +60,7 @@ public class AuthorisationMethodSecurityMetadataSource extends AbstractFallbackM
      * @return configuration attributes
      */
     @Override
-    public Collection getAllConfigAttributes() {
+    public Collection<ConfigAttribute> getAllConfigAttributes() {
         return new ArrayList<>();
     }
 }
