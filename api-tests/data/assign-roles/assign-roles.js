@@ -18,6 +18,12 @@ const createPerson = {
     "familyName": "Cookie"
 }
 
+const createCCO = {
+    "name": utils.getRandomString(5),
+    "alias": utils.getRandomString(3),
+    "siteType": "CCO"
+}
+
 const createSite = {
     "name": utils.getRandomString(5),
     "alias": utils.getRandomString(3),
@@ -34,6 +40,7 @@ module.exports = {
     roleWithPermissions,
     createPerson,
     createSite,
-    assignRole
+    assignRole,
+    createCCO
 };
 

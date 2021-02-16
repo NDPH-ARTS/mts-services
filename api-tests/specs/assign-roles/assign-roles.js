@@ -11,10 +11,11 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
     it.only('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
 
         // GET parent site Id from sites endpoint
-        const getSitesResponse = await baseRequest.get(sitesEndpointUri);
-        const captureParentSiteId = getSitesResponse.text
-        let parseParentSiteIdData = JSON.parse(captureParentSiteId)
-        parentId = parseParentSiteIdData[1].parentSiteId
+        const createCCO = await baseRequest.post(sitesEndpointUri).send(requests.createCCO)
+        const captureCCOId = createCCO.text
+        let parseCCOId = JSON.parse(captureCCOId)
+        parentId = parseCCOId.id
+
         // request posted to sites end point
         let createSiteJSON = requests.createSite
         createSiteJSON.parentSiteId = parentId
