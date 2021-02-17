@@ -1,109 +1,134 @@
+//creating a parent as CCO with no existing node
+const validSiteCCO = {
+    "name": "CCOUK",
+    "alias": "CCO",
+    "parentSiteId": ""
+}
+
 //parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
-const newTrialSite1 = {
-        "name": "UK Regional Coordinating Centre",
-        "alias": "UK RCC",
-        "parentSiteId": ""
-    }
-module.exports.newTrialSite1 = newTrialSite1;
+const validSiteRCC = {
+    "name": "UK",
+    "alias": "UK",
+    "parentSiteId": "",
+    "siteType":"REGION"
+}
 
 //parentSiteId - the Id for the RCC should be retrieved and added for parentSiteId
-const newTrialSite2 = {
-        "name": "UK Country",
-        "alias": "UK Country",
-        "parentSiteId": ""
-    }
-module.exports.newTrialSite2 = newTrialSite2;
+const validSiteCountry = {
+    "name": "ENGLAND",
+    "alias": "ENGLAND",
+    "parentSiteId": "",
+    "siteType":"COUNTRY"
+}
 
 //parentSiteId - the Id for the Country should be retrieved and added for parentSiteId
-const newTrialSite3 = {
-        "name": "Oxford Local Clinical Centre",
-        "alias": "UK LCC",
-        "parentSiteId": ""
-    }
-module.exports.newTrialSite3 = newTrialSite3;
+const validSiteLCC = {
+    "name": "Queen Elizabeth Hospitals",
+    "alias": "QE Newcastle",
+    "parentSiteId": "",
+    "siteType":"LCC"
+}
 
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
-const missingFields1 = {
+//parentSiteId - rccParentSiteId
+const missingName = {
+    "name": "UK",
+    "alias": "someName",
+    "parentSiteId": "",
+    "siteType":"REGION"
+}
+
+//parentSiteId - rccParentSiteId
+const missingAlias = {
+    "name": "someName",
+    "alias": "UK",
+    "parentSiteId": "",
+    "siteType":"REGION"
+}
+
+//parentSiteId - rccParentSiteId
+const missingBoth = {
     "name": "",
-    "alias": "RCC",
-    "parentSiteId": ""
-}
-module.exports.missingFields1 = missingFields1;
-
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
-const missingFields2 = {
-    "name": "RCC",
     "alias": "",
-    "parentSiteId": ""
+    "parentSiteId": "",
+    "siteType":"REGION"
 }
-module.exports.missingFields2 = missingFields2;
 
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
-const missingFields3 = {
-    "name": "",
-    "alias": "",
-    "parentSiteId": ""
-}
-module.exports.missingFields3 = missingFields3;
-
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
-const exceeding1 = {
+//parentSiteId - rccParentSiteId
+const exceedingName = {
     "name": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
-    "alias": "RCC",
-    "parentSiteId": ""
+    "alias": "SomeAlias",
+    "parentSiteId": "",
+    "siteType":"REGION"
 }
-module.exports.exceeding1 = exceeding1;
 
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
-const exceeding2 = {
+//parentSiteId - rccParentSiteId
+const exceedingAlias = {
+    "name": "SomeName",
+    "alias": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
+    "parentSiteId": "",
+    "siteType":"REGION"
+}
+
+//parentSiteId - rccParentSiteId
+const exceedingBoth = {
     "name": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
     "alias": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
-    "parentSiteId": ""
+    "parentSiteId": "",
+    "siteType":"REGION"
 }
-module.exports.exceeding2 = exceeding2;
-
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
-const exceeding3 = {
-    "name": "RCC",
-    "alias": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
-    "parentSiteId": ""
-}
-module.exports.exceeding3 = exceeding3;
 
 const missingParent = {
-    "name": "RCC",
-    "alias": "RCC",
-    "parentSiteId": ""
+    "name": "SomeName",
+    "alias": "SomeAlias",
+    "parentSiteId": "",
+    "siteType":"REGION"
 }
-module.exports.missingParent = missingParent;
 
 const invalidParentType = {
-    "name": "RCC",
-    "alias": "RCC",
-    "parentSiteId": "&^%$^&*("
+    "name": "SomeName",
+    "alias": "SomeAlias",
+    "parentSiteId": "",
+    "siteType":"&^%$^&*("
 }
-module.exports.invalidParentType = invalidParentType;
 
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
+//parentSiteId - rccParentSiteId
 const duplicateName = {
-    "name": "UK Regional Coordinating Centre",
+    "name": "rccuk",
     "alias": "someText",
-    "parentSiteId": ""
+    "parentSiteId": "",
+    "siteType":"REGION"
 }
-module.exports.duplicateName = duplicateName;
 
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
+//parentSiteId - rccParentSiteId
 const duplicateAlias = {
     "name": "someText",
-    "alias": "UK RCC",
-    "parentSiteId": ""
+    "alias": "rcc",
+    "parentSiteId": "",
+    "siteType":"REGION"
 }
-module.exports.duplicateAlias = duplicateAlias;
 
-//parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
+//parentSiteId - rccParentSiteId
 const duplicateBoth = {
-    "name": "UK Regional Coordinating Centre",
-    "alias": "UK rcc",
-    "parentSiteId": ""
+    "name": "uk",
+    "alias": "uk",
+    "parentSiteId": "",
+    "siteType":"REGION"
 }
-module.exports.duplicateBoth = duplicateBoth;
+
+module.exports = {
+    validSiteCCO,
+    validSiteRCC,
+    validSiteCountry,
+    validSiteLCC,
+    missingName,
+    missingAlias,
+    missingBoth,
+    exceedingName,
+    exceedingAlias,
+    exceedingBoth,
+    missingParent,
+    invalidParentType,
+    duplicateName,
+    duplicateAlias,
+    duplicateBoth
+}
