@@ -5,13 +5,6 @@ server:
     include-message: always
 fhir:
   uri: http://localhost:8080
-role:
-  service:
-    uri: http://localhost:8082
-site:
-  service:
-    uri: http://localhost:8083
-
 ---
 config:
   name: Practitioner
@@ -26,3 +19,12 @@ config:
   - name: prefix
     displayName: Prefix
     validationRegex: "^[a-zA-Z]{0,35}$"
+
+---
+site-service:
+  ribbon:
+    listOfServers: localhost:8083
+
+role-service:
+  ribbon:
+    listOfServers: localhost:8082

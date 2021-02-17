@@ -9,9 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class SiteServiceClient extends AbstractEntityServiceClient {
 
     @Autowired
-    public SiteServiceClient(final WebClient.Builder webClientBuilder,
-                             @Value("${site.service.uri}") String serviceUrlBase) {
-        this.serviceUrlBase = serviceUrlBase;
+    public SiteServiceClient(final WebClient.Builder webClientBuilder) {
+        this.serviceUrlBase = "http://site-service";
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
         this.serviceExistsRoute = "/sites/{siteId}";
     }

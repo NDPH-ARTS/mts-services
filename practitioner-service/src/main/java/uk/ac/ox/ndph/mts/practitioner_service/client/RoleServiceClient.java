@@ -9,11 +9,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class RoleServiceClient extends AbstractEntityServiceClient {
 
     @Autowired
+    public RoleServiceClient(final WebClient.Builder webClientBuilder) {
+        this.serviceUrlBase =  "http://role-service";
+        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
+        this.serviceExistsRoute = "/roles/{id}";
+    }
+
+    // For test usage
     public RoleServiceClient(final WebClient.Builder webClientBuilder,
                              @Value("${role.service.uri}") String serviceUrlBase) {
         this.serviceUrlBase =  serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
         this.serviceExistsRoute = "/roles/{id}";
     }
-
 }

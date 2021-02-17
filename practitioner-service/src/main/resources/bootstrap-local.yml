@@ -6,3 +6,7 @@ spring:
         enabled: false
     discovery:
       enabled: false
+
+ribbon:
+  eureka:
+    enabled: false
