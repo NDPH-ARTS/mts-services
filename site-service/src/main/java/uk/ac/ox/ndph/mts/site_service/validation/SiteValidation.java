@@ -65,9 +65,9 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         this.validationMap = configuration.getAttributes().stream()
             .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
             .collect(Collectors.toMap(Pair::getRight,
-                    pair -> new AttributeData(pair.getLeft().getDisplayName(),
-                            Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
-                            pair.getRight().getValueFunc())));
+                pair -> new AttributeData(pair.getLeft().getDisplayName(),
+                    Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
+                    pair.getRight().getValueFunc())));
         validateMap();
         logger.info(Validations.STARTUP.message(), configuration);
     }
