@@ -47,19 +47,19 @@ public class AuthorisationService {
         this.siteServiceClient = siteServiceClient;
     }
 
-    public boolean authorise(String requiredPermissions, List<Object> sites, String methodName) {
+    public boolean authorise(String requiredPermission, List<Object> sites, String methodName) {
         List<String> siteIds = sites.stream()
                 .map(site -> getSiteIdFromObj(site, methodName))
                 .collect(Collectors.toList());
-        return authorise(requiredPermissions, siteIds);
+        return authorise(requiredPermission, siteIds);
     }
 
-    public boolean authorise(String requiredPermissions, String siteId) {
-        return authorise(requiredPermissions, Collections.singletonList(siteId));
+    public boolean authorise(String requiredPermission, String siteId) {
+        return authorise(requiredPermission, Collections.singletonList(siteId));
     }
 
-    public boolean authorise(String requiredPermissions) {
-        return authorise(requiredPermissions, Lists.newArrayList());
+    public boolean authorise(String requiredPermission) {
+        return authorise(requiredPermission, Lists.newArrayList());
     }
 
 
