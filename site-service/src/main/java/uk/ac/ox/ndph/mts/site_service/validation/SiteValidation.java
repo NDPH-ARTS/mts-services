@@ -62,6 +62,9 @@ public class SiteValidation implements ModelEntityValidation<Site> {
      */
     @Autowired
     public SiteValidation(final SiteConfiguration configuration) {
+        if (configuration == null) {
+            throw new InitialisationError("site configuration cannot be null");
+        }
         this.validationMap = configuration.getAttributes().stream()
             .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
             .collect(Collectors.toMap(Pair::getRight,

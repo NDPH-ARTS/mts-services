@@ -81,6 +81,9 @@ class SiteValidationTests {
     @Test
     void TestSiteValidation_WhenInitWithIncompleteConfig_ThrowsRuntimeException() {
         // Act + Assert
+        Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(null),
+            "Expecting null configuration to throw");
+        // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(new SiteConfiguration("site",
                         "Site", "CCO", INCOMPLETE_MAP, SITE_CONFIGURATION_LIST)),
                 "Expecting incomplete configuration to throw");
