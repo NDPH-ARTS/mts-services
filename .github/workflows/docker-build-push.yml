@@ -21,6 +21,7 @@ jobs:
         service_name: [ "sample-service", "practitioner-service", "site-service", "role-service", "init-service", "config-server", "discovery-server", "gateway-server" ]
     env:
       GHCR: ghcr.io/ndph-arts
+      ACR: trialsci.azurecr.io
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +33,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: trialsci.azurecr.io
+          username: ${{ secrets.ACR_REGISTRY_USERNAME }}
+          password: ${{ secrets.ACR_REGISTRY_PASSWORD }}
       - name: Build & publish runtime image
         env:
           DOCKER_BUILDKIT: 1
@@ -54,11 +61,16 @@ jobs:
           set -o nounset
 
           FROM_TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
-          TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
+          TO_GH_TAG=$GHCR/${{ matrix.service_name }}:$TAG
+          TO_ACR_TAG=$ACR/${{ matrix.service_name }}:$TAG
 
           # assume the step before created the image with the sha tag
-          docker tag $FROM_TAG $TO_TAG
-          docker push $TO_TAG
+          docker tag $FROM_TAG $TO_GH_TAG
+          docker push $TO_GH_TAG
+
+          # Push to ACR so we can leverage webhooks for CI
+          docker tag $FROM_TAG $TO_ACR_TAG
+          docker push $TO_ACR_TAG
 
   test:
     name: API Integration Tests
