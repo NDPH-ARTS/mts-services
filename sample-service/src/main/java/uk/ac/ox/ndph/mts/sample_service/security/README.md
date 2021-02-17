@@ -44,11 +44,11 @@ public String yourEndpoint() {
 
 **Endpoint that requires no site check:**
 
-'<required-permission>' - is a string specifying the required permission to perform the action. For example if the
-required permission is create-person, then the param should be 'create-person'.
+`'required-permission'` - is a string specifying the required permission to perform the action. This parameter should be wrapped with single quotes. 
+For example if the required permission is create-person, then the param should be 'create-person'. 
 
 ```java
-@PreAuthorize("@authorisationService.authorise('<required-permission>')")
+@PreAuthorize("@authorisationService.authorise('required-permission')")
 @GetMapping("/yourEndpoint")
 public String yourEndpoint() {
         return ...;
@@ -58,11 +58,11 @@ public String yourEndpoint() {
 
 **Endpoint with single entity with site check:**
 
-- '<required-permission>' - is a string specifying the required permission to perform the action. For example if the
-required permission is create-person, then the param should be 'create-person'.
+- `'required-permission'` - is a string specifying the required permission to perform the action. This parameter should be wrapped with single quotes. 
+For example if the required permission is create-person, then the param should be 'create-person'. 
 
 
-- someEntity.siteIdPropertyName - is an entity in the request with a siteId property which we want to validate.
+- `#someEntity.siteIdPropertyName` - is an entity in the request with a siteId property which we want to validate.  Should be preceeded with \#.
   For example:
   ```java
   class SomeEntity {
@@ -74,7 +74,7 @@ required permission is create-person, then the param should be 'create-person'.
   ```
 
 ```java
-@PreAuthorize("@authorisationService.authorise('<required-permission>', #someEntity.siteIdPropertyName)")
+@PreAuthorize("@authorisationService.authorise('required-permission', #someEntity.siteIdPropertyName)")
 @PostMapping("/yourEndpoint")
 public String yourEndpoint(@RequestBody SomeEntity someEntity) {
         return ...;
@@ -83,12 +83,12 @@ public String yourEndpoint(@RequestBody SomeEntity someEntity) {
 
 **Endpoint with list of entities with site check:**
 
-- '<required-permission>' - is a string specifying the required permission to perform the action. For example if the
-  required permission is create-person, then the param should be 'create-person'.
+- `'required-permission'` - is a string specifying the required permission to perform the action. This parameter should be wrapped with single quotes. 
+For example if the required permission is create-person, then the param should be 'create-person'. 
 
-- entitiesList - the list of entities in the request
+- `#entitiesList` - the list of entities in the request. Should be preceeded with \#.
 
-- getSiteId - the method name in the entity to get the site id property
+- `getSiteId` - the method name in the entity to get the site id property
 
 For example:
   ```java
@@ -103,7 +103,7 @@ For example:
   ```
 
 ```java
-@PreAuthorize("@authorisationService.authorise('<required-permission>', #entitiesList, 'getSiteId')")
+@PreAuthorize("@authorisationService.authorise('required-permission', #entitiesList, 'getSiteId')")
 @PostMapping("/yourEndpoint")
 public String yourEndpoint(@RequestBody List<SomeEntity> entitiesList) {
         return ...;
