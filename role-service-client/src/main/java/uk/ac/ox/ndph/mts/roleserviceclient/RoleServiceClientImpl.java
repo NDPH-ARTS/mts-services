@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class RoleServiceClientImpl implements RoleServiceClient {
+public class RoleServiceClientImpl extends AbstractEntityServiceClient implements RoleServiceClient {
 
     private final WebClient webClient;
 
@@ -23,6 +23,7 @@ public class RoleServiceClientImpl implements RoleServiceClient {
     public RoleServiceClientImpl(final WebClient.Builder webClientBuilder,
                                  @Value("${role.service.url}") String roleServiceUrl) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
+        this.serviceExistsRoute = "/roles/{id}";
     }
 
     /**
