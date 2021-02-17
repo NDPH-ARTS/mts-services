@@ -1,0 +1,28 @@
+# for local work we specify the uri's manually using env vars
+server:
+  port: 8081
+  error:
+    include-message: always
+fhir:
+  uri: http://localhost:8080
+role:
+  service:
+    uri: http://localhost:8082
+site:
+  service:
+    uri: http://localhost:8083
+
+---
+config:
+  name: Practitioner
+  displayName: person
+  attributes:
+  - name: givenName
+    displayName: Given Name
+    validationRegex: "^[a-zA-Z]{0,35}$"
+  - name: familyName
+    displayName: Family Name
+    validationRegex: "^[a-zA-Z]{1,35}$"
+  - name: prefix
+    displayName: Prefix
+    validationRegex: "^[a-zA-Z]{0,35}$"

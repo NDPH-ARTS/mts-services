@@ -5,21 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>uk.ac.ox.ndph.mts</groupId>
-        <artifactId>mts-services-parent</artifactId>
+        <artifactId>mts-services-web-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.web.xml</relativePath>
     </parent>
-    <groupId>uk.ac.ox.ndph.mts</groupId>
     <artifactId>role-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>role-service</name>
     <description>CRUD service for roles and permissions</description>
 
     <dependencies>
 
         <dependency>
-            <groupId>com.microsoft.azure</groupId>
-            <artifactId>azure-keyvault-secrets-spring-boot-starter</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -79,7 +77,6 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-envers</artifactId>
-            <version>2.3.1.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>

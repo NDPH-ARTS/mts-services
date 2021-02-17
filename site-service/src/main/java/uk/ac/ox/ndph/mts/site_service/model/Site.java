@@ -40,14 +40,30 @@ public class Site {
 
     /**
      * Site Constructor with siteId name alias and parent
+     * @param name the Site name
+     * @param alias the Site alias
+     * @param parentSiteId the Site parentSiteId
+     * @param siteType the Site siteType
+     *
+     */
+    public Site(String name, String alias, String parentSiteId, String siteType) {
+        this.name = name;
+        this.alias = alias;
+        this.parentSiteId = parentSiteId;
+        this.siteType = siteType;
+    }
+
+    /**
+     * Site Constructor with siteId name alias parent siteType
      * @param siteId site ID
      * @param name the Site name
      * @param alias the Site alias
      * @param parentSiteId the Site parentSiteId
+     * @param siteType the Site siteType
      *
      */
-    public Site(final String siteId, String name, String alias, String parentSiteId) {
-        this(name, alias, parentSiteId);
+    public Site(final String siteId, String name, String alias, String parentSiteId, String siteType) {
+        this(name, alias, parentSiteId, siteType);
         this.siteId = siteId;
     }
 
@@ -55,6 +71,7 @@ public class Site {
     private String alias;
     private String siteId;
     private String parentSiteId;
+    private String siteType;
 
     /**
      * Returns the name associated with the Site.
@@ -109,10 +126,38 @@ public class Site {
         this.parentSiteId = parentSiteId;
     }
 
+    /**
+     * Returns the siteType associated with the Site.
+     * @return siteType the Site siteType.
+     *
+     */
+    public String getSiteType() {
+        return siteType;
+    }
+
+    /**
+     * Sets the siteType of the Site.
+     * @param siteType the Site siteType
+     *
+     */
+    public void setSiteType(String siteType) {
+        this.siteType = siteType;
+    }
+
+    /**
+     * Returns the siteId associated with the Site.
+     * @return siteId the Site siteId.
+     *
+     */
     public String getSiteId() {
         return siteId;
     }
 
+    /**
+     * Sets the siteId of the Site.
+     * @param siteId the Site siteId
+     *
+     */
     public void setSiteId(String siteId) {
         this.siteId = siteId;
     }

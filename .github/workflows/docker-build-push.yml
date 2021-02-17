@@ -18,7 +18,7 @@ jobs:
     name: Build services
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service", "site-service", "role-service", "init-service", "config-server"]
+        service_name: [ "sample-service", "practitioner-service", "site-service", "role-service", "init-service", "config-server", "discovery-server", "gateway-server" ]
     env:
       GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
@@ -33,6 +33,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
       - name: Build & publish runtime image
+        env:
+          DOCKER_BUILDKIT: 1
         run: |
           set -o errexit
           set -o nounset
@@ -60,7 +62,7 @@ jobs:
 
   test:
     name: API Integration Tests
-    if: github.event_name == 'pull_request'
+    if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -70,16 +72,21 @@ jobs:
         timeout-minutes: 5
         env:
           SAPASSWORD: $(openssl rand -base64 12)
-          BASE_URL: http://localhost
           GITHUB_SHA: ${{github.sha}}
         run: |
           ./.ci/docker/check-docker-compose-services.sh
+      - name: Run API Tests
+        env:
+          BASE_URL: http://localhost
+        run: |
           npm run --prefix api-tests api-test-ci
           docker-compose down
-      - name: Publish API Test Report
+      - name: Process API Tests Report
         if: always()
         uses: scacap/action-surefire-report@v1
         with:
+          check_name: API Tests Report Check
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: 'api-tests/api-test-results.xml'
           fail_on_test_failures: true
+          fail_if_no_tests: true

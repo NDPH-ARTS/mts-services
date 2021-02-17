@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,9 +34,9 @@ public class SiteController {
     }
 
     /**
-     *
-     * @param site
-     * @return ResponseEntity
+     * Try and create a posted new site
+     * @param site site to post from request
+     * @return ResponseEntity CREATED if successful plus returns the site ID
      */
     @PostMapping()
     public ResponseEntity<Response> site(@RequestBody Site site) {
@@ -50,6 +51,16 @@ public class SiteController {
     @GetMapping
     public ResponseEntity<List<Site>> sites() {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
+    }
+
+    /**
+     * Get site by id
+     * @param id site id to search for
+     * @return ResponseEntity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Site> findSiteById(@PathVariable String id) {
+        return ResponseEntity.ok(siteService.findSiteById(id));
     }
 
 }

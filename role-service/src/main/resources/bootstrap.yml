@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: role-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: CONFIG-SERVER
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://placeholder:8761/eureka/
