@@ -18,18 +18,18 @@ public class SiteTreeUtil {
      * @param sites list of sites in tree
      * @return HashMap with siteId as key with value list of SiteDTO in it's subtree
      */
-    public Map<String, ArrayList<SiteDTO>> getSiteSubTrees(List<SiteDTO> sites) {
+    public Map<String, ArrayList<String>> getSiteSubTrees(List<SiteDTO> sites) {
 
         Map<String, SiteDTO> sitesMap = sites.stream()
                 .collect(Collectors.toMap(SiteDTO::getSiteId, Function.identity()));
 
         //initial subtrees
-        HashMap<String, ArrayList<SiteDTO>> sitesSubTrees  = new HashMap<>();
+        HashMap<String, ArrayList<String>> sitesSubTrees  = new HashMap<>();
 
         for (SiteDTO node : sites) {
             //each subtree should contain the site itself
             if (!sitesSubTrees.containsKey(node.getSiteId())) {
-                sitesSubTrees.put(node.getSiteId(), Lists.newArrayList(node));
+                sitesSubTrees.put(node.getSiteId(), Lists.newArrayList(node.getSiteId()));
             }
             //Add the site to all of it's parents
             SiteDTO parentNode = sitesMap.get(node.getParentSiteId());
@@ -50,12 +50,12 @@ public class SiteTreeUtil {
      */
     private void addSiteToParentSite(SiteDTO parentSite,
                                      SiteDTO siteToAdd,
-                                     HashMap<String, ArrayList<SiteDTO>> sitesSubTrees) {
+                                     HashMap<String, ArrayList<String>> sitesSubTrees) {
         if (parentSite.getSiteId() != null) {
             if (!sitesSubTrees.containsKey(parentSite.getSiteId())) {
-                sitesSubTrees.put(parentSite.getSiteId(), Lists.newArrayList(parentSite));
+                sitesSubTrees.put(parentSite.getSiteId(), Lists.newArrayList(parentSite.getSiteId()));
             }
-            sitesSubTrees.get(parentSite.getSiteId()).add(siteToAdd);
+            sitesSubTrees.get(parentSite.getSiteId()).add(siteToAdd.getSiteId());
         }
     }
 }

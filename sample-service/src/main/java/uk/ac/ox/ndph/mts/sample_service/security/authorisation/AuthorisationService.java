@@ -14,9 +14,11 @@ import uk.ac.ox.ndph.mts.sample_service.client.site_service.SiteServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -144,17 +146,14 @@ public class AuthorisationService {
                                           List<RoleAssignmentDTO> roleAssignments,
                                           List<String> entitiesSiteIds) {
 
-        Map<String, ArrayList<SiteDTO>> tree = siteTreeUtil.getSiteSubTrees(sites);
+        Map<String, ArrayList<String>> tree = siteTreeUtil.getSiteSubTrees(sites);
 
-        var hasAnUnauthorisedSite = entitiesSiteIds.stream().anyMatch(siteId ->
-                roleAssignments.stream()
-                        .map(RoleAssignmentDTO::getSiteId).distinct()
-                        .noneMatch(roleSiteId ->
-                                tree.get(roleSiteId).stream()
-                                        .anyMatch(siteDTO -> siteDTO.getSiteId().equals(siteId)))
-        );
+        Set<String> allSitesInRoles = roleAssignments.stream()
+                .flatMap(roleAssignmentDTO ->
+                        tree.getOrDefault(roleAssignmentDTO.getSiteId(), Lists.newArrayList()).stream())
+                .collect(Collectors.toSet());
 
-        return !hasAnUnauthorisedSite;
+        return entitiesSiteIds.stream().allMatch(allSitesInRoles::contains);
     }
 
     private String getSiteIdFromObj(Object obj, String methodName) {

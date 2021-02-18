@@ -37,7 +37,7 @@ class SiteTreeUtilTests {
         assertAll(
                 ()-> assertEquals(1, actualTree.size()),
                 ()-> assertEquals(1, actualTree.get("siteId").size()),
-                ()-> assertEquals(expectedSiteDto, actualTree.get("siteId").get(0))
+                ()-> assertEquals(expectedSiteDto.getSiteId(), actualTree.get("siteId").get(0))
         );
     }
 
@@ -55,11 +55,11 @@ class SiteTreeUtilTests {
                 ()-> assertEquals(2, actualTrees.size()),
                 // Parent tree contains itself and it's children
                 ()-> assertEquals(2, actualTrees.get("parentSiteId").size()),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto)),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto)),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto.getSiteId())),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto.getSiteId())),
                 // The child subtree contains only itself
                 ()-> assertEquals(1, actualTrees.get("childSiteId").size()),
-                ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto))
+                ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto.getSiteId()))
         );
     }
 
@@ -79,14 +79,14 @@ class SiteTreeUtilTests {
                 ()-> assertEquals(3, actualTrees.size()),
                 // Parent tree contains itself and it's children
                 ()-> assertEquals(3, actualTrees.get("parentSiteId").size()),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto)),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto)),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto2)),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto.getSiteId())),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto.getSiteId())),
+                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto2.getSiteId())),
                 // The child subtree contains only itself
                 ()-> assertEquals(1, actualTrees.get("childSiteId").size()),
-                ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto)),
+                ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto.getSiteId())),
                 ()-> assertEquals(1, actualTrees.get("childSiteId2").size()),
-                ()-> assertTrue(actualTrees.get("childSiteId2").contains(childSiteDto2))
+                ()-> assertTrue(actualTrees.get("childSiteId2").contains(childSiteDto2.getSiteId()))
         );
     }
 
