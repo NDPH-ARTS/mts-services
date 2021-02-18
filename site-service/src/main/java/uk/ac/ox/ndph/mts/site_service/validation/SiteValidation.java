@@ -12,6 +12,7 @@ import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -62,9 +63,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
      */
     @Autowired
     public SiteValidation(final SiteConfiguration configuration) {
-        if (configuration == null) {
-            throw new InitialisationError("site configuration cannot be null");
-        }
+        Objects.requireNonNull(configuration, "site configuration cannot be null");
         this.validationMap = configuration.getAttributes().stream()
             .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
             .collect(Collectors.toMap(Pair::getRight,

@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
-import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
@@ -185,11 +184,11 @@ class SiteServiceImplTests {
     @Test
     void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
-        assertThrows(InitialisationError.class, () -> new SiteServiceImpl(null, siteStore, siteValidation),
+        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(null, siteStore, siteValidation),
                 "null configuration should throw");
-        assertThrows(InitialisationError.class, () -> new SiteServiceImpl(new SiteConfiguration(), null, siteValidation),
+        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(new SiteConfiguration(), null, siteValidation),
                 "null store should throw");
-        assertThrows(InitialisationError.class, () -> new SiteServiceImpl(new SiteConfiguration(), siteStore, null),
+        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(new SiteConfiguration(), siteStore, null),
                 "null validation should throw");
     }
 
