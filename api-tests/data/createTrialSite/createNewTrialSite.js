@@ -1,3 +1,4 @@
+const utils = require('../../common/utils')
 //creating a parent as CCO with no existing node
 const validSiteCCO = {
     "name": "CCOUK",
@@ -7,42 +8,42 @@ const validSiteCCO = {
 
 //parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
 const validSiteRCC = {
-    "name": "UK",
-    "alias": "UK",
+    "name": utils.getRandomString(5),
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - the Id for the RCC should be retrieved and added for parentSiteId
 const validSiteCountry = {
-    "name": "ENGLAND",
-    "alias": "ENGLAND",
+    "name": utils.getRandomString(5),
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"COUNTRY"
+    "siteType": "COUNTRY"
 }
 
 //parentSiteId - the Id for the Country should be retrieved and added for parentSiteId
 const validSiteLCC = {
-    "name": "Queen Elizabeth Hospitals",
-    "alias": "QE Newcastle",
+    "name": utils.getRandomString(5),
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"LCC"
+    "siteType": "LCC"
 }
 
 //parentSiteId - rccParentSiteId
 const missingName = {
-    "name": "UK",
-    "alias": "someName",
+    "name": "",
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - rccParentSiteId
 const missingAlias = {
-    "name": "someName",
-    "alias": "UK",
+    "name": utils.getRandomString(5),
+    "alias": "",
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - rccParentSiteId
@@ -50,61 +51,61 @@ const missingBoth = {
     "name": "",
     "alias": "",
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - rccParentSiteId
 const exceedingName = {
-    "name": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
-    "alias": "SomeAlias",
+    "name": utils.getRandomString(36),
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - rccParentSiteId
 const exceedingAlias = {
-    "name": "SomeName",
-    "alias": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
+    "name": utils.getRandomString(5),
+    "alias": utils.getRandomString(36),
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - rccParentSiteId
 const exceedingBoth = {
-    "name": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
-    "alias": "Abcdefghijklmnopqrstuvwxyzabcdefghij",
+    "name": utils.getRandomString(36),
+    "alias": utils.getRandomString(36),
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 const missingParent = {
-    "name": "SomeName",
-    "alias": "SomeAlias",
+    "name": utils.getRandomString(5),
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 const invalidParentType = {
-    "name": "SomeName",
-    "alias": "SomeAlias",
+    "name": utils.getRandomString(5),
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"&^%$^&*("
+    "siteType": "&^%$^&*("
 }
 
 //parentSiteId - rccParentSiteId
 const duplicateName = {
     "name": "rccuk",
-    "alias": "someText",
+    "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - rccParentSiteId
 const duplicateAlias = {
-    "name": "someText",
+    "name": utils.getRandomString(5),
     "alias": "rcc",
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 //parentSiteId - rccParentSiteId
@@ -112,7 +113,7 @@ const duplicateBoth = {
     "name": "uk",
     "alias": "uk",
     "parentSiteId": "",
-    "siteType":"REGION"
+    "siteType": "REGION"
 }
 
 module.exports = {
