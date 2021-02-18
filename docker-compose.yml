@@ -98,7 +98,6 @@ services:
       SITE_SERVICE: "http://site-service:8083"
       CONFIG_JSON: config.json
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
-      SPRING_CLOUD_CONFIG_LABEL: "initfix"
     deploy:
       restart_policy:
           condition: none
