@@ -21,8 +21,10 @@ is_healthy() {
     fi
 }
 
+# on CI we want to test ALL services (discovery, config and gateway) using dev profile (instead of the local default)
+export PROFILE=dev
 docker-compose pull -q
-docker-compose up --no-build -d practitioner-service role-service site-service
+docker-compose up --no-build -d
 
 echo "Waiting for services to become healthy..."
 while ! is_healthy site-service; do sleep 10; done

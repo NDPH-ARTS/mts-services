@@ -1,9 +1,9 @@
 const requests = require('../../data/assign-roles/assign-roles')
 const conf = require('../../config/conf')
-const sitesEndpointUri = ':8083/sites';
-const rolesEndpointUri = ':8082/roles';
-const practitionerEndpointUri = ':8081/practitioner'
-let assignRoleEndpointUri = ':8081/practitioner/{personId}/roles'
+const sitesEndpointUri = '/api/sites';
+const rolesEndpointUri = '/api/roles';
+const practitionerEndpointUri = '/api/practitioner'
+let assignRoleEndpointUri = '/api/practitioner/{personId}/roles'
 
 
 describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
@@ -16,7 +16,7 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         let parseParentSiteIdData = JSON.parse(captureParentSiteId)
         parentSiteId = parseParentSiteIdData[0].siteId
 
-        //request posted to practitioner end point 
+        //request posted to practitioner end point
         const personResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createPerson)
         const capturePersonResponseData = personResponse.text
         let parsePersonResponseData = JSON.parse(capturePersonResponseData)
