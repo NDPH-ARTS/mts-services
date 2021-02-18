@@ -32,6 +32,14 @@ public interface EntityStore<T, K> {
     Optional<T> findByName(String name);
 
     /**
+     * Find entity by name, case-insensitively in the store
+     *
+     * @param name to search for
+     * @return entity or none() if none found
+     */
+    Optional<T> findByNameIgnoringCase(String name);
+
+    /**
      * Find entity by ID in the store
      *
      * @param id ID of entity to find

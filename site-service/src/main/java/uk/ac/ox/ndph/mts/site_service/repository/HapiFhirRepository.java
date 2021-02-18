@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
+import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -15,6 +16,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Implement FhirRepository interface using HAPI client sdk and backed up by
@@ -80,6 +82,28 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     /**
+     * Search by some criteria
+     *
+     * @param criterion search criteria
+     * @return stream of orgs matching search
+     */
+    public Stream<Organization> findOrganization(final ICriterion<?> criterion) {
+        try {
+            return fhirContextWrapper
+                .search(fhirUri, Organization.class)
+                .where(criterion)
+                .returnBundle(Bundle.class)
+                .execute()
+                .getEntry()
+                .stream()
+                .map(Bundle.BundleEntryComponent::getResource)
+                .map(Organization.class::cast);
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
+    }
+
+    /**
      * Exact search on name
      *
      * @param name of the organization to search.
@@ -87,20 +111,23 @@ public class HapiFhirRepository implements FhirRepository {
      */
     @Override
     public Optional<Organization> findOrganizationByName(final String name) {
-        try {
-            return fhirContextWrapper
-                    .search(fhirUri, Organization.class)
-                    .where(Organization.NAME.matchesExactly().value(name))
-                    .returnBundle(Bundle.class)
-                    .execute()
-                    .getEntry()
-                    .stream()
-                    .findFirst()
-                    .map(Bundle.BundleEntryComponent::getResource)
-                    .map(Organization.class::cast);
-        } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
-        }
+        return findOrganization(Organization.NAME.matchesExactly().value(name)).findFirst();
+    }
+
+    /**
+     * Find Organization By name from the FHIR store, case insensitively
+     *
+     * @param name of the organization to search.
+     * @return Organization searched by name or empty if not found
+     */
+    @Override
+    public Optional<Organization> findOrganizationByNameIgnoringCase(final String name) {
+        final String searchName = name.toLowerCase().trim();
+        // NAME.matches() should do a case-insensitive, substring search
+        // so need to filter for actually equal names, ignoring case
+        return findOrganization(Organization.NAME.matches().value(searchName))
+            .filter(o -> o.getName().trim().equalsIgnoreCase(searchName))
+            .findFirst();
     }
 
     /**

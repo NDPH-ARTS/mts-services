@@ -62,6 +62,19 @@ public class SiteStore implements EntityStore<Site, String> {
                 .map(fromOrgConverter::convert);
     }
 
+    /**
+     * Find entity by name, case-insensitively in the store
+     *
+     * @param name to search for
+     * @return entity or none() if none found
+     */
+    @Override
+    public Optional<Site> findByNameIgnoringCase(String name) {
+        return this.repository.findOrganizationByNameIgnoringCase(name)
+            .map(fromOrgConverter::convert);
+    }
+
+
     private String createResearchStudy(Organization org) {
         ResearchStudy rs = new ResearchStudy();
         rs.setTitle(org.getName());

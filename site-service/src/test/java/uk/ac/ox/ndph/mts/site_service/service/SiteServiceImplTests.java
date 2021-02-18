@@ -14,6 +14,7 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
+import uk.ac.ox.ndph.mts.site_service.repository.TestSiteStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 
 import java.util.Collections;
@@ -21,10 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -391,4 +389,30 @@ class SiteServiceImplTests {
         // act and assert
         assertThrows(ValidationException.class, () -> siteService.save(site), "Invalid Site Type for Root");
     }
+
+    @Test
+    void TestSaveSite_WhenValidSiteWithDuplicateName_ThrowsValidationException_DoesNotSaveToStore() {
+        // Arrange
+        String name = "name";
+        String alias = "alias";
+        final var config = new SiteConfiguration(
+            "Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP,
+            Collections.singletonList(new SiteConfiguration(
+                "Organization", "site", "RCC", ALL_REQUIRED_UNDER_35_MAP, null
+            )));
+        when(siteValidation.validate(any(Site.class))).thenReturn(ok());
+        //Act + Assert
+        final var siteService = new SiteServiceImpl(config, new TestSiteStore(), siteValidation);
+        final String rootId = siteService.save(new Site("root", "root", null, "CCO"));
+        final var site = new Site(name, alias, rootId, "RCC");
+        final var site2 = new Site(name.toUpperCase(), alias + 'x', rootId, "RCC");
+        assertThat(rootId, not(emptyOrNullString()));
+        final String siteId = siteService.save(site);
+        assertThrows(ValidationException.class, () -> siteService.save(site),
+            "Expecting save to throw validation exception");
+        assertThrows(ValidationException.class, () -> siteService.save(site2),
+            "Expecting save to throw validation exception");
+        assertThat(siteStore.findAll().size(), is(2));
+    }
+
 }

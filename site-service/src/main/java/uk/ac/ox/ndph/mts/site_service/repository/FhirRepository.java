@@ -28,6 +28,14 @@ public interface FhirRepository {
     Optional<Organization> findOrganizationByName(String name);
 
     /**
+     * Find Organization By name from the FHIR store, case insensitively
+     *
+     * @param name of the organization to search.
+     * @return Organization searched by name or none if not found
+     */
+    Optional<Organization> findOrganizationByNameIgnoringCase(String name);
+
+    /**
      * Creates a new ResearchStudy resource.
      *
      * @param researchStudy study to create
