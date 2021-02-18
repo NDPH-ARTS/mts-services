@@ -41,7 +41,7 @@ jobs:
 
           TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
 
-          docker build --build-arg SVC="${{ matrix.service_name }}" -t $TAG -f "${{ matrix.service_name }}"/Dockerfile .
+          docker build --build-arg SVC="${{ matrix.service_name }}" -t $TAG .
           docker push $TAG
       - name: Publish named image
         # The way to run this only on "merge" to main branch is to catch the "push" event into it (and schedule).
