@@ -22,7 +22,6 @@ is_healthy() {
 }
 
 # on CI we want to test ALL services (discovery, config and gateway) using dev profile (instead of the local default)
-export PROFILE=dev
 docker-compose pull -q
 docker-compose up --no-build -d gateway-server config-server discovery-server practitioner-service site-service role-service
 
