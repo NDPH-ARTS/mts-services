@@ -3,23 +3,23 @@ package uk.ac.ox.ndph.mts.init_service.loader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.init_service.service.TrialService;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
+import uk.ac.ox.ndph.mts.init_service.service.TrialService;
 
 import java.util.List;
 
 @Component
 public class Loader implements CommandLineRunner {
 
-    private TrialService trialService;
+    private final TrialService trialService;
 
-    private PractitionerServiceInvoker practitionerServiceInvoker;
+    private final PractitionerServiceInvoker practitionerServiceInvoker;
 
-    private RoleServiceInvoker roleServiceInvoker;
+    private final RoleServiceInvoker roleServiceInvoker;
 
-    private SiteServiceInvoker siteServiceInvoker;
+    private final SiteServiceInvoker siteServiceInvoker;
 
     @Autowired
     public Loader(TrialService trialService, PractitionerServiceInvoker practitionerServiceInvoker,
