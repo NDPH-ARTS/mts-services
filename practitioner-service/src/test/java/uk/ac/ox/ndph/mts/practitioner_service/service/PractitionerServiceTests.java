@@ -320,4 +320,17 @@ class PractitionerServiceTests {
         //Assert
         assertEquals(expectedResult, actualResult);
     }
+
+    @Test
+    void TestGePractitionersByUserIdentity_WithUserIdentity_ReturnsPractitionersAsExpected() {
+
+        String userID = "dummy-azureoid";
+        List<Practitioner> reultFromStore = Collections.singletonList(
+                new Practitioner("dummy-id", "dummy-prefix", "dummy-given-name", "dummy-family-name", userID));
+        when(practitionerStore.findEntitiesByUserIdentity(userID)).thenReturn(reultFromStore);
+
+        List<Practitioner> result = service.getPractitionersByUserIdentity(userID);
+
+        assertEquals(userID, result.get(0).getUserAccountId());
+    }
 }

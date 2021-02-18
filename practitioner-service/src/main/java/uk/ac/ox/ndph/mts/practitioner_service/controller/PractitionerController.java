@@ -83,21 +83,16 @@ public class PractitionerController {
         return ResponseEntity.ok(roleAssignments);
     }
 
-    @GetMapping(path = "/profile/{oid}", consumes = MediaType.ALL_VALUE) // Overrides consumes=json at class level.
-    public ResponseEntity<Practitioner> profile(@PathVariable String oid) { // Will come from token once auth in place
+    @GetMapping(path = "/profile", consumes = MediaType.ALL_VALUE) // Overrides consumes=json at class level.
+    public ResponseEntity<List<Practitioner>> profile(@RequestParam String userIdentity) { // Will come from token once auth in place
         Logger.getAnonymousLogger().info("Call to profile endpoint " );
-        Practitioner dummy = new Practitioner(
-                oid,
-                "dummy-prefix",
-                "dummy-given-name",
-                "dummy-family-name",
-                "dummy-account-id");
-        return ResponseEntity.ok(dummy);
+        List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdentity);
+        return ResponseEntity.ok(practitioners);
     }
 
     // This won't be needed once authentication module is in place
-    @RequestMapping(value = "/profile/{oid}", method = RequestMethod.OPTIONS, consumes = MediaType.ALL_VALUE) 
-    public ResponseEntity options(HttpServletResponse response, @PathVariable String oid) {
+    @RequestMapping(value = "/profile", method = RequestMethod.OPTIONS, consumes = MediaType.ALL_VALUE)
+    public ResponseEntity options(HttpServletResponse response, @RequestParam String userIdentity) {
         Logger.getAnonymousLogger().info("Call to OPTIONS " );
         response.setHeader("Allow", "GET,OPTIONS");
         return new ResponseEntity(HttpStatus.OK);

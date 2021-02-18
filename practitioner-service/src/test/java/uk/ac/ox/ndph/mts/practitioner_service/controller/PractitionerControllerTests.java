@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,6 +22,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 
 import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,8 +36,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("test-all-required")
@@ -46,6 +48,7 @@ class PractitionerControllerTests {
     private final String roleAssignmentUri = "/practitioner/987/roles";
     private final String roleAssignmentByUserIdentityUri = "/practitioner/roles";
     private final String practitionerLinkUri = "/practitioner/6/link";
+    private final String practitionerProfileUri = "/practitioner/profile";
 
     @Autowired
     private MockMvc mockMvc;
@@ -229,6 +232,26 @@ class PractitionerControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(
                         content().string(containsString(jsonExpectedRoleAssignment)));
+    }
+
+    @Test
+    void TestGetPractitionersByUserIdentity_WithUserIdentityParam_ReturnsPractitionersAsExpected() throws Exception {
+
+
+        String userID = "dummy-azureoid";
+        String familyName = "dummy-family-name";
+        List<Practitioner> practitionersFromService = Collections.singletonList(
+                new Practitioner("dummy-id", "dummy-prefix", "dummy-given-name", familyName, userID));
+        when(entityService.getPractitionersByUserIdentity(userID)).thenReturn(practitionersFromService);
+
+        String uriWithParam = practitionerProfileUri + "?userIdentity="+userID;  //TODO once we have auth in prac-service since it will come from the token
+        this.mockMvc
+                .perform(get(uriWithParam))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].userAccountId").value(userID))
+                .andExpect(jsonPath("$[0].familyName").value(familyName));
     }
 
 }
