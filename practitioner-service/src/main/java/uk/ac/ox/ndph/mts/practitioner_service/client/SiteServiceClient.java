@@ -9,10 +9,13 @@ public class SiteServiceClient extends AbstractEntityServiceClient {
 
     @Autowired
     public SiteServiceClient(final WebClient.Builder webClientBuilder) {
-        this.serviceUrlBase = "http://site-service";
-        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
-        this.serviceExistsRoute = "/sites/{siteId}";
+        this(webClientBuilder, "http://site-service");
     }
 
+    public SiteServiceClient(WebClient.Builder webClientBuilder, String serviceUrlBase) {
+        this.serviceUrlBase =  serviceUrlBase;
+        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
+        this.serviceExistsRoute = "/sites/{id}";
+    }
 }
 
