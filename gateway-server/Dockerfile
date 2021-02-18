@@ -33,5 +33,5 @@ ARG SVC
 ARG JAR_FILE=${SVC}/target/*.jar
 COPY --from=builder ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
-EXPOSE 8702:8702
+EXPOSE 8072:8072
 
