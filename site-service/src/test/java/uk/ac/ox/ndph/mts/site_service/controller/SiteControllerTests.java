@@ -5,21 +5,27 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
+import uk.ac.ox.ndph.mts.site_service.TestSiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -29,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8080" })
+@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8080"})
 @AutoConfigureMockMvc
 class SiteControllerTests {
 
@@ -40,6 +46,17 @@ class SiteControllerTests {
 
     @MockBean
     private SiteService siteService;
+
+    @TestConfiguration
+    static class Config {
+        private final TestSiteConfiguration configuration = new TestSiteConfiguration();
+
+        @Primary
+        @Bean
+        public SiteConfiguration getSiteConfiguration() {
+            return configuration.getSiteConfiguration();
+        }
+    }
 
     @Test
     void TestPostSite_WhenNoInput_Returns400() throws Exception {
@@ -87,13 +104,13 @@ class SiteControllerTests {
     void TestPostSite_WhenArgumentException_Returns400() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
-
+        final String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         // Act + Assert
-        String error = this.mockMvc
+        final var error = this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
-        assertThat(error, containsString("name"));
+                .andDo(print()).andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException();
+        assertThat(error, notNullValue());
+        assertThat(error.getMessage(), containsString("name"));
     }
 
 
@@ -102,11 +119,11 @@ class SiteControllerTests {
         // Arrange
         when(siteService.findSites()).thenThrow(new InvariantException("root"));
         // Act + Assert
-        final String error = this.mockMvc
+        final var error = this.mockMvc
                 .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotImplemented()).andReturn().getResolvedException().getMessage();
-        assertThat(error, containsString("root"));
-
+                .andExpect(status().isNotImplemented()).andReturn().getResolvedException();
+        assertThat(error, notNullValue());
+        assertThat(error.getMessage(), containsString("root"));
     }
 
     @Test
