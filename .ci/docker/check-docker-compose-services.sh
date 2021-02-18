@@ -30,6 +30,10 @@ echo "Waiting for services to become healthy..."
 while ! is_healthy site-service; do sleep 10; done
 while ! is_healthy role-service; do sleep 10; done
 while ! is_healthy practitioner-service; do sleep 10; done
+while ! is_healthy gateway-server; do sleep 10; done
+while ! is_healthy discovery-server; do sleep 10; done
+while ! is_healthy config-server; do sleep 10; done
+
 echo "Services started."
 
 
