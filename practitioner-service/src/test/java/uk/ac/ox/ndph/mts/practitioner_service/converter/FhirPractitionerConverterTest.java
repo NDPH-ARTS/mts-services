@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,14 +23,8 @@ class FhirPractitionerConverterTest {
 
     @Test
     void convert_ConvertsValidPractitioner() {
-        Practitioner practitioner = new Practitioner();
-        HumanName humanName = new HumanName();
-        humanName.addPrefix("Mr");
-        humanName.addGiven("Given");
-        humanName.setFamily("Family");
+        Practitioner practitioner = makeDummyFhirPractitioner();
 
-        practitioner.addName(humanName);
-        practitioner.setIdBase("base id");
 
         var modelPractitioner = converter.convert(practitioner);
         HumanName practitionerName = practitioner.getName().get(0);
@@ -47,10 +43,25 @@ class FhirPractitionerConverterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> converter.convert(practitioner));
     }
 
+
     @Test
-    void TestConvertList_WhenCalled_ReturnsException() {
-        var list = new ArrayList<Practitioner>();
-        Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> converter.convertList(list));
+    void TestConvertList_WhenCalled_ReturnsListOfPractitionersWithDataTransferred() {
+        org.hl7.fhir.r4.model.Practitioner fhirPractitioner = makeDummyFhirPractitioner();
+        List<org.hl7.fhir.r4.model.Practitioner> inputFhirPractitioners = Collections.singletonList(fhirPractitioner);
+        List<uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner> outputModelPractitioners = converter.convertList(inputFhirPractitioners);
+        assertEquals(1, outputModelPractitioners.size());
+        assertEquals(outputModelPractitioners.get(0).getFamilyName(), fhirPractitioner.getName().get(0).getFamily());
+    }
+
+    private Practitioner makeDummyFhirPractitioner(){
+        Practitioner practitioner = new Practitioner();
+        HumanName humanName = new HumanName();
+        humanName.addPrefix("Mx");
+        humanName.addGiven("Given");
+        humanName.setFamily("Family");
+
+        practitioner.addName(humanName);
+        practitioner.setIdBase("base id");
+        return practitioner;
     }
 }

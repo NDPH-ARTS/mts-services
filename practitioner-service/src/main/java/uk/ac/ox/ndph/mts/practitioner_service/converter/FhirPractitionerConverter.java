@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.converter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.hl7.fhir.r4.model.HumanName;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,8 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
 
     @Override
     public List<Practitioner> convertList(List<org.hl7.fhir.r4.model.Practitioner> input) {
-        throw new UnsupportedOperationException();
+        return input.stream()
+                .map(fhirPractitioner -> convert(fhirPractitioner))
+                .collect(Collectors.toList());
     }
 }
