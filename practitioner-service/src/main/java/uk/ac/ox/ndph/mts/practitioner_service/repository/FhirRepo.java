@@ -1,8 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-/**
- * String constants
- */
+
 public enum FhirRepo {
     SAVE_REQUEST("request to fhir: {}"),
     SAVE_RESPONSE("response from fhir: {}"),
@@ -11,7 +9,9 @@ public enum FhirRepo {
     SEARCH_ERROR("Failed to search repository"),
     FAILED_TO_SAVE_PRACTITIONER("Failed to save practitioner"),
     GET_PRACTITIONER_ROLES_BY_USER_IDENTITY("get practitioner roles by user identity %s"),
-    GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE("found %d practitioner roles");
+    GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE("found %d practitioner roles"),
+    GET_PRACTITIONERS_BY_USER_IDENTITY("get practitioners by user identity %s"),
+    GET_PRACTITIONERS_BY_USER_IDENTITY_RESPONSE("found %d practitioners");
 
     private final String message;
 
@@ -19,11 +19,7 @@ public enum FhirRepo {
         this.message = message;
     }
 
-    /**
-     * Returns the message associated with the enum variant.
-     *
-     * @return the message value of the enum variant
-     */
+
     public String message() {
         return message;
     }

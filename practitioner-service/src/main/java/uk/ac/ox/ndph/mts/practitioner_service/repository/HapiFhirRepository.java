@@ -163,5 +163,30 @@ public class HapiFhirRepository implements FhirRepository {
 
         return bundle;
     }
+    @Override
+    public List<Practitioner> getPractitionersByUserIdentity(String userIdentity) {
+
+        logger.info(
+                String.format(
+                        FhirRepo.GET_PRACTITIONERS_BY_USER_IDENTITY.message(),
+                        userIdentity));
+
+        List<Practitioner> practitioners = new ArrayList<>();
+
+        var results = fhirContextWrapper.searchResource(
+                Practitioner.class,
+                Practitioner.IDENTIFIER.exactly().identifier(userIdentity));
+
+        for (var result : results) {
+            practitioners.add((Practitioner) result);
+        }
+
+        logger.info(
+                String.format(
+                        FhirRepo.GET_PRACTITIONERS_BY_USER_IDENTITY_RESPONSE.message(),
+                        practitioners.size()));
+
+        return practitioners;
+    }
 
 }

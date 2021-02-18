@@ -240,4 +240,24 @@ class HapiFhirRepositoryTests {
                 () ->assertThat(roleAssignment.getRoleId(), equalTo("role123"))
                 );
     }
+
+    @Test
+    void TestGetPractitionersByUserIdentity_WhenSearchNonExistentID_ReturnsEmptyList(){
+
+        when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(new ArrayList<>());
+        var value = repository.getPractitionersByUserIdentity("123");
+        assertThat(value, equalTo(new ArrayList<Practitioner>()));
+    }
+
+    @Test
+    void TestGetPractitionersByUserIdentity_WhenSearchExistentId_ReturnsNotEmptyList(){
+
+        Practitioner fhirPractitioner = new Practitioner();
+        List<IBaseResource> fhirResponse = new ArrayList<>();
+        fhirResponse.add(fhirPractitioner);
+        when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(fhirResponse);
+        List<Practitioner> practitionersByUserID = repository.getPractitionersByUserIdentity("123");
+        assertEquals(1, practitionersByUserID.size());
+
+    }
 }

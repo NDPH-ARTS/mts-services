@@ -1,15 +1,21 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
+import uk.ac.ox.ndph.mts.practitioner_service.converter.FhirPractitionerConverter;
+import uk.ac.ox.ndph.mts.practitioner_service.converter.ModelPractitionerConverter;
+import uk.ac.ox.ndph.mts.practitioner_service.converter.PractitionerRoleConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -41,11 +47,20 @@ class PractitionerStoreTest {
     }
 
     @Test
-    void TestListEntitiesByUserIdentity_WhenListByUserIdentity_ThrowsNotImplementedException() {
-        //act and assert
+    void TestListPractitionersByUserIdentity_WhenListByUserIdentity_ReturnsListOfPractitioners() {
+
         PractitionerStore practitionerStore = new PractitionerStore(repository, modelToFhirConverter, fhirToModelConverter);
-        Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> practitionerStore.findEntitiesByUserIdentity("123"),
-                "Expecting to throw an exception");
+
+        List<org.hl7.fhir.r4.model.Practitioner> fhirPractitionerList =
+                Collections.singletonList(new org.hl7.fhir.r4.model.Practitioner());
+        List<Practitioner> ourPractitionerList =
+                Collections.singletonList(
+                new Practitioner("some-id", "some-prefix", "some-name", "some-family-name", "some-id"));
+        when(repository.getPractitionersByUserIdentity(any(String.class))).thenReturn(fhirPractitionerList);
+        when(fhirToModelConverter.convertList(fhirPractitionerList)).thenReturn(ourPractitionerList);
+
+        List<uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner> convertedPractitionersList = practitionerStore.findEntitiesByUserIdentity("123");
+
+        assertEquals(1, convertedPractitionersList.size());
     }
 }

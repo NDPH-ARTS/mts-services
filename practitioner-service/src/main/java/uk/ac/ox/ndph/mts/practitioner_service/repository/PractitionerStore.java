@@ -7,19 +7,13 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implement an EntityStore for Practitioner.
- */
+
 @Component
 public class PractitionerStore implements EntityStore<Practitioner> {
     private final FhirRepository repository;
     private final EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter;
     private final EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter;
 
-    /**
-     * @param repository - The fhir repository
-     * @param modelToFhirConverter - a model-entity to fhir-entity converter
-     */
     @Autowired
     public PractitionerStore(FhirRepository repository,
                              EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter,
@@ -42,7 +36,8 @@ public class PractitionerStore implements EntityStore<Practitioner> {
 
     @Override
     public List<Practitioner> findEntitiesByUserIdentity(String userIdentity) {
-        throw new UnsupportedOperationException();
+        return fhirToModelConverter.convertList(
+                repository.getPractitionersByUserIdentity(userIdentity));
     }
 
 
