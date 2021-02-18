@@ -6,6 +6,7 @@ COPY ./pom*.xml ./
 
 # copy entire build-tools folder
 COPY ./build-tools ./build-tools
+COPY ./security ./security
 
 # copy poms of shared modules
 COPY ./fhir-client/pom.xml ./fhir-client/
