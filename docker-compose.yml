@@ -67,6 +67,7 @@ services:
     image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
     depends_on:
       - fhir-api
+      - config-server
     environment:
       SERVER_PORT: "8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
