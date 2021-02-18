@@ -12,8 +12,7 @@
     </parent>
     <artifactId>role-service-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Common Role Service Client</name>
-    <description>Client for accessing role-service</description>
+    <description>Common client for accessing role-service</description>
 
     <properties>
         <!-- TODO only really needed if we have multiple dependencies with the same version -->
