@@ -52,3 +52,5 @@ else
   echo "init-service failure!" >&2
   exit 1
 fi
+
+sleep 2m
