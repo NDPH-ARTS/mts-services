@@ -1,6 +1,6 @@
 const requests = require('../../data/role-service/permissions')
 const conf = require('../../config/conf')
-const endpointUri = '/api/roles';
+const endpointUri = ':8072/api/roles';
 
 describe('As a user I want to set permissions for a role so that I can decide what functionality users assigned this role will have in the system', function () {
 

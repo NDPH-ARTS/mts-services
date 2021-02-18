@@ -1,9 +1,9 @@
 const requests = require('../../data/assign-roles/assign-roles')
 const conf = require('../../config/conf')
-const sitesEndpointUri = '/api/sites';
-const rolesEndpointUri = '/api/roles';
-const practitionerEndpointUri = '/api/practitioner'
-let assignRoleEndpointUri = '/api/practitioner/{personId}/roles'
+const sitesEndpointUri = ':8072/api/sites';
+const rolesEndpointUri = ':8072/api/roles';
+const practitionerEndpointUri = ':8072/api/practitioner'
+let assignRoleEndpointUri = ':8072/api/practitioner/{personId}/roles'
 
 
 describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
