@@ -74,8 +74,10 @@ public class RoleServiceClient implements EntityServiceClient {
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
+                        // TODO makes sense for 404, but not other 4xx where I would expect an exception
                         return Mono.just(false);
                     } else if (clientResponse.statusCode().is2xxSuccessful()) {
+                        // TODO makes sense for 200, but other 2xx are inconclusive and may deserve an exception
                         return Mono.just(true);
                     } else {
                         return clientResponse.createException().flatMap(Mono::error);

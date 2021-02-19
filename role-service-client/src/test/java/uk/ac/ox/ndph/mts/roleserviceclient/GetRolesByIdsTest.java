@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.roleserviceclient;
 
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,12 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(properties = {"spring.cloud.config.enabled=false", "spring.main.allow-bean-definition-overriding=true"})
-class RoleServiceClientTests {
+class GetRolesByIdsTest {
 
-    public static TestServiceBackend mockBackEnd;
-
-    private RoleServiceClient client;
-
+    public static TestServiceBackend webServer;
+    private RoleServiceClient sut;
     private static WebClient.Builder builder;
 
     @BeforeAll
@@ -33,24 +31,23 @@ class RoleServiceClientTests {
         config.setConnectTimeOutMs(500);
         config.setReadTimeOutMs(1000);
         builder = config.webClientBuilder();
+
+        webServer = TestServiceBackend.autoStart();
     }
 
     @BeforeEach
     void setUp()  {
-        mockBackEnd = TestServiceBackend.autoStart();
-        this.client = new RoleServiceClient(builder, mockBackEnd.getUrl());
+        sut = new RoleServiceClient(builder, webServer.getUrl());
     }
 
-    @AfterEach
-    void cleanup() {
-        mockBackEnd.shutdown();
+    @AfterAll
+    static void cleanup() {
+        webServer.shutdown();
     }
 
     @Test
-    void TestGetRolesById_WithValidResponse_ReturnsRolesWithPermissionsAsExpected() {
-
+    void withValidResponse_ReturnsRolesWithPermissionsAsExpected() {
         // Arrange
-
         final var roleId = "roleId";
 
         PermissionDTO permissionDTO = new PermissionDTO();
@@ -66,10 +63,10 @@ class RoleServiceClientTests {
                         "\"id\":\"%s\",\"permissions\":[{\"createdDateTime\":null,\"createdBy\":\"test\"," +
                         "\"modifiedDateTime\":null,\"modifiedBy\":\"test\",\"id\":\"some-permission\"}]}]", roleId);
 
-        mockBackEnd.queueResponse(expectedBodyResponse);
+        webServer.queueResponse(expectedBodyResponse);
 
         // Act
-        List<RoleDTO> actualResponse = client.getRolesByIds(Collections.singletonList(roleId));
+        List<RoleDTO> actualResponse = sut.getRolesByIds(Collections.singletonList(roleId));
 
         //Assert
         assertAll(
@@ -83,12 +80,12 @@ class RoleServiceClientTests {
     }
 
     @Test
-    void TestGetRolesById_WhenServiceFails_ThrowsRestException() {
+    void whenServiceFails_ThrowsRestException() {
         // Arrange
-        mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
+        webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
         // Act
         // Assert
-        assertThrows(RestException.class, () -> client.getRolesByIds(Collections.singletonList("roleId")));
+        assertThrows(RestException.class, () -> sut.getRolesByIds(Collections.singletonList("roleId")));
     }
 
 }
