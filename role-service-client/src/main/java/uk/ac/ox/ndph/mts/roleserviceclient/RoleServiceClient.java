@@ -49,16 +49,16 @@ public class RoleServiceClient implements EntityServiceClient {
     @Override
     public RoleDTO getRoleById(final String roleId) throws RestException {
         Objects.requireNonNull(roleId, "roleId must not be null");
-        return webClient.get().uri(uriBuilder -> uriBuilder
-                .path(serviceGetRole)
-                .queryParam("id", roleId)
-                .build())
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(serviceGetRole)
+                        .queryParam("id", roleId)
+                        .build())
                 .header("Content-Type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ID.message(),
                                               serviceName, resp.statusCode(), roleId))))
                 .bodyToMono(RoleDTO.class)
@@ -70,7 +70,8 @@ public class RoleServiceClient implements EntityServiceClient {
     @Override
     public boolean roleIdExists(final String roleId) throws RestException {
         Objects.requireNonNull(roleId, "roleId must not be null");
-        return webClient.get().uri(serviceExistsRoute, roleId)
+        return webClient.get()
+                .uri(serviceExistsRoute, roleId)
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
@@ -90,20 +91,21 @@ public class RoleServiceClient implements EntityServiceClient {
     @Override
     public Page<RoleDTO> getPaged(final int page, final int size) throws RestException {
         final ParameterizedTypeReference<Page<RoleDTO>> parameterizedTypeReference =
-                new ParameterizedTypeReference<>() { };
+                new ParameterizedTypeReference<>() {
+                };
 
-        return webClient.get().uri(uriBuilder ->
-                                           uriBuilder
-                                                   .path(serviceGetPaged)
-                                                   .queryParam("page", page)
-                                                   .queryParam("size", size)
-                                                   .build())
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(serviceGetPaged)
+                        .queryParam("page", page)
+                        .queryParam("size", size)
+                        .build())
                 .header("Content-Type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
                                               serviceName, resp.statusCode(),
                                               "page=" + page + "; size=" + size))))
@@ -116,17 +118,17 @@ public class RoleServiceClient implements EntityServiceClient {
     public List<RoleDTO> getRolesByIds(final List<String> roleIds) {
         final String parsedRoleIds = String.join(",", roleIds);
 
-        return webClient.get().uri(uriBuilder ->
-                                           uriBuilder
-                                                   .path(serviceRolesByIds)
-                                                   .queryParam("ids", parsedRoleIds)
-                                                   .build())
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(serviceRolesByIds)
+                        .queryParam("ids", parsedRoleIds)
+                        .build())
                 .header("Content-Type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ID.message(),
                                               serviceName, resp.statusCode(), parsedRoleIds))))
                 .bodyToMono(RoleDTO[].class)
@@ -138,13 +140,14 @@ public class RoleServiceClient implements EntityServiceClient {
     @Override
     public RoleDTO createRole(final RoleDTO role) {
         Objects.requireNonNull(role, "role must not be null");
-        return webClient.post().uri(serviceCreateRole, role)
+        return webClient.post()
+                .uri(serviceCreateRole, role)
                 .header("Content-Type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
                                               serviceName, resp.statusCode(), "role=" + role))))
                 .bodyToMono(RoleDTO.class)
@@ -155,21 +158,21 @@ public class RoleServiceClient implements EntityServiceClient {
     @Override
     public RoleDTO updatePermissions(final String roleId, final List<PermissionDTO> permissionsDTOs) {
         Objects.requireNonNull(roleId, "roleId must not be null");
-        return webClient.post().uri(uriBuilder ->
-                                            uriBuilder.path(serviceUpdatePermissions)
-                                                    .queryParam("id", roleId)
-                                                    .queryParam("permissionsDTOs", permissionsDTOs)
-                                                    .build())
+        return webClient.post()
+                .uri(uriBuilder -> uriBuilder.path(serviceUpdatePermissions)
+                        .queryParam("id", roleId)
+                        .queryParam("permissionsDTOs", permissionsDTOs)
+                        .build())
                 .header("Content-Type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
-                            String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
-                                          serviceName,
-                                          resp.statusCode(),
-                                          "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
+                                String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
+                                              serviceName,
+                                              resp.statusCode(),
+                                              "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
                 .bodyToMono(RoleDTO.class)
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block();
