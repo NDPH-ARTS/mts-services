@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MainController {
 
+    private final static String Managed_Identity = "MANAGED_IDENTITY";
+
     private Environment env;
 
     private ConfigService myConfig;
-
-    private final static String managedIdentityProperty = "MANAGED_IDENTITY";
 
     @Value("${application.message:Not configured by a Spring Cloud Server}")
     private String message;
@@ -50,7 +50,7 @@ public class MainController {
      *
      * @return a message as a string.
      */
-    @PreAuthorize("@authenticationService.authenticate(env.getProperty(managedIdentityProperty)) or @authorisationService.authorise('stubPermission')") //NOSONAR
+    @PreAuthorize("@authenticationService.authenticate(env.getProperty(Managed_Identity)) or @authorisationService.authorise('stubPermission')") //NOSONAR
     @GetMapping("/hello")
     public String hello() {
         return message;
