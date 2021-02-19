@@ -17,11 +17,12 @@ public abstract class ServiceInvoker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoker.class);
 
-    private WebClient webClient;
+    private final WebClient webClient;
 
     protected ServiceInvoker() {
         this.webClient = WebClient.create();
     }
+
     protected ServiceInvoker(WebClient webClient) {
         this.webClient = webClient;
     }
@@ -50,10 +51,10 @@ public abstract class ServiceInvoker {
     public List<String> execute(List<? extends Entity> entities) throws NullEntityException {
         List<String> entityIds = new ArrayList<>();
         if (entities != null) {
+            LOGGER.info("Starting to create {} entity(s)", entities.size());
             for (Entity entity : entities) {
-                LOGGER.info("Starting to create {}(s): {}", entity.getClass(), entities);
+                LOGGER.info("Starting to create {}(s): {}", entity.getClass(), entity);
                 entityIds.add(create(entity));
-                LOGGER.info("Finished creating {} {}(s)", entities.size(), entity.getClass());
             }
         } else {
             throw new NullEntityException("No entities in payload.");

@@ -9,10 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.init_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.init_service.model.RoleAssignment;
 
 import java.io.IOException;
@@ -21,7 +23,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTest {
@@ -55,7 +56,7 @@ class PractitionerServiceTest {
 
         mockBackEnd.enqueue(new MockResponse()
                 .setBody(new ObjectMapper().writeValueAsString(mockResponseFromPractitionerService))
-               .addHeader("Content-Type", "application/json"));
+                .addHeader("Content-Type", "application/json"));
         String returnedPractitionerId = practitionerServiceInvoker.create(testPractitioner);
         assertNotNull(returnedPractitionerId);
     }
@@ -93,7 +94,7 @@ class PractitionerServiceTest {
                 .addHeader("Content-Type", "application/json"));
         try {
             practitionerServiceInvoker.execute(practitioners, "dummy-site-id");
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail("Should not have thrown any exception");
         }
     }
@@ -111,7 +112,24 @@ class PractitionerServiceTest {
         ReflectionTestUtils.setField(practitionerServiceInvoker, "assignRoleEndpoint", "dummy/%s/dummy");
         try {
             practitionerServiceInvoker.assignRoleToPractitioner(ra);
-        } catch(Exception e) {
+        } catch (Exception e) {
+            fail("Should not have thrown any exception");
+        }
+    }
+
+    @Test
+    void testLinkUserAccountToPractitioner() throws IOException {
+        PractitionerUserAccount userAccount = new PractitionerUserAccount("practitioner-id", "user-account-id");
+        IDResponse mockResponseBody = new IDResponse();
+        mockResponseBody.setId("id-dummy-link-user-account");
+        mockBackEnd.enqueue(new MockResponse()
+                .setBody(new ObjectMapper().writeValueAsString(mockResponseBody))
+                .addHeader("Content-Type", "application/json"));
+
+        ReflectionTestUtils.setField(practitionerServiceInvoker, "linkUserAccountEndpoint", "dummy/%s/dummy");
+        try {
+            practitionerServiceInvoker.linkUserAccount(userAccount);
+        } catch (Exception e) {
             fail("Should not have thrown any exception");
         }
     }
@@ -125,7 +143,7 @@ class PractitionerServiceTest {
         testPractitioner.setRoles(Collections.singletonList("superuser"));
         List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
 
-        String practitionerId ="dummy-practitioner-id";
+        String practitionerId = "dummy-practitioner-id";
 
         PractitionerServiceInvoker mockServiceInvoker = mock(PractitionerServiceInvoker.class, org.mockito.Mockito.CALLS_REAL_METHODS);
 
@@ -137,6 +155,28 @@ class PractitionerServiceTest {
         ArgumentCaptor<RoleAssignment> argumentCaptor = ArgumentCaptor.forClass(RoleAssignment.class);
         verify(mockServiceInvoker).assignRoleToPractitioner(argumentCaptor.capture());
         assertEquals(practitionerId, argumentCaptor.getValue().getPractitionerId());
+    }
 
+    @Test
+    void testExecute_UsesReturnedPractitionerId_inUserAccount() {
+        Practitioner testPractitioner = new Practitioner();
+        testPractitioner.setFamilyName("testFamilyName");
+        testPractitioner.setGivenName("testGivenName");
+        testPractitioner.setPrefix("Mrs");
+        testPractitioner.setUserAccount("testUserAccountIdentity");
+        List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
+
+        String practitionerId = "dummy-practitioner-id";
+
+        PractitionerServiceInvoker spyServiceInvoker = spy(PractitionerServiceInvoker.class);
+
+        doReturn(practitionerId).when(spyServiceInvoker).create(testPractitioner);
+        doNothing().when(spyServiceInvoker).linkUserAccount(any(PractitionerUserAccount.class));
+
+        spyServiceInvoker.execute(practitioners, "dummy-site-id");
+
+        ArgumentCaptor<PractitionerUserAccount> argumentCaptor = ArgumentCaptor.forClass(PractitionerUserAccount.class);
+        verify(spyServiceInvoker).linkUserAccount(argumentCaptor.capture());
+        assertEquals(practitionerId, argumentCaptor.getValue().getPractitionerId());
     }
 }

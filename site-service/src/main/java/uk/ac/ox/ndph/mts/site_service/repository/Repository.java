@@ -11,7 +11,7 @@ public enum Repository {
     SEARCH_ERROR("error while searching for resource: %s"),
     TRANSACTION_ERROR("Problem executing transaction with bundle at: %s");
 
-    private String message;
+    private final String message;
 
     Repository(String message) {
         this.message = message;
