@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.roleserviceclient;
+package uk.ac.ox.ndph.mts.roleserviceclient.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

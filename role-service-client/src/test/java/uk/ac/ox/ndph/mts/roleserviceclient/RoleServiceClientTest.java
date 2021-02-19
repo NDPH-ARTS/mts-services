@@ -9,20 +9,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-@SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true"})
-@ActiveProfiles("test-all-required")
+@SpringBootTest
 public class RoleServiceClientTest {
 
     public static MockWebServer mockBackEnd;
 
-    private AbstractEntityServiceClient roleServiceClient;
+    private EntityServiceClient roleServiceClient;
 
     private static WebClient.Builder builder;
 
@@ -46,27 +45,27 @@ public class RoleServiceClientTest {
     @BeforeEach
     void initialize() {
         String baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
-        roleServiceClient = new RoleServiceClientImpl(builder, baseUrl);
+        roleServiceClient = new RoleServiceClient(builder, baseUrl);
     }
 
     @Test
     void TestEntityRoleExists_WhenExists_ReturnsTrue() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_OK));
-        boolean idExists = roleServiceClient.entityIdExists("12");
+        boolean idExists = roleServiceClient.roleIdExists("12");
         assertSame(idExists, true);
     }
 
     @Test
     void TestEntityRoleExists_WhenNotExists_ReturnsFalse() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_NOT_FOUND));
-        boolean idExists = roleServiceClient.entityIdExists("12");
+        boolean idExists = roleServiceClient.roleIdExists("12");
         assertSame(idExists, false);
     }
 
     @Test
     void TestEntityRoleExists_WhenServiceException_ReturnsRestException() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_INTERNAL_SERVER_ERROR));
-        Assertions.assertThrows(RestException.class, () -> roleServiceClient.entityIdExists("12"));
+        Assertions.assertThrows(RestException.class, () -> roleServiceClient.roleIdExists("12"));
     }
 
 }
