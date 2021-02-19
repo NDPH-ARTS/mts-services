@@ -28,8 +28,8 @@ public class TestSiteStore implements EntityStore<Site, String> {
     }
 
     @Override
-    public Optional<Site> findByName(final String name) {
-        return sites.stream().filter(site -> site.getName().equals(name)).findFirst();
+    public boolean existsByName(final String name) {
+        return sites.stream().anyMatch(site -> site.getName().equalsIgnoreCase(name));
     }
 
     @Override

@@ -16,6 +16,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -43,10 +44,9 @@ public class HapiFhirRepository implements FhirRepository {
      */
     public List<Organization> findOrganizations() {
         try {
-            // TODO (alexb siteType): filter organizations by the extension element that identifies them as sites
             final Bundle responseBundle = fhirContextWrapper
-                    .search(fhirUri, Organization.class)
-                    .execute();
+                .search(fhirUri, Organization.class)
+                .execute();
             return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
         } catch (BaseServerResponseException e) {
             throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
@@ -64,7 +64,7 @@ public class HapiFhirRepository implements FhirRepository {
         Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
-                    bundle(resource, resource.getResourceType().name()));
+                bundle(resource, resource.getResourceType().name()));
         } catch (FhirServerResponseException e) {
             throw new RestException(Repository.UPDATE_ERROR.message(), e);
         }
@@ -87,7 +87,7 @@ public class HapiFhirRepository implements FhirRepository {
      * @param criterion search criteria
      * @return stream of orgs matching search
      */
-    public Stream<Organization> findOrganization(final ICriterion<?> criterion) {
+    Stream<Organization> findOrganizations(final ICriterion<?> criterion) {
         try {
             return fhirContextWrapper
                 .search(fhirUri, Organization.class)
@@ -104,30 +104,19 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     /**
-     * Exact search on name
+     * Check if an Organization resource with the given name exists in the repository; loose matching
+     * (case-insensitive, leading and trailing whitespace ignored)
      *
-     * @param name of the organization to search.
-     * @return org with that name or none() if not found
+     * @param name to search for
+     * @return true if exists already, false otherwise
      */
     @Override
-    public Optional<Organization> findOrganizationByName(final String name) {
-        return findOrganization(Organization.NAME.matchesExactly().value(name)).findFirst();
-    }
-
-    /**
-     * Find Organization By name from the FHIR store, case insensitively
-     *
-     * @param name of the organization to search.
-     * @return Organization searched by name or empty if not found
-     */
-    @Override
-    public Optional<Organization> findOrganizationByNameIgnoringCase(final String name) {
-        final String searchName = name.toLowerCase().trim();
-        // NAME.matches() should do a case-insensitive, substring search
-        // so need to filter for actually equal names, ignoring case
-        return findOrganization(Organization.NAME.matches().value(searchName))
-            .filter(o -> o.getName().trim().equalsIgnoreCase(searchName))
-            .findFirst();
+    public boolean organizationExistsByName(final String name) {
+        final String searchName = name.trim();
+        // cannot use the summary.count method of searching because the name match is too loose
+        // - can get matches by substring
+        return findOrganizations(Organization.NAME.matches().value(searchName))
+            .anyMatch(o -> o.getName().trim().equalsIgnoreCase(searchName));
     }
 
     /**
@@ -142,7 +131,7 @@ public class HapiFhirRepository implements FhirRepository {
         final var resp = fhirContextWrapper.toListOfResources(bundle);
         if (resp.size() != 1) {
             throw new RestException(String.format(
-                    Repository.BAD_RESPONSE_SIZE.message(), resp.size()));
+                Repository.BAD_RESPONSE_SIZE.message(), resp.size()));
         }
         return resp.get(0);
     }
@@ -152,7 +141,7 @@ public class HapiFhirRepository implements FhirRepository {
         bundle.setType(Bundle.BundleType.TRANSACTION);
         // Add the site as an entry.
         bundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource).getRequest()
-                .setUrl(resourceName).setMethod(Bundle.HTTPVerb.POST);
+            .setUrl(resourceName).setMethod(Bundle.HTTPVerb.POST);
         return bundle;
     }
 
@@ -182,17 +171,9 @@ public class HapiFhirRepository implements FhirRepository {
     @Override
     public List<Organization> findOrganizationsByPartOf(final String id) {
         final var criterion = (id == null)
-                ? Organization.PARTOF.isMissing(true)
-                : Organization.PARTOF.hasId(id);
-        try {
-            final Bundle responseBundle = fhirContextWrapper.search(fhirUri, Organization.class)
-                    .where(criterion)
-                    .returnBundle(Bundle.class)
-                    .execute();
-            return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Organization.class);
-        } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
-        }
+            ? Organization.PARTOF.isMissing(true)
+            : Organization.PARTOF.hasId(id);
+        return findOrganizations(criterion).collect(Collectors.toList());
     }
 
 }

@@ -226,56 +226,6 @@ class SiteServiceImplTests {
     }
 
     @Test
-    void TestFindSiteByName_WhenStoreHasSite_ReturnsSite() {
-        // arrange
-        final var config =
-                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, null);
-
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
-        final var site = new Site("CCO", "Root", null);
-        when(siteStore.findByName(site.getName())).thenReturn(Optional.of(site));
-        // act
-        String siteName = "CCO";
-        final Optional<Site> siteFound = siteService.findSiteByName(siteName);
-        // assert
-        assertThat(siteFound.isPresent(), is(true));
-        if (siteFound.isPresent()) {
-            assertThat(siteFound.get().getName(), equalTo(site.getName()));
-            assertThat(siteFound.get().getAlias(), equalTo(site.getAlias()));
-        }
-    }
-
-    @Test
-    void TestSaveSite_WhenStoreHasSite_ThrowsSiteExistsException() {
-        // arrange
-        final var config =
-                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, null);
-
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
-        final var site = new Site("CCO", "Root", null);
-        when(siteValidation.validate(site)).thenReturn(ok());
-        when(siteStore.findByName(site.getName())).thenReturn(Optional.of(site));
-
-        // assert
-        assertThrows(ValidationException.class, () -> siteService.save(site),
-                "Site Already Exists");
-    }
-
-    @Test
-    void TestFindSiteByName_WhenStoreHasNoSite_ReturnsEmpty() {
-        // arrange
-        final var config =
-                new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, null);
-
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
-        when(siteStore.findByName(anyString())).thenReturn(Optional.empty());
-        // act
-        String siteName = "CCO";
-        final Optional<Site> siteFound = siteService.findSiteByName(siteName);
-        assertThat(siteFound.isEmpty(), is(true));
-    }
-
-    @Test
     void TestFindSiteById_WhenStoreHasSite_ReturnsSite() {
         // arrange
         final var config =
@@ -401,18 +351,19 @@ class SiteServiceImplTests {
                 "Organization", "site", "RCC", ALL_REQUIRED_UNDER_35_MAP, null
             )));
         when(siteValidation.validate(any(Site.class))).thenReturn(ok());
+        final var testSiteStore = new TestSiteStore();
         //Act + Assert
-        final var siteService = new SiteServiceImpl(config, new TestSiteStore(), siteValidation);
+        final var siteService = new SiteServiceImpl(config, testSiteStore, siteValidation);
         final String rootId = siteService.save(new Site("root", "root", null, "CCO"));
         final var site = new Site(name, alias, rootId, "RCC");
         final var site2 = new Site(name.toUpperCase(), alias + 'x', rootId, "RCC");
         assertThat(rootId, not(emptyOrNullString()));
-        final String siteId = siteService.save(site);
+        siteService.save(site);
         assertThrows(ValidationException.class, () -> siteService.save(site),
             "Expecting save to throw validation exception");
         assertThrows(ValidationException.class, () -> siteService.save(site2),
             "Expecting save to throw validation exception");
-        assertThat(siteStore.findAll().size(), is(2));
+        assertThat(testSiteStore.findAll().size(), is(2));
     }
 
 }

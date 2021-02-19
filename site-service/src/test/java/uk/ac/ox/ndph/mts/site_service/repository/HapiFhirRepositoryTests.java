@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,7 +61,7 @@ class HapiFhirRepositoryTests {
     }
 
     @Test
-    void TestHapiRepositorySearchOrganizationByName_WhenSiteExists_ReturnSite() {
+    void TestHapiRepositoryOrganizationExistsByName_WhenOrgExists_ReturnOrg() {
         // Arrange
         final var organization = new Organization();
         organization.setName("abc");
@@ -72,13 +71,13 @@ class HapiFhirRepositoryTests {
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act
-        final var foundOrg = fhirRepository.findOrganizationByName(organization.getName());
+        final var exists = fhirRepository.organizationExistsByName(organization.getName());
         // Assert
-        assertThat(foundOrg.isPresent(), is(true));
+        assertThat(exists, is(true));
     }
 
     @Test
-    void TestHapiRepositorySearchOrganizationByName_WhenContextWrapperThrowsExpected_ThrowsException() {
+    void TestHapiRepositoryOrganizationExistsByName_WhenContextWrapperThrowsExpected_ThrowsException() {
         // arrange
         final var exception = new FhirClientConnectionException("message");
         final var mockQuery = mockQuery();
@@ -88,20 +87,20 @@ class HapiFhirRepositoryTests {
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act + Assert
-        assertThrows(RestException.class, () -> fhirRepository.findOrganizationByName("some-name"));
+        assertThrows(RestException.class, () -> fhirRepository.organizationExistsByName("some-name"));
     }
 
     @Test
-    void TestHapiRepositorySearchOrganizationByName_WhenSiteNotFound_ReturnEmpty() {
+    void TestHapiRepositoryOrganizationExistsByName_WheOrgNotFound_ReturnFalse() {
         // Arrange
         final var responseBundle = new Bundle();
         final IQuery<Bundle> mockQuery = mockQueryReturning(responseBundle);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act
-        final var foundOrg = fhirRepository.findOrganizationByName("no-name-here");
+        final var exists = fhirRepository.organizationExistsByName("name-not-found");
         // Assert
-        assertThat(foundOrg.isPresent(), is(false));
+        assertThat(exists, is(false));
     }
 
     @Test
@@ -294,7 +293,6 @@ class HapiFhirRepositoryTests {
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
         when(mockQuery.returnBundle(Bundle.class)).thenReturn(mockQuery);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
-        when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(Collections.emptyList());
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act
         final var foundOrg = fhirRepository.findOrganizationsByPartOf(root.getId());
@@ -322,7 +320,6 @@ class HapiFhirRepositoryTests {
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
         when(mockQuery.returnBundle(Bundle.class)).thenReturn(mockQuery);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
-        when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(List.of(child));
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act
         final var foundOrgs = fhirRepository.findOrganizationsByPartOf(root.getId());
@@ -342,7 +339,6 @@ class HapiFhirRepositoryTests {
         responseBundle.addEntry().setResource(root);
         final var mockQuery = mockQueryReturning(responseBundle);
         when(fhirContextWrapper.search(anyString(), eq(Organization.class))).thenReturn(mockQuery);
-        when(fhirContextWrapper.toListOfResourcesOfType(any(Bundle.class), eq(Organization.class))).thenReturn(Collections.singletonList(root));
         final var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         // Act
         final var foundOrgs = fhirRepository.findOrganizationsByPartOf(null);
