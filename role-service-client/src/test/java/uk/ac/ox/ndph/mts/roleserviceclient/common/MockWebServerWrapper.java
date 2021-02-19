@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.roleserviceclient;
+package uk.ac.ox.ndph.mts.roleserviceclient.common;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

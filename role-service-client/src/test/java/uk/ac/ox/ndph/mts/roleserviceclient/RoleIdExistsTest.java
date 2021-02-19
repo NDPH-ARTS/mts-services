@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
+import uk.ac.ox.ndph.mts.roleserviceclient.common.WebClientConfig;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 
 import java.io.IOException;

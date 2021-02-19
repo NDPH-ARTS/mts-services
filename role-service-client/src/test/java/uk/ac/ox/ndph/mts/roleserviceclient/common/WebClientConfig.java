@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.roleserviceclient;
+package uk.ac.ox.ndph.mts.roleserviceclient.common;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
