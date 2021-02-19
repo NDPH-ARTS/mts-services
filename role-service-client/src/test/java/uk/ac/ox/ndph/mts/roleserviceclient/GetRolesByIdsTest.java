@@ -18,30 +18,30 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(properties = {"spring.cloud.config.enabled=false", "spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest
 class GetRolesByIdsTest {
 
-    public static TestServiceBackend webServer;
+    public static MockWebServerWrapper webServer;
     private RoleServiceClient sut;
     private static WebClient.Builder builder;
 
     @BeforeAll
-    static void init() {
+    static void beforeAll() {
         final WebClientConfig config = new WebClientConfig();
         config.setConnectTimeOutMs(500);
         config.setReadTimeOutMs(1000);
         builder = config.webClientBuilder();
 
-        webServer = TestServiceBackend.autoStart();
+        webServer = MockWebServerWrapper.newStartedInstance();
     }
 
     @BeforeEach
-    void setUp()  {
+    void beforeEach() {
         sut = new RoleServiceClient(builder, webServer.getUrl());
     }
 
     @AfterAll
-    static void cleanup() {
+    static void afterAll() {
         webServer.shutdown();
     }
 
@@ -57,7 +57,7 @@ class GetRolesByIdsTest {
         expectedRoleResponse.setPermissions(Collections.singletonList(permissionDTO));
 
 
-        String expectedBodyResponse =String.format(
+        String expectedBodyResponse = String.format(
                 "[{\"createdDateTime\":\"2021-02-07T17:56:23.837542\",\"createdBy\":\"fake-id\"," +
                         "\"modifiedDateTime\":\"2021-02-07T17:56:23.837542\",\"modifiedBy\":\"fake-id\"," +
                         "\"id\":\"%s\",\"permissions\":[{\"createdDateTime\":null,\"createdBy\":\"test\"," +
@@ -70,12 +70,12 @@ class GetRolesByIdsTest {
 
         //Assert
         assertAll(
-                () -> assertEquals(1 , actualResponse.size()),
-                () -> assertEquals(expectedRoleResponse.getId() , actualResponse.get(0).getId()),
-                () -> assertEquals(expectedRoleResponse.getPermissions().size() ,
-                        actualResponse.get(0).getPermissions().size()),
-                () -> assertEquals(expectedRoleResponse.getPermissions().get(0).getId() ,
-                        actualResponse.get(0).getPermissions().get(0).getId())
+                () -> assertEquals(1, actualResponse.size()),
+                () -> assertEquals(expectedRoleResponse.getId(), actualResponse.get(0).getId()),
+                () -> assertEquals(expectedRoleResponse.getPermissions().size(),
+                                   actualResponse.get(0).getPermissions().size()),
+                () -> assertEquals(expectedRoleResponse.getPermissions().get(0).getId(),
+                                   actualResponse.get(0).getPermissions().get(0).getId())
         );
     }
 
@@ -83,8 +83,8 @@ class GetRolesByIdsTest {
     void whenServiceFails_ThrowsRestException() {
         // Arrange
         webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
-        // Act
-        // Assert
+
+        // Act + Assert
         assertThrows(RestException.class, () -> sut.getRolesByIds(Collections.singletonList("roleId")));
     }
 

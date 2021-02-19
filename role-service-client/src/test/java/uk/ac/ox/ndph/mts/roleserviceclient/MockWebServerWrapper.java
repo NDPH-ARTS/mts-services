@@ -6,7 +6,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public final class TestServiceBackend {
+public final class MockWebServerWrapper {
 
     private MockWebServer mockBackEnd;
 
@@ -19,8 +19,8 @@ public final class TestServiceBackend {
         }
     }
 
-    public static TestServiceBackend autoStart() {
-        final TestServiceBackend result = new TestServiceBackend();
+    public static MockWebServerWrapper newStartedInstance() {
+        final MockWebServerWrapper result = new MockWebServerWrapper();
         result.start();
         return result;
     }

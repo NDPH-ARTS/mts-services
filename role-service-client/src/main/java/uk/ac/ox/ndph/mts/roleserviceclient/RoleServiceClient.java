@@ -57,8 +57,8 @@ public class RoleServiceClient implements EntityServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ID.message(),
                                               serviceName, resp.statusCode(), roleId))))
                 .bodyToMono(RoleDTO.class)
@@ -74,10 +74,11 @@ public class RoleServiceClient implements EntityServiceClient {
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
-                        // TODO makes sense for 404, but not other 4xx where I would expect an exception
+                        // TODO (archiem) makes sense for 404, but not other 4xx where I would expect an exception
                         return Mono.just(false);
                     } else if (clientResponse.statusCode().is2xxSuccessful()) {
-                        // TODO makes sense for 200, but other 2xx are inconclusive and may deserve an exception
+                        // TODO (archiem) makes sense for 200,
+                        // but other 2xx are inconclusive and may deserve an exception
                         return Mono.just(true);
                     } else {
                         return clientResponse.createException().flatMap(Mono::error);
@@ -89,8 +90,7 @@ public class RoleServiceClient implements EntityServiceClient {
     @Override
     public Page<RoleDTO> getPaged(final int page, final int size) throws RestException {
         final ParameterizedTypeReference<Page<RoleDTO>> parameterizedTypeReference =
-                new ParameterizedTypeReference<>() {
-                };
+                new ParameterizedTypeReference<>() { };
 
         return webClient.get().uri(uriBuilder ->
                                            uriBuilder
@@ -102,8 +102,8 @@ public class RoleServiceClient implements EntityServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
                                               serviceName, resp.statusCode(),
                                               "page=" + page + "; size=" + size))))
@@ -114,7 +114,7 @@ public class RoleServiceClient implements EntityServiceClient {
 
     @Override
     public List<RoleDTO> getRolesByIds(final List<String> roleIds) {
-        String parsedRoleIds = String.join(",", roleIds);
+        final String parsedRoleIds = String.join(",", roleIds);
 
         return webClient.get().uri(uriBuilder ->
                                            uriBuilder
@@ -125,8 +125,8 @@ public class RoleServiceClient implements EntityServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ID.message(),
                                               serviceName, resp.statusCode(), parsedRoleIds))))
                 .bodyToMono(RoleDTO[].class)
@@ -143,8 +143,8 @@ public class RoleServiceClient implements EntityServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
                                 String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
                                               serviceName, resp.statusCode(), "role=" + role))))
                 .bodyToMono(RoleDTO.class)
@@ -164,10 +164,12 @@ public class RoleServiceClient implements EntityServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
-                                              serviceName, resp.statusCode(), "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
+                            String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
+                                          serviceName,
+                                          resp.statusCode(),
+                                          "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
                 .bodyToMono(RoleDTO.class)
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block();
