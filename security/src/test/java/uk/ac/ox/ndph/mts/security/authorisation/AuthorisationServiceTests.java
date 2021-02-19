@@ -13,7 +13,7 @@ import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClientImpl;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
-import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
+import uk.ac.ox.ndph.mts.security.exception.AuthenticationException;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
 
 import java.util.Collections;
@@ -46,7 +46,7 @@ class AuthorisationServiceTests {
     @Test
     void TestAuthorise_WithInvalidToken_ReturnsFalse(){
         //Arrange
-        when(securityContextUtil.getUserId()).thenThrow(new AuthorisationException("Any exception during getting user from token"));
+        when(securityContextUtil.getUserId()).thenThrow(new AuthenticationException("Any exception during getting user from token"));
 
         //Act
         //Assert
