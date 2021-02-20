@@ -4,15 +4,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.ac.ox.ndph.mts.init_service.model.*;
+import uk.ac.ox.ndph.mts.init_service.model.Permission;
+import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.init_service.model.Role;
+import uk.ac.ox.ndph.mts.init_service.model.Site;
+import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.TrialService;
 
 import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class LoaderTest {
@@ -26,18 +34,13 @@ class LoaderTest {
     @Mock
     PractitionerServiceInvoker practitionerServiceInvoker;
 
-    @Mock
-    TrialService trialService;
-
     @Test
-    void testLoader() throws Exception {
-        Loader loader = new Loader(trialService, practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
+    void testLoader() {
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).execute(anyList());
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
-
-        when(trialService.getTrial()).thenReturn(mockedTrial());
 
         loader.run();
 
@@ -54,7 +57,7 @@ class LoaderTest {
         site.setName("testSiteName");
         site.setAlias("testSiteAlias");
 
-        Practitioner practitioner= new Practitioner();
+        Practitioner practitioner = new Practitioner();
         practitioner.setFamilyName("testFamilyName");
         practitioner.setGivenName("testGivenName");
         practitioner.setPrefix("Mr");
