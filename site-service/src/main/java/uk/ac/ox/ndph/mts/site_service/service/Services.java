@@ -13,7 +13,7 @@ public enum Services {
     INVALID_ROOT_SITE("Invalid Site Type for Root"),
     INVALID_CHILD_SITE_TYPE("Invalid Child Site Type for Parent");
 
-    private String message;
+    private final String message;
  
     Services(String message) {
         this.message = message;

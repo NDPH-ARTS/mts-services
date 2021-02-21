@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * The main class of this service.
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"uk.ac.ox.ndph.mts"})
 public class SampleServiceApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(SampleServiceApplication.class);
 
@@ -18,7 +18,7 @@ public class SampleServiceApplication {
      */
     public static void main(String[] args) {
 
-        LOGGER.info("Staring sample service app...");
+        LOGGER.info("Starting sample service app...");
         SpringApplication.run(SampleServiceApplication.class, args);
 
     }

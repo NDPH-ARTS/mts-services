@@ -1,23 +1,24 @@
 package uk.ac.ox.ndph.mts.site_service.validation;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.site_service.configuration.SiteConfigurationProvider;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.model.Attribute;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.ValidationResponse;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static uk.ac.ox.ndph.mts.site_service.model.ValidationResponse.invalid;
+import static uk.ac.ox.ndph.mts.site_service.model.ValidationResponse.ok;
 
 /**
  * Implement a ModelEntityValidation for Site
@@ -25,13 +26,29 @@ import java.util.stream.Collectors;
 @Component
 public class SiteValidation implements ModelEntityValidation<Site> {
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
     static class AttributeData {
-        private String description;
-        private Pattern regex;
-        private Function<Site, String> value;
+        private final String description;
+        private final Pattern regex;
+        private final Function<Site, String> valueFunc;
+
+        AttributeData(final String description, final Pattern regex, final Function<Site, String> valueFunc) {
+            this.description = description;
+            this.regex = regex;
+            this.valueFunc = valueFunc;
+        }
+
+        public String getDescription() {
+            return this.description;
+        }
+
+        public Pattern getRegex() {
+            return this.regex;
+        }
+
+        public String applyValueFunc(final Site site) {
+            return this.valueFunc.apply(site);
+        }
+
     }
 
     private static final String REGEX_ALL = ".*";
@@ -40,62 +57,55 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     private final Logger logger = LoggerFactory.getLogger(SiteValidation.class);
 
     /**
-     * @param configurationProvider provide Site Configuration
+     * Construct the site attribute validator. Note this class does not validate references between sites.
+     *
+     * @param configuration injected trial sites configuration
      */
     @Autowired
-    public SiteValidation(SiteConfigurationProvider configurationProvider) {
-        var configuration = configurationProvider.getConfiguration();
-        validationMap = configuration.getAttributes().stream()
-                .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
-                .collect(Collectors.toMap(Pair::getRight,
-                    pair -> new AttributeData(pair.getLeft().getDisplayName(),
-                                Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
-                                pair.getRight().getValue())));
-
+    public SiteValidation(final SiteConfiguration configuration) {
+        Objects.requireNonNull(configuration, "site configuration cannot be null");
+        this.validationMap = configuration.getAttributes().stream()
+            .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
+            .collect(Collectors.toMap(Pair::getRight,
+                pair -> new AttributeData(pair.getLeft().getDisplayName(),
+                    Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
+                    pair.getRight().getValueFunc())));
         validateMap();
         logger.info(Validations.STARTUP.message(), configuration);
     }
 
     @Override
     public ValidationResponse validate(Site entity) {
-        var validation = validateArgument(Attribute.NAME, entity);
-        if (!validation.isValid()) {
-            return validation;
+        for (final Attribute attribute : Attribute.values()) {
+            final var validation = validateArgument(attribute, entity);
+            if (!validation.isValid()) {
+                return validation;
+            }
         }
-        validation = validateArgument(Attribute.ALIAS, entity);
-        if (!validation.isValid()) {
-            return validation;
-        }
-        validation = validateArgument(Attribute.PARENT_SITE_ID, entity);
-        if (!validation.isValid()) {
-            return validation;
-        }
-        validation = validateArgument(Attribute.SITE_TYPE, entity);
-        if (!validation.isValid()) {
-            return validation;
-        }
-        return new ValidationResponse(true, "");
+        return ok();
     }
 
-    private ValidationResponse validateArgument(Attribute attribute, Site site) {
+    private ValidationResponse validateArgument(final Attribute attribute, final Site site) {
         var validation = validationMap.get(attribute);
-        var value = validation.getValue().apply(site);
+        var value = validation.applyValueFunc(site);
         if (value == null) {
             value = "";
         }
         if (!validation.getRegex().matcher(value.trim()).matches()) {
-            return new ValidationResponse(false,
-                    String.format(Validations.ERROR.message(), validation.getDescription()));
+            return invalid(String.format(Validations.ERROR.message(), validation.getDescription()));
         }
-        return new ValidationResponse(true, "");
+        return ok();
     }
 
+    /**
+     * Validate the static (required) attributes configuration is present
+     */
     private void validateMap() {
-        if (validationMap.get(Attribute.NAME) == null
-                || validationMap.get(Attribute.ALIAS) == null
-                    || validationMap.get(Attribute.PARENT_SITE_ID) == null
-                        || validationMap.get(Attribute.SITE_TYPE) == null) {
-            throw new InitialisationError("Configuration field cannot be missing");
+        for (final Attribute attr : Attribute.values()) {
+            if (!validationMap.containsKey(attr)) {
+                throw new InitialisationError(
+                        String.format(Validations.MISSING_ATTRIBUTE.message(), attr.getAttributeName()));
+            }
         }
     }
 
@@ -105,4 +115,5 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         }
         return regexString;
     }
+
 }
