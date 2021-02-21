@@ -15,4 +15,5 @@ public class RoleServiceClient extends AbstractEntityServiceClient {
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
         this.serviceExistsRoute = "/roles/{id}";
     }
+
 }

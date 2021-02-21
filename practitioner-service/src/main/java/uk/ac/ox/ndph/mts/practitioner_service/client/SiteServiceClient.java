@@ -15,5 +15,6 @@ public class SiteServiceClient extends AbstractEntityServiceClient {
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
         this.serviceExistsRoute = "/sites/{siteId}";
     }
+
 }
 
