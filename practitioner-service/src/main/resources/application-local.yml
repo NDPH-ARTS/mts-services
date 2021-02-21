@@ -5,6 +5,13 @@ server:
     include-message: always
 fhir:
   uri: http://localhost:8080
+role:
+  service:
+    uri: http://localhost:8082
+site:
+  service:
+    uri: http://localhost:8083
+
 ---
 config:
   name: Practitioner

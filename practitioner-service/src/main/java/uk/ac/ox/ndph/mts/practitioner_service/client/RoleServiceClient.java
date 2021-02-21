@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -8,11 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class RoleServiceClient extends AbstractEntityServiceClient {
 
     @Autowired
-    public RoleServiceClient(WebClient.Builder webClientBuilder) {
-        this(webClientBuilder, "http://role-service");
-    }
-
-    public RoleServiceClient(WebClient.Builder webClientBuilder, String serviceUrlBase) {
+    public RoleServiceClient(final WebClient.Builder webClientBuilder,
+                             @Value("${role.service.uri}") String serviceUrlBase) {
         this.serviceUrlBase =  serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
         this.serviceExistsRoute = "/roles/{id}";
