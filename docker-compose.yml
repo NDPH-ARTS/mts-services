@@ -24,6 +24,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+#      For docker compose only, in order to disable load balancing from discovery
       SITE-SERVICE_RIBBON_LISTOFSERVERS: "http://site-service:8083"
       ROLE-SERVICE_RIBBON_LISTOFSERVERS: "http://role-service:8082"
     healthcheck:
