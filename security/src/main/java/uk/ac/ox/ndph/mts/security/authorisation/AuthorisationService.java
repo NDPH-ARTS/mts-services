@@ -133,7 +133,7 @@ public class AuthorisationService {
     }
 
     /**
-     * Validate if the user matches a system service identity
+     * Validate if the user matches a system managed service identity
      * @param userId - the requested userId
      * @return true if user and identity match;
      */
