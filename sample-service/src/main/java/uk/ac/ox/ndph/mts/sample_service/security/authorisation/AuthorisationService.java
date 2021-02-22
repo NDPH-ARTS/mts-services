@@ -14,7 +14,6 @@ import uk.ac.ox.ndph.mts.sample_service.client.site_service.SiteServiceClient;
 import uk.ac.ox.ndph.mts.sample_service.exception.AuthorisationException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
