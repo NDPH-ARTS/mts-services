@@ -47,7 +47,7 @@ class AuthorisationServiceTests {
                 practitionerServiceClient,
                 roleServiceClient);
         //Set env var
-        ReflectionTestUtils.setField(authorisationService, "Managed_Identity", managedIdentity);
+        ReflectionTestUtils.setField(authorisationService, "managedIdentity", managedIdentity);
     }
 
     @Test
