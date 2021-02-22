@@ -37,6 +37,7 @@ while ! is_healthy practitioner-service; do sleep 10; done
 
 echo "Services started."
 
+sleep 60s
 
 echo "Running init-service..."
 set +o errexit # the run might fail and we'd like to continue the script

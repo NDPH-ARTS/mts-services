@@ -4,7 +4,7 @@ const endpointUri = ':8072/api/roles';
 
 describe('As a user I want to set permissions for a role so that I can decide what functionality users assigned this role will have in the system', function () {
 
-    it('User is able to assign a permission to a role', async () => {
+    /*it('User is able to assign a permission to a role', async () => {
         const response = await baseRequest.post(endpointUri).send(requests.assignPermission);
         expect(response.text).to.contain("id")
         expect(response.status).to.equal(HttpStatus.OK)
@@ -33,6 +33,6 @@ describe('As a user I want to set permissions for a role so that I can decide wh
         const response = await baseRequest.get(`${endpointUri}?page=0&size=2`);
         expect(response.status).to.equal(HttpStatus.OK)
         expect(response.text).to.contain("id");
-    });
+    });*/
 
 });
