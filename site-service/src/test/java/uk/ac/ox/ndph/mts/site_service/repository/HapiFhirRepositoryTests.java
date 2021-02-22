@@ -312,9 +312,14 @@ class HapiFhirRepositoryTests {
                 .addAlias("Child")
                 .setPartOfTarget(root);
         child.setId("the-child-id");
+        final var child2 = new Organization()
+            .setName("RCC2")
+            .addAlias("Child2")
+            .setPartOfTarget(root);
+        child2.setId("the-child-id-2");
         final var responseBundle = new Bundle();
-        responseBundle.addEntry()
-                .setResource(child);
+        responseBundle.addEntry().setResource(child);
+        responseBundle.addEntry().setResource(child2);
         final var mockQuery = mockQuery();
         when(mockQuery.execute()).thenReturn(responseBundle);
         when(mockQuery.where(any(ICriterion.class))).thenReturn(mockQuery);
@@ -325,11 +330,11 @@ class HapiFhirRepositoryTests {
         final var foundOrgs = fhirRepository.findOrganizationsByPartOf(root.getId());
         // Assert
         assertThat(foundOrgs.isEmpty(), is(false));
-        assertThat(foundOrgs, contains(child));
+        assertThat(foundOrgs, containsInAnyOrder(child, child2));
     }
 
     @Test
-    void TestHapiRepositorySearchOrganizationByPartOf_WhenNull_ReturnsRooty() {
+    void TestHapiRepositorySearchOrganizationByPartOf_WhenNull_ReturnsRoot() {
         // arrange
         final var root = new Organization()
                 .setName("CCO")

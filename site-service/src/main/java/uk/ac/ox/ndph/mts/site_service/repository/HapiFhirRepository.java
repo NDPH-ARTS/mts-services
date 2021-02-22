@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.repository;
 
-import ca.uhn.fhir.rest.gclient.ICriterion;
+import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -60,7 +60,8 @@ public class HapiFhirRepository implements FhirRepository {
      * @return id of the created resource
      */
     private String saveResource(final Resource resource) {
-        logger.info(Repository.REQUEST_PAYLOAD.message(), fhirContextWrapper.prettyPrint(resource));
+        logger.info(String.format(Repository.REQUEST_PAYLOAD.message(),
+            fhirContextWrapper.prettyPrint(resource)));
         Bundle responseBundle;
         try {
             responseBundle = fhirContextWrapper.executeTransaction(fhirUri,
@@ -69,7 +70,8 @@ public class HapiFhirRepository implements FhirRepository {
             throw new RestException(Repository.UPDATE_ERROR.message(), e);
         }
         IBaseResource responseElement = extractResponseResource(responseBundle);
-        logger.info(Repository.RESPONSE_PAYLOAD.message(), fhirContextWrapper.prettyPrint(responseElement));
+        logger.info(String.format(Repository.RESPONSE_PAYLOAD.message(),
+            fhirContextWrapper.prettyPrint(responseElement)));
         return responseElement.getIdElement().getIdPart();
     }
 
@@ -82,25 +84,19 @@ public class HapiFhirRepository implements FhirRepository {
     }
 
     /**
-     * Search by some criteria
-     *
-     * @param criterion search criteria
-     * @return stream of orgs matching search
+     * Private method to return a query (returning Organization, hopefully) as a stream of Organization
+     * @param query query to execcute
+     * @return stream of organization
+     * throws whatever query.execute throws (unchecked exceptions)
      */
-    Stream<Organization> findOrganizations(final ICriterion<?> criterion) {
-        try {
-            return fhirContextWrapper
-                .search(fhirUri, Organization.class)
-                .where(criterion)
-                .returnBundle(Bundle.class)
-                .execute()
-                .getEntry()
-                .stream()
-                .map(Bundle.BundleEntryComponent::getResource)
-                .map(Organization.class::cast);
-        } catch (BaseServerResponseException e) {
-            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
-        }
+    private Stream<Organization> queryAsOrganizationStream(final IQuery<?> query) {
+        return query
+            .returnBundle(Bundle.class)
+            .execute()
+            .getEntry()
+            .stream()
+            .map(Bundle.BundleEntryComponent::getResource)
+            .map(Organization.class::cast);
     }
 
     /**
@@ -115,8 +111,14 @@ public class HapiFhirRepository implements FhirRepository {
         final String searchName = name.trim();
         // cannot use the summary.count method of searching because the name match is too loose
         // - can get matches by substring
-        return findOrganizations(Organization.NAME.matches().value(searchName))
-            .anyMatch(o -> o.getName().trim().equalsIgnoreCase(searchName));
+        try {
+            return queryAsOrganizationStream(
+                fhirContextWrapper.search(fhirUri, Organization.class)
+                    .where(Organization.NAME.matches().value(searchName)))
+                .anyMatch(o -> o.getName().trim().equalsIgnoreCase(searchName));
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
     }
 
     /**
@@ -173,7 +175,14 @@ public class HapiFhirRepository implements FhirRepository {
         final var criterion = (id == null)
             ? Organization.PARTOF.isMissing(true)
             : Organization.PARTOF.hasId(id);
-        return findOrganizations(criterion).collect(Collectors.toList());
+        try {
+            return queryAsOrganizationStream(
+                fhirContextWrapper.search(fhirUri, Organization.class)
+                    .where(criterion))
+                .collect(Collectors.toList());
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(Repository.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
     }
 
 }
