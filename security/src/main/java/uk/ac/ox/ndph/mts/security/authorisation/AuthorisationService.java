@@ -49,8 +49,9 @@ public class AuthorisationService {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
 
-            //If user is a service it is authorized.
-            if(isManagedServiceIdentity(userId)) {
+            //Managed Service Identities represent a call from a service and is
+            //therefore authorized.
+            if(isUserAManagedServiceIdentity(userId)) {
                 return true;
             }
 
@@ -136,7 +137,7 @@ public class AuthorisationService {
      * @param userId - the requested userId
      * @return true if user and identity match;
      */
-    private boolean isManagedServiceIdentity(String userId) {
+    private boolean isUserAManagedServiceIdentity(String userId) {
         return userId.equals(Managed_Identity);
     }
 }
