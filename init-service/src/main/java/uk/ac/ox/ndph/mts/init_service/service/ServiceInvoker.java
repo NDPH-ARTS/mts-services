@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.init_service.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,6 +21,11 @@ public abstract class ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoker.class);
 
     private final WebClient webClient;
+
+    // In unit-tests the webclient retry step gets stuck (something about virtual time).
+    // This is a quick trick to disable retry while testing without the spring container.
+    @Value("${max-webclient-attempts:9}")
+    private long maxWebClientAttempts = 0;
 
     protected ServiceInvoker() {
         this.webClient = WebClient.create();
@@ -41,7 +47,8 @@ public abstract class ServiceInvoker {
                     .body(Mono.just(payload), payload.getClass())
                     .retrieve()
                     .bodyToMono(responseExpected)
-                    .retryWhen(Retry.backoff(9, Duration.ofSeconds(5)).maxBackoff(Duration.ofSeconds(30)))
+                    .retryWhen(Retry.backoff(maxWebClientAttempts,
+                            Duration.ofSeconds(5)).maxBackoff(Duration.ofSeconds(30)))
                     .block();
 
         } catch (Exception e) {
