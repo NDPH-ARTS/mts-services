@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
@@ -26,6 +27,10 @@ class GetRolesByIdsTest {
     public static MockWebServerWrapper webServer;
     private RoleServiceClient sut;
     private static WebClient.Builder builder;
+
+    @SpringBootApplication
+    static class TestConfiguration {
+    }
 
     @BeforeAll
     static void beforeAll() {
