@@ -28,7 +28,7 @@ public class AuthorisationService {
     private final RoleServiceClient roleServiceClient;
 
     @Value("Managed_Identity")
-    private String Managed_Identity;
+    private String managedIdentity;
 
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityContextUtil,
@@ -51,7 +51,7 @@ public class AuthorisationService {
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
-            if(isUserAManagedServiceIdentity(userId)) {
+            if (isUserAManagedServiceIdentity(userId)) {
                 return true;
             }
 
@@ -138,6 +138,6 @@ public class AuthorisationService {
      * @return true if user and identity match;
      */
     private boolean isUserAManagedServiceIdentity(String userId) {
-        return userId.equals(Managed_Identity);
+        return userId.equals(managedIdentity);
     }
 }
