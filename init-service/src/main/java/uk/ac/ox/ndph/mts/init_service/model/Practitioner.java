@@ -12,6 +12,8 @@ public class Practitioner implements Entity {
     private String familyName;
     private List<String> roles;
 
+    private String userAccount;
+
     public String getPrefix() {
         return prefix;
     }
@@ -44,14 +46,24 @@ public class Practitioner implements Entity {
         this.roles = roles;
     }
 
+    public String getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
+    }
+
     @Override
     public String toString() {
         return String.format(
                 "Practitioner{prefix='%s', "
-                + "givenName='%s', "
-                + "familyName'%s'}",
+                        + "givenName='%s', "
+                        + "familyName='%s', "
+                        + "userAccount='%s'}",
                 prefix,
                 givenName,
-                familyName);
+                familyName,
+                userAccount);
     }
 }
