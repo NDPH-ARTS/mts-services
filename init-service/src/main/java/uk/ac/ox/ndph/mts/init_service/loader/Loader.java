@@ -32,14 +32,11 @@ public class Loader implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws InterruptedException {
         // TODO: remove this temporary fix in this story: https://ndph-arts.atlassian.net/browse/ARTS-362
-        try {
-            // Give the other services some time to come online.
-            Thread.sleep(delayStartInSeconds * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // Give the other services some time to come online.
+        Thread.sleep(delayStartInSeconds * 1000);
+
         roleServiceInvoker.execute(trialConfig.getRoles());
         List<String> siteIds = siteServiceInvoker.execute(trialConfig.getSites());
         // This yuk but it is the assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164

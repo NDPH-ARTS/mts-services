@@ -35,7 +35,7 @@ class LoaderTest {
     PractitionerServiceInvoker practitionerServiceInvoker;
 
     @Test
-    void testLoader() {
+    void testLoader() throws InterruptedException {
         Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).execute(anyList());
