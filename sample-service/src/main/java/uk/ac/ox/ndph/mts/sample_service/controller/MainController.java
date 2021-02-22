@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MainController {
 
-    private final static String Managed_Identity = "MANAGED_IDENTITY";
-
-    private Environment env;
-
     private ConfigService myConfig;
 
     @Value("${application.message:Not configured by a Spring Cloud Server}")
@@ -29,9 +25,8 @@ public class MainController {
      * @param configService a config service
      */
     @Autowired
-    public MainController(ConfigService configService, Environment env) {
+    public MainController(ConfigService configService) {
         this.myConfig = configService;
-        this.env = env;
     }
 
     /**
@@ -50,7 +45,7 @@ public class MainController {
      *
      * @return a message as a string.
      */
-    @PreAuthorize("@authenticationService.authenticate(env.getProperty(Managed_Identity)) or @authorisationService.authorise('stubPermission')") //NOSONAR
+    @PreAuthorize("@authorisationService.authorise('stubPermission')") //NOSONAR
     @GetMapping("/hello")
     public String hello() {
         return message;

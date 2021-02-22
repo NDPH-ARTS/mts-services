@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClientImpl;
 import uk.ac.ox.ndph.mts.client.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,14 +36,31 @@ class AuthorisationServiceTests {
     @Mock
     private SecurityContextUtil securityContextUtil;
 
+
     private AuthorisationService authorisationService;
+
+    private final String managedIdentity = "999";
 
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
                 practitionerServiceClient,
                 roleServiceClient);
+        //Set env var
+        ReflectionTestUtils.setField(authorisationService, "Managed_Identity", managedIdentity);
     }
+
+    @Test
+    void TestBypassAuthorise_WhenUser_ManagedIdentity(){
+        //Arrange
+        String userId = managedIdentity;
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authorise("some-permission"));
+    }
+
 
     @Test
     void TestAuthorise_WithInvalidToken_ReturnsFalse(){

@@ -1,6 +1,8 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClient;
@@ -26,6 +28,9 @@ public class AuthorisationService {
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
 
+    @Value("Managed_Identity")
+    private String Managed_Identity;
+
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityContextUtil,
                                 final PractitionerServiceClient practitionerServiceClient,
@@ -44,6 +49,11 @@ public class AuthorisationService {
         try {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
+
+            //If user is a service it is authorized.
+            if(isServiceIdentity(userId)) {
+                return true;
+            }
 
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId);
@@ -120,5 +130,14 @@ public class AuthorisationService {
     @SuppressWarnings("squid:S1172") //suppress unused parameter
     private boolean isSiteAuthorised(String entitySite, String userRole) {
         return true;
+    }
+
+    /**
+     * Validate if the user matches a service identity
+     * @param userId - the requested userId
+     * @return true if user and identity match;
+     */
+    private boolean isServiceIdentity(String userId) {
+        return userId.equals(Managed_Identity);
     }
 }
