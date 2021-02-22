@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClient;
@@ -51,7 +50,7 @@ public class AuthorisationService {
             String userId = securityContextUtil.getUserId();
 
             //If user is a service it is authorized.
-            if(isServiceIdentity(userId)) {
+            if(isManagedServiceIdentity(userId)) {
                 return true;
             }
 
@@ -137,7 +136,7 @@ public class AuthorisationService {
      * @param userId - the requested userId
      * @return true if user and identity match;
      */
-    private boolean isServiceIdentity(String userId) {
+    private boolean isManagedServiceIdentity(String userId) {
         return userId.equals(Managed_Identity);
     }
 }
