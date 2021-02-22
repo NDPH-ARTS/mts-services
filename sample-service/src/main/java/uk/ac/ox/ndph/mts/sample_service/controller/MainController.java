@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.sample_service.controller;
 
-import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
 import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
