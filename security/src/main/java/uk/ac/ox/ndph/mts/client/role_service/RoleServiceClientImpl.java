@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.client.role_service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class RoleServiceClientImpl implements RoleServiceClient {
     @Value("${role.service.endpoint.roles}")
     private String rolesRoute;
 
+    @Autowired
     public RoleServiceClientImpl(final WebClient.Builder webClientBuilder,
                                  @Value("${role.service.url}") String roleServiceUrl) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
