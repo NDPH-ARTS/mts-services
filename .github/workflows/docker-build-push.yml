@@ -69,7 +69,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Start services using Docker Compose
-        timeout-minutes: 10
+        timeout-minutes: 5
         env:
           PROFILE: dev
           SAPASSWORD: $(openssl rand -base64 12)
