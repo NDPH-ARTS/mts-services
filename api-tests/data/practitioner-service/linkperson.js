@@ -1,19 +1,19 @@
 const createFirstPerson = {
-    "prefix": "Mr",
-    "givenName": "Adam",
+    "prefix": "Miss",
+    "givenName": "Clare",
     "familyName": "Rich"
 }
 
 const createSecondPerson = {
-    "prefix": "Ms",
+    "prefix": "Mrs",
     "givenName": "Louise",
-    "familyName": "Gardener"
+    "familyName": "Redford"
 }
 
 const createThirdPerson = {
-    "prefix": "Ms",
+    "prefix": "Bishop",
     "givenName": "Chelsea",
-    "familyName": "Edwards"
+    "familyName": "King"
 }
 
 const createFourthPerson = {
@@ -23,7 +23,11 @@ const createFourthPerson = {
 }
 
 const linkUser = {
-    "userAccountId": "user007"
+    "userAccountId": "user006"
+}
+
+const linkEmptyUser = {
+    
 }
 
 module.exports = {
@@ -31,5 +35,6 @@ module.exports = {
     createSecondPerson,
     createThirdPerson,
     createFourthPerson,
-    linkUser
+    linkUser,
+    linkEmptyUser
 };   
