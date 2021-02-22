@@ -49,7 +49,7 @@ public class AuthorisationService {
         this.siteServiceClient = siteServiceClient;
     }
 
-    public boolean authorise(String requiredPermission, List<Object> sites, String methodName) {
+    public boolean authorise(String requiredPermission, List<?> sites, String methodName) {
         List<String> siteIds = sites.stream()
                 .map(site -> getSiteIdFromObj(site, methodName))
                 .collect(Collectors.toList());
