@@ -97,10 +97,9 @@ services:
     image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
     restart: on-failure
     environment:
-      PRACTITIONER_SERVICE: "http://practitioner-service:8081"
-      ROLE_SERVICE: "http://role-service:8082"
-      SITE_SERVICE: "http://site-service:8083"
-      CONFIG_JSON: config.json
+      PRACTITIONER-SERVICE_URI: "http://practitioner-service:8081"
+      ROLE-SERVICE_URI: "http://role-service:8082"
+      SITE-SERVICE_URI: "http://site-service:8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
     deploy:
       restart_policy:
