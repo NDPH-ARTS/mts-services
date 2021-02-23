@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.client.practitioner_service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -44,8 +45,8 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
                         .path(roleAssignmentRoute)
                         .queryParam("userIdentity", userId)
                         .build())
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
