@@ -23,7 +23,6 @@ import uk.ac.ox.ndph.mts.security.authorisation.SecurityContextUtil;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
