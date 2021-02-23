@@ -47,6 +47,7 @@ services:
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
