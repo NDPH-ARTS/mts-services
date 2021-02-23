@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
@@ -19,12 +20,16 @@ public abstract class ServiceInvoker {
 
     private final WebClient webClient;
 
+    private AzureTokenService azureTokenService;
+
     protected ServiceInvoker() {
         this.webClient = WebClient.create();
     }
 
-    protected ServiceInvoker(WebClient webClient) {
+    protected ServiceInvoker(WebClient webClient,
+                             AzureTokenService azureTokenservice) {
         this.webClient = webClient;
+        this.azureTokenService = azureTokenservice;
     }
 
     protected abstract String create(Entity entity) throws DependentServiceException;
@@ -36,6 +41,7 @@ public abstract class ServiceInvoker {
             return webClient.post()
                     .uri(uri)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .headers(h -> h.setBearerAuth(azureTokenService.getToken()))
                     .body(Mono.just(payload), payload.getClass())
                     .retrieve()
                     .bodyToMono(responseExpected)
