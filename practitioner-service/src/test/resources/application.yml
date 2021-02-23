@@ -4,7 +4,7 @@ server:
   error:
     include-message: always
 fhir:
-  uri: http://localhost:8084
+  uri: http://localhost:8099
 role:
   service:
     uri: http://localhost:8082
