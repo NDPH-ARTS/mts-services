@@ -6,9 +6,9 @@
     
     <parent>
         <groupId>uk.ac.ox.ndph.mts</groupId>
-        <artifactId>mts-services-web-parent</artifactId>
+        <artifactId>mts-services-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.web.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     
@@ -107,6 +107,12 @@
             <artifactId>mockwebserver</artifactId>
             <version>${okhttp.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>2.2.6.RELEASE</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
