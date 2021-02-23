@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Thrown when an incoming REST call was forbidden
  */
 @ResponseStatus(value = HttpStatus.FORBIDDEN)
-public class AuthenticationException extends RuntimeException {
+public class AuthorisationException extends RuntimeException {
 
     /**
      *
      * @param message the exception message
      */
-    public AuthenticationException(String message) {
+    public AuthorisationException(String message) {
         super(message);
     }
 
@@ -22,7 +22,7 @@ public class AuthenticationException extends RuntimeException {
      * @param message the exception message
      * @param cause case of the exception
      */
-    public AuthenticationException(String message, Throwable cause) {
+    public AuthorisationException(String message, Throwable cause) {
         super(message, cause);
     }
 }
