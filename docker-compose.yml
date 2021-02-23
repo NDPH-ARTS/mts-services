@@ -101,6 +101,9 @@ services:
       ROLE-SERVICE_URI: "http://role-service:8082"
       SITE-SERVICE_URI: "http://site-service:8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
     deploy:
       restart_policy:
           condition: none
