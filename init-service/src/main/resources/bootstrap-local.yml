@@ -2,3 +2,7 @@ spring:
   cloud:
     config:
       enabled: false
+      discovery:
+        enabled: false
+    discovery:
+      enabled: false

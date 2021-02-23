@@ -1,0 +1,49 @@
+server:
+  error:
+    include-message: always
+
+logging:
+  level:
+    uk:
+      ac:
+        ox:
+          ndph:
+            mts: DEBUG
+    org:
+      springframework:
+        web:
+          reactive:
+            function:
+              client:
+                ExchangeFunctions: TRACE
+
+# for local work we specify the uri's manually using env vars
+role-service:
+  uri: http://localhost:8082
+site-service:
+  uri: http://localhost:8083
+practitioner-service:
+  uri: http://localhost:8081
+---
+# for local work we use this static trial config
+trial:
+  trialName: "My Local Trial"
+  persons:
+    - givenName: Bootstrap
+      familyName: User
+      prefix: Mr
+      roles:
+        - superuser
+      userAccount: some-user-account-id
+  sites:
+    - name: CCO
+      alias: CCO
+      siteType: CCO
+  roles:
+    - id: superuser
+      permissions:
+        - id: create-person
+        - id: view-person
+    - id: country-admin
+      permissions:
+        - id: create-person
