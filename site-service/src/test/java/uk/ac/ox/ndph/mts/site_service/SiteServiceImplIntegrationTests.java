@@ -53,7 +53,6 @@ class SiteServiceImplIntegrationTests {
         root.setId(rootSiteId);
         root.setImplicitRules(parentSiteType);
         when(repository.findOrganizationById(rootSiteId)).thenReturn(Optional.of(root));
-        when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"" + rootSiteId + "\", \"siteType\": \"" + siteType + "\"}";
@@ -83,7 +82,6 @@ class SiteServiceImplIntegrationTests {
         final Organization root = new Organization();
         root.setId(rootSiteId);
         root.setImplicitRules(parentSiteType);
-        when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.findOrganizationById(anyString())).thenReturn(Optional.of(root));
         when(repository.saveOrganization(any(Organization.class))).thenThrow(new RestException("test error"));
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"REGION\"}";
@@ -101,7 +99,6 @@ class SiteServiceImplIntegrationTests {
         root.setId("parentSiteId");
         root.setImplicitRules("CCO");
         when(repository.findOrganizationById(("parentSiteId"))).thenReturn(Optional.of(root));
-        when(repository.findOrganizationByName(anyString())).thenReturn(Optional.empty());
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"REGION\"}";
