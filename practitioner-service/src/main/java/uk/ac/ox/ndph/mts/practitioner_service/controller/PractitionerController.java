@@ -96,7 +96,6 @@ public class PractitionerController {
     @GetMapping(path = "/profile", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<List<Practitioner>> profile() {
         String userIdFromToken = securityContextUtil.getUserId();
-        Logger.getAnonymousLogger().info("Request to profile endpoint " + userIdFromToken);
         List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdFromToken);
         return ResponseEntity.ok(practitioners);
     }

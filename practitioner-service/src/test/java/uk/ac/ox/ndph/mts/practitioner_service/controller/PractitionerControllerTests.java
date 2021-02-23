@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import uk.ac.ox.ndph.mts.security.authorisation.SecurityContextUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -55,6 +56,9 @@ class PractitionerControllerTests {
     private MockMvc mockMvc;
     @MockBean
     private EntityService entityService;
+    @MockBean
+    private SecurityContextUtil securityContextUtil;
+
 
     @WithMockUser
     @Test
@@ -256,9 +260,14 @@ class PractitionerControllerTests {
 
         String userID = "dummy-azureoid";
         String familyName = "dummy-family-name";
+
+        when(securityContextUtil.getUserId()).thenReturn(userID);
+
         List<Practitioner> practitionersFromService = Collections.singletonList(
                 new Practitioner("dummy-id", "dummy-prefix", "dummy-given-name", familyName, userID));
         when(entityService.getPractitionersByUserIdentity(userID)).thenReturn(practitionersFromService);
+
+
 
         this.mockMvc
                 .perform(get(practitionerProfileUri))
