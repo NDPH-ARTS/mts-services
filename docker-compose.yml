@@ -116,7 +116,7 @@ services:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
     restart: on-failure
     environment:
-      sSERVER_PORT: "8084"
+      SERVER_PORT: "8084"
       FHIRServer__Security__Enabled: "false"
       SqlServer__ConnectionString: "Server=tcp:sql,1433;Initial Catalog=FHIR;Persist Security Info=False;User ID=sa;Password=${SAPASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
       SqlServer__AllowDatabaseCreation: "true"
