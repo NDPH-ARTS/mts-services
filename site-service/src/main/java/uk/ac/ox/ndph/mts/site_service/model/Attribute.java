@@ -5,8 +5,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import java.util.function.Function;
 
 /**
- * The known Site attributes.
- * TODO (who): These should be generated dynamically from the configuration json.
+ * The known Site attributes. These are the static attributes, so configuration for them is required to be present.
  */
 public enum Attribute {
 
@@ -15,12 +14,12 @@ public enum Attribute {
     PARENT_SITE_ID(AttributeNames.PARENT_SITE_ID.nameof(), Site::getParentSiteId),
     SITE_TYPE(AttributeNames.SITE_TYPE.nameof(), Site::getSiteType);
 
-    private String attributeName;
-    private Function<Site, String> value;
+    private final String attributeName;
+    private final Function<Site, String> valueFunc;
 
     Attribute(String attributeName, Function<Site, String> value) {
         this.attributeName = attributeName;
-        this.value = value;
+        this.valueFunc = value;
     }
     
     /**
@@ -35,8 +34,8 @@ public enum Attribute {
      * gets the getter function for this attribute
      * @return a function that returns value from site
      */
-    public Function<Site, String> getValue() {
-        return value;
+    public Function<Site, String> getValueFunc() {
+        return valueFunc;
     }
 
     /**
@@ -57,4 +56,5 @@ public enum Attribute {
         }
         throw new InitialisationError(String.format(Models.STRING_PARSE_ERROR.error(), input));
     }
+
 }

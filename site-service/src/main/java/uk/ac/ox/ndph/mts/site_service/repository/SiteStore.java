@@ -46,8 +46,6 @@ public class SiteStore implements EntityStore<Site, String> {
         final Organization org = fromSiteConverter.convert(entity);
         final String orgId = repository.saveOrganization(org);
         org.setId(orgId);
-        // TODO (who): Add research study only when needed.
-        // TODO (alexb): attach research study to site properly
         createResearchStudy(org);
         return orgId;
     }
