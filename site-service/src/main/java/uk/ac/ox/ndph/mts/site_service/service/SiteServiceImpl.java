@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Implement an SiteServiceInterface interface.
@@ -73,7 +72,7 @@ public class SiteServiceImpl implements SiteService {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
 
-        if (findSiteByName(site.getName()).isPresent()) {
+        if (siteStore.existsByName(site.getName())) {
             throw new ValidationException(Services.SITE_NAME_EXISTS.message());
         }
 
@@ -111,16 +110,6 @@ public class SiteServiceImpl implements SiteService {
             throw new InvariantException(Services.NO_ROOT_SITE.message());
         }
         return sites;
-    }
-
-    /**
-     * Find Site By Site Name
-     *
-     * @param siteName the Site to search.
-     * @return site The Site being searched, or none() if not found
-     */
-    Optional<Site> findSiteByName(String siteName) {
-        return siteStore.findByName(siteName);
     }
 
     /**

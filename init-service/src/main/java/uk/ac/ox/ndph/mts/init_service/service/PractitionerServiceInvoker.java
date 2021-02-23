@@ -20,16 +20,16 @@ import java.util.List;
 public class PractitionerServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerServiceInvoker.class);
 
-    @Value("${practitioner.service}")
+    @Value("${practitioner-service.uri}")
     private String practitionerService;
 
-    @Value("${practitioner.service.endpoint.create}")
+    @Value("${practitioner-service.routes.create}")
     private String createEndpoint;
 
-    @Value("${practitioner.service.endpoint.assign.role}")
+    @Value("${practitioner-service.routes.assign-role}")
     private String assignRoleEndpoint;
 
-    @Value("${practitioner.service.endpoint.link.useraccount}")
+    @Value("${practitioner-service.routes.link-user-account}")
     private String linkUserAccountEndpoint;
 
     public PractitionerServiceInvoker() {
