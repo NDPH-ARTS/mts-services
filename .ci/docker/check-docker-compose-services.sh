@@ -21,15 +21,21 @@ is_healthy() {
     fi
 }
 
+# on CI we want to test ALL services (discovery, config and gateway) using dev profile (instead of the local default)
 docker-compose pull -q
-docker-compose up --no-build -d practitioner-service role-service site-service
+docker-compose up --no-build -d gateway-server config-server discovery-server
 
 echo "Waiting for services to become healthy..."
+while ! is_healthy discovery-server; do sleep 10; done
+while ! is_healthy config-server; do sleep 10; done
+while ! is_healthy gateway-server; do sleep 10; done
+
+docker-compose up --no-build -d practitioner-service site-service role-service
 while ! is_healthy site-service; do sleep 10; done
 while ! is_healthy role-service; do sleep 10; done
 while ! is_healthy practitioner-service; do sleep 10; done
-echo "Services started."
 
+echo "Services started."
 
 echo "Running init-service..."
 set +o errexit # the run might fail and we'd like to continue the script

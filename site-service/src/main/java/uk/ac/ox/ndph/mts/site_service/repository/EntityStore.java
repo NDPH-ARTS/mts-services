@@ -24,14 +24,6 @@ public interface EntityStore<T, K> {
     List<T> findAll();
 
     /**
-     * Find entity by name in the store
-     *
-     * @param name to search for
-     * @return entity or none() if none found
-     */
-    Optional<T> findByName(String name);
-
-    /**
      * Find entity by ID in the store
      *
      * @param id ID of entity to find
@@ -46,6 +38,16 @@ public interface EntityStore<T, K> {
      */
     default Optional<T> findRoot() {
         return Optional.empty();
+    }
+
+    /**
+     * Check if an entity with the given name exists (if names are valid for this entity)
+     * Default implementation always returns false
+     * @param entityName entity name to check for, not null
+     * @return true if entity with the given name exists
+     */
+    default boolean existsByName(final String entityName) {
+        return false;
     }
 
 }

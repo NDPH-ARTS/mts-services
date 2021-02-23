@@ -71,6 +71,7 @@ jobs:
       - name: Start services using Docker Compose
         timeout-minutes: 5
         env:
+          PROFILE: dev
           SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
         run: |
