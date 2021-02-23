@@ -4,14 +4,13 @@ server:
   error:
     include-message: always
 fhir:
-  uri: http://localhost:8080
+  uri: http://localhost:8099
 role:
   service:
     uri: http://localhost:8082
 site:
   service:
     uri: http://localhost:8083
-
 ---
 config:
   name: Practitioner
@@ -26,3 +25,30 @@ config:
   - name: prefix
     displayName: Prefix
     validationRegex: "^[a-zA-Z]{0,35}$"
+
+---
+# When Eureka is disabled Ribbon client defaults to a configured server list
+site-service:
+  ribbon:
+    listOfServers: ${SITE_SERVICE_URI:-http://localhost:8083}
+
+role-service:
+  ribbon:
+    listOfServers: ${ROLE_SERVICE_URI:-http://localhost:8082}
+---
+#security
+azure:
+  activedirectory:
+    client-id: <client-id>
+    session-stateless: true
+practitioner:
+  service:
+    uri: http://localhost:8081
+    endpoint:
+      roles: /practitioner/roles
+    name: practitioner-service
+role:
+  service:
+    endpoint:
+      roles: /roles
+    name: role-service
