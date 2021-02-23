@@ -4,7 +4,7 @@ server:
   error:
     include-message: always
 fhir:
-  uri: http://localhost:8080
+  uri: http://localhost:8084
 # trial site config - this is the default for local testing, with CCO/REGION/COUNTRY/LCC
 site:
   name: Organization

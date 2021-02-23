@@ -9,4 +9,4 @@ http://baseurl:port/service-name/endpoint.
 
 for example:
 
-POST http://localhost:8072/practitioner-service/practitioner
+POST http://localhost/practitioner-service/practitioner
