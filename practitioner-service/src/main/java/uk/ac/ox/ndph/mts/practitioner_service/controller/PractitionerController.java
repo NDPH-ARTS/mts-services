@@ -47,7 +47,7 @@ public class PractitionerController {
      * @param practitioner The practitioner to create
      * @return ResponseEntity
      */
-    @PreAuthorize("@authorisationService.authorise('create-person')")
+    @PreAuthorize("@authorisationService.authorise('create-person')") //NOSONAR
     @PostMapping()
     public ResponseEntity<Response> savePractitioner(@RequestBody Practitioner practitioner) {
         String practitionerId = entityService.savePractitioner(practitioner);
