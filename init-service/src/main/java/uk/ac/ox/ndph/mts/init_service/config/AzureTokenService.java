@@ -21,7 +21,7 @@ public class AzureTokenService implements TokenService {
 
         LOGGER.info("Token is - " + token);
 
-        LOGGER.info("OID of token is - " + getIdentityId());
+        LOGGER.info("OID of azure token is - " + getIdentityId());
 
         return token;
     }
