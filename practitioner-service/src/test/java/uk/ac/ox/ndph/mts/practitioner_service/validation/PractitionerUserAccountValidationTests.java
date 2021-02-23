@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -24,31 +25,46 @@ import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 
 @ExtendWith(MockitoExtension.class)
 public class PractitionerUserAccountValidationTests {
-    
+
     private PractitionerUserAccountValidation validator;
 
     @Mock
     private EntityStore<Practitioner> entityStore;
-    
+
     @BeforeEach
     void setup() {
-         this.validator = new PractitionerUserAccountValidation(entityStore);
+        this.validator = new PractitionerUserAccountValidation(entityStore);
     }
-    
+
     @Test
-    void TestPractitionerUserAccoountValidation_WhenPractitionerHasAccount_FailsValidation() {
+    void TestPractitionerUserAccountValidation_WhenPractitionerHasAccount_FailsValidation() {
         String practitionerId = "practitionerId";
         PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, "userAccountId");
         Practitioner practitioner = new Practitioner("id", "prefix", "given", "family", "anotherAccountId");
-               
+
         when(entityStore.getEntity(practitionerId)).thenReturn(Optional.of(practitioner));
         var result = validator.validate(userAccount);
         assertThat(result.isValid(), is(false));
         assertThat(result.getErrorMessage(), containsString("registered"));
+    }
+
+    @Test
+    void TestPractitionerUserAccountValidation_WhenUserAccountIsAlreadyLinked_FailsValidation() {
+        String practitionerId = "practitionerId";
+        String userAccountId = "userAccountId";
+        PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, userAccountId);
+        Practitioner practitioner = new Practitioner("id", "prefix", "given", "family", "");
+
+        when(entityStore.getEntity(practitionerId)).thenReturn(Optional.of(practitioner));
+        when(entityStore.findEntitiesByUserIdentity(userAccountId)).thenReturn(asList(practitioner));
+        
+        var result = validator.validate(userAccount);
+        assertThat(result.isValid(), is(false));
+        assertThat(result.getErrorMessage(), containsString("already linked to a practitioner"));
     }    
     
     @Test
-    void TestPractitionerUserAccoountValidation_WhenPractitionerHasNoAccount_PassesValidation() {
+    void TestPractitionerUserAccountValidation_WhenPractitionerHasNoAccount_PassesValidation() {
         String practitionerId = "practitionerId";
         PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, "userAccountId");
         Practitioner practitioner = new Practitioner("id", "prefix", "given", "family", "");
@@ -59,7 +75,7 @@ public class PractitionerUserAccountValidationTests {
     }
         
     @Test
-    void TestPractitionerUserAccoountValidation_WhenPractitionerDoesNotExist_FailsValidation() {
+    void TestPractitionerUserAccountValidation_WhenPractitionerDoesNotExist_FailsValidation() {
         String practitionerId = "practitionerId";
         PractitionerUserAccount userAccount = new PractitionerUserAccount(practitionerId, "userAccountId");
                
