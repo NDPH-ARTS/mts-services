@@ -28,10 +28,11 @@ config:
     validationRegex: "^[a-zA-Z]{0,35}$"
 
 ---
+# When Eureka is disabled Ribbon client defaults to a configured server list
 site-service:
   ribbon:
-    listOfServers: localhost:8083
+    listOfServers: ${SITE_SERVICE_URI:-http://localhost:8083}
 
 role-service:
   ribbon:
-    listOfServers: localhost:8082
+    listOfServers: ${ROLE_SERVICE_URI:-http://localhost:8082}
