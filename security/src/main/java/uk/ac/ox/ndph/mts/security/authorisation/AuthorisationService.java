@@ -171,10 +171,10 @@ public class AuthorisationService {
 
         Set<String> allSitesInRoles = roleAssignments.stream()
                 .flatMap(roleAssignmentDTO ->
-                        tree.getOrDefault(roleAssignmentDTO.getSiteId(), new ArrayList<String>()).stream())
+                        tree.getOrDefault(roleAssignmentDTO.getSiteId(), new ArrayList<>()).stream())
                 .collect(Collectors.toSet());
 
-        return entitiesSiteIds.stream().allMatch(allSitesInRoles::contains);
+        return allSitesInRoles.containsAll(entitiesSiteIds);
     }
 
     private String getSiteIdFromObj(Object obj, String methodName) {
