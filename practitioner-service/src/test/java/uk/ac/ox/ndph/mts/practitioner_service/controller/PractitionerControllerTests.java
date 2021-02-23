@@ -249,6 +249,7 @@ class PractitionerControllerTests {
                         content().string(containsString(jsonExpectedRoleAssignment)));
     }
 
+    @WithMockUser
     @Test
     void TestGetPractitionersByUserIdentity_WithUserIdentityParam_ReturnsPractitionersAsExpected() throws Exception {
 
@@ -259,9 +260,8 @@ class PractitionerControllerTests {
                 new Practitioner("dummy-id", "dummy-prefix", "dummy-given-name", familyName, userID));
         when(entityService.getPractitionersByUserIdentity(userID)).thenReturn(practitionersFromService);
 
-        String uriWithParam = practitionerProfileUri + "?userIdentity="+userID;  //TODO once we have auth in prac-service since it will come from the token
         this.mockMvc
-                .perform(get(uriWithParam))
+                .perform(get(practitionerProfileUri))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())

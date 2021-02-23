@@ -98,10 +98,7 @@ public class PractitionerController {
     public ResponseEntity<List<Practitioner>> profile() {
         String userIdFromToken = securityContextUtil.getUserId();
         Logger.getAnonymousLogger().info("Request to profile endpoint " + userIdFromToken);
-        // List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdFromToken);
-        List<Practitioner> practitioners = Collections.singletonList(
-                new Practitioner("dummy-id", "dummy-prefix",
-                        "dummy-given-name", "dummy-family-name", userIdFromToken));
+        List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdFromToken);
         return ResponseEntity.ok(practitioners);
     }
 
