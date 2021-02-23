@@ -50,7 +50,8 @@ class AuthorisationServiceTests {
         this.authorisationService = new AuthorisationService(securityContextUtil,
                 new SiteTreeUtil(),
                 practitionerServiceClient,
-                roleServiceClient);
+                roleServiceClient,
+                siteServiceClient);
         ReflectionTestUtils.setField(authorisationService, "managedIdentity", managedIdentity);
 
 
