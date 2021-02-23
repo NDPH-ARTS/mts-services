@@ -21,9 +21,11 @@ services:
       FHIR_URI: "http://fhir-api:8099"
       ROLE_SERVICE_URI: "http://role-service:8082"
       SITE_SERVICE_URI: "http://site-service:8083"
+      PRACTITIONER_SERVICE_URI: "http://practitioner-service:8081"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: "azure-aad-client-id"
     healthcheck:
       test: curl http://localhost:8081
       interval: 10s

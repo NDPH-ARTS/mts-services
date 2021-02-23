@@ -5,6 +5,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,24 +47,6 @@ class AADAuthenticationEntryPoint implements AuthenticationEntryPoint {
         setResponseError(response,
                 HttpServletResponse.SC_FORBIDDEN,
                 String.format("Access Denied: %s", accessDeniedException.getMessage()));
-    }
-
-    /**
-     * Commence internal server error response
-     * @param request - http request
-     * @param response - http response
-     * @param exception - internal server exception
-     * @throws IOException - signals that an I/O exception of some sort has occurred
-     */
-    @ExceptionHandler (value = {Exception.class})
-    public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         Exception exception) throws IOException {
-        // 500
-        setResponseError(response,
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                String.format("Internal Server Error: %s",
-                        exception.getMessage()));
     }
 
     /**

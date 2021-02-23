@@ -8,6 +8,19 @@ fhir:
 role:
   service:
     uri: http://localhost:8082
+    endpoint:
+      roles: /roles
+    name: role-service
 site:
   service:
     uri: http://localhost:8083
+practitioner:
+  service:
+    uri: http://localhost:8081
+    name: practitioner-service
+    endpoint:
+      roles: /roles
+azure:
+  activedirectory:
+    client-id: <client-id>
+    session-stateless: true

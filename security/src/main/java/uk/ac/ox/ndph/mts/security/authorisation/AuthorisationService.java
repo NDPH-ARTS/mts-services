@@ -95,9 +95,10 @@ public class AuthorisationService {
         try {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
+            String token = securityContextUtil.getToken();
 
             //get practitioner role assignment
-            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId);
+            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
 
             if (roleAssignments == null || roleAssignments.isEmpty()) {
                 LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);

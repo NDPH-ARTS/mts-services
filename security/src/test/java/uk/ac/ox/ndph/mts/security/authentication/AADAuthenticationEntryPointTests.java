@@ -33,14 +33,6 @@ class AADAuthenticationEntryPointTests {
     }
 
     @Test
-    void TestCommence_WithException_ReturnsResponseWithInternalServerError() throws Exception {
-        Exception ex = new Exception("any exception in the system");
-
-        aadAuthenticationEntryPoint.commence(request, response, ex);
-        assertThat(response.getStatus(), equalTo(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
-    }
-
-    @Test
     void TestCommence_WithAuthenticationException_ReturnsResponseWithUnauthorisedAccess() throws Exception {
         TestAuthenticationException ex = new TestAuthenticationException("any exception in the system");
 

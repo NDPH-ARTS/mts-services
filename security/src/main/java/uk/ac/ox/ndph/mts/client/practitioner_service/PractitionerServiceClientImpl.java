@@ -27,7 +27,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
     private String roleAssignmentRoute;
 
     public PractitionerServiceClientImpl(final WebClient.Builder webClientBuilder,
-                                         @Value("${practitioner.service.url}") String roleAssignmentsUrl) {
+                                         @Value("${practitioner.service.uri}") String roleAssignmentsUrl) {
         this.webClient = webClientBuilder.baseUrl(roleAssignmentsUrl).build();
     }
 
@@ -37,7 +37,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
      * @return list of role assignments
      */
     @Override
-    public List<RoleAssignmentDTO> getUserRoleAssignments(String userId) {
+    public List<RoleAssignmentDTO> getUserRoleAssignments(String userId, String token) {
 
         return webClient.get().uri(uriBuilder ->
                 uriBuilder
@@ -45,6 +45,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
                         .queryParam("userIdentity", userId)
                         .build())
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),

@@ -11,7 +11,6 @@ role:
 site:
   service:
     uri: http://localhost:8083
-
 ---
 config:
   name: Practitioner
@@ -36,3 +35,20 @@ site-service:
 role-service:
   ribbon:
     listOfServers: ${ROLE_SERVICE_URI:-http://localhost:8082}
+---
+#security
+azure:
+  activedirectory:
+    client-id: <client-id>
+    session-stateless: true
+practitioner:
+  service:
+    uri: http://localhost:8081
+    endpoint:
+      roles: /practitioner/roles
+    name: practitioner-service
+role:
+  service:
+    endpoint:
+      roles: /roles
+    name: role-service
