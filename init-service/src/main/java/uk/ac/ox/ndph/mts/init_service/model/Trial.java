@@ -1,7 +1,14 @@
 package uk.ac.ox.ndph.mts.init_service.model;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
+@Component
+@Configuration
+@ConfigurationProperties("trial")
 public class Trial {
     private List<Practitioner> persons;
     private List<Site> sites;
