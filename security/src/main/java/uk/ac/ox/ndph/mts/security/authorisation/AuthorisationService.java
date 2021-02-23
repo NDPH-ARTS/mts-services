@@ -27,7 +27,7 @@ public class AuthorisationService {
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
 
-    @Value("Managed_Identity")
+    @Value("init-service.identity")
     private String managedIdentity;
 
     @Autowired
