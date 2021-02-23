@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,6 +49,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // This requires all requests to have a valid token
         http.authorizeRequests() //NOSONAR
+                .antMatchers(HttpMethod.OPTIONS).permitAll() //TODO(katesan) discuss with Liza. CORS
                 .anyRequest().authenticated();
 
         // This enables us to return appropriate http codes

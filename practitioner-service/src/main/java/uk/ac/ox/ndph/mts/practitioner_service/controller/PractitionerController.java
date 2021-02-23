@@ -13,6 +13,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
+import uk.ac.ox.ndph.mts.security.authorisation.SecurityContextUtil;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -21,6 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -28,18 +30,20 @@ import java.util.logging.Logger;
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
     private final EntityService entityService;
+    private final SecurityContextUtil securityContextUtil;
 
     /**
      * @param entityService validate and save the practitioner
      */
     @Autowired
-    public PractitionerController(EntityService entityService) {
+    public PractitionerController(EntityService entityService,  SecurityContextUtil securityContextUtil) {
         this.entityService = entityService;
+        this.securityContextUtil= securityContextUtil;
     }
 
     /**
@@ -85,18 +89,15 @@ public class PractitionerController {
         return ResponseEntity.ok(roleAssignments);
     }
 
-    @GetMapping(path = "/profile", consumes = MediaType.ALL_VALUE) // Overrides consumes=json at class level.
-    public ResponseEntity<List<Practitioner>> profile(@RequestParam String userIdentity) { // Will come from token once auth in place
-        Logger.getAnonymousLogger().info("Call to profile endpoint " );
-        List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdentity);
+    @GetMapping(path = "/profile", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<List<Practitioner>> profile() {
+        String userIdFromToken = securityContextUtil.getUserId();
+        Logger.getAnonymousLogger().info("Request to profile endpoint " + userIdFromToken);
+        // List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdFromToken);
+        List<Practitioner> practitioners = Collections.singletonList(
+                new Practitioner("dummy-id", "dummy-prefix",
+                        "dummy-given-name", "dummy-family-name", userIdFromToken));
         return ResponseEntity.ok(practitioners);
     }
 
-    // This won't be needed once authentication module is in place
-    @RequestMapping(value = "/profile", method = RequestMethod.OPTIONS, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity options(HttpServletResponse response, @RequestParam String userIdentity) {
-        Logger.getAnonymousLogger().info("Call to OPTIONS " );
-        response.setHeader("Allow", "GET,OPTIONS");
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }
