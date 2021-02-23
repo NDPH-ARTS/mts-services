@@ -13,14 +13,15 @@ import uk.ac.ox.ndph.mts.init_service.model.Role;
 public class RoleServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoleServiceInvoker.class);
 
-    @Value("${role.service}")
+    @Value("${role-service.uri}")
     private String roleService;
 
-    @Value("${role.service.endpoint.create}")
+    @Value("${role-service.routes.create}")
     private String createEndpoint;
 
+    public RoleServiceInvoker() {
+    }
 
-    public RoleServiceInvoker() { }
     public RoleServiceInvoker(WebClient webClient) {
         super(webClient);
     }

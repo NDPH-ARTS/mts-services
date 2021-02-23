@@ -6,8 +6,10 @@ spring:
       discovery:
         enabled: true
         service-id: CONFIG-SERVER
+      fail-fast: true
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://placeholder:8761/eureka/
+    registerWithEureka: false

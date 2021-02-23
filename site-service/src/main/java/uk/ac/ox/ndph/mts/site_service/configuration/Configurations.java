@@ -6,7 +6,7 @@ package uk.ac.ox.ndph.mts.site_service.configuration;
 public enum Configurations {
     ERROR("Error while loading configuration file");
 
-    private String message;
+    private final String message;
  
     Configurations(String message) {
         this.message = message;
