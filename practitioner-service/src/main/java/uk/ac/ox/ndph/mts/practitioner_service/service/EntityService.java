@@ -5,7 +5,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
