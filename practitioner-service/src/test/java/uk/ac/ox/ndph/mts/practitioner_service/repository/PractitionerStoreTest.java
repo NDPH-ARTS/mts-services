@@ -51,7 +51,7 @@ class PractitionerStoreTest {
     void TestListEntitiesByUserIdentity_WhenFindByUserIdentity_CallsRepository() {
         // act and assert
         var practitioner = new org.hl7.fhir.r4.model.Practitioner();
-        var modelPractitioner = new Practitioner(null, null, null, null, null);
+        var modelPractitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         when(repository.getPractitionersByUserIdentity("123")).thenReturn(asList(practitioner));
         when(fhirToModelConverter.convertList(asList(practitioner))).thenReturn(asList(modelPractitioner));
 
