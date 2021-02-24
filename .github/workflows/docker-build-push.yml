@@ -79,6 +79,7 @@ jobs:
       - name: Run API Tests
         env:
           BASE_URL: http://localhost
+          AZURE_AAD_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
         run: |
           npm run --prefix api-tests api-test-ci
           docker-compose down
