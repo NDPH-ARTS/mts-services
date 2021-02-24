@@ -3,7 +3,7 @@ const conf = require('../../config/conf')
 const utils = require('../../common/utils')
 const endpointUri = ':8080/api/practitioner';
 
-describe.only('As a user with Create Person permission, I want to have my create person request validated by the system, So that I cannot create an invalid person', function () {
+describe('As a user with Create Person permission, I want to have my create person request validated by the system, So that I cannot create an invalid person', function () {
 
     it('When I submit an API request to create a Person with a value for all mandatory fields and no fields exceed their specified maximum length, Then a new Person record is persisted in the system with a unique identifier And I receive a success acknowledgement', async () => {
         const tokenId = await utils.getTokenId();
