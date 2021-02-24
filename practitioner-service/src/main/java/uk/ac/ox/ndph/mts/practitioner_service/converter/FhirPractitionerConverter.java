@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.converter;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -25,24 +27,24 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
         if (input.getName().isEmpty()) {
             throw new IllegalArgumentException("FHIR Practitioner must have a name");
         }
-        
+
         String userAccountId = input.getIdentifier().stream()
-                                    .filter((id) -> id.getId().equals(Practitioner.USERACCOUNTID_IDENTIFIER_NAME))
-                                    .map((id) -> id.getValue())
-                                    .findAny()
-                                    .orElse("");
-                                    
+                .filter((id) -> id.getId().equals(Practitioner.USERACCOUNTID_IDENTIFIER_NAME))
+                .map((id) -> id.getValue())
+                .findAny()
+                .orElse("");
+
         HumanName humanName = input.getName().get(0);
 
-        return new Practitioner(input.getIdElement().getIdPart(),
+        return new Practitioner(input.getIdElement().getIdPart(), 
                 humanName.getPrefixAsSingleString(),
-                humanName.getGivenAsSingleString(),
-                humanName.getFamily(),
+                humanName.getGivenAsSingleString(), 
+                humanName.getFamily(), 
                 userAccountId);
     }
 
     @Override
     public List<Practitioner> convertList(List<org.hl7.fhir.r4.model.Practitioner> input) {
-        throw new UnsupportedOperationException();
+        return input.stream().map(p -> convert(p)).collect(toList());
     }
 }
