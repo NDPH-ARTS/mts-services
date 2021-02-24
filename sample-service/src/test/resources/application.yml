@@ -16,7 +16,7 @@ practitioner:
     uri: http://localhost:8081
     name: practitioner-service
     endpoint:
-      roles: /roles
+      roles: /practitioner/roles
 azure:
   activedirectory:
     client-id: <client-id>
