@@ -166,7 +166,7 @@ class PractitionerServiceTest {
 
     @Test
     void testExecute_UsesReturnedPractitionerId_inUserAccount() {
-        PractitionerServiceInvoker practServInk = new PractitionerServiceInvoker(mockTokenService);
+        PractitionerServiceInvoker practServInvkr = new PractitionerServiceInvoker(mockTokenService);
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
@@ -176,7 +176,7 @@ class PractitionerServiceTest {
 
         String practitionerId = "dummy-practitioner-id";
 
-        PractitionerServiceInvoker spyServiceInvoker = Mockito.spy(practServInk);
+        PractitionerServiceInvoker spyServiceInvoker = Mockito.spy(practServInvkr);
 
         doReturn(practitionerId).when(spyServiceInvoker).create(testPractitioner);
         doNothing().when(spyServiceInvoker).linkUserAccount(any(PractitionerUserAccount.class));

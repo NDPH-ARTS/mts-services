@@ -103,7 +103,8 @@ public class AuthorisationService {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
 
-            LOGGER.info("userId is - " + userId);
+            LOGGER.debug("userId is - " + userId);
+            LOGGER.debug("managed identity is - " + managedIdentity);
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.

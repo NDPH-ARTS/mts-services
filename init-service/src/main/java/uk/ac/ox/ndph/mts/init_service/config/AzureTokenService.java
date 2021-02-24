@@ -24,23 +24,6 @@ public class AzureTokenService implements TokenService {
 
         String token = tokenCredential.getToken(trc1).block().getToken();
 
-        LOGGER.info("Token is - " + token);
-
-
-        String identityId = null;
-        LOGGER.info("Gonna get id from token");
-        try {
-            DecodedJWT jwt = JWT.decode(token);
-            LOGGER.info("Decoded token " + jwt.getToken());
-            LOGGER.info("Gonna try to get Id  ");
-            identityId = jwt.getId();
-        } catch (JWTDecodeException jwtDecodeException) {
-            //invalid token
-            LOGGER.info("Ooops weve got an invalid token");
-        }
-
-        LOGGER.info("OID of azure token is - " + identityId);
-
         return token;
     }
 
