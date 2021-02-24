@@ -24,7 +24,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: "1b8d9098-8c21-452b-b359-430b78cb642d"
+      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_IDENTITY}
     healthcheck:
       test: curl http://localhost:8081
       interval: 10s
@@ -51,7 +51,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: "1b8d9098-8c21-452b-b359-430b78cb642d"
+      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_IDENTITY}
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -77,7 +77,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: "1b8d9098-8c21-452b-b359-430b78cb642d"
+      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_IDENTITY}
     healthcheck:
       test: curl http://localhost:8083
       interval: 10s
@@ -107,7 +107,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: "1b8d9098-8c21-452b-b359-430b78cb642d"
+      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_IDENTITY}
     deploy:
       restart_policy:
           condition: none

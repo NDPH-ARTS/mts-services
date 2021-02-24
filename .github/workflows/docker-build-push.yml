@@ -74,6 +74,7 @@ jobs:
           PROFILE: dev
           SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
+          INIT_SERVICE_IDENTITY: 1b8d9098-8c21-452b-b359-430b78cb642d
         run: |
           ./.ci/docker/check-docker-compose-services.sh
       - name: Run API Tests
