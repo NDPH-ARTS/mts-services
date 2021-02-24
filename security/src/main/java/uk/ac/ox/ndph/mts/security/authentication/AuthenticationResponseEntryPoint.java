@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.security.authentication;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -15,7 +14,7 @@ import java.io.IOException;
  * on the response before sending it back to the client.
  */
 @ControllerAdvice
-class AADAuthenticationEntryPoint implements AuthenticationEntryPoint {
+class AuthenticationResponseEntryPoint implements org.springframework.security.web.AuthenticationEntryPoint {
 
     /**
      * Commence unauthorised authentication response

@@ -25,7 +25,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      AZURE_ACTIVEDIRECTORY_CLIENT-ID: "azure-aad-client-id"
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${AZURE_AAD_CLIENT_ID}
     healthcheck:
       test: curl http://localhost:8081
       interval: 10s
