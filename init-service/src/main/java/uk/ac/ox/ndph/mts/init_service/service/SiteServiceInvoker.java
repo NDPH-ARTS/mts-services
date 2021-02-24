@@ -22,7 +22,7 @@ public class SiteServiceInvoker extends ServiceInvoker {
     private String createEndpoint;
 
     @Autowired
-    protected SiteServiceInvoker (AzureTokenService azureTokenservice) {
+    protected SiteServiceInvoker(AzureTokenService azureTokenservice) {
         super(azureTokenservice);
 
     }
