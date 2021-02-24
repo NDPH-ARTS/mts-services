@@ -24,7 +24,6 @@ import uk.ac.ox.ndph.mts.security.authorisation.SecurityContextUtil;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
