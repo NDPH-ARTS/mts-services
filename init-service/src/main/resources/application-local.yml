@@ -22,19 +22,19 @@ logging:
 role-service:
   uri: http://role-service
   ribbon:
-    listOfServers: ${ROLE_SERVICE_URI:-http://localhost:8082}
+    listOfServers: ${ROLE_SERVICE_URI:localhost:8082}
 
 
 site-service:
   uri: http://site-service
   ribbon:
-    listOfServers: ${SITE_SERVICE_URI:-http://localhost:8083}
+    listOfServers: ${SITE_SERVICE_URI:localhost:8083}
 
 
 practitioner-service:
   uri: http://practitioner-service
   ribbon:
-    listOfServers: ${PRACTITIONER_SERVICE_URI:-http://localhost:8081}
+    listOfServers: ${PRACTITIONER_SERVICE_URI:localhost:8081}
 
 ---
 # for local work we use this static trial config
