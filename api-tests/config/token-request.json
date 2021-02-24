@@ -1,8 +1,8 @@
 {
-    "grant_type": "password",
-    "client_id": "f352ce15-0142-4dfa-8e18-801ee6391557",
-    "client_secret": "-nr_.4Ni_PcKa5Itxsyl1~W2bErmvxb082",
+    "grant_type": "cGFzc3dvcmQ=",
+    "client_id": "ZjM1MmNlMTUtMDE0Mi00ZGZhLThlMTgtODAxZWU2MzkxNTU3",
+    "client_secret": "LW5yXy40TmlfUGNLYTVJdHhzeWwxflcyYkVybXZ4YjA4Mg==",
     "scope": "openid profile",
-    "username": "test-automation@mtsdevndph.onmicrosoft.com",
-    "password": "Oxford909"
+    "username": "dGVzdC1hdXRvbWF0aW9uQG10c2Rldm5kcGgub25taWNyb3NvZnQuY29t",
+    "password": "T3hmb3JkOTA5"
 }

@@ -15,23 +15,23 @@ class utils {
         return result;
     }
 
-    getTokenId() {
+    async  getTokenId() {
         let form = new formData();
-        form.append('grant_type', token_request['grant_type'])
-        form.append('client_id', token_request.client_id)
-        form.append('client_secret', token_request.client_secret)
+        form.append('grant_type', Buffer.from(token_request.grant_type, 'base64').toString('ascii'));
+        form.append('client_id', Buffer.from(token_request.client_id, 'base64').toString('ascii'));
+        form.append('client_secret', Buffer.from(token_request.client_secret, 'base64').toString('ascii'));
         form.append('scope', token_request.scope)
-        form.append('username', token_request.username)
-        form.append('password', token_request.password)
-
-        fetch(authUri, {
+        form.append('username', Buffer.from(token_request.username, 'base64').toString('ascii'));
+        form.append('password', Buffer.from(token_request.password, 'base64').toString('ascii'));
+        let response = await fetch(authUri, {
             method: 'POST',
             body: form
         })
-            .then(response => response.json())
-            .catch(error => console.error('Error:', error))
-            .then(response => console.log('Success:', JSON.stringify(response.id_token)))
+
+        let jsonResponse = await response.json();
+        return jsonResponse.id_token;
     };
+
 }
 
 module.exports = new utils;
