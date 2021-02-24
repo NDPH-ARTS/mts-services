@@ -1,5 +1,8 @@
 package uk.ac.ox.ndph.mts.init_service.config;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -23,7 +26,20 @@ public class AzureTokenService implements TokenService {
 
         LOGGER.info("Token is - " + token);
 
-        LOGGER.info("OID of azure token is - " + getIdentityId());
+
+        String identityId = null;
+        LOGGER.info("Gonna get id from token");
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            LOGGER.info("Decoded token " + jwt.getToken());
+            LOGGER.info("Gonna try to get Id  ");
+            identityId = jwt.getId();
+        } catch (JWTDecodeException jwtDecodeException) {
+            //invalid token
+            LOGGER.info("Ooops weve got an invalid token");
+        }
+
+        LOGGER.info("OID of azure token is - " + identityId);
 
         return token;
     }
