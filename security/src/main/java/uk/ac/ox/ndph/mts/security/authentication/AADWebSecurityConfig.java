@@ -1,14 +1,13 @@
 package uk.ac.ox.ndph.mts.security.authentication;
 
 // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
-import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 
+import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,12 +43,13 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
         // disable csrf because we are using another token mechanism
         http.csrf().disable(); //NOSONAR
 
+        http.cors(); // See https://www.baeldung.com/spring-cors
+
         // Do not create user sessions
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
         // This requires all requests to have a valid token
         http.authorizeRequests() //NOSONAR
-                .antMatchers(HttpMethod.OPTIONS).permitAll() //TODO(katesan) discuss with Liza. CORS
                 .anyRequest().authenticated();
 
         // This enables us to return appropriate http codes
