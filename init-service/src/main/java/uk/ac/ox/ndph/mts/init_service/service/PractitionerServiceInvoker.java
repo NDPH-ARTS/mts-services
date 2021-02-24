@@ -37,6 +37,9 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
     }
 
+    public PractitionerServiceInvoker() {
+    }
+
     @Override
     protected String create(Entity practitioner) throws DependentServiceException {
         String uri = serviceUrlBase + createEndpoint;
