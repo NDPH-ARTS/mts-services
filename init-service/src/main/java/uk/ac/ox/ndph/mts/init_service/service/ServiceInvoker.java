@@ -47,12 +47,13 @@ public abstract class ServiceInvoker {
 
     protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected)
             throws DependentServiceException {
-
+        String token = azureTokenService.getToken();
+        LOGGER.info("Token in invoker - " + token);
         try {
             return webClient.post()
                     .uri(uri)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .headers(h -> h.setBearerAuth(azureTokenService.getToken()))
+                    .headers(h -> h.setBearerAuth(token))
                     .body(Mono.just(payload), payload.getClass())
                     .retrieve()
                     .bodyToMono(responseExpected)
