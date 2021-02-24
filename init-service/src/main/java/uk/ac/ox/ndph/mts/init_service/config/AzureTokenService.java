@@ -5,7 +5,9 @@ import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AzureTokenService implements TokenService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AzureTokenService.class);

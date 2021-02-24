@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.init_service.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,23 +26,22 @@ public abstract class ServiceInvoker {
 
     private AzureTokenService azureTokenService;
 
-    protected ServiceInvoker() {
-        this.webClient = WebClient.create();
-    }
-
     // In unit-tests the webclient retry step gets stuck (something about virtual time).
     // This is a quick trick to disable retry while testing without the spring container.
     @Value("${max-webclient-attempts:9}")
     private long maxWebClientAttempts = 0;
 
-    protected ServiceInvoker(WebClient webClient,
-                             AzureTokenService azureTokenservice) {
-        this.webClient = webClient;
+    protected ServiceInvoker(AzureTokenService azureTokenservice) {
         this.azureTokenService = azureTokenservice;
+        this.webClient = WebClient.create();
     }
 
-    public ServiceInvoker(WebClient webClient) {
+    protected ServiceInvoker(WebClient webClient,
+                             AzureTokenService azureTokenService) {
+        this.webClient = webClient;
+        this.azureTokenService = azureTokenService;
     }
+
 
     protected abstract String create(Entity entity) throws DependentServiceException;
 

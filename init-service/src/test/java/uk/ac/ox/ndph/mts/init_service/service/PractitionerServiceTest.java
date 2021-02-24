@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -165,6 +166,7 @@ class PractitionerServiceTest {
 
     @Test
     void testExecute_UsesReturnedPractitionerId_inUserAccount() {
+        PractitionerServiceInvoker practServInk = new PractitionerServiceInvoker(mockTokenService);
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
@@ -174,7 +176,7 @@ class PractitionerServiceTest {
 
         String practitionerId = "dummy-practitioner-id";
 
-        PractitionerServiceInvoker spyServiceInvoker = spy(PractitionerServiceInvoker.class);
+        PractitionerServiceInvoker spyServiceInvoker = Mockito.spy(practServInk);
 
         doReturn(practitionerId).when(spyServiceInvoker).create(testPractitioner);
         doNothing().when(spyServiceInvoker).linkUserAccount(any(PractitionerUserAccount.class));

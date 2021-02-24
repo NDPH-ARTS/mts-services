@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.init_service.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -33,10 +34,12 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     @Value("${practitioner-service.routes.link-user-account}")
     private String linkUserAccountEndpoint;
 
-    public PractitionerServiceInvoker() {
+    @Autowired
+    protected PractitionerServiceInvoker(AzureTokenService azureTokenservice) {
+        super(azureTokenservice);
     }
 
-    public PractitionerServiceInvoker(WebClient webClient,
+    protected PractitionerServiceInvoker(WebClient webClient,
                                       AzureTokenService azureTokenservice) {
         super(webClient, azureTokenservice);
     }
