@@ -19,7 +19,7 @@ public class RoleServiceInvoker extends ServiceInvoker {
 
     @Autowired
     public RoleServiceInvoker(final WebClient.Builder webClientBuilder,
-                              @Value("${role.service.uri}") String serviceUrlBase) {
+                              @Value("${role-service.uri}") String serviceUrlBase) {
         this.serviceUrlBase = serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
     }
