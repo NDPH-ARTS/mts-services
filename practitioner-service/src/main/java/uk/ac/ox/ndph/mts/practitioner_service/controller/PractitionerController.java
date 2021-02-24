@@ -33,7 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
-@CrossOrigin // See https://www.baeldung.com/spring-cors
+@CrossOrigin(origins = "http://localhost:4200")  // See https://www.baeldung.com/spring-cors   Shouldn't arise in production
 @RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
