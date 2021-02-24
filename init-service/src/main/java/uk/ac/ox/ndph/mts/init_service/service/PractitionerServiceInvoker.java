@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
@@ -35,8 +36,9 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     public PractitionerServiceInvoker() {
     }
 
-    public PractitionerServiceInvoker(WebClient webClient) {
-        super(webClient);
+    public PractitionerServiceInvoker(WebClient webClient,
+                                      AzureTokenService azureTokenservice) {
+        super(webClient, azureTokenservice);
     }
 
     @Override

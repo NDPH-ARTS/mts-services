@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
@@ -31,13 +33,17 @@ class PractitionerServiceTest {
 
     MockWebServer mockBackEnd;
 
+    @Mock
+    AzureTokenService mockTokenService;
+
     @BeforeEach
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
         WebClient webClient = WebClient.create(String.format("http://localhost:%s",
                 mockBackEnd.getPort()));
-        practitionerServiceInvoker = new PractitionerServiceInvoker(webClient);
+        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
+        practitionerServiceInvoker = new PractitionerServiceInvoker(webClient, mockTokenService);
     }
 
     @AfterEach

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
@@ -19,11 +20,15 @@ public class SiteServiceInvoker extends ServiceInvoker {
     @Value("${site-service.routes.create}")
     private String createEndpoint;
 
-    public SiteServiceInvoker() {
+    private WebClient webClient;
+
+    protected SiteServiceInvoker() {
+        this.webClient = WebClient.create();
     }
 
-    public SiteServiceInvoker(WebClient webClient) {
-        super(webClient);
+    public SiteServiceInvoker(WebClient webClient,
+                              AzureTokenService azureTokenservice) {
+        super(webClient, azureTokenservice);
     }
 
     protected String create(Entity site) throws DependentServiceException {
