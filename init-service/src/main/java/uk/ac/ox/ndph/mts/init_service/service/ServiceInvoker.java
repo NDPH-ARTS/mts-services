@@ -20,20 +20,14 @@ public abstract class ServiceInvoker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoker.class);
 
-    private final WebClient webClient;
+    protected WebClient webClient;
+
+    protected String serviceUrlBase;
 
     // In unit-tests the webclient retry step gets stuck (something about virtual time).
     // This is a quick trick to disable retry while testing without the spring container.
     @Value("${max-webclient-attempts:9}")
     private long maxWebClientAttempts = 0;
-
-    protected ServiceInvoker() {
-        this.webClient = WebClient.create();
-    }
-
-    protected ServiceInvoker(WebClient webClient) {
-        this.webClient = webClient;
-    }
 
     protected abstract String create(Entity entity) throws DependentServiceException;
 

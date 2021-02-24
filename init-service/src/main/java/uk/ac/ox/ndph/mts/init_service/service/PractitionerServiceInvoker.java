@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.init_service.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,9 +21,6 @@ import java.util.List;
 public class PractitionerServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerServiceInvoker.class);
 
-    @Value("${practitioner-service.uri}")
-    private String practitionerService;
-
     @Value("${practitioner-service.routes.create}")
     private String createEndpoint;
 
@@ -32,27 +30,27 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     @Value("${practitioner-service.routes.link-user-account}")
     private String linkUserAccountEndpoint;
 
-    public PractitionerServiceInvoker() {
-    }
-
-    public PractitionerServiceInvoker(WebClient webClient) {
-        super(webClient);
+    @Autowired
+    public PractitionerServiceInvoker(final WebClient.Builder webClientBuilder,
+                                      @Value("${practitioner-service.uri}") String serviceUrlBase) {
+        this.serviceUrlBase = serviceUrlBase;
+        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
     }
 
     @Override
     protected String create(Entity practitioner) throws DependentServiceException {
-        String uri = practitionerService + createEndpoint;
+        String uri = serviceUrlBase + createEndpoint;
         IDResponse response = sendBlockingPostRequest(uri, practitioner, IDResponse.class);
         return response.getId();
     }
 
     protected void assignRoleToPractitioner(RoleAssignment roleAssignment) throws DependentServiceException {
-        String uri = practitionerService + String.format(assignRoleEndpoint, roleAssignment.getPractitionerId());
+        String uri = serviceUrlBase + String.format(assignRoleEndpoint, roleAssignment.getPractitionerId());
         sendBlockingPostRequest(uri, roleAssignment, IDResponse.class);
     }
 
     protected void linkUserAccount(PractitionerUserAccount userAccount) throws DependentServiceException {
-        String uri = practitionerService + String.format(linkUserAccountEndpoint, userAccount.getPractitionerId());
+        String uri = serviceUrlBase + String.format(linkUserAccountEndpoint, userAccount.getPractitionerId());
         sendBlockingPostRequest(uri, userAccount, IDResponse.class);
     }
 
