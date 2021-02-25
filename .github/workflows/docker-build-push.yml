@@ -74,7 +74,6 @@ jobs:
           PROFILE: dev
           SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
-          INIT_SERVICE_IDENTITY: 1b8d9098-8c21-452b-b359-430b78cb642d
           INIT_SERVICE_ACCOUNT_OBJECTID: e6fd67af-ef25-4a4b-af7c-0ed8a7bd40cf
           MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
