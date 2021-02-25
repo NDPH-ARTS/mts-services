@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClientImpl;
 import uk.ac.ox.ndph.mts.client.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClientImpl;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClientImpl;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
@@ -41,6 +43,8 @@ class AuthorisationServiceTests {
 
     private AuthorisationService authorisationService;
 
+    private final String managedIdentity = "999";
+
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
@@ -48,7 +52,22 @@ class AuthorisationServiceTests {
                 practitionerServiceClient,
                 roleServiceClient,
                 siteServiceClient);
+        ReflectionTestUtils.setField(authorisationService, "managedIdentity", managedIdentity);
+
+
     }
+
+    @Test
+    void TestBypassAuthorise_WhenUser_ManagedIdentity(){
+        //Arrange
+        String userId = managedIdentity;
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authorise("some-permission"));
+    }
+
 
     @Test
     void TestAuthorise_WithInvalidToken_ReturnsFalse(){
