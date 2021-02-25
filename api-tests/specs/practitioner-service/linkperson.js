@@ -38,7 +38,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
         const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
 
         //check application response confirms link failure
-        expect(response.status).to.equal(422)
+        expect(response.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
 
     });
 
@@ -56,7 +56,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
         const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
 
         //check application response confirms link failure
-        expect(response.status).to.equal(422)
+        expect(response.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
 
     });
 
@@ -74,7 +74,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
         const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
 
         //check application response confirms link failure
-        expect(response.status).to.equal(422)
+        expect(response.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
 
     });
 
