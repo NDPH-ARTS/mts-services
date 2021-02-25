@@ -52,3 +52,11 @@ role:
     endpoint:
       roles: /roles
     name: role-service
+logging:
+  level:
+    uk:
+      ac:
+        ox:
+          ndph:
+            mts:
+              security: TRACE
