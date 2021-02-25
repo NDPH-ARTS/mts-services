@@ -59,18 +59,3 @@ trial:
     - id: country-admin
       permissions:
         - id: create-person
----
-spring:
-  main:
-    web-application-type: NONE # init-service is just a console app, should quit when done.
-role-service:
-  routes:
-    create: /roles
-site-service:
-  routes:
-    create: /sites
-practitioner-service:
-  routes:
-    create: /practitioner
-    assign-role: /practitioner/%s/roles
-    link-user-account: /practitioner/%s/link
