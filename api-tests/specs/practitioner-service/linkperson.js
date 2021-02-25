@@ -6,7 +6,7 @@ let linkpersonEndpointUri = ':8081/practitioner/{personId}/link'
 
 describe('As a user with Update Person permission I want to link a Person to an existing User So that they have the Persons roles when they login to the system', function () {
 
-    it.only('Given a Person exists who is not linked to a User AND a User exists that is not linked to a Person When I submit an API request to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are linked and I receive a success acknowledgement ', async () => {
+    it('Given a Person exists who is not linked to a User AND a User exists that is not linked to a Person When I submit an API request to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are linked and I receive a success acknowledgement ', async () => {
 
         //post a request to practitioner end point to create first Practitioner
         const firstPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createFirstPerson)
@@ -24,7 +24,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
 
     });
 
-    it.only('Given a Person exists who is not linked to a User When I submit an API request to link the Person to a User who is already linked to a Person in this trial Then the Person and User are NOT linked and I receive an error notification ', async () => {
+    it('Given a Person exists who is not linked to a User When I submit an API request to link the Person to a User who is already linked to a Person in this trial Then the Person and User are NOT linked and I receive an error notification ', async () => {
 
         //post a request to practitioner end point to create second Practitioner
         const secondPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createSecondPerson)
@@ -42,7 +42,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
 
     });
 
-    it.only('When I submit an API request with missing Practitioner ID to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are NOT linked and I receive a failure acknowledgement ', async () => {
+    it('When I submit an API request with missing Practitioner ID to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are NOT linked and I receive a failure acknowledgement ', async () => {
 
         //post a request to practitioner end point to create third Practitioner
         const thirdPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createThirdPerson)
@@ -60,7 +60,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
 
     });
 
-    it.only('When I submit an API request with missing User ID to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are NOT linked and I receive a failure acknowledgement ', async () => {
+    it('When I submit an API request with missing User ID to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are NOT linked and I receive a failure acknowledgement ', async () => {
 
         //post a request to practitioner end point to create fourth Practitioner
         const fourthPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createFourthPerson)
