@@ -8,9 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
@@ -21,8 +24,16 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTest {
@@ -31,13 +42,17 @@ class PractitionerServiceTest {
 
     MockWebServer mockBackEnd;
 
+    @Mock
+    AzureTokenService mockTokenService;
+
     @BeforeEach
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
         WebClient webClient = WebClient.create(String.format("http://localhost:%s",
                 mockBackEnd.getPort()));
-        practitionerServiceInvoker = new PractitionerServiceInvoker(webClient);
+        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
+        practitionerServiceInvoker = new PractitionerServiceInvoker(webClient, mockTokenService);
     }
 
     @AfterEach
@@ -159,6 +174,7 @@ class PractitionerServiceTest {
 
     @Test
     void testExecute_UsesReturnedPractitionerId_inUserAccount() {
+        PractitionerServiceInvoker practServInvkr = new PractitionerServiceInvoker(mockTokenService);
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
@@ -168,7 +184,7 @@ class PractitionerServiceTest {
 
         String practitionerId = "dummy-practitioner-id";
 
-        PractitionerServiceInvoker spyServiceInvoker = spy(PractitionerServiceInvoker.class);
+        PractitionerServiceInvoker spyServiceInvoker = Mockito.spy(practServInvkr);
 
         doReturn(practitionerId).when(spyServiceInvoker).create(testPractitioner);
         doNothing().when(spyServiceInvoker).linkUserAccount(any(PractitionerUserAccount.class));

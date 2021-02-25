@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.security.authorisation;
+package uk.ac.ox.ndph.mts.security.authentication;
 
 // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
 import com.azure.spring.autoconfigure.aad.UserPrincipal;
