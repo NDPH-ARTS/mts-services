@@ -75,6 +75,9 @@ jobs:
           SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
           INIT_SERVICE_IDENTITY: 1b8d9098-8c21-452b-b359-430b78cb642d
+          AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
+          AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
+          AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
         run: |
           ./.ci/docker/check-docker-compose-services.sh
       - name: Run API Tests

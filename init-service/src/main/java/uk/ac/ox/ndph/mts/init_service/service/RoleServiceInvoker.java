@@ -27,7 +27,7 @@ public class RoleServiceInvoker extends ServiceInvoker {
     }
 
     protected RoleServiceInvoker(WebClient webClient,
-                              AzureTokenService azureTokenservice) {
+                                 AzureTokenService azureTokenservice) {
         super(webClient, azureTokenservice);
     }
 

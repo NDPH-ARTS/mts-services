@@ -28,7 +28,7 @@ public class SiteServiceInvoker extends ServiceInvoker {
     }
 
     protected SiteServiceInvoker(WebClient webClient,
-                              AzureTokenService azureTokenservice) {
+                                 AzureTokenService azureTokenservice) {
         super(webClient, azureTokenservice);
     }
 

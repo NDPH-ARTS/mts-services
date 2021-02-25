@@ -40,7 +40,7 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     }
 
     protected PractitionerServiceInvoker(WebClient webClient,
-                                      AzureTokenService azureTokenservice) {
+                                         AzureTokenService azureTokenservice) {
         super(webClient, azureTokenservice);
     }
 
