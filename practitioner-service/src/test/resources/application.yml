@@ -27,3 +27,5 @@ azure:
   activedirectory:
     client-id: <client-id>
     session-stateless: true
+init-service:
+  identity: <init-service-identity>
