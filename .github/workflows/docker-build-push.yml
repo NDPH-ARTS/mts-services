@@ -60,6 +60,15 @@ jobs:
           docker tag $FROM_TAG $TO_TAG
           docker push $TO_TAG
 
+  buildall:
+    runs-on: ubuntu-latest
+    name: Build services check all
+    needs: build
+    steps:
+      - name: Check build matrix status
+        if: ${{ needs.build.result != 'success' }}
+        run: exit 1
+
   test:
     name: API Integration Tests
     if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
