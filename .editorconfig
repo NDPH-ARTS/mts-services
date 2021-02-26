@@ -17,6 +17,9 @@ max_line_length = 120
 # ij_wrap_on_typing = true
 
 [*.java]
+# disable wildcard imports
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_names_count_to_use_import_on_demand = 99
 # ij_java_align_consecutive_assignments = false
 # ij_java_align_consecutive_variable_declarations = false
 # ij_java_align_group_field_declarations = false
@@ -70,7 +73,6 @@ max_line_length = 120
 # ij_java_catch_on_new_line = false
 # ij_java_class_annotation_wrap = split_into_lines
 # ij_java_class_brace_style = end_of_line
-# ij_java_class_count_to_use_import_on_demand = 50
 # ij_java_class_names_in_javadoc = 1
 # ij_java_do_not_indent_top_level_class_members = false
 # ij_java_do_not_wrap_after_single_annotation = false
@@ -136,7 +138,6 @@ max_line_length = 120
 # ij_java_method_parameters_right_paren_on_new_line = false
 # ij_java_method_parameters_wrap = off
 # ij_java_modifier_list_wrap = false
-# ij_java_names_count_to_use_import_on_demand = 3
 # ij_java_new_line_after_lparen_in_record_header = false
 # ij_java_packages_to_use_import_on_demand = java.awt.*,javax.swing.*
 # ij_java_parameter_annotation_wrap = off
@@ -263,7 +264,7 @@ max_line_length = 120
 # ij_editorconfig_spaces_around_assignment_operators = true
 
 [{*.yaml,*.yml}]
-# indent_size = 2
+indent_size = 2
 # ij_yaml_align_values_properties = do_not_align
 # ij_yaml_autoinsert_sequence_marker = true
 # ij_yaml_block_mapping_on_new_line = false
