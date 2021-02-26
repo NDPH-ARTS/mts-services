@@ -23,3 +23,5 @@ site:
 spring:
   main:
     allow-bean-definition-overriding: true
+init-service:
+  identity: <init-service-identity>

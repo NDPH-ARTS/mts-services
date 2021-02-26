@@ -11,6 +11,9 @@ role:
 site:
   service:
     uri: http://localhost:8083
+init-service:
+  identity: <init-service-identity>
+
 ---
 config:
   name: Practitioner
@@ -52,3 +55,11 @@ role:
     endpoint:
       roles: /roles
     name: role-service
+logging:
+  level:
+    uk:
+      ac:
+        ox:
+          ndph:
+            mts:
+              security: TRACE
