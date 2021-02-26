@@ -2,14 +2,17 @@ package uk.ac.ox.ndph.mts.init_service.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +20,17 @@ public abstract class ServiceInvoker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoker.class);
 
-    private WebClient webClient;
+    private final WebClient webClient;
+
+    // In unit-tests the webclient retry step gets stuck (something about virtual time).
+    // This is a quick trick to disable retry while testing without the spring container.
+    @Value("${max-webclient-attempts:9}")
+    private long maxWebClientAttempts = 0;
 
     protected ServiceInvoker() {
         this.webClient = WebClient.create();
     }
+
     protected ServiceInvoker(WebClient webClient) {
         this.webClient = webClient;
     }
@@ -38,6 +47,8 @@ public abstract class ServiceInvoker {
                     .body(Mono.just(payload), payload.getClass())
                     .retrieve()
                     .bodyToMono(responseExpected)
+                    .retryWhen(Retry.backoff(maxWebClientAttempts,
+                            Duration.ofSeconds(5)).maxBackoff(Duration.ofSeconds(30)))
                     .block();
 
         } catch (Exception e) {
@@ -50,10 +61,10 @@ public abstract class ServiceInvoker {
     public List<String> execute(List<? extends Entity> entities) throws NullEntityException {
         List<String> entityIds = new ArrayList<>();
         if (entities != null) {
+            LOGGER.info("Starting to create {} entity(s)", entities.size());
             for (Entity entity : entities) {
-                LOGGER.info("Starting to create {}(s): {}", entity.getClass(), entities);
+                LOGGER.info("Starting to create {}(s): {}", entity.getClass(), entity);
                 entityIds.add(create(entity));
-                LOGGER.info("Finished creating {} {}(s)", entities.size(), entity.getClass());
             }
         } else {
             throw new NullEntityException("No entities in payload.");

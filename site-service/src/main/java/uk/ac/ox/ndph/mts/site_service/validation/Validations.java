@@ -5,11 +5,12 @@ package uk.ac.ox.ndph.mts.site_service.validation;
  */
 public enum Validations {
     STARTUP("Loaded site validation with configuration: {}"),
-    ERROR("argument %s failed validation");
+    ERROR("argument %s failed validation"),
+    MISSING_ATTRIBUTE("configuration missing at least one required attribute '%s'");
 
-    private String message;
+    private final String message;
  
-    Validations(String message) {
+    Validations(final String message) {
         this.message = message;
     }
 
