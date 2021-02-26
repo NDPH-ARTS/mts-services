@@ -38,7 +38,7 @@ public class AuthorisationService {
     private final RoleServiceClient roleServiceClient;
     private final SiteServiceClient siteServiceClient;
 
-    @Value("init-service.identity")
+    @Value("${init-service.identity}")
     private String managedIdentity;
 
     @Autowired

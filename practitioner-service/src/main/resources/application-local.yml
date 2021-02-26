@@ -11,6 +11,9 @@ role:
 site:
   service:
     uri: http://localhost:8083
+init-service:
+  identity: <init-service-identity>
+
 ---
 config:
   name: Practitioner
