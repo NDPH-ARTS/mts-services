@@ -15,7 +15,7 @@ class utils {
         return result;
     }
 
-    async  getTokenId() {
+    async getTokenId() {
         let form = new formData();
         form.append('grant_type', Buffer.from(token_request.grant_type, 'base64').toString('ascii'));
         form.append('client_id', Buffer.from(token_request.client_id, 'base64').toString('ascii'));
@@ -31,6 +31,17 @@ class utils {
         let jsonResponse = await response.json();
         return jsonResponse.id_token;
     };
+
+    async getHeadersWithAuth() {
+        const tokenId = await this.getTokenId();
+        let headers = {
+            'Authorization': 'Bearer ' + tokenId,
+            'Content-Type': 'application/json',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive'
+        };
+        return headers;
+    }
 
 }
 
