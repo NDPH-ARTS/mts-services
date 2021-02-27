@@ -2,7 +2,7 @@ const requests = require('../../data/practitioner-service/createperson')
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");
-const endpointUri = 'https://as-tauth1-sc-gateway-dev.azurewebsites.net/api/practitioner';
+const endpointUri = ':8080/api/practitioner';
 
 
 describe('As a user with Create Person permission, I want to have my create person request validated by the system, So that I cannot create an invalid person', function () {
