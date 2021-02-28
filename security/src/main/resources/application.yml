@@ -1,0 +1,42 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+azure:
+  activedirectory:
+    client-id: <CLIENT_ID>
+    session-stateless: true
+
+practitioner:
+  service:
+    name: practitioner-service
+    url: http://practitioner-service
+    endpoint:
+      roles: /practitioner/roles
+
+practitioner-service:
+  ribbon:
+    listOfServers: ${PRACTITIONER_SERVICE_URI:localhost:8081}
+
+role:
+  service:
+    name: role-service
+    url: http://role-service
+    endpoint:
+      roles: /roles
+
+role-service:
+  ribbon:
+    listOfServers: ${ROLE_SERVICE_URI:localhost:8082}
+
+site:
+  service:
+    name: site-service
+    url: http://site-service
+    endpoint:
+      sites: /sites
+
+site-service:
+  ribbon:
+    listOfServers: ${SITE_SERVICE_URI:localhost:8083}
+
