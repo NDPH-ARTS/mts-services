@@ -4,11 +4,13 @@ const sitesEndpointUri = ':8080/api/sites';
 const rolesEndpointUri = ':8080/api/roles';
 const practitionerEndpointUri = ':8080/api/practitioner'
 let assignRoleEndpointUri = ':8080/api/practitioner/{personId}/roles'
+const utils = require('../../common/utils')
+const fetch = require("node-fetch");
 
 
 describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
 
-    it('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
+    it.only('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
 
         //get parent site Id from sites endpoint
         const getSitesResponse = await baseRequest.get(sitesEndpointUri);
@@ -17,9 +19,15 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         parentSiteId = parseParentSiteIdData[0].siteId
 
         //request posted to practitioner end point
-        const personResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createPerson)
-        const capturePersonResponseData = personResponse.text
-        let parsePersonResponseData = JSON.parse(capturePersonResponseData)
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(requests.createPerson),
+        })
+        let personResponse = await fetchResponse.json();
+        const capturePersonResponseData = personResponse
+        let parsePersonResponseData = capturePersonResponseData
         personId = parsePersonResponseData.id
 
         //request posted to role service endpoint
