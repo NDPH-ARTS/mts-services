@@ -100,6 +100,7 @@ jobs:
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
+          TEMP_USER_CRED: ${{ secrets.TEMP_USER_CRED }}
         run: |
           npm run --prefix api-tests api-test-ci
       - name: Process API Tests Report

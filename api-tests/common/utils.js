@@ -1,7 +1,6 @@
 let formData = require('form-data');
 const authUri = 'https://login.microsoftonline.com/5d23383f-2acb-448e-8353-4b4573b82276/oauth2/v2.0/token'
 const fetch = require("node-fetch");
-let token_request = require('../config/token-request.json');
 
 class utils {
 
@@ -16,6 +15,7 @@ class utils {
     }
 
     async getTokenId() {
+        let token_request = JSON.parse(process.env.TEMP_USER_CRED);
         let form = new formData();
         form.append('grant_type', Buffer.from(token_request.grant_type, 'base64').toString('ascii'));
         form.append('client_id', Buffer.from(token_request.client_id, 'base64').toString('ascii'));
