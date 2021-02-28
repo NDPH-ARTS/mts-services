@@ -14,10 +14,10 @@ To run tests locally
 
 # set the env variables and build the docker image locally as per the service under test
 # export BASE_URL, example
-BASE_URL=ttp://localhost:82
+BASE_URL=http://localhost:82
 
 # without the html reports
-npm run test 
+npm run test
 
 # with html reports
 npm run test:awesome
@@ -25,7 +25,7 @@ npm run test:awesome
 If you want to run only a single test
 
 # add only before the scenario
-Example: 
+Example:
 <!-- it.only('User is able to view the created roles', async () => {
         const response = await baseRequest.get('/roles?page=0&size=2');
         expect(response.status).to.equal(HttpStatus.OK)
@@ -34,5 +34,5 @@ Example:
 
 # or update the following lines in package.json file with the particular service
 Example:
-<!-- line 7 with "test:awesome": "mocha specs/*/roleservice.js --reporter mochawesome || true", 
+<!-- line 7 with "test:awesome": "mocha specs/*/roleservice.js --reporter mochawesome || true",
 line 9 with "test": "mocha specs/*/roleservice.js", -->

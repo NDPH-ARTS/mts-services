@@ -6,6 +6,7 @@ COPY ./pom*.xml ./
 
 # copy entire build-tools folder
 COPY ./build-tools ./build-tools
+COPY ./security ./security
 
 # copy poms of shared modules
 COPY ./fhir-client/pom.xml ./fhir-client/
@@ -33,5 +34,5 @@ ARG SVC
 ARG JAR_FILE=${SVC}/target/*.jar
 COPY --from=builder ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
-EXPOSE 8702:8702
+EXPOSE 8080:8080
 

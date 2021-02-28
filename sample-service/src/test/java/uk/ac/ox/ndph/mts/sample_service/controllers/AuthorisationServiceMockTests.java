@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import uk.ac.ox.ndph.mts.sample_service.security.authorisation.AuthorisationService;;
+import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
+
 import static org.mockito.ArgumentMatchers.anyString;
 
 @Profile("no-authZ")

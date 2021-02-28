@@ -6,7 +6,7 @@ package uk.ac.ox.ndph.mts.site_service.model;
 public enum Models {
     STRING_PARSE_ERROR("cannot convert %s to Attribute enum");
 
-    private String error;
+    private final String error;
  
     Models(String error) {
         this.error = error;

@@ -18,7 +18,7 @@ services:
     environment:
       SERVER_PORT: "8081"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
-      FHIR_URI: "http://fhir-api:8080"
+      FHIR_URI: "http://fhir-api:8099"
       ROLE_SERVICE_URI: "http://role-service:8082"
       SITE_SERVICE_URI: "http://site-service:8083"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
@@ -47,6 +47,9 @@ services:
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
       JDBC_URL: jdbc:sqlserver://sql:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -64,10 +67,11 @@ services:
     image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
     depends_on:
       - fhir-api
+      - config-server
     environment:
       SERVER_PORT: "8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
-      FHIR_URI: "http://fhir-api:8080"
+      FHIR_URI: "http://fhir-api:8099"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
@@ -93,11 +97,13 @@ services:
     image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
     restart: on-failure
     environment:
-      PRACTITIONER_SERVICE: "http://practitioner-service:8081"
-      ROLE_SERVICE: "http://role-service:8082"
-      SITE_SERVICE: "http://site-service:8083"
-      CONFIG_JSON: config.json
+      PRACTITIONER-SERVICE_URI: "http://practitioner-service:8081"
+      ROLE-SERVICE_URI: "http://role-service:8082"
+      SITE-SERVICE_URI: "http://site-service:8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
     deploy:
       restart_policy:
           condition: none
@@ -119,8 +125,9 @@ services:
       SqlServer__SchemaOptions__AutomaticUpdatesEnabled: "true"
       SqlServer__Initialize: "true"
       DataStore: "SqlServer"
+      ASPNETCORE_URLS: "http://+:8099"
     ports:
-      - "8080:8080"
+      - "8099:8099"
     depends_on:
       - sql
 
@@ -160,6 +167,7 @@ services:
       args:
         SVC: discovery-server
     environment:
+      SERVER_PORT: "8761"
       EUREKA_CLIENT_REGISTERWITHEUREKA: "false"
       EUREKA_CLIENT_FETCHREGISTRY: "false"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
@@ -186,9 +194,9 @@ services:
     image: ghcr.io/ndph-arts/gateway-server:${GITHUB_SHA}
     restart: on-failure
     ports:
-      - "8072:8072"
+      - "8080:8080"
     healthcheck:
-      test: curl http://gateway-server:8072/
+      test: curl http://gateway-server:8080/
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service

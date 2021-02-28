@@ -46,22 +46,19 @@ public class SiteStore implements EntityStore<Site, String> {
         final Organization org = fromSiteConverter.convert(entity);
         final String orgId = repository.saveOrganization(org);
         org.setId(orgId);
-        // TODO (who): Add research study only when needed.
-        // TODO (alexb): attach research study to site properly
         createResearchStudy(org);
         return orgId;
     }
 
     /**
-     * Find Organization By ID from the FHIR store
+     * Check if an entity with the given name exists in the repository
      *
-     * @param organizationName of the organization to search.
-     * @return Organization searched by name.
+     * @param name to search for
+     * @return true if exists already, false otherwise
      */
     @Override
-    public Optional<Site> findByName(final String organizationName) {
-        return this.repository.findOrganizationByName(organizationName)
-                .map(fromOrgConverter::convert);
+    public boolean existsByName(final String name) {
+        return this.repository.organizationExistsByName(name);
     }
 
     private String createResearchStudy(Organization org) {

@@ -16,11 +16,11 @@ class EntityStoreTests {
         final EntityStore<String, String> defaultStore = new EntityStore<>() {
             public String saveEntity(String entity) { return null; }
             public List<String> findAll() { return null; }
-            public Optional<String> findByName(String name) { return Optional.empty(); }
             public Optional<String> findById(String name) { return Optional.empty(); }
         };
         // act and assert
         assertThat(defaultStore.findRoot().isPresent(), equalTo(false));
+        assertThat(defaultStore.existsByName("foo"), equalTo(false));
     }
 
 }

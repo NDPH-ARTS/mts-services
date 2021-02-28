@@ -13,13 +13,15 @@ import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 public class SiteServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceInvoker.class);
 
-    @Value("${site.service}")
+    @Value("${site-service.uri}")
     private String siteService;
 
-    @Value("${site.service.endpoint.create}")
+    @Value("${site-service.routes.create}")
     private String createEndpoint;
 
-    public SiteServiceInvoker() { }
+    public SiteServiceInvoker() {
+    }
+
     public SiteServiceInvoker(WebClient webClient) {
         super(webClient);
     }
