@@ -1,9 +1,9 @@
 const requests = require('../../data/assign-roles/assign-roles')
 const conf = require('../../config/conf')
-const sitesEndpointUri = ':8080/api/sites';
-const rolesEndpointUri = ':8080/api/roles';
-const practitionerEndpointUri = ':8080/api/practitioner'
-let assignRoleEndpointUri = ':8080/api/practitioner/{personId}/roles'
+const sitesEndpointUri = '/api/sites';
+const rolesEndpointUri = '/api/roles';
+const practitionerEndpointUri = '/api/practitioner'
+let assignRoleEndpointUri = '/api/practitioner/{personId}/roles'
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");
 
