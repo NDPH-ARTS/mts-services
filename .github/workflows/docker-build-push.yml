@@ -41,7 +41,7 @@ jobs:
 
           TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
 
-          docker build --build-arg SVC="${{ matrix.service_name }}" -t $TAG -f "${{ matrix.service_name }}"/Dockerfile .
+          docker build --build-arg SVC="${{ matrix.service_name }}" -t $TAG .
           docker push $TAG
       - name: Publish named image
         # The way to run this only on "merge" to main branch is to catch the "push" event into it (and schedule).
@@ -59,6 +59,15 @@ jobs:
           # assume the step before created the image with the sha tag
           docker tag $FROM_TAG $TO_TAG
           docker push $TO_TAG
+
+  buildall:
+    runs-on: ubuntu-latest
+    name: Build services check all
+    needs: build
+    steps:
+      - name: Check build matrix status
+        if: ${{ needs.build.result != 'success' }}
+        run: exit 1
 
   test:
     name: API Integration Tests
