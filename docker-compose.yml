@@ -50,6 +50,9 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      SPRING_CLOUD_REPO: "https://raw.githubusercontent.com/NDPH-ARTS/mts-trial-deployment-config/"
+      SERVICE_DIR: "/sample_trial/services/role-service"
+
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
