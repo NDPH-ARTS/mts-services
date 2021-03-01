@@ -1,16 +1,14 @@
-application:
-  message: '"My app settings value here"'
 role:
   service:
     name: role-service
-    url: <role-service-url>
+    url: '<role-service-url>'
     endpoint:
-      exists: /roles/{id}
-      paged: /roles/
-      role: /roles/{id}
-      roles: /roles
-        create: /roles
+      exists: '/roles/{id}'
+      paged: '/roles/'
+      role: '/roles/{id}'
+      roles:
+        create: '/roles'
         by:
-          ids: roles
+          ids: 'roles'
       update:
-        permissions: /roles/{id}/permissions
+        permissions: '/roles/{id}/permissions'

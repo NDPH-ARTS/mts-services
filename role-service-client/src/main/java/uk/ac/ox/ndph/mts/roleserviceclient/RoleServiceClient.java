@@ -2,35 +2,36 @@ package uk.ac.ox.ndph.mts.roleserviceclient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
-import uk.ac.ox.ndph.mts.roleserviceclient.model.Response;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
+import uk.ac.ox.ndph.mts.roleserviceclient.model.RolePageImpl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
-public class RoleServiceClient implements EntityServiceClient {
+public class RoleServiceClient {
 
     private final WebClient webClient;
 
     @Value("${role.service.name}")
     private String serviceName;
-
-    @Value("${role.service.endpoint.roles}")
-    private String baseRolesRoute;
-
     @Value("${role.service.endpoint.exists}")
     private String serviceExistsRoute;
-
     @Value("${role.service.endpoint.role}")
     private String serviceGetRole;
     @Value("${role.service.endpoint.paged}")
@@ -42,148 +43,182 @@ public class RoleServiceClient implements EntityServiceClient {
     @Value("${role.service.endpoint.update.permissions}")
     private String serviceUpdatePermissions;
 
+    private final Supplier<Retry> retryPolicy;
+
+    public static Consumer<HttpHeaders> noAuth() {
+        return (headers) -> {
+        };
+    }
+
+    public static Consumer<HttpHeaders> basicAuth(final String username, final String password) {
+        return (headers) -> headers.setBasicAuth(username, password);
+    }
+
+    public static Consumer<HttpHeaders> bearerAuth(final String token) {
+        return (headers) -> headers.setBearerAuth(token);
+    }
+
     @Autowired
     public RoleServiceClient(final WebClient.Builder webClientBuilder,
+                             final Supplier<Retry> retryPolicy,
                              @Value("${role.service.url}") String roleServiceUrl) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
+        this.retryPolicy = retryPolicy;
     }
 
-    @Override
-    public RoleDTO getRoleById(final String roleId) throws RestException {
-        Objects.requireNonNull(roleId, "roleId must not be null");
+    public RoleDTO findById(final String roleId,
+                            final Consumer<HttpHeaders> authHeaders) throws RestException {
+        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(serviceGetRole)
-                        .queryParam("id", roleId)
-                        .build())
-                .header("Content-Type", "application/json")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                String.format(Response.SERVICE_NAME_STATUS_AND_ID.message(),
-                                              serviceName, resp.statusCode(), roleId))))
-                .bodyToMono(RoleDTO.class)
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
+            .uri(uriBuilder -> uriBuilder.path(serviceGetRole)
+                .queryParam("id", roleId)
+                .build())
+            .headers(authHeaders)
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .bodyToMono(RoleDTO.class)
+            .retryWhen(retryPolicy.get())
+            .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+            .block();
     }
 
-    @SuppressWarnings("ConstantConditions")
-    @Override
-    public boolean roleIdExists(final String roleId) throws RestException {
-        Objects.requireNonNull(roleId, "roleId must not be null");
+    public boolean idExists(final String roleId,
+                            final Consumer<HttpHeaders> authHeaders) throws RestException {
+        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
+        return Boolean.TRUE.equals(webClient.get()
+            .uri(serviceExistsRoute, roleId)
+            .headers(authHeaders)
+            .exchange()
+            .flatMap(clientResponse -> {
+                if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
+                    return Mono.just(false);
+                } else if (clientResponse.statusCode().equals(HttpStatus.OK)) {
+                    return Mono.just(true);
+                } else {
+                    return clientResponse.createException().flatMap(Mono::error);
+                }
+            })
+            .retryWhen(retryPolicy.get())
+            .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+            .block());
+    }
+
+    public Page<RoleDTO> findPage(final int page, final int size,
+                                  final Consumer<HttpHeaders> authHeaders) throws RestException {
         return webClient.get()
-                .uri(serviceExistsRoute, roleId)
-                .exchange()
-                .flatMap(clientResponse -> {
-                    if (clientResponse.statusCode().is4xxClientError()) {
-                        // TODO (archiem) makes sense for 404, but not other 4xx where I would expect an exception
-                        return Mono.just(false);
-                    } else if (clientResponse.statusCode().is2xxSuccessful()) {
-                        // TODO (archiem) makes sense for 200,
-                        // but other 2xx are inconclusive and may deserve an exception
-                        return Mono.just(true);
-                    } else {
-                        return clientResponse.createException().flatMap(Mono::error);
-                    }
-                }).onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
+            .uri(uriBuilder -> uriBuilder
+                .path(serviceGetPaged)
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .build())
+            .headers(authHeaders)
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .onStatus(
+                httpStatus -> !httpStatus.is2xxSuccessful(),
+                resp -> Mono.error(new RestException(
+                    ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
+                        serviceName, resp.statusCode(),
+                        "page=" + page + "; size=" + size))))
+            .bodyToMono(RolePageImpl.class)
+            .retryWhen(retryPolicy.get())
+            .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+            .block();
     }
 
-    @Override
-    public Page<RoleDTO> getPaged(final int page, final int size) throws RestException {
-        final ParameterizedTypeReference<Page<RoleDTO>> parameterizedTypeReference =
-                new ParameterizedTypeReference<>() {
-                };
-
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(serviceGetPaged)
-                        .queryParam("page", page)
-                        .queryParam("size", size)
-                        .build())
-                .header("Content-Type", "application/json")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
-                                              serviceName, resp.statusCode(),
-                                              "page=" + page + "; size=" + size))))
-                .bodyToMono(parameterizedTypeReference)
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
-    }
-
-    @Override
-    public List<RoleDTO> getRolesByIds(final List<String> roleIds) {
+    public List<RoleDTO> findByIds(final List<String> roleIds,
+                                   final Consumer<HttpHeaders> authHeaders) throws RestException {
+        Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
         final String parsedRoleIds = String.join(",", roleIds);
-
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(serviceRolesByIds)
-                        .queryParam("ids", parsedRoleIds)
-                        .build())
-                .header("Content-Type", "application/json")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                String.format(Response.SERVICE_NAME_STATUS_AND_ID.message(),
-                                              serviceName, resp.statusCode(), parsedRoleIds))))
-                .bodyToMono(RoleDTO[].class)
-                .map(Arrays::asList)
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
+            .uri(uriBuilder -> uriBuilder
+                .path(serviceRolesByIds)
+                .queryParam("ids", parsedRoleIds)
+                .build())
+            .headers(authHeaders)
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .onStatus(
+                httpStatus -> !httpStatus.is2xxSuccessful(),
+                resp -> Mono.error(new RestException(
+                    ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
+                        serviceName, resp.statusCode(), parsedRoleIds))))
+            .bodyToMono(RoleDTO[].class)
+            .map(Arrays::asList)
+            .retryWhen(retryPolicy.get())
+            .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+            .block();
     }
 
-    @Override
-    public RoleDTO createRole(final RoleDTO role) {
-        Objects.requireNonNull(role, "role must not be null");
+    public RoleDTO createEntity(final RoleDTO role,
+                                final Consumer<HttpHeaders> authHeaders) throws RestException {
+        Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
         return webClient.post()
-                .uri(serviceCreateRole, role)
-                .header("Content-Type", "application/json")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
-                                              serviceName, resp.statusCode(), "role=" + role))))
-                .bodyToMono(RoleDTO.class)
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
+            .uri(serviceCreateRole, role)
+            .headers(authHeaders)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .bodyValue(role)
+            .retrieve()
+            .onStatus(
+                httpStatus -> !httpStatus.is2xxSuccessful(),
+                resp -> Mono.error(new RestException(
+                    ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
+                        serviceName, resp.statusCode(), "role=" + role))))
+            .bodyToMono(RoleDTO.class)
+            .retryWhen(retryPolicy.get())
+            .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+            .block();
     }
 
-    @Override
-    public RoleDTO updatePermissions(final String roleId, final List<PermissionDTO> permissionsDTOs) {
-        Objects.requireNonNull(roleId, "roleId must not be null");
+
+    public RoleDTO updatePermissions(final String roleId,
+                                     final List<PermissionDTO> permissionsDTOs,
+                                     final Consumer<HttpHeaders> authHeaders) throws RestException {
+        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
+        Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
         return webClient.post()
-                .uri(uriBuilder -> uriBuilder.path(serviceUpdatePermissions)
-                        .queryParam("id", roleId)
-                        .queryParam("permissionsDTOs", permissionsDTOs)
-                        .build())
-                .header("Content-Type", "application/json")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                String.format(Response.SERVICE_NAME_STATUS_AND_ARGUMENTS.message(),
-                                              serviceName,
-                                              resp.statusCode(),
-                                              "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
-                .bodyToMono(RoleDTO.class)
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
+            .uri(uriBuilder -> uriBuilder.path(serviceUpdatePermissions)
+                .queryParam("id", roleId)
+                .build())
+            .headers(authHeaders)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .bodyValue(permissionsDTOs)
+            .retrieve()
+            .onStatus(
+                httpStatus -> !httpStatus.is2xxSuccessful(),
+                resp -> Mono.error(new RestException(
+                    ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
+                        serviceName,
+                        resp.statusCode(),
+                        "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
+            .bodyToMono(RoleDTO.class)
+            .retryWhen(retryPolicy.get())
+            .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+            .block();
     }
 
     private String listToString(final List<?> list) {
-        final StringBuilder sb = new StringBuilder();
-        list.forEach(sb::append);
-        return sb.toString();
+        return list.stream().map(Object::toString).collect(Collectors.joining(", "));
+    }
+
+    public List<RoleDTO> createMany(final List<? extends RoleDTO> entities,
+                                    final Consumer<HttpHeaders> authHeaders) throws RestException {
+        Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
+        RestException error = null;
+        final List<RoleDTO> result = new ArrayList<>();
+        for (final RoleDTO role : entities) {
+            try {
+                result.add(createEntity(role, authHeaders));
+            } catch (RestException ex) {
+                error = ex;
+            }
+        }
+        if (error != null) {
+            throw error;
+        }
+        return result;
     }
 
 }

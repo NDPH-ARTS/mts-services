@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.roleserviceclient.common;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -76,6 +77,20 @@ public final class MockWebServerWrapper {
     public void queueResponse(final MockResponse response) {
         try {
             mockBackEnd.enqueue(response);
+        } catch (RuntimeException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public int getRequestCount() {
+        return mockBackEnd.getRequestCount();
+    }
+
+    public RecordedRequest takeRequest() {
+        try {
+            return mockBackEnd.takeRequest();
         } catch (RuntimeException ex) {
             throw ex;
         } catch (Exception ex) {

@@ -9,44 +9,36 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class RoleIdExistsTest {
+public class IdExistsTest {
 
     public static MockWebServerWrapper webServer;
-    private RoleServiceClient sut;
-    private static WebClient.Builder builder;
+    private static final TestClientBuilder builder = new TestClientBuilder();
+    private RoleServiceClient roleServiceClient;
 
     @SpringBootApplication
     static class TestConfiguration {
     }
 
     @BeforeAll
-    static void beforeAll() throws IOException {
-        final WebClientConfig config = new WebClientConfig();
-        config.setConnectTimeOutMs(500);
-        config.setReadTimeOutMs(1000);
-        builder = config.webClientBuilder();
-
+    static void beforeAll() {
         webServer = MockWebServerWrapper.newStartedInstance();
     }
 
     @BeforeEach
     void beforeEach() {
-        sut = new RoleServiceClient(builder, webServer.getUrl());
+        roleServiceClient = builder.build(webServer.getUrl());
     }
 
     @AfterAll
-    static void afterAll() throws IOException {
+    static void afterAll() {
         webServer.shutdown();
     }
 
@@ -56,7 +48,7 @@ public class RoleIdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
 
         // Act
-        boolean idExists = sut.roleIdExists("12");
+        boolean idExists = roleServiceClient.idExists("12", RoleServiceClient.noAuth());
 
         // Assert
         assertTrue(idExists);
@@ -68,7 +60,7 @@ public class RoleIdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()));
 
         // Act
-        boolean idExists = sut.roleIdExists("12");
+        boolean idExists = roleServiceClient.idExists("12", RoleServiceClient.noAuth());
 
         // Assert
         assertFalse(idExists);
@@ -80,7 +72,7 @@ public class RoleIdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
         // Act + Assert
-        Assertions.assertThrows(RestException.class, () -> sut.roleIdExists("12"));
+        Assertions.assertThrows(RestException.class, () -> roleServiceClient.idExists("12", RoleServiceClient.noAuth()));
     }
 
 }
