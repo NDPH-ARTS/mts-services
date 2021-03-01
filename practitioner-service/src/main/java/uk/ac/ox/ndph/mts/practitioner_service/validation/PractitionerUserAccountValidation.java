@@ -40,6 +40,10 @@ public class PractitionerUserAccountValidation implements ModelEntityValidation<
             return new ValidationResponse(false, "Invalid participant id");
         }
         
+        if (!practitionerStore.findEntitiesByUserIdentity(userAccount.getUserAccountId()).isEmpty()) {
+            return new ValidationResponse(false, "This user account id is already linked to a practitioner.");
+        }
+        
         if (StringUtils.hasText(practitioner.get().getUserAccountId().trim())) {
             return new ValidationResponse(false, "This person already has a user account id registered.");
         }

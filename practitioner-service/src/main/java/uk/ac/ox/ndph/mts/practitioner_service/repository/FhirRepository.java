@@ -23,4 +23,6 @@ public interface FhirRepository {
     String savePractitionerRole(PractitionerRole practitionerRole);
 
     List<PractitionerRole> getPractitionerRolesByUserIdentity(String userIdentity);
+
+    List<Practitioner> getPractitionersByUserIdentity(String userIdentity);
 }
