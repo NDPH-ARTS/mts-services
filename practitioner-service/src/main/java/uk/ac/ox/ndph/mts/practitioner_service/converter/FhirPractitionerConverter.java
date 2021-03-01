@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Identifier;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
@@ -30,7 +31,7 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
 
         String userAccountId = input.getIdentifier().stream()
                 .filter((id) -> id.getId().equals(Practitioner.USERACCOUNTID_IDENTIFIER_NAME))
-                .map((id) -> id.getValue())
+                .map(Identifier::getValue)
                 .findAny()
                 .orElse("");
 
@@ -45,6 +46,6 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
 
     @Override
     public List<Practitioner> convertList(List<org.hl7.fhir.r4.model.Practitioner> input) {
-        return input.stream().map(p -> convert(p)).collect(toList());
+        return input.stream().map(this::convert).collect(toList());
     }
 }
