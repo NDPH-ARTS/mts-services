@@ -19,7 +19,7 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         parentSiteId = parseParentSiteIdData[0].siteId
 
         //request posted to practitioner end point
-        const headers = await utils.getHeadersWithAuth()
+        let headers = await utils.getHeadersWithAuth()
         let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
             headers: headers,
             method: 'POST',
@@ -40,8 +40,14 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         let assignRoleJSON = requests.assignRole
         assignRoleJSON.siteId = parentSiteId
         assignRoleJSON.roleId = roleId
+        let headers1 = await utils.getHeadersWithAuth()
         assignRoleEndpointUri = assignRoleEndpointUri.replace("{personId}", personId);
-        const response = await baseRequest.post(assignRoleEndpointUri).send(assignRoleJSON)
-        expect(response.status).to.equal(HttpStatus.CREATED)
+        let fetchResponse1 = await fetch(conf.baseUrl + assignRoleEndpointUri, {
+            headers: headers1,
+            method: 'POST',
+            body: JSON.stringify(assignRoleJSON),
+        })
+
+        expect(fetchResponse1.status).to.equal(HttpStatus.CREATED)
     });
 });
