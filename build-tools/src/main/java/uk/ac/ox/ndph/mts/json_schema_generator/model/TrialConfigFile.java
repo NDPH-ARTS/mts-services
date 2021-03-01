@@ -6,9 +6,6 @@ public class TrialConfigFile {
     @JsonProperty(required = true)
     private String name;
 
-    @JsonProperty(required = true)
-    private String id;
-
     @JsonProperty(value = "tenant_id", required = true)
     private String tenantId;
 
@@ -17,9 +14,6 @@ public class TrialConfigFile {
 
     @JsonProperty(required = true, defaultValue = "1")
     private int version;
-
-    @JsonProperty(required = true)
-    private String rootUser;
 
     @JsonProperty(value = "site_service", required = true)
     private Service siteService;
