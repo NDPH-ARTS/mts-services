@@ -3,14 +3,14 @@ name: Docker build and push
 on:
   pull_request:
     paths-ignore:
-      - '**.md'
+      - "**.md"
   push:
     # ONLY main branch should be listed below!
-    branches: [ main ]
+    branches: [main]
   # schedule only runs on the main branch
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron: '1 1 * * *'
+    - cron: "1 1 * * *"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,17 @@ jobs:
     name: Build services
     strategy:
       matrix:
-        service_name: [ "sample-service", "practitioner-service", "site-service", "role-service", "init-service", "config-server", "discovery-server", "gateway-server" ]
+        service_name:
+          [
+            "sample-service",
+            "practitioner-service",
+            "site-service",
+            "role-service",
+            "init-service",
+            "config-server",
+            "discovery-server",
+            "gateway-server",
+          ]
     env:
       GHCR: ghcr.io/ndph-arts
     runs-on: ubuntu-latest
@@ -79,6 +89,8 @@ jobs:
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
+          AUTOMATION_USER_NAME: test-automation@mtsdevndph.onmicrosoft.com
+          AUTOMATION_USER_PASSWORD: ${{ secrets.AUTOMATION_USER_PASSWORD }}
         run: |
           ./.ci/docker/check-docker-compose-services.sh
       - name: Run init
@@ -95,11 +107,12 @@ jobs:
           docker-compose run --no-deps init-service
       - name: Run API Tests
         env:
-          BASE_URL: http://localhost
+          BASE_URL: http://localhost:8080
           MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
+          TEMP_USER_CRED: ${{ secrets.TEMP_USER_CRED }}
         run: |
           npm run --prefix api-tests api-test-ci
       - name: Process API Tests Report
@@ -108,7 +121,7 @@ jobs:
         with:
           check_name: API Tests Report Check
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: 'api-tests/api-test-results.xml'
+          report_paths: "api-tests/api-test-results.xml"
           fail_on_test_failures: true
           fail_if_no_tests: true
       - name: Stop compose services
