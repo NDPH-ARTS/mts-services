@@ -1,6 +1,6 @@
 const requests = require('../../data/createTrialSite/createNewTrialSite')
 const conf = require('../../config/conf')
-const endpointUri = ':8080/api/sites';
+const endpointUri = '/api/sites';
 let ccoParentSiteId;
 let rccParentSiteId;
 let countryParentSiteId;
