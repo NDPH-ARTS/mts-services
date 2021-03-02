@@ -18,10 +18,10 @@ import java.util.concurrent.TimeUnit;
 @ConfigurationProperties(prefix = "http")
 public class WebClientConfig {
 
-    @Value("${http.connectTimeOutMs:1000}")
+    @Value("${http.connectTimeOutMs:3000}")
     private int connectTimeOutMs;
 
-    @Value("${http.readTimeOutMs:10000}")
+    @Value("${http.readTimeOutMs:30000}")
     private long readTimeOutMs;
 
     public ClientHttpConnector connectorWithConnectAndReadTimeOuts() {
