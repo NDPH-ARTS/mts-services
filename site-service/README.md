@@ -13,15 +13,17 @@ Creates a new site entity.
 {
     "name": "CCO",
     "alias": "CCO",
-    "parentSiteId": "01ced0b1-a6e6-4408-9701-0ced2fff9a26"
+    "parentSiteId": "01ced0b1-a6e6-4408-9701-0ced2fff9a26",
+    "siteType": "..."
 }
 ```
 
-| Parameter | Data Type Expected |                                                       Description                                                      |
-|:---------:|:------------------:|:----------------------------------------------------------------------------------------------------------------------:|
-|     name    |       string       | Name |
-|     alias    |       string       | Description |
-|     parentSiteId    |       string       | Description |
+| Parameter | Data Type Expected |          
+|:---------:|:------------------:|
+|     name    |       string       
+|     alias    |       string       
+|     parentSiteId    |       string       
+|     siteType    |       string       
 
 **Method** : `POST`
 
