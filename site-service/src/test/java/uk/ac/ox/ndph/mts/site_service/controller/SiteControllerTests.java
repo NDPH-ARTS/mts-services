@@ -118,10 +118,10 @@ class SiteControllerTests {
         assertThat(error, notNullValue());
         assertThat(error.getMessage(), containsString("name"));
     }
+
     @Test
     void TestPostSite_WhenNotAuthorized_Returns401() throws Exception {
 
-        when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
