@@ -38,7 +38,7 @@ public class AuthorisationService {
     private final RoleServiceClient roleServiceClient;
     private final SiteServiceClient siteServiceClient;
 
-    @Value("init-service.identity")
+    @Value("${init-service.identity}")
     private String managedIdentity;
 
     @Autowired
@@ -102,6 +102,7 @@ public class AuthorisationService {
         try {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
+            String token = securityContextUtil.getToken();
 
             LOGGER.debug("userId is - " + userId);
             LOGGER.debug("managed identity is - " + managedIdentity);
@@ -113,7 +114,7 @@ public class AuthorisationService {
             }
 
             //get practitioner role assignment
-            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId);
+            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
 
             if (roleAssignments == null || roleAssignments.isEmpty()) {
                 LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);

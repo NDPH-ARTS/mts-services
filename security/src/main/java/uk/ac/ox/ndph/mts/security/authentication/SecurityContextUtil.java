@@ -21,4 +21,14 @@ public class SecurityContextUtil {
         UserPrincipal userPrincipal = ((UserPrincipal) authentication.getPrincipal());
         return userPrincipal.getClaim("oid").toString();
     }
+
+    /**
+     * Get user id from security context
+     * @return string user id
+     */
+    public String getToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = ((UserPrincipal) authentication.getPrincipal());
+        return userPrincipal.getAadIssuedBearerToken();
+    }
 }

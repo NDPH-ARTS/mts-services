@@ -36,19 +36,3 @@ while ! is_healthy role-service; do sleep 10; done
 while ! is_healthy practitioner-service; do sleep 10; done
 
 echo "Services started."
-
-echo "Running init-service..."
-set +o errexit # the run might fail and we'd like to continue the script
-docker-compose run --no-deps init-service
-run_exit_code=$?
-set -o errexit
-
-# check the run command exit code
-if [ $run_exit_code -eq 0 ]
-then
-  echo "init-service completed successfully."
-  exit 0
-else
-  echo "init-service failure!" >&2
-  exit 1
-fi

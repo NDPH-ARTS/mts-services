@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"uk.ac.ox.ndph.mts"})
 public class PractitionerServiceApplication {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerServiceApplication.class);

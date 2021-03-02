@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
-@ActiveProfiles("test-all-required")
+@ActiveProfiles({"no-authZ", "test-all-required"})
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
 
@@ -52,6 +53,7 @@ class PractitionerControllerTests {
     @MockBean
     private EntityService entityService;
 
+    @WithMockUser
     @Test
     void TestGetPractitioner_WithUnknownId_Returns404() throws Exception {
         // Arrange
@@ -64,6 +66,7 @@ class PractitionerControllerTests {
                 .andExpect(status().isNotFound());
     }
 
+    @WithMockUser
     @Test
     void TestGetPractitioner_WithValidId_Returns200AndPractitioner() throws Exception {
         // Arrange
@@ -77,6 +80,7 @@ class PractitionerControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("42"));
     }
 
+    @WithMockUser
     @Test
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
@@ -84,6 +88,7 @@ class PractitionerControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
@@ -95,6 +100,7 @@ class PractitionerControllerTests {
                 .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestPostPractitioner_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
@@ -106,6 +112,7 @@ class PractitionerControllerTests {
                 .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestPostPractitioner_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
@@ -118,8 +125,9 @@ class PractitionerControllerTests {
                 .andExpect(status().isBadGateway());
     }
 
+    @WithMockUser
     @Test
-    void TestPostPractitioner_WhenArgumentException_Returns400() throws Exception {
+    void TestPostPractitioner_WhenArgumentException_Returns422() throws Exception {
         // Arrange
         when(entityService.savePractitioner(any(Practitioner.class))).thenThrow(new ValidationException("prefix"));
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
@@ -131,6 +139,7 @@ class PractitionerControllerTests {
         assertThat(error, containsString("prefix"));
     }
 
+    @WithMockUser
     @Test
     void TestLinkPractitioner_whenParamsNotPresent_error() throws Exception {
         // Act
@@ -141,6 +150,7 @@ class PractitionerControllerTests {
         verify(entityService, never()).linkPractitioner((any(PractitionerUserAccount.class)));
     }
 
+    @WithMockUser
     @Test
     void linkPractitioner_whenLinkSucceeds_thenReturnCreatedStatus() throws Exception {
         // Arrange
@@ -156,6 +166,7 @@ class PractitionerControllerTests {
 
     // RoleAssignment Tests
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
@@ -163,6 +174,7 @@ class PractitionerControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenPartialInput_Returns201AndId() throws Exception {
         // We test that the controller doesn't do any logic
@@ -176,7 +188,7 @@ class PractitionerControllerTests {
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(returnedValue)));
     }
-
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenServiceFails_Returns502() throws Exception {
         // Arrange
@@ -189,6 +201,7 @@ class PractitionerControllerTests {
                 .andExpect(status().isBadGateway());
     }
 
+    @WithMockUser
     @Test
     void TestGetRoleAssignmentByUserIdentity_WithMissingUserIdentityParam_Returns500() throws Exception {
         // We test that the endpoint requires user identity parameter
@@ -201,6 +214,7 @@ class PractitionerControllerTests {
         assertThat(error, equalTo("Required String parameter 'userIdentity' is not present"));
     }
 
+    @WithMockUser
     @Test
     void TestGetRoleAssignmentByUserIdentity_WithNullUserIdentityParam_Returns500() throws Exception {
         // We test that the endpoint requires user identity parameter
@@ -214,6 +228,7 @@ class PractitionerControllerTests {
         assertThat(error, equalTo("Required String parameter 'userIdentity' is blank"));
     }
 
+    @WithMockUser
     @Test
     void TestGetRoleAssignmentByUserIdentity_WithUserIdentityParam_ReturnsRoleAssignmentAsExpected() throws Exception {
 
