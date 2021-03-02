@@ -131,6 +131,32 @@ public class HapiFhirRepository implements FhirRepository {
         return practitionerRoles;
     }
 
+    @SuppressWarnings("squid:S2629")
+    @Override
+    public List<Practitioner> getPractitionersByUserIdentity(String userIdentity) {
+        // Log the request
+        logger.info(
+                String.format(
+                        FhirRepo.GET_PRACTITIONERS_BY_USER_IDENTITY.message(),
+                        userIdentity));
+
+        List<Practitioner> practitioners = new ArrayList<>();
+
+        var results = fhirContextWrapper.searchResource(Practitioner.class, 
+            Practitioner.IDENTIFIER.exactly().identifier(userIdentity));
+
+        for (var result : results) {
+            practitioners.add((Practitioner) result);
+        }
+
+        logger.info(
+            String.format(
+                     FhirRepo.GET_PRACTITIONERS_BY_USER_IDENTITY.message(),
+                        practitioners.size()));
+
+        return practitioners;
+    }
+
     private IBaseResource extractResponseResource(Bundle bundle) throws RestException {
         var resp = fhirContextWrapper.toListOfResources(bundle);
 
