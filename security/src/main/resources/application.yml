@@ -40,3 +40,5 @@ site-service:
   ribbon:
     listOfServers: ${SITE_SERVICE_URI:localhost:8083}
 
+init-service:
+  identity: <init-service-identity>

@@ -28,7 +28,7 @@ public class RoleServiceClientImpl implements RoleServiceClient {
 
     @Autowired
     public RoleServiceClientImpl(final WebClient.Builder webClientBuilder,
-                                 @Value("${role.service.url}") String roleServiceUrl) {
+                                 @Value("${role.service.uri}") String roleServiceUrl) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
     }
 

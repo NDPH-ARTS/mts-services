@@ -10,6 +10,7 @@ public enum FhirRepo {
     PROBLEM_EXECUTING_TRANSACTION("Problem executing transaction with bundle at: %s"),
     SEARCH_ERROR("Failed to search repository"),
     FAILED_TO_SAVE_PRACTITIONER("Failed to save practitioner"),
+    GET_PRACTITIONERS_BY_USER_IDENTITY("get practitioners by user identity %s"),
     GET_PRACTITIONER_ROLES_BY_USER_IDENTITY("get practitioner roles by user identity %s"),
     GET_PRACTITIONER_ROLES_BY_USER_IDENTITY_RESPONSE("found %d practitioner roles");
 

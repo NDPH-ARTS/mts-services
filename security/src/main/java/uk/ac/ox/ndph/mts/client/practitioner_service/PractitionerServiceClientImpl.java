@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.client.practitioner_service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,7 +30,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
 
     @Autowired
     public PractitionerServiceClientImpl(final WebClient.Builder webClientBuilder,
-                                         @Value("${practitioner.service.url}") String roleAssignmentsUrl) {
+                                         @Value("${practitioner.service.uri}") String roleAssignmentsUrl) {
         this.webClient = webClientBuilder.baseUrl(roleAssignmentsUrl).build();
     }
 
@@ -39,14 +40,15 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
      * @return list of role assignments
      */
     @Override
-    public List<RoleAssignmentDTO> getUserRoleAssignments(String userId) {
+    public List<RoleAssignmentDTO> getUserRoleAssignments(String userId, String token) {
 
         return webClient.get().uri(uriBuilder ->
                 uriBuilder
                         .path(roleAssignmentRoute)
                         .queryParam("userIdentity", userId)
                         .build())
-                .header("Content-Type", "application/json")
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
