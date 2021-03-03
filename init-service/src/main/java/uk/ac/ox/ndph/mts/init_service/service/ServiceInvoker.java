@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
@@ -24,6 +25,8 @@ public abstract class ServiceInvoker {
 
     protected String serviceUrlBase;
 
+    protected AzureTokenService azureTokenService;
+
     // In unit-tests the webclient retry step gets stuck (something about virtual time).
     // This is a quick trick to disable retry while testing without the spring container.
     @Value("${max-webclient-attempts:9}")
@@ -33,11 +36,14 @@ public abstract class ServiceInvoker {
 
     protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected)
             throws DependentServiceException {
-
         try {
+            LOGGER.debug("About to get Token");
+            String token = azureTokenService.getToken();
+            LOGGER.debug("Token in invoker - " + token);
             return webClient.post()
                     .uri(uri)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .headers(h -> h.setBearerAuth(token))
                     .body(Mono.just(payload), payload.getClass())
                     .retrieve()
                     .bodyToMono(responseExpected)

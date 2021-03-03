@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class PractitionerController {
      * @param practitioner The practitioner to create
      * @return ResponseEntity
      */
+    @PreAuthorize("@authorisationService.authorise('create-person')") //NOSONAR
     @PostMapping()
     public ResponseEntity<Response> savePractitioner(@RequestBody Practitioner practitioner) {
         String practitionerId = entityService.savePractitioner(practitioner);

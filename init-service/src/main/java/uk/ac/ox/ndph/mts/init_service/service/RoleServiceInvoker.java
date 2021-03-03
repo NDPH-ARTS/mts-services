@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
@@ -19,9 +20,11 @@ public class RoleServiceInvoker extends ServiceInvoker {
 
     @Autowired
     public RoleServiceInvoker(final WebClient.Builder webClientBuilder,
-                              @Value("${role-service.uri}") String serviceUrlBase) {
+                              @Value("${role-service.uri}") String serviceUrlBase,
+                              AzureTokenService azureTokenservice) {
         this.serviceUrlBase = serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
+        this.azureTokenService = azureTokenservice;
     }
 
     @Override

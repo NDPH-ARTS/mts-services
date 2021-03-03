@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
@@ -32,12 +33,11 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
 
     @Autowired
     public PractitionerServiceInvoker(final WebClient.Builder webClientBuilder,
-                                      @Value("${practitioner-service.uri}") String serviceUrlBase) {
+                              @Value("${practitioner-service.uri}") String serviceUrlBase,
+                              AzureTokenService azureTokenservice) {
         this.serviceUrlBase = serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
-    }
-
-    public PractitionerServiceInvoker() {
+        this.azureTokenService = azureTokenservice;
     }
 
     @Override
