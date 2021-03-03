@@ -31,9 +31,11 @@ class RoleServiceTest {
 
     private static MockWebServer mockBackEnd;
 
-    RoleServiceInvoker roleServiceInvoker;
-
     private static WebClient.Builder builder;
+
+    private static String baseUrl;
+
+    RoleServiceInvoker roleServiceInvoker;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -53,10 +55,9 @@ class RoleServiceTest {
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        WebClient webClient = WebClient.create(String.format("http://localhost:%s",
-                mockBackEnd.getPort()));
+        baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
         lenient().when(mockTokenService.getToken()).thenReturn("123ert");
-        roleServiceInvoker = new RoleServiceInvoker(webClient, mockTokenService);
+        roleServiceInvoker = new RoleServiceInvoker(builder, baseUrl, mockTokenService);
     }
 
     @AfterAll

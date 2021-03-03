@@ -44,6 +44,8 @@ class PractitionerServiceTest {
 
     private static WebClient.Builder builder;
 
+    private static String baseUrl;
+
     PractitionerServiceInvoker practitionerServiceInvoker;
 
     @BeforeAll
@@ -64,10 +66,9 @@ class PractitionerServiceTest {
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        WebClient webClient = WebClient.create(String.format("http://localhost:%s",
-                mockBackEnd.getPort()));
+        baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
         lenient().when(mockTokenService.getToken()).thenReturn("123ert");
-        practitionerServiceInvoker = new PractitionerServiceInvoker(webClient, mockTokenService);
+        practitionerServiceInvoker = new PractitionerServiceInvoker(builder, baseUrl, mockTokenService);
     }
 
     @AfterAll
@@ -189,7 +190,7 @@ class PractitionerServiceTest {
 
     @Test
     void testExecute_UsesReturnedPractitionerId_inUserAccount() {
-        PractitionerServiceInvoker practServInvkr = new PractitionerServiceInvoker(mockTokenService);
+        PractitionerServiceInvoker practServInvkr = new PractitionerServiceInvoker(builder, baseUrl, mockTokenService);
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");

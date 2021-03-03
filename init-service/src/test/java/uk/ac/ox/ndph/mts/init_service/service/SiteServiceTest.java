@@ -36,9 +36,11 @@ class SiteServiceTest {
 
     private static MockWebServer mockBackEnd;
 
-    SiteServiceInvoker siteServiceInvoker;
-
     private static WebClient.Builder builder;
+
+    private static String baseUrl;
+
+    SiteServiceInvoker siteServiceInvoker;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -58,10 +60,9 @@ class SiteServiceTest {
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        WebClient webClient = WebClient.create(String.format("http://localhost:%s",
-                mockBackEnd.getPort()));
+        baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
         lenient().when(mockTokenService.getToken()).thenReturn("123ert");
-        siteServiceInvoker = new SiteServiceInvoker(webClient, mockTokenService);
+        siteServiceInvoker = new SiteServiceInvoker(builder, baseUrl, mockTokenService);
     }
 
     @AfterAll
