@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FhirPractitionerConverterTest {
 
@@ -48,9 +49,21 @@ class FhirPractitionerConverterTest {
     }
 
     @Test
-    void TestConvertList_WhenCalled_ReturnsException() {
-        var list = new ArrayList<Practitioner>();
-        Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> converter.convertList(list));
+    void TestConvertList_ConvertsList() {
+        Practitioner one = new Practitioner();
+        HumanName nameOne = new HumanName();
+        nameOne.setFamily("One");
+        one.addName(nameOne);
+        
+        Practitioner two = new Practitioner();
+        HumanName nameTwo = new HumanName();
+        nameTwo.setFamily("Two");
+        two.addName(nameTwo);
+        
+        var converted = converter.convertList(Arrays.asList(one, two));
+        
+        assertEquals(2, converted.size());
+        assertTrue(converted.stream().anyMatch(p -> p.getFamilyName().equals("One")));
+        assertTrue(converted.stream().anyMatch(p -> p.getFamilyName().equals("Two")));
     }
 }
