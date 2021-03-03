@@ -15,26 +15,19 @@ import uk.ac.ox.ndph.mts.init_service.model.Role;
 public class RoleServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoleServiceInvoker.class);
 
-    @Value("${role-service.uri}")
-    private String roleService;
-
     @Value("${role-service.routes.create}")
     private String createEndpoint;
 
     @Autowired
-    protected RoleServiceInvoker(AzureTokenService azureTokenservice) {
-        super(azureTokenservice);
-    }
-
-    protected RoleServiceInvoker(WebClient webClient,
-                                 AzureTokenService azureTokenservice) {
-        super(webClient, azureTokenservice);
+    public RoleServiceInvoker(final WebClient.Builder webClientBuilder,
+                              @Value("${role-service.uri}") String serviceUrlBase,
+                              AzureTokenService azureTokenservice) {
+        super(webClientBuilder, serviceUrlBase, azureTokenservice);
     }
 
     @Override
     protected String create(Entity role) throws DependentServiceException {
-
-        String uri = roleService + createEndpoint;
+        String uri = serviceUrlBase + createEndpoint;
         Role returnedRole = sendBlockingPostRequest(uri, role, Role.class);
         return returnedRole.getId();
     }

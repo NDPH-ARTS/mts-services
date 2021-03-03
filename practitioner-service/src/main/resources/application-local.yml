@@ -7,10 +7,10 @@ fhir:
   uri: http://localhost:8099
 role:
   service:
-    uri: http://localhost:8082
+    uri: http://role-service
 site:
   service:
-    uri: http://localhost:8083
+    uri: http://site-service
 init-service:
   identity: <init-service-identity>
 
@@ -33,11 +33,11 @@ config:
 # When Eureka is disabled Ribbon client defaults to a configured server list
 site-service:
   ribbon:
-    listOfServers: ${SITE_SERVICE_URI:-http://localhost:8083}
+    listOfServers: ${SITE_SERVICE_URI:localhost:8083}
 
 role-service:
   ribbon:
-    listOfServers: ${ROLE_SERVICE_URI:-http://localhost:8082}
+    listOfServers: ${ROLE_SERVICE_URI:localhost:8082}
 ---
 #security
 azure:

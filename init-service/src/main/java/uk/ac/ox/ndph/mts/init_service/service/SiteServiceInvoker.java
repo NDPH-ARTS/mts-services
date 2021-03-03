@@ -15,26 +15,18 @@ import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 public class SiteServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceInvoker.class);
 
-    @Value("${site-service.uri}")
-    private String siteService;
-
     @Value("${site-service.routes.create}")
     private String createEndpoint;
 
     @Autowired
-    protected SiteServiceInvoker(AzureTokenService azureTokenservice) {
-        super(azureTokenservice);
-
-    }
-
-    protected SiteServiceInvoker(WebClient webClient,
-                                 AzureTokenService azureTokenservice) {
-        super(webClient, azureTokenservice);
+    public SiteServiceInvoker(final WebClient.Builder webClientBuilder,
+                              @Value("${site-service.uri}") String serviceUrlBase,
+                              AzureTokenService azureTokenservice) {
+        super(webClientBuilder, serviceUrlBase, azureTokenservice);
     }
 
     protected String create(Entity site) throws DependentServiceException {
-
-        String uri = siteService + createEndpoint;
+        String uri = serviceUrlBase + createEndpoint;
         IDResponse responseFromSiteService = sendBlockingPostRequest(uri, site, IDResponse.class);
         return responseFromSiteService.getId();
     }
