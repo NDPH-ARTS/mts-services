@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClientImpl;
 import uk.ac.ox.ndph.mts.client.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClientImpl;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClientImpl;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
@@ -41,6 +43,8 @@ class AuthorisationServiceTests {
 
     private AuthorisationService authorisationService;
 
+    private final String managedIdentity = "999";
+
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
@@ -48,7 +52,22 @@ class AuthorisationServiceTests {
                 practitionerServiceClient,
                 roleServiceClient,
                 siteServiceClient);
+        ReflectionTestUtils.setField(authorisationService, "managedIdentity", managedIdentity);
+
+
     }
+
+    @Test
+    void TestBypassAuthorise_WhenUser_ManagedIdentity(){
+        //Arrange
+        String userId = managedIdentity;
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authorise("some-permission"));
+    }
+
 
     @Test
     void TestAuthorise_WithInvalidToken_ReturnsFalse(){
@@ -65,8 +84,10 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithUserThatHasNullRoleAssignments_ReturnsFalse(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(null);
+        when(securityContextUtil.getToken()).thenReturn(token);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(null);
 
         //Act
         //Assert
@@ -77,8 +98,10 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithUserThatHasEmptyRoleAssignments_ReturnsFalse(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(Lists.emptyList());
+        when(securityContextUtil.getToken()).thenReturn(token);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Lists.emptyList());
 
         //Act
         //Assert
@@ -89,8 +112,10 @@ class AuthorisationServiceTests {
     void TestAuthorise_WhenGettingRoleAssignmentsThrowsException_ReturnsFalse(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenThrow(new RestException("Any exception"));
+        when(securityContextUtil.getToken()).thenReturn(token);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenThrow(new RestException("Any exception"));
 
         //Act
         //Assert
@@ -101,12 +126,14 @@ class AuthorisationServiceTests {
     void TestAuthorise_WhenGettingNoRolesWereFound_ReturnsFalse(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, "siteId");
 
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
         when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(null);
 
         //Act
@@ -118,11 +145,13 @@ class AuthorisationServiceTests {
     void TestAuthorise_WhenFoundRoleDoesNotContainThePermission_ReturnsFalse(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, "siteId");
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "another_permission"));
@@ -137,11 +166,13 @@ class AuthorisationServiceTests {
     void TestAuthorise_WhenFoundRoleWithThePermission_ReturnsTrue(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, "siteId");
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
@@ -156,12 +187,14 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithUnauthorisedSite_ReturnsFalse(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         String authorisedSiteId = "siteId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
@@ -183,12 +216,14 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithUnauthorisedSiteInList_ReturnsFalse(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         String authorisedSiteId = "siteId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
@@ -212,12 +247,14 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithAllAuthorisedSiteInList_ReturnsTrue(){
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         String authorisedSiteId = "siteId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
@@ -237,12 +274,14 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithAuthorisedListOfEntitiesObjects_ReturnTrue() {
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         String authorisedSiteId = "siteId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
@@ -264,12 +303,14 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithUnauthorisedListOfEntitiesObjects_ReturnsFalse() {
         //Arrange
         String userId = "123";
+        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
 
         String roleId = "roleId";
         String authorisedSiteId = "siteId";
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId)).thenReturn(roleAssignmentDtos);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));

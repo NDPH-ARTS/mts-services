@@ -20,9 +20,13 @@ services:
       FHIR_URI: "http://fhir-api:8099"
       ROLE_SERVICE_URI: "http://role-service:8082"
       SITE_SERVICE_URI: "http://site-service:8083"
+      PRACTITIONER_SERVICE_URI: "http://practitioner-service:8081"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      # This is the id of the client application
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
+      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     healthcheck:
       test: curl http://localhost:8081
       interval: 10s
@@ -48,6 +52,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -72,6 +77,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     healthcheck:
       test: curl http://localhost:8083
       interval: 10s
@@ -100,6 +106,11 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      # the following 3 entries allow getting a token to send to other services
+      AZURE_USERNAME: ${INIT_SERVICE_ACCOUNT_USERNAME}
+      AZURE_PASSWORD: ${INIT_SERVICE_ACCOUNT_PASSWORD}
+      AZURE_CLIENT_ID: ${MTS_AZURE_APP_CLIENT_ID}
+      LOGGING_LEVEL_UK_AC_OX_NDPH_MTS: DEBUG
     deploy:
       restart_policy:
           condition: none

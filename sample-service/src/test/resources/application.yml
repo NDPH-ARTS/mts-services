@@ -1,10 +1,4 @@
-# for local work we specify the uri's manually using env vars
-server:
-  port: 8081
-  error:
-    include-message: always
-fhir:
-  uri: http://localhost:8099
+# security
 role:
   service:
     uri: http://localhost:8082
