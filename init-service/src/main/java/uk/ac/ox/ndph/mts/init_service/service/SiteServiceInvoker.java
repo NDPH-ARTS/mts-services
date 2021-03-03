@@ -22,9 +22,7 @@ public class SiteServiceInvoker extends ServiceInvoker {
     public SiteServiceInvoker(final WebClient.Builder webClientBuilder,
                               @Value("${site-service.uri}") String serviceUrlBase,
                               AzureTokenService azureTokenservice) {
-        this.serviceUrlBase = serviceUrlBase;
-        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
-        this.azureTokenService = azureTokenservice;
+        super(webClientBuilder, serviceUrlBase, azureTokenservice);
     }
 
     protected String create(Entity site) throws DependentServiceException {

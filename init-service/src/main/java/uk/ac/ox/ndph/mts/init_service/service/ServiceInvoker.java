@@ -27,6 +27,14 @@ public abstract class ServiceInvoker {
 
     protected AzureTokenService azureTokenService;
 
+    public ServiceInvoker(final WebClient.Builder webClientBuilder,
+                              String serviceUrlBase,
+                              AzureTokenService azureTokenservice) {
+        this.serviceUrlBase = serviceUrlBase;
+        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
+        this.azureTokenService = azureTokenservice;
+    }
+
     // In unit-tests the webclient retry step gets stuck (something about virtual time).
     // This is a quick trick to disable retry while testing without the spring container.
     @Value("${max-webclient-attempts:9}")

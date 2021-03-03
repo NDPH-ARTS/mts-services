@@ -22,9 +22,7 @@ public class RoleServiceInvoker extends ServiceInvoker {
     public RoleServiceInvoker(final WebClient.Builder webClientBuilder,
                               @Value("${role-service.uri}") String serviceUrlBase,
                               AzureTokenService azureTokenservice) {
-        this.serviceUrlBase = serviceUrlBase;
-        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
-        this.azureTokenService = azureTokenservice;
+        super(webClientBuilder, serviceUrlBase, azureTokenservice);
     }
 
     @Override

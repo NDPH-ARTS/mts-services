@@ -35,9 +35,7 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     public PractitionerServiceInvoker(final WebClient.Builder webClientBuilder,
                               @Value("${practitioner-service.uri}") String serviceUrlBase,
                               AzureTokenService azureTokenservice) {
-        this.serviceUrlBase = serviceUrlBase;
-        this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
-        this.azureTokenService = azureTokenservice;
+        super(webClientBuilder, serviceUrlBase, azureTokenservice);
     }
 
     @Override
