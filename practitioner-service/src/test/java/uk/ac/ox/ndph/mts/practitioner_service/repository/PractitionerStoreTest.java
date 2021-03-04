@@ -56,6 +56,5 @@ class PractitionerStoreTest {
         when(fhirToModelConverter.convertList(asList(practitioner))).thenReturn(asList(modelPractitioner));
 
         assertThat(practitionerStore.findEntitiesByUserIdentity("123").size(), equalTo(1));
-
     }
 }

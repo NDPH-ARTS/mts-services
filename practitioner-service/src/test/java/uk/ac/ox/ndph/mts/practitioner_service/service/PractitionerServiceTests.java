@@ -322,7 +322,7 @@ class PractitionerServiceTests {
     }
 
     @Test
-    void TestGePractitionersByUserIdentity_WithUserIdentity_ReturnsPractitionersAsExpected() {
+    void TestGePractitionersByUserIdentity_WithUserIdentity_ReturnsPractitioners() {
 
         String userID = "dummy-azureoid";
         List<Practitioner> reultFromStore = Collections.singletonList(

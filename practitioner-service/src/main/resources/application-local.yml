@@ -13,6 +13,7 @@ site:
     uri: http://site-service
 init-service:
   identity: <init-service-identity>
+
 ---
 config:
   name: Practitioner
