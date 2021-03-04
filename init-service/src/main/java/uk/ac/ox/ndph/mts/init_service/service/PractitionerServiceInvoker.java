@@ -22,9 +22,6 @@ import java.util.List;
 public class PractitionerServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerServiceInvoker.class);
 
-    @Value("${practitioner-service.uri}")
-    private String practitionerService;
-
     @Value("${practitioner-service.routes.create}")
     private String createEndpoint;
 
@@ -35,29 +32,26 @@ public class PractitionerServiceInvoker extends ServiceInvoker {
     private String linkUserAccountEndpoint;
 
     @Autowired
-    protected PractitionerServiceInvoker(AzureTokenService azureTokenservice) {
-        super(azureTokenservice);
-    }
-
-    protected PractitionerServiceInvoker(WebClient webClient,
-                                         AzureTokenService azureTokenservice) {
-        super(webClient, azureTokenservice);
+    public PractitionerServiceInvoker(final WebClient.Builder webClientBuilder,
+                              @Value("${practitioner-service.uri}") String serviceUrlBase,
+                              AzureTokenService azureTokenservice) {
+        super(webClientBuilder, serviceUrlBase, azureTokenservice);
     }
 
     @Override
     protected String create(Entity practitioner) throws DependentServiceException {
-        String uri = practitionerService + createEndpoint;
+        String uri = serviceUrlBase + createEndpoint;
         IDResponse response = sendBlockingPostRequest(uri, practitioner, IDResponse.class);
         return response.getId();
     }
 
     protected void assignRoleToPractitioner(RoleAssignment roleAssignment) throws DependentServiceException {
-        String uri = practitionerService + String.format(assignRoleEndpoint, roleAssignment.getPractitionerId());
+        String uri = serviceUrlBase + String.format(assignRoleEndpoint, roleAssignment.getPractitionerId());
         sendBlockingPostRequest(uri, roleAssignment, IDResponse.class);
     }
 
     protected void linkUserAccount(PractitionerUserAccount userAccount) throws DependentServiceException {
-        String uri = practitionerService + String.format(linkUserAccountEndpoint, userAccount.getPractitionerId());
+        String uri = serviceUrlBase + String.format(linkUserAccountEndpoint, userAccount.getPractitionerId());
         sendBlockingPostRequest(uri, userAccount, IDResponse.class);
     }
 
