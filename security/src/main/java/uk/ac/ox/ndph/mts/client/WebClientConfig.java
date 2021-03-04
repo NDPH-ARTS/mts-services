@@ -15,7 +15,6 @@ import reactor.netty.http.client.HttpClient;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@ConfigurationProperties(prefix = "http")
 public class WebClientConfig {
 
     @Value("${http.connectTimeOutMs:1000}")
