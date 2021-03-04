@@ -18,10 +18,12 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "http-status-codes": "^2.1.4",
-    "superagent": ">=3.7.0",
     "extend": ">=3.0.2",
+    "form-data": "^4.0.0",
+    "http-status-codes": "^2.1.4",
     "mem": ">=4.0.0",
-    "qs": ">=6.0.4"
+    "node-fetch": "^2.6.1",
+    "qs": ">=6.0.4",
+    "superagent": ">=3.7.0"
   }
 }

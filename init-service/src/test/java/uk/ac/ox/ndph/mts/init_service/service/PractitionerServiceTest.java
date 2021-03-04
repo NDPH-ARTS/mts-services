@@ -3,14 +3,19 @@ package uk.ac.ox.ndph.mts.init_service.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
@@ -21,27 +26,53 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTest {
 
+    private static MockWebServer mockBackEnd;
+
+    private static WebClient.Builder builder;
+
+    private static String baseUrl;
+
     PractitionerServiceInvoker practitionerServiceInvoker;
 
-    MockWebServer mockBackEnd;
+    @BeforeAll
+    static void setUp() throws IOException {
+        // this section uses a custom webclient props
+        final WebClientConfig config = new WebClientConfig();
+        config.setConnectTimeOutMs(500);
+        config.setReadTimeOutMs(1000);
+        builder = config.webClientBuilder();
+        mockBackEnd = new MockWebServer();
+        mockBackEnd.start();
+    }
+
+    @Mock
+    AzureTokenService mockTokenService;
 
     @BeforeEach
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        WebClient webClient = WebClient.create(String.format("http://localhost:%s",
-                mockBackEnd.getPort()));
-        practitionerServiceInvoker = new PractitionerServiceInvoker(webClient);
+        baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
+        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
+        practitionerServiceInvoker = new PractitionerServiceInvoker(builder, baseUrl, mockTokenService);
     }
 
-    @AfterEach
-    void tearDown() throws IOException {
+    @AfterAll
+    static void tearDown() throws IOException {
         mockBackEnd.shutdown();
     }
 
@@ -159,6 +190,7 @@ class PractitionerServiceTest {
 
     @Test
     void testExecute_UsesReturnedPractitionerId_inUserAccount() {
+        PractitionerServiceInvoker practServInvkr = new PractitionerServiceInvoker(builder, baseUrl, mockTokenService);
         Practitioner testPractitioner = new Practitioner();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
@@ -168,7 +200,7 @@ class PractitionerServiceTest {
 
         String practitionerId = "dummy-practitioner-id";
 
-        PractitionerServiceInvoker spyServiceInvoker = spy(PractitionerServiceInvoker.class);
+        PractitionerServiceInvoker spyServiceInvoker = Mockito.spy(practServInvkr);
 
         doReturn(practitionerId).when(spyServiceInvoker).create(testPractitioner);
         doNothing().when(spyServiceInvoker).linkUserAccount(any(PractitionerUserAccount.class));

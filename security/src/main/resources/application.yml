@@ -1,0 +1,27 @@
+azure:
+  activedirectory:
+    client-id: <client-id>
+    session-stateless: true
+practitioner:
+  service:
+    endpoint:
+      roles: /practitioner/roles
+    name: practitioner-service
+    uri: http://localhost:8081
+role:
+  service:
+    endpoint:
+      roles: /roles
+    name: role-service
+    uri: http://localhost:8082
+site:
+  service:
+    endpoint:
+      sites: /sites
+    name: site-service
+    uri: http://localhost:8083
+spring:
+  main:
+    allow-bean-definition-overriding: true
+init-service:
+  identity: <init-service-identity>
