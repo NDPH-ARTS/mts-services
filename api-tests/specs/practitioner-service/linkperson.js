@@ -1,5 +1,8 @@
 const requests = require('../../data/practitioner-service/linkperson')
 const conf = require('../../config/conf')
+const utils = require('../../common/utils')
+const fetch = require("node-fetch");
+const { expect } = require('chai');
 const practitionerEndpointUri = ':8081/practitioner'
 let linkpersonEndpointUri = ':8081/practitioner/{personId}/link'
 
