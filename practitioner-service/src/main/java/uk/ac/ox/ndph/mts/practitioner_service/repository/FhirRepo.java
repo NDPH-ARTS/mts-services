@@ -1,6 +1,8 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
-
+/**
+ * String constants
+ */
 public enum FhirRepo {
     SAVE_REQUEST("request to fhir: {}"),
     SAVE_RESPONSE("response from fhir: {}"),
@@ -18,7 +20,11 @@ public enum FhirRepo {
         this.message = message;
     }
 
-
+    /**
+     * Returns the message associated with the enum variant.
+     *
+     * @return the message value of the enum variant
+     */
     public String message() {
         return message;
     }
