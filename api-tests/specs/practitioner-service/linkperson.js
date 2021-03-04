@@ -15,7 +15,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
         firstPersonId = parseFirstPersonResponseData.id
         
         //link person to a user
-        let linkUserJSON = requests.linkUser
+        let linkUserJSON = requests.linkUser;
         linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", firstPersonId);
         const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
 
@@ -29,11 +29,11 @@ describe('As a user with Update Person permission I want to link a Person to an 
         //post a request to practitioner end point to create second Practitioner
         const secondPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createSecondPerson)
         const captureSecondPersonResponseData = secondPersonResponse.text
-        let parseSecondPersonResponseData = JSON.parse(captureSecondPersonResponseData)
-        secondPersonId = parseSecondPersonResponseData.id
+        let parseSecondPersonResponseData = JSON.parse(captureSecondPersonResponseData);
+        secondPersonId = parseSecondPersonResponseData.id;
 
         //link person to a user who is already linked
-        let linkUserJSON = requests.linkUser
+        let linkUserJSON = requests.linkUser;
         linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", secondPersonId);
         const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
 
@@ -47,11 +47,11 @@ describe('As a user with Update Person permission I want to link a Person to an 
         //post a request to practitioner end point to create third Practitioner
         const thirdPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createThirdPerson)
         const captureThirdPersonResponseData = thirdPersonResponse.text
-        let parseThirdPersonResponseData = JSON.parse(captureThirdPersonResponseData)
-        thirdPersonId = parseThirdPersonResponseData.id
+        let parseThirdPersonResponseData = JSON.parse(captureThirdPersonResponseData);
+        thirdPersonId = parseThirdPersonResponseData.id;
                 
         //link person to a user with request missing practitioner ID
-        let linkUserJSON = requests.linkUser
+        let linkUserJSON = requests.linkUser;
         linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", " ");
         const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
 
@@ -65,11 +65,11 @@ describe('As a user with Update Person permission I want to link a Person to an 
         //post a request to practitioner end point to create fourth Practitioner
         const fourthPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createFourthPerson)
         const captureFourthPersonResponseData = fourthPersonResponse.text
-        let parseFourthPersonResponseData = JSON.parse(captureFourthPersonResponseData)
-        fourthPersonId = parseFourthPersonResponseData.id
+        let parseFourthPersonResponseData = JSON.parse(captureFourthPersonResponseData);
+        fourthPersonId = parseFourthPersonResponseData.id;
                 
         //link person to a user with request missing practitioner ID
-        let linkUserJSON = requests.linkEmptyUser
+        let linkUserJSON = requests.linkEmptyUser;
         linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", fourthPersonId);
         const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
 
