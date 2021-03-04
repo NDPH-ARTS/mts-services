@@ -35,9 +35,10 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
+            allowCredentials: true
             allowedOrigins: "*"
             allowedMethods: "*"
-            allowedHeaders: "*"
+
 eureka:
   client:
     registerWithEureka: false
