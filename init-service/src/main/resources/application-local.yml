@@ -46,7 +46,7 @@ trial:
       prefix: Mr
       roles:
         - superuser
-      userAccount: 5d995fd0-a1ff-4b2c-ba93-238ba9e349b1
+      userAccount: some-user-account-id
   sites:
     - name: CCO
       alias: CCO
