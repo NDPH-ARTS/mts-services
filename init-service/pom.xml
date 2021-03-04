@@ -65,6 +65,12 @@
             <artifactId>azure-identity</artifactId>
             <version>1.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>12.10.0</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
