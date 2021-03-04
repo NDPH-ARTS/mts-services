@@ -10,16 +10,16 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import javax.servlet.http.HttpServletResponse;
 
-class AADAuthenticationEntryPointTests {
+class AuthenticationResponseEntryPointTests {
 
-    private AADAuthenticationEntryPoint aadAuthenticationEntryPoint;
+    private AuthenticationResponseEntryPoint authenticationEntryPoint;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
 
 
     @BeforeEach
     void setUp() {
-        aadAuthenticationEntryPoint = new AADAuthenticationEntryPoint();
+        authenticationEntryPoint = new AuthenticationResponseEntryPoint();
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
     }
@@ -28,23 +28,15 @@ class AADAuthenticationEntryPointTests {
     void TestCommence_WithForbiddenAccess_ReturnsResponseWithForbiddenAccess() throws Exception {
         AccessDeniedException ex = new AccessDeniedException("access denied");
 
-        aadAuthenticationEntryPoint.commence(request, response, ex);
+        authenticationEntryPoint.commence(request, response, ex);
         assertThat(response.getStatus(), equalTo(HttpServletResponse.SC_FORBIDDEN));
-    }
-
-    @Test
-    void TestCommence_WithException_ReturnsResponseWithInternalServerError() throws Exception {
-        Exception ex = new Exception("any exception in the system");
-
-        aadAuthenticationEntryPoint.commence(request, response, ex);
-        assertThat(response.getStatus(), equalTo(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
     }
 
     @Test
     void TestCommence_WithAuthenticationException_ReturnsResponseWithUnauthorisedAccess() throws Exception {
         TestAuthenticationException ex = new TestAuthenticationException("any exception in the system");
 
-        aadAuthenticationEntryPoint.commence(request, response, ex);
+        authenticationEntryPoint.commence(request, response, ex);
         assertThat(response.getStatus(), equalTo(HttpServletResponse.SC_UNAUTHORIZED));
     }
 

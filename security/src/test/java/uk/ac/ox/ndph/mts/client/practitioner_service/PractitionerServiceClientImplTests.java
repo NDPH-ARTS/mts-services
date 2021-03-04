@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.client.TestServiceBackend;
-import uk.ac.ox.ndph.mts.client.WebClientConfig;
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
 import java.net.HttpURLConnection;
@@ -29,10 +28,7 @@ class PractitionerServiceClientImplTests {
 
     @BeforeAll
     static void init() {
-        final WebClientConfig config = new WebClientConfig();
-        config.setConnectTimeOutMs(500);
-        config.setReadTimeOutMs(1000);
-        builder = config.webClientBuilder();
+        builder = WebClient.builder();
     }
 
     @BeforeEach
@@ -62,7 +58,7 @@ class PractitionerServiceClientImplTests {
         mockBackEnd.queueResponse(expectedBodyResponse);
 
         // Act
-        List<RoleAssignmentDTO> actualResponse = client.getUserRoleAssignments(userId);
+        List<RoleAssignmentDTO> actualResponse = client.getUserRoleAssignments(userId, "token");
 
         //Assert
         assertAll(
@@ -78,7 +74,7 @@ class PractitionerServiceClientImplTests {
         this.mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
         // Act
         // Assert
-        assertThrows(RestException.class, () -> client.getUserRoleAssignments("userId"));
+        assertThrows(RestException.class, () -> client.getUserRoleAssignments("userId", "token"));
     }
 
 }

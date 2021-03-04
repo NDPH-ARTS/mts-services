@@ -8,15 +8,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
-
 import java.util.Optional;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.containsString;
@@ -33,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest(properties = {"server.error.include-message=always",
         "spring.main.allow-bean-definition-overriding=true"})
-@ActiveProfiles({"test-all-required", "local"})
+@ActiveProfiles({"test-all-required", "local", "no-authZ"})
 @AutoConfigureMockMvc
 class PractitionerServiceComponentTests {
 
@@ -49,6 +48,7 @@ class PractitionerServiceComponentTests {
     @MockBean
     private SiteServiceClient siteServiceClient;
 
+    @WithMockUser
     @Test
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
@@ -61,6 +61,7 @@ class PractitionerServiceComponentTests {
                 .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestPostPractitioner_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
         // Arrange
@@ -74,6 +75,7 @@ class PractitionerServiceComponentTests {
         assertThat(error, containsString("Given Name"));
     }
 
+    @WithMockUser
     @Test
     void TestPostPractitioner_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange
@@ -87,6 +89,7 @@ class PractitionerServiceComponentTests {
         assertThat(error, containsString("test error"));
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
@@ -105,6 +108,7 @@ class PractitionerServiceComponentTests {
                 .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
         // Arrange
@@ -124,6 +128,7 @@ class PractitionerServiceComponentTests {
         assertThat(errorMsg, containsString("siteId"));
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenInvalidPractitioner_ReturnsUnprocessableEntity() throws Exception {
         // Arrange
@@ -139,6 +144,7 @@ class PractitionerServiceComponentTests {
         assertThat(errorMsg, both(containsString("Practitioner")).and(containsString("found")));
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenInvalidRole_ReturnsUnprocessableEntity() throws Exception {
         // Arrange
@@ -158,6 +164,7 @@ class PractitionerServiceComponentTests {
         assertThat(errorMsg, both(containsString("roleId")).and(containsString("exist")));
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenInvalidSite_ReturnsUnprocessableEntity() throws Exception {
         // Arrange
@@ -177,6 +184,7 @@ class PractitionerServiceComponentTests {
         assertThat(errorMsg, both(containsString("siteId")).and(containsString("exist")));
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange

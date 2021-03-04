@@ -9,6 +9,6 @@ import java.util.List;
  */
 public interface PractitionerServiceClient {
 
-    List<RoleAssignmentDTO> getUserRoleAssignments(String userId);
+    List<RoleAssignmentDTO> getUserRoleAssignments(String userId, String token);
 
 }

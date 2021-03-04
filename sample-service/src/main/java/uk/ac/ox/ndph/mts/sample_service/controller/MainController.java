@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MainController {
 
+    private ConfigService myConfig;
+
+    @Value("${application.message:Not configured by a Spring Cloud Server}")
+    private String message;
+
     /**
      * The constructor for this class.
      *
@@ -22,11 +27,6 @@ public class MainController {
     public MainController(ConfigService configService) {
         this.myConfig = configService;
     }
-
-    private ConfigService myConfig;
-
-    @Value("${application.message:Not configured by a Spring Cloud Server}")
-    private String message;
 
     /**
      * The endpoint to get the secret.
