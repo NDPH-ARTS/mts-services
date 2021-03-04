@@ -10,7 +10,7 @@ azure:
 practitioner:
   service:
     name: practitioner-service
-    url: http://practitioner-service
+    uri: http://practitioner-service
     endpoint:
       roles: /practitioner/roles
 
@@ -21,7 +21,7 @@ practitioner-service:
 role:
   service:
     name: role-service
-    url: http://role-service
+    uri: http://role-service
     endpoint:
       roles: /roles
 
@@ -32,7 +32,7 @@ role-service:
 site:
   service:
     name: site-service
-    url: http://site-service
+    uri: http://site-service
     endpoint:
       sites: /sites
 
