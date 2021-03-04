@@ -15,10 +15,12 @@
 .devcontainer
 .ci
 **/*.md
+api-tests
+gitRepo
 
 # Maven
-**/target
-**/logs
+*/**/target
+*/**/logs
 
 
 # Node

@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Reference;
@@ -29,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnclassifiedServerFailureException;
+import uk.ac.ox.ndph.mts.practitioner_service.converter.FhirPractitionerConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.PractitionerRoleConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
@@ -130,7 +132,6 @@ class HapiFhirRepositoryTests {
     @Test
     void TestHapiRepository_WhenContextReturnsNull_ThrowsRestException() throws FhirServerResponseException {
         // Arrange
-        var fhirRepository = new HapiFhirRepository(fhirContextWrapper);
         when(fhirContextWrapper.executeTransaction(any(Bundle.class))).thenReturn(null);
         var practitioner = new Practitioner();
 
@@ -205,6 +206,38 @@ class HapiFhirRepositoryTests {
 
         // Act + Assert
         assertThrows(RestException.class, () -> repository.savePractitionerRole(entity));
+    }
+
+    @Test
+    void TestGetPractitionersByUserIdentity_WhenSearchResource_ReturnsEmptyList() {
+        // Arrange
+        when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(new ArrayList<>());
+        var value = repository.getPractitionersByUserIdentity("42");
+
+        assertThat(value, equalTo(new ArrayList<Practitioner>()));
+    }
+
+    @Test
+    void TestGetPractitionersByUserIdentity_WhenSearchResource_ReturnsNotEmptyList() {
+        // Arrange
+        var response = new ArrayList<IBaseResource>();
+
+        org.hl7.fhir.r4.model.Practitioner fhirPractitioner = new org.hl7.fhir.r4.model.Practitioner();
+        HumanName name = new HumanName();
+        name.setFamily("Family");
+        fhirPractitioner.addName(name);
+        response.add(fhirPractitioner);
+
+        when(fhirContextWrapper.searchResource(any(), any(ICriterion.class))).thenReturn(response);
+        var value = repository.getPractitionersByUserIdentity("6");
+
+        FhirPractitionerConverter practitionerConverter = new FhirPractitionerConverter();
+        var practitioner = practitionerConverter.convert(value.get(0));
+
+        assertAll(
+                () ->assertThat(value.size(), equalTo(1)),
+                () ->assertThat(practitioner.getFamilyName(), equalTo("Family") )
+        );
     }
 
     @Test

@@ -19,7 +19,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
-import uk.ac.ox.ndph.mts.security.authorisation.SecurityContextUtil;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

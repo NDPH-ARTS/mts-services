@@ -21,12 +21,10 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
-
 import java.util.Collections;
 import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import uk.ac.ox.ndph.mts.security.authorisation.SecurityContextUtil;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;

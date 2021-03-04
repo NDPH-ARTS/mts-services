@@ -1,9 +1,12 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
+
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
@@ -14,6 +17,7 @@ import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +37,9 @@ public class AuthorisationService {
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
     private final SiteServiceClient siteServiceClient;
+
+    @Value("${init-service.identity}")
+    private String managedIdentity;
 
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityContextUtil,
@@ -96,6 +103,15 @@ public class AuthorisationService {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
+
+            LOGGER.debug("userId is - " + userId);
+            LOGGER.debug("managed identity is - " + managedIdentity);
+
+            //Managed Service Identities represent a call from a service and is
+            //therefore authorized.
+            if (isUserAManagedServiceIdentity(userId)) {
+                return true;
+            }
 
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
@@ -185,5 +201,14 @@ public class AuthorisationService {
         } catch (Exception e) {
             throw new AuthorisationException("Error parsing sites from request body.", e);
         }
+    }
+
+    /**
+     * Validate if the user matches a system managed service identity
+     * @param userId - the requested userId
+     * @return true if user and identity match;
+     */
+    private boolean isUserAManagedServiceIdentity(String userId) {
+        return userId.equals(managedIdentity);
     }
 }

@@ -6,11 +6,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FhirPractitionerConverterTest {
 
@@ -23,8 +22,14 @@ class FhirPractitionerConverterTest {
 
     @Test
     void convert_ConvertsValidPractitioner() {
-        Practitioner practitioner = makeDummyFhirPractitioner();
+        Practitioner practitioner = new Practitioner();
+        HumanName humanName = new HumanName();
+        humanName.addPrefix("Mr");
+        humanName.addGiven("Given");
+        humanName.setFamily("Family");
 
+        practitioner.addName(humanName);
+        practitioner.setIdBase("base id");
 
         var modelPractitioner = converter.convert(practitioner);
         HumanName practitionerName = practitioner.getName().get(0);
@@ -43,25 +48,22 @@ class FhirPractitionerConverterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> converter.convert(practitioner));
     }
 
-
     @Test
-    void TestConvertList_WhenCalled_ReturnsListOfPractitionersWithDataTransferred() {
-        org.hl7.fhir.r4.model.Practitioner fhirPractitioner = makeDummyFhirPractitioner();
-        List<org.hl7.fhir.r4.model.Practitioner> inputFhirPractitioners = Collections.singletonList(fhirPractitioner);
-        List<uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner> outputModelPractitioners = converter.convertList(inputFhirPractitioners);
-        assertEquals(1, outputModelPractitioners.size());
-        assertEquals(outputModelPractitioners.get(0).getFamilyName(), fhirPractitioner.getName().get(0).getFamily());
-    }
+    void TestConvertList_ConvertsList() {
+        Practitioner one = new Practitioner();
+        HumanName nameOne = new HumanName();
+        nameOne.setFamily("One");
+        one.addName(nameOne);
 
-    private Practitioner makeDummyFhirPractitioner(){
-        Practitioner practitioner = new Practitioner();
-        HumanName humanName = new HumanName();
-        humanName.addPrefix("Mx");
-        humanName.addGiven("Given");
-        humanName.setFamily("Family");
+        Practitioner two = new Practitioner();
+        HumanName nameTwo = new HumanName();
+        nameTwo.setFamily("Two");
+        two.addName(nameTwo);
 
-        practitioner.addName(humanName);
-        practitioner.setIdBase("base id");
-        return practitioner;
+        var converted = converter.convertList(Arrays.asList(one, two));
+
+        assertEquals(2, converted.size());
+        assertTrue(converted.stream().anyMatch(p -> p.getFamilyName().equals("One")));
+        assertTrue(converted.stream().anyMatch(p -> p.getFamilyName().equals("Two")));
     }
 }

@@ -36,9 +36,6 @@ public class PractitionerStore implements EntityStore<Practitioner> {
 
     @Override
     public List<Practitioner> findEntitiesByUserIdentity(String userIdentity) {
-        return fhirToModelConverter.convertList(
-                repository.getPractitionersByUserIdentity(userIdentity));
+        return fhirToModelConverter.convertList(repository.getPractitionersByUserIdentity(userIdentity));
     }
-
-
 }

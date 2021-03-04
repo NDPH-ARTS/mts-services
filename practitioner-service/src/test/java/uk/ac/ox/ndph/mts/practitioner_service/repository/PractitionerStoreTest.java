@@ -1,21 +1,16 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
-import uk.ac.ox.ndph.mts.practitioner_service.converter.FhirPractitionerConverter;
-import uk.ac.ox.ndph.mts.practitioner_service.converter.ModelPractitionerConverter;
-import uk.ac.ox.ndph.mts.practitioner_service.converter.PractitionerRoleConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 
-import java.util.Collections;
-import java.util.List;
-
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -30,37 +25,37 @@ class PractitionerStoreTest {
     @Mock
     private EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter;
 
+    private PractitionerStore practitionerStore;
+
+    @BeforeEach
+    void setup() {
+        practitionerStore = new PractitionerStore(repository, modelToFhirConverter, fhirToModelConverter);
+    }
+
     @Test
     void TestSaveEntity_WhenValidEntity_SaveToRepositoryAndReturnGeneratedId() {
-        //arrange
+        // arrange
         Practitioner inputPractitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
         var outputPractitioner = new org.hl7.fhir.r4.model.Practitioner();
         when(modelToFhirConverter.convert(any(Practitioner.class))).thenReturn(outputPractitioner);
         when(repository.savePractitioner(any(org.hl7.fhir.r4.model.Practitioner.class))).thenReturn("123");
 
-        //act
-        PractitionerStore practitionerStore = new PractitionerStore(repository, modelToFhirConverter, fhirToModelConverter);
+        // act
         var result = practitionerStore.saveEntity(inputPractitioner);
 
-        //assert
+        // assert
         assertThat(result, equalTo("123"));
     }
 
     @Test
-    void TestListPractitionersByUserIdentity_WhenListByUserIdentity_ReturnsListOfPractitioners() {
+    void TestListEntitiesByUserIdentity_WhenFindByUserIdentity_CallsRepository() {
+        // act and assert
+        var practitioner = new org.hl7.fhir.r4.model.Practitioner();
+        var modelPractitioner = new Practitioner(null, "prefix", "givenName", "familyName", "123");
+        when(repository.getPractitionersByUserIdentity("123")).thenReturn(asList(practitioner));
+        when(fhirToModelConverter.convertList(asList(practitioner))).thenReturn(asList(modelPractitioner));
 
-        PractitionerStore practitionerStore = new PractitionerStore(repository, modelToFhirConverter, fhirToModelConverter);
+        assertThat(practitionerStore.findEntitiesByUserIdentity("123").size(), equalTo(1));
 
-        List<org.hl7.fhir.r4.model.Practitioner> fhirPractitionerList =
-                Collections.singletonList(new org.hl7.fhir.r4.model.Practitioner());
-        List<Practitioner> ourPractitionerList =
-                Collections.singletonList(
-                new Practitioner("some-id", "some-prefix", "some-name", "some-family-name", "some-id"));
-        when(repository.getPractitionersByUserIdentity(any(String.class))).thenReturn(fhirPractitionerList);
-        when(fhirToModelConverter.convertList(fhirPractitionerList)).thenReturn(ourPractitionerList);
-
-        List<uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner> convertedPractitionersList = practitionerStore.findEntitiesByUserIdentity("123");
-
-        assertEquals(1, convertedPractitionersList.size());
     }
 }
