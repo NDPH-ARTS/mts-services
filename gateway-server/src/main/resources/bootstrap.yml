@@ -33,7 +33,6 @@ spring:
           filters:
             - StripPrefix=1
       globalcors:
-        add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
             allowedOrigins: "*"
