@@ -27,7 +27,7 @@ public class SiteServiceClientImpl implements SiteServiceClient {
     private String sitesRoute;
 
     public SiteServiceClientImpl(final WebClient.Builder webClientBuilder,
-                                 @Value("${site.service.url}") String assignmentRolesUrl) {
+                                 @Value("${site.service.uri}") String assignmentRolesUrl) {
         this.webClient = webClientBuilder.baseUrl(assignmentRolesUrl).build();
     }
 

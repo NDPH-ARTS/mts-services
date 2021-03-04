@@ -1,7 +1,6 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.method.MethodSecurityMetadataSource;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,11 +16,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 public class DenyMethodSecurityConfig extends GlobalMethodSecurityConfiguration { //NOSONAR
 
     /**
+     * TODO: Uncomment when authorisation integration is done
      * Enforce custom method security
      * @return MethodSecurityMetadataSource - custom method security
-     */
     @Override
     protected MethodSecurityMetadataSource customMethodSecurityMetadataSource() {
         return new AuthorisationMethodSecurityMetadataSource();
     }
+    */
 }
