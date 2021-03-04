@@ -6,6 +6,7 @@ services:
   practitioner-service:
     build:
       context: .
+      dockerfile: practitioner-service/Dockerfile
       args:
         SVC: practitioner-service
     image: ghcr.io/ndph-arts/practitioner-service:${GITHUB_SHA}
@@ -20,13 +21,9 @@ services:
       FHIR_URI: "http://fhir-api:8099"
       ROLE_SERVICE_URI: "http://role-service:8082"
       SITE_SERVICE_URI: "http://site-service:8083"
-      PRACTITIONER_SERVICE_URI: "http://practitioner-service:8081"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      # This is the id of the client application
-      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
-      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     healthcheck:
       test: curl http://localhost:8081
       interval: 10s
@@ -38,6 +35,7 @@ services:
   role-service:
     build:
       context: .
+      dockerfile: role-service/Dockerfile
       args:
         SVC: role-service
     image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
@@ -52,7 +50,9 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
+      SPRING_CLOUD_REPO: "https://raw.githubusercontent.com/NDPH-ARTS/mts-trial-deployment-config/"
+      SERVICE_DIR: "/sample_trial/services/role-service"
+
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -64,6 +64,7 @@ services:
   site-service:
     build:
       context: .
+      dockerfile: site-service/Dockerfile
       args:
         SVC: site-service
     image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
@@ -77,7 +78,6 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     healthcheck:
       test: curl http://localhost:8083
       interval: 10s
@@ -94,6 +94,7 @@ services:
     #   - init
     build:
       context: .
+      dockerfile: init-service/Dockerfile
       args:
         SVC: init-service
     image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
@@ -106,11 +107,6 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      # the following 3 entries allow getting a token to send to other services
-      AZURE_USERNAME: ${INIT_SERVICE_ACCOUNT_USERNAME}
-      AZURE_PASSWORD: ${INIT_SERVICE_ACCOUNT_PASSWORD}
-      AZURE_CLIENT_ID: ${MTS_AZURE_APP_CLIENT_ID}
-      LOGGING_LEVEL_UK_AC_OX_NDPH_MTS: DEBUG
     deploy:
       restart_policy:
           condition: none
@@ -146,6 +142,7 @@ services:
     #   - springcloud
     build:
       context: .
+      dockerfile: config-server/Dockerfile
       args:
         SVC: config-server
     environment:
@@ -169,6 +166,7 @@ services:
     #   - springcloud
     build:
       context: .
+      dockerfile: discovery-server/Dockerfile
       args:
         SVC: discovery-server
     environment:
@@ -190,6 +188,7 @@ services:
   gateway-server:
     build:
       context: .
+      dockerfile: gateway-server/Dockerfile
       args:
         SVC: gateway-server
     environment:
