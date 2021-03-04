@@ -77,7 +77,5 @@ describe('As a user with Update Person permission I want to link a Person to an 
         expect(response.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
 
     });
-
-
     
 });
