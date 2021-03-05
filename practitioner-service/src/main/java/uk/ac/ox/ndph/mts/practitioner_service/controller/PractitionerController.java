@@ -5,7 +5,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,21 +20,19 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE,
-        produces = APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
     private final EntityService entityService;
@@ -62,13 +59,13 @@ public class PractitionerController {
     }
 
     @PostMapping(path = "/{practitionerId}/link")
-    public ResponseEntity<Response> linkPractitioner(@PathVariable String practitionerId, 
-                                                    @RequestBody PractitionerUserAccount link) {
+    public ResponseEntity<Response> linkPractitioner(@PathVariable String practitionerId,
+                                                     @RequestBody PractitionerUserAccount link) {
         link.setPractitionerId(practitionerId);
         entityService.linkPractitioner(link);
         return ResponseEntity.status(OK).build();
     }
-    
+
     @GetMapping(path = "/{id}")
     public ResponseEntity<Practitioner> findPractitionerById(@PathVariable String id) {
         return ResponseEntity.ok(entityService.findPractitionerById(id));
@@ -99,5 +96,4 @@ public class PractitionerController {
         List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdFromToken);
         return ResponseEntity.ok(practitioners);
     }
-
 }

@@ -35,7 +35,7 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOrigins: "*" # TODO : limit origins - or reconsider CORS approach?
             allowedMethods:
               - GET
               - POST
