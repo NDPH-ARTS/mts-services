@@ -67,6 +67,7 @@ public class PractitionerController {
         return ResponseEntity.ok(entityService.findPractitionerById(id));
     }
 
+    @PreAuthorize("@authorisationService.authorise('assign-role')") //NOSONAR
     @PostMapping(path = "/{practitionerId}/roles")
     public ResponseEntity<Response> saveRoleAssignment(@PathVariable String practitionerId,
                                                        @RequestBody RoleAssignment roleAssignment) {
