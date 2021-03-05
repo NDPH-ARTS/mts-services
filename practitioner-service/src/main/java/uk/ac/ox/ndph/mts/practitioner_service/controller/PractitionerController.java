@@ -54,7 +54,6 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(practitionerId));
     }
 
-    @PreAuthorize("@authorisationService.authorise('link-person')") //NOSONAR
     @PostMapping(path = "/{practitionerId}/link")
     public ResponseEntity<Response> linkPractitioner(@PathVariable String practitionerId, 
                                                     @RequestBody PractitionerUserAccount link) {
