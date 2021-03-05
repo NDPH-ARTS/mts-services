@@ -24,7 +24,7 @@
         </insert>
 
         <insert tableName="permission">
-            <column name="id" value="link-user"/>
+            <column name="id" value="link-person"/>
             <column name="created_by" value="katesan"/>
             <column name="modified_by" value="katesan"/>
         </insert>
