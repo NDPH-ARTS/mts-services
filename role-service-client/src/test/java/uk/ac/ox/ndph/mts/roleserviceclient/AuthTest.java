@@ -47,7 +47,7 @@ public class AuthTest {
     @Test
     void whenNoAuth_thenNoHeadersReceived() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        assertTrue(roleServiceClient.idExists("some-id", RoleServiceClient.noAuth()));
+        assertTrue(roleServiceClient.entityIdExists("some-id", RoleServiceClient.noAuth()));
         final RecordedRequest request = webServer.takeRequest();
         assertNull(request.getHeaders().get("Authorization"));
     }
@@ -55,7 +55,7 @@ public class AuthTest {
     @Test
     void whenaBasicAuth_thenBasicAuthHeaderReceived() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        assertTrue(roleServiceClient.idExists("some-id", RoleServiceClient.basicAuth("user", "pass")));
+        assertTrue(roleServiceClient.entityIdExists("some-id", RoleServiceClient.basicAuth("user", "pass")));
         final RecordedRequest request = webServer.takeRequest();
         assertThat(request.getHeaders().get("Authorization"), startsWith("Basic"));
     }
@@ -64,7 +64,7 @@ public class AuthTest {
     void whenaBearerAuth_thenTokenHeaderReceived() {
         final String token = "this-is-the-random-token";
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        assertTrue(roleServiceClient.idExists("some-id", RoleServiceClient.bearerAuth(token)));
+        assertTrue(roleServiceClient.entityIdExists("some-id", RoleServiceClient.bearerAuth(token)));
         final RecordedRequest request = webServer.takeRequest();
         final String authHeader = request.getHeaders().get("Authorization");
         assertThat(authHeader, startsWith("Bearer"));

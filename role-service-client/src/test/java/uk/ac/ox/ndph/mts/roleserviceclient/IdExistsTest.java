@@ -48,7 +48,7 @@ public class IdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
 
         // Act
-        boolean idExists = roleServiceClient.idExists("12", RoleServiceClient.noAuth());
+        boolean idExists = roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth());
 
         // Assert
         assertTrue(idExists);
@@ -60,7 +60,7 @@ public class IdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()));
 
         // Act
-        boolean idExists = roleServiceClient.idExists("12", RoleServiceClient.noAuth());
+        boolean idExists = roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth());
 
         // Assert
         assertFalse(idExists);
@@ -72,7 +72,7 @@ public class IdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
         // Act + Assert
-        Assertions.assertThrows(RestException.class, () -> roleServiceClient.idExists("12", RoleServiceClient.noAuth()));
+        Assertions.assertThrows(RestException.class, () -> roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth()));
     }
 
 }

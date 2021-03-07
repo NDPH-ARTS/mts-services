@@ -67,7 +67,7 @@ class FindByIdTest {
 
         // Act
         final RoleDTO actualResponse =
-            roleServiceClient.findById(roleId, RoleServiceClient.noAuth());
+            roleServiceClient.getById(roleId, RoleServiceClient.noAuth());
 
         //Assert
         assertAll(
@@ -86,7 +86,7 @@ class FindByIdTest {
 
         // Act + Assert
         assertThrows(RestException.class,
-            () -> roleServiceClient.findById("any-role-id", RoleServiceClient.noAuth()));
+            () -> roleServiceClient.getById("any-role-id", RoleServiceClient.noAuth()));
     }
 
 }

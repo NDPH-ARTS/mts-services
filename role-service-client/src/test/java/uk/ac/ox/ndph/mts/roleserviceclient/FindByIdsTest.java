@@ -68,7 +68,7 @@ class FindByIdsTest {
 
         // Act
         List<RoleDTO> actualResponse =
-            roleServiceClient.findByIds(Collections.singletonList(roleId), RoleServiceClient.noAuth());
+            roleServiceClient.getRolesByIds(Collections.singletonList(roleId), RoleServiceClient.noAuth());
 
         //Assert
         assertAll(
@@ -88,7 +88,7 @@ class FindByIdsTest {
 
         // Act + Assert
         assertThrows(RestException.class,
-            () -> roleServiceClient.findByIds(Collections.singletonList("any-role-id"), RoleServiceClient.noAuth()));
+            () -> roleServiceClient.getRolesByIds(Collections.singletonList("any-role-id"), RoleServiceClient.noAuth()));
     }
 
 }

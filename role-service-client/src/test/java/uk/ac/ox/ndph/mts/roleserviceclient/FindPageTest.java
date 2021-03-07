@@ -56,7 +56,7 @@ public class FindPageTest {
             "\"totalElements\":2,\"last\":true,\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
             "\"first\":true,\"size\":5,\"number\":0,\"numberOfElements\":2,\"empty\":false}";
         webServer.queueResponse(responseBody);
-        final Page<RoleDTO> actualResponse = roleServiceClient.findPage(0, 5, RoleServiceClient.noAuth());
+        final Page<RoleDTO> actualResponse = roleServiceClient.getPage(0, 5, RoleServiceClient.noAuth());
         final List<RoleDTO> actualRoles = actualResponse.getContent();
         //Assert
         assertEquals(1, actualRoles.size());
@@ -70,7 +70,7 @@ public class FindPageTest {
         // Arrange
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         // Act + Assert
-        assertThrows(RestException.class, () -> roleServiceClient.findPage(0, 5, RoleServiceClient.noAuth()));
+        assertThrows(RestException.class, () -> roleServiceClient.getPage(0, 5, RoleServiceClient.noAuth()));
     }
 
 }
