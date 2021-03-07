@@ -9,6 +9,6 @@ import java.util.List;
  */
 public interface SiteServiceClient {
 
-    List<SiteDTO> getAllSites();
+    List<SiteDTO> getAllSites(String token);
 
 }

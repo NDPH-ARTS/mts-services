@@ -52,7 +52,7 @@ class SiteServiceClientImplTests {
         mockBackEnd.queueResponse(expectedBodyResponse);
 
         // Act
-        List<SiteDTO> actualResponse = client.getAllSites();
+        List<SiteDTO> actualResponse = client.getAllSites("token");
 
         //Assert
         assertAll(
@@ -68,6 +68,6 @@ class SiteServiceClientImplTests {
         mockBackEnd.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
         // Act
         // Assert
-        assertThrows(RestException.class, () -> client.getAllSites());
+        assertThrows(RestException.class, () -> client.getAllSites("token"));
     }
 }

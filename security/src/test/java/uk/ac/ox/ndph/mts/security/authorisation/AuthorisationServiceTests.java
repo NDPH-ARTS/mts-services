@@ -184,66 +184,6 @@ class AuthorisationServiceTests {
     }
 
     @Test
-    void TestAuthorise_WithUnauthorisedSite_ReturnsFalse(){
-        //Arrange
-        String userId = "123";
-        String token = "token";
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(token);
-
-        String roleId = "roleId";
-        String authorisedSiteId = "siteId";
-        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
-
-        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
-                "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
-
-        var siteDto = new SiteDTO();
-        siteDto.setSiteId(authorisedSiteId);
-
-        var unauthorisedSiteDto = new SiteDTO();
-        unauthorisedSiteDto.setSiteId("unauthorizedSiteId");
-        when(siteServiceClient.getAllSites()).thenReturn(List.of(siteDto, unauthorisedSiteDto));
-
-        //Act
-        //Assert
-        assertFalse(authorisationService.authorise("some_permission", "unauthorizedSiteId" ));
-    }
-
-    @Test
-    void TestAuthorise_WithUnauthorisedSiteInList_ReturnsFalse(){
-        //Arrange
-        String userId = "123";
-        String token = "token";
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(token);
-
-        String roleId = "roleId";
-        String authorisedSiteId = "siteId";
-        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
-
-        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
-                "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
-
-        var siteDto = new SiteDTO();
-        siteDto.setSiteId(authorisedSiteId);
-
-        String unauthorizedSiteId = "unauthorizedSiteId";
-        var unauthorisedSiteDto = new SiteDTO();
-        unauthorisedSiteDto.setSiteId(unauthorizedSiteId);
-
-        when(siteServiceClient.getAllSites()).thenReturn(List.of(siteDto, unauthorisedSiteDto));
-
-        //Act
-        //Assert
-        assertFalse(authorisationService.authorise("some_permission", List.of(authorisedSiteId, unauthorizedSiteId )));
-    }
-
-    @Test
     void TestAuthorise_WithAllAuthorisedSiteInList_ReturnsTrue(){
         //Arrange
         String userId = "123";
@@ -262,7 +202,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAllSites(token)).thenReturn(Collections.singletonList(siteDto));
 
         //Act
         //Assert
@@ -289,7 +229,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAllSites(token)).thenReturn(Collections.singletonList(siteDto));
 
         List<Object> entitiesList = Collections.singletonList(new TestEntityObject("siteId"));
         String getSiteIdMethodName = "getSiteId";
@@ -318,7 +258,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAllSites(token)).thenReturn(Collections.singletonList(siteDto));
 
         List<Object> entitiesList = List.of(new TestEntityObject("siteId"),
                 new TestEntityObject("unauthorisedSiteId"));

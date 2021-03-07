@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.client.site_service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -36,9 +37,10 @@ public class SiteServiceClientImpl implements SiteServiceClient {
      * @return  list of SiteDTO
      */
     @Override
-    public List<SiteDTO> getAllSites() {
+    public List<SiteDTO> getAllSites(String token) {
 
         return webClient.get().uri(sitesRoute)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),

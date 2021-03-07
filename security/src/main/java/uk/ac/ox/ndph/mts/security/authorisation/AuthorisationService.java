@@ -24,6 +24,7 @@ import java.util.Collections;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class AuthorisationService {
     private final RoleServiceClient roleServiceClient;
     private final SiteServiceClient siteServiceClient;
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Value("${init-service.identity}")
     private String managedIdentity;
@@ -131,9 +132,10 @@ public class AuthorisationService {
                 return false;
             }
 
-            List<SiteDTO> sites = siteServiceClient.getAllSites();
+            List<String> sites = siteServiceClient.getAllSites(token).stream()
+                    .map(SiteDTO::getSiteId).collect(Collectors.toList());
 
-            return isAuthorisedToAllSites(sites, roleAssignments, entitiesSiteIds);
+            return sites.containsAll(entitiesSiteIds);
 
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
@@ -144,14 +146,15 @@ public class AuthorisationService {
     public boolean filterMySites(ResponseEntity<List<?>> returnObject) {
 
         try {
-            var body = mapper.writeValueAsString(returnObject.getBody());
-            List<SiteDTO> sites = mapper.readValue(body, new TypeReference<List<SiteDTO>>(){});
+            var body = MAPPER.writeValueAsString(returnObject.getBody());
+            List<SiteDTO> sites = MAPPER.readValue(body, new TypeReference<List<SiteDTO>>() { });
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
             Set<String> userSites = getUserSites(sites, roleAssignments);
 
-            returnObject.getBody().removeIf(siteObject -> !userSites.contains(getSiteIdFromObj(siteObject, "getSiteId")));
+            Objects.requireNonNull(returnObject.getBody())
+                    .removeIf(siteObject -> !userSites.contains(getSiteIdFromObj(siteObject, "getSiteId")));
 
             return true;
         } catch (JsonProcessingException e) {
