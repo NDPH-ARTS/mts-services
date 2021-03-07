@@ -5,7 +5,8 @@ package uk.ac.ox.ndph.mts.practitioner_service.service;
  */
 public enum Services {
     STARTUP("Loaded practitioner service required dependencies"),
-    PRACTITIONER_NOT_FOUND("Practitioner Id not found");
+    PRACTITIONER_NOT_FOUND("Practitioner Id not found"),
+    USER_ID_CANNOT_BE_NULL("User identifier can not be null.");
 
     private final String message;
  
