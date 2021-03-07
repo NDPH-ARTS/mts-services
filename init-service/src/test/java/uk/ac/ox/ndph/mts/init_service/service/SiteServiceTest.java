@@ -3,12 +3,17 @@ package uk.ac.ox.ndph.mts.init_service.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
@@ -20,6 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.lenient;
 
 /*
  * TODO this test is meaningless because it defines a mock site-service API that does not match the site-service.
@@ -28,23 +34,42 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class SiteServiceTest {
 
+    private static MockWebServer mockBackEnd;
+
+    private static WebClient.Builder builder;
+
+    private static String baseUrl;
+
     SiteServiceInvoker siteServiceInvoker;
 
-    MockWebServer mockBackEnd;
+    @BeforeAll
+    static void setUp() throws IOException {
+        // this section uses a custom webclient props
+        final WebClientConfig config = new WebClientConfig();
+        config.setConnectTimeOutMs(500);
+        config.setReadTimeOutMs(1000);
+        builder = config.webClientBuilder();
+        mockBackEnd = new MockWebServer();
+        mockBackEnd.start();
+    }
+
+    @Mock
+    AzureTokenService mockTokenService;
 
     @BeforeEach
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        WebClient webClient = WebClient.create(String.format("http://localhost:%s",
-                mockBackEnd.getPort()));
-        siteServiceInvoker = new SiteServiceInvoker(webClient);
+        baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
+        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
+        siteServiceInvoker = new SiteServiceInvoker(builder, baseUrl, mockTokenService);
     }
 
-    @AfterEach
-    void tearDown() throws IOException {
+    @AfterAll
+    static void tearDown() throws IOException {
         mockBackEnd.shutdown();
     }
+
 
     @Test
     void createOneSite() throws IOException {

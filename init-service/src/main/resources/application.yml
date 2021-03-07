@@ -2,12 +2,15 @@ spring:
   main:
     web-application-type: NONE # init-service is just a console app, should quit when done.
 role-service:
+  uri: http://role-service
   routes:
     create: /roles
 site-service:
+  uri: http://site-service
   routes:
     create: /sites
 practitioner-service:
+  uri: http://practitioner-service
   routes:
     create: /practitioner
     assign-role: /practitioner/%s/roles

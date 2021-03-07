@@ -42,8 +42,6 @@ public class PractitionerStore implements EntityStore<Practitioner> {
 
     @Override
     public List<Practitioner> findEntitiesByUserIdentity(String userIdentity) {
-        throw new UnsupportedOperationException();
+        return fhirToModelConverter.convertList(repository.getPractitionersByUserIdentity(userIdentity));
     }
-
-
 }

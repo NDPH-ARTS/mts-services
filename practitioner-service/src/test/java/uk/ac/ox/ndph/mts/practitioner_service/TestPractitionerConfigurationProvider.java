@@ -1,7 +1,8 @@
 package uk.ac.ox.ndph.mts.practitioner_service;
+
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.util.List;
-import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -23,7 +24,7 @@ public class TestPractitionerConfigurationProvider {
     @Bean
     @Primary
     public PractitionerConfigurationProvider practitionerConfigurationProvider() {
-        var mock = Mockito.mock(PractitionerConfigurationProvider.class);
+        var mock = mock(PractitionerConfigurationProvider.class);
         when(mock.getConfiguration()).thenReturn(new PractitionerConfiguration("person",
             "Practitioner", ALL_REQUIRED_UNDER_35_MAP)); 
         return mock;

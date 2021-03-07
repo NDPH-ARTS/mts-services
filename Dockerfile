@@ -1,8 +1,16 @@
 # This dockerfile includes "conditional layers" and best used with DOCKER_BUILDKIT=1.
-
 ARG DEPS_CACHE=project
+ARG BUILDER_IMAGE=maven:3-openjdk-11
+ARG RUNTIME_IMAGE=adoptopenjdk/openjdk11:jre-11.0.10_9-debianslim
+ARG APPINSIGHTS_FILE=applicationinsights-agent-3.0.2.jar
+ARG APPINSIGHTS_URL_PREFIX=https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.0.2
 
-FROM maven:3-openjdk-11 as builder
+
+FROM ${BUILDER_IMAGE} as builder
+ARG APPINSIGHTS_FILE
+ARG APPINSIGHTS_URL_PREFIX
+# downloading in builder to copy the jar and config file together in 1 layer
+RUN wget "${APPINSIGHTS_URL_PREFIX}/${APPINSIGHTS_FILE}" --output-document applicationinsights-agent.jar
 
 # copy parent poms
 COPY ./pom*.xml ./
@@ -42,9 +50,10 @@ ARG SVC
 COPY . ./
 RUN mvn package --projects ${SVC} --batch-mode -q --also-make -Dmaven.wagon.http.retryHandler.count=3
 
-FROM adoptopenjdk/openjdk11:jre-11.0.10_9-debianslim
+FROM ${RUNTIME_IMAGE}
 ARG SVC
 ARG JAR_FILE=${SVC}/target/*.jar
+COPY --from=builder-cached applicationinsights* .
 COPY --from=builder-cached ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-javaagent:applicationinsights-agent.jar", "-jar","/app.jar"]
 EXPOSE 8080:80
