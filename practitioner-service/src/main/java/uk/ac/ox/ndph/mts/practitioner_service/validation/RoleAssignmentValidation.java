@@ -6,6 +6,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 /**
  * Implements a ModelEntityValidation for RoleAssignment
@@ -15,16 +16,21 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
 
     private final RoleServiceClient roleServiceClient;
     private final SiteServiceClient siteServiceClient;
+    private final SecurityContextUtil securityContextUtil;
 
     @Autowired
     public RoleAssignmentValidation(final RoleServiceClient roleServiceClient,
-                                    final SiteServiceClient siteServiceClient) {
+                                    final SiteServiceClient siteServiceClient,
+                                    final SecurityContextUtil securityContextUtil) {
         this.roleServiceClient = roleServiceClient;
         this.siteServiceClient = siteServiceClient;
+        this.securityContextUtil = securityContextUtil;
     }
 
     @Override
     public ValidationResponse validate(RoleAssignment entity) {
+
+        var token = securityContextUtil.getToken();
         if (isNullOrBlank(entity.getPractitionerId())) {
             return new ValidationResponse(false, "practitionerId must have a value");
         }
@@ -35,12 +41,12 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
             return new ValidationResponse(false, "roleId must have a value");
         }
 
-        if (!this.roleServiceClient.entityIdExists(entity.getRoleId())) {
+        if (!this.roleServiceClient.entityIdExists(entity.getRoleId(), token)) {
             return new ValidationResponse(false,
                     String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "roleId"));
         }
 
-        if (!this.siteServiceClient.entityIdExists(entity.getSiteId())) {
+        if (!this.siteServiceClient.entityIdExists(entity.getSiteId(), token)) {
             return new ValidationResponse(false,
                     String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "siteId"));
         }

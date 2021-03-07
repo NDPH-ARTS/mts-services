@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Site Service Application
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"uk.ac.ox.ndph.mts"})
 public class SiteServiceApplication {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceApplication.class);

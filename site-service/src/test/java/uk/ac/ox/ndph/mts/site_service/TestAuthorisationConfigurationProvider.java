@@ -1,11 +1,10 @@
-package uk.ac.ox.ndph.mts.practitioner_service;
+package uk.ac.ox.ndph.mts.site_service;
 
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -19,14 +18,6 @@ public class TestAuthorisationConfigurationProvider {
     public AuthorisationService authorisationService() {
         var mockService = Mockito.mock(AuthorisationService.class);
         Mockito.when(mockService.authorise(anyString())).thenReturn(true);
-        return mockService;
-    }
-
-    @Bean
-    @Primary
-    public SecurityContextUtil gettoken() {
-        var mockService = Mockito.mock(SecurityContextUtil.class);
-        Mockito.when(mockService.getToken()).thenReturn("token");
         return mockService;
     }
 }

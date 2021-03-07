@@ -19,6 +19,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +49,8 @@ class PractitionerServiceTests {
     private ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
     @Mock
     private ModelEntityValidation<PractitionerUserAccount> practitionerUserAccountValidator;
+    @Mock
+    private SecurityContextUtil securityContextUtil;
 
     private PractitionerService service;
     private PractitionerService serviceSpy;
@@ -56,7 +59,7 @@ class PractitionerServiceTests {
     @BeforeEach
     void init() {
         this.service = new PractitionerService(practitionerStore, practitionerValidator,
-                roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator);
+                roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator, securityContextUtil);
         this.serviceSpy = Mockito.spy(service);
     }
 
@@ -116,19 +119,19 @@ class PractitionerServiceTests {
     void TestPractitionerService_WhenNullInConstructor_ThrowsNullPointerException() {
         // Arrange + Act + Assert
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(null, practitionerValidator
-                        , roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator),
+                        , roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator, securityContextUtil),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, null,
-                        roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator),
+                        roleAssignmentStore, roleAssignmentValidator, practitionerUserAccountValidator, securityContextUtil),
                 "null validation should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore,
-                        practitionerValidator, null, roleAssignmentValidator, practitionerUserAccountValidator),
+                        practitionerValidator, null, roleAssignmentValidator, practitionerUserAccountValidator, securityContextUtil),
                 "null store should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
-                        roleAssignmentStore, null, practitionerUserAccountValidator),
+                        roleAssignmentStore, null, practitionerUserAccountValidator, securityContextUtil),
                 "null validation should throw");
         Assertions.assertThrows(NullPointerException.class, () -> new PractitionerService(practitionerStore, practitionerValidator,
-                        roleAssignmentStore, roleAssignmentValidator, null),
+                        roleAssignmentStore, roleAssignmentValidator, null, securityContextUtil),
                 "null validation should throw");
     }
 

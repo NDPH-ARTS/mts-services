@@ -1,7 +1,11 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +41,8 @@ public class AuthorisationService {
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
     private final SiteServiceClient siteServiceClient;
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${init-service.identity}")
     private String managedIdentity;
@@ -135,6 +141,25 @@ public class AuthorisationService {
         }
     }
 
+    public boolean filterMySites(ResponseEntity<List<?>> returnObject) {
+
+        try {
+            var body = mapper.writeValueAsString(returnObject.getBody());
+            List<SiteDTO> sites = mapper.readValue(body, new TypeReference<List<SiteDTO>>(){});
+            String userId = securityContextUtil.getUserId();
+            String token = securityContextUtil.getToken();
+            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+            Set<String> userSites = getUserSites(sites, roleAssignments);
+
+            returnObject.getBody().removeIf(siteObject -> !userSites.contains(getSiteIdFromObj(siteObject, "getSiteId")));
+
+            return true;
+        } catch (JsonProcessingException e) {
+            return false;
+        }
+
+    }
+
     /**
      * Validate if the role assignments have the required permission linked to them.
      * @param requiredPermission action required permission
@@ -180,18 +205,29 @@ public class AuthorisationService {
                 .anyMatch(permission -> permission.getId().equals(requiredPermission));
     }
 
+    /**
+     * Check if the user roles authorised on all entities sites
+     * @param sites user sites
+     * @param roleAssignments user role assignments
+     * @param entitiesSiteIds entities site ids
+     * @return
+     */
     private boolean isAuthorisedToAllSites(List<SiteDTO> sites,
                                           List<RoleAssignmentDTO> roleAssignments,
                                           List<String> entitiesSiteIds) {
 
+        Set<String> allSitesInRoles = getUserSites(sites, roleAssignments);
+
+        return allSitesInRoles.containsAll(entitiesSiteIds);
+    }
+
+    private Set<String> getUserSites(List<SiteDTO> sites, List<RoleAssignmentDTO> roleAssignments) {
         Map<String, ArrayList<String>> tree = siteTreeUtil.getSiteSubTrees(sites);
 
-        Set<String> allSitesInRoles = roleAssignments.stream()
+        return roleAssignments.stream()
                 .flatMap(roleAssignmentDTO ->
                         tree.getOrDefault(roleAssignmentDTO.getSiteId(), new ArrayList<>()).stream())
                 .collect(Collectors.toSet());
-
-        return allSitesInRoles.containsAll(entitiesSiteIds);
     }
 
     private String getSiteIdFromObj(Object obj, String methodName) {

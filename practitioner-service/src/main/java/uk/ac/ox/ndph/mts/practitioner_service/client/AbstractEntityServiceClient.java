@@ -14,10 +14,12 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean entityIdExists(String id) throws RestException {
+    public boolean entityIdExists(String id, String token) throws RestException {
+
         Objects.requireNonNull(id, "id must be non-null");
         return webClient.get()
                 .uri(serviceExistsRoute, id)
+                .header("Authorization", "Bearer " + token)
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {

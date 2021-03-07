@@ -19,6 +19,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 /**
  * Implement an EntityService interface.
@@ -36,6 +37,7 @@ public class PractitionerService implements EntityService {
     private final EntityStore<RoleAssignment> roleAssignmentStore;
     private final ModelEntityValidation<RoleAssignment> roleAssignmentValidator;
     private final ModelEntityValidation<PractitionerUserAccount> practitionerUserAccountValidator;
+    private final SecurityContextUtil securityContextUtil;
 
     /**
      * @param practitionerStore Practitioner store interface
@@ -46,7 +48,8 @@ public class PractitionerService implements EntityService {
                                ModelEntityValidation<Practitioner> practitionerValidator,
                                EntityStore<RoleAssignment> roleAssignmentStore,
                                ModelEntityValidation<RoleAssignment> roleAssignmentValidator,
-                               ModelEntityValidation<PractitionerUserAccount> directoryLinkValidator) {
+                               ModelEntityValidation<PractitionerUserAccount> directoryLinkValidator,
+                               final SecurityContextUtil securityContextUtil) {
         this.practitionerStore =
                 Objects.requireNonNull(practitionerStore, "practitioner store cannot be null");
         this.practitionerValidator =
@@ -57,7 +60,7 @@ public class PractitionerService implements EntityService {
                 Objects.requireNonNull(roleAssignmentStore, "RoleAssignment store cannot be null");
         this.roleAssignmentValidator =
                 Objects.requireNonNull(roleAssignmentValidator, "RoleAssignment entity validation cannot be null");
-        
+        this.securityContextUtil = securityContextUtil;
         logger.info(Services.STARTUP.message());
     }
 

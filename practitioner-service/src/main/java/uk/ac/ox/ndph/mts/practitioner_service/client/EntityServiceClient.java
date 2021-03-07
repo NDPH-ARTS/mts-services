@@ -7,6 +7,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
  */
 public interface EntityServiceClient {
 
-    boolean entityIdExists(String entityId) throws RestException;
+    boolean entityIdExists(String id, String token) throws RestException;
 
 }
