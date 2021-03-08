@@ -1,8 +1,12 @@
 package uk.ac.ox.ndph.mts.site_service.converter;
 
 import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.StringType;
 import org.springframework.stereotype.Component;
+import uk.ac.ox.ndph.mts.site_service.model.Address;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+
+import java.util.List;
 
 /**
  * Implement an EntityConverter for Site. Reverse of {@link OrganizationConverter}.
@@ -17,8 +21,25 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
                 org.getName(),
                 (org.getAlias().isEmpty()) ? null : org.getAlias().get(0).getValueAsString(),
                 findParentSiteId(org),
-                org.getImplicitRules()
+                org.getImplicitRules(),
+                findAddress(org)
         );
+    }
+
+    private Address findAddress(Organization org) {
+        if (org.hasAddress()) {
+            List<StringType> line = org.getAddress().get(0).getLine();
+            return new Address(line.size() > 0 ? line.get(0).getValue() : "",
+                    line.size() > 1 ? line.get(1).getValue() : "",
+                    line.size() > 2 ? line.get(2).getValue() : "",
+                    line.size() > 3 ? line.get(3).getValue() : "",
+                    line.size() > 4 ? line.get(4).getValue() : "",
+                    org.getAddress().get(0) != null ? org.getAddress().get(0).getCity() : "",
+                    org.getAddress().get(0) != null ? org.getAddress().get(0).getCountry() : "",
+                    org.getAddress().get(0) != null ? org.getAddress().get(0).getPostalCode() : "");
+        } else {
+            return null;
+        }
     }
 
     private String findParentSiteId(final Organization org) {

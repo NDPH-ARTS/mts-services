@@ -6,22 +6,57 @@ server:
 fhir:
   uri: http://localhost:8099
 # trial site config - this is the default for local testing, with CCO/REGION/COUNTRY/LCC
+address:
+  addressType:
+    - name : addressLine1
+      displayName : AddressLine1
+      validationRegex: '^[a-zA-Z\s]{1,35}$'
+    - name : addressLine2
+      displayName : AddressLine2
+      validationRegex: '^[a-zA-Z\s]{1,35}$'
+    - name : addressLine3
+      displayName : AddressLine3
+      validationRegex: '^[a-zA-Z\s]{1,35}$'
+    - name : addressLine4
+      displayName : AddressLine4
+      validationRegex: '^[a-zA-Z\s]{1,35}$'
+    - name: addressLine5
+      displayName: AddressLine5
+      validationRegex: '^[a-zA-Z\s]{1,35}$'
+    - name: city
+      displayName: City
+      validationRegex: '^[a-zA-Z\s]{1,80}$'
+    - name: country
+      displayName: Country
+      validationRegex: '^[a-zA-Z\s]{1,40}$'
+    - name: postcode
+      displayName: Postcode
+      validationRegex: '^[a-zA-Z\s]{1,8}$'
 site:
   name: Organization
   displayName: site
   type: CCO
   attributes:
     - name: name
+      type: string
       displayName: Name
       validationRegex: '^[a-zA-Z\s]{1,35}$'
     - name: alias
+      type: string
       displayName: Alias
       validationRegex: '^[a-zA-Z\s]{1,35}$'
     - name: parentSiteId
+      type: string
       displayName: Parent Site Id
       validationRegex: ''
     - name: siteType
+      type: string
       displayName: Site Type
+      validationRegex: ''
+  custom:
+    - name: address
+      type: address
+      displayName: The Address
       validationRegex: ''
   child:
     - name: Organization
@@ -29,15 +64,19 @@ site:
       type: REGION
       attributes:
         - name: name
+          type: string
           displayName: Name
           validationRegex: '^[a-zA-Z\s]{1,35}$'
         - name: alias
+          type: string
           displayName: Alias
           validationRegex: '^[a-zA-Z\s]{1,35}$'
         - name: parentSiteId
+          type: string
           displayName: Parent Site Id
           validationRegex: ''
         - name: siteType
+          type: string
           displayName: Site Type
           validationRegex: ''
       child:
@@ -46,15 +85,19 @@ site:
           type: COUNTRY
           attributes:
             - name: name
+              type: string
               displayName: Name
               validationRegex: '^[a-zA-Z\s]{1,35}$'
             - name: alias
+              type: string
               displayName: Alias
               validationRegex: '^[a-zA-Z\s]{1,35}$'
             - name: parentSiteId
+              type: string
               displayName: Parent Site Id
               validationRegex: ''
             - name: siteType
+              type: string
               displayName: Site Type
               validationRegex: ''
           child:
@@ -63,14 +106,23 @@ site:
               type: LCC
               attributes:
                 - name: name
+                  type: string
                   displayName: Name
                   validationRegex: '^[a-zA-Z\s]{1,35}$'
                 - name: alias
+                  type: string
                   displayName: Alias
                   validationRegex: '^[a-zA-Z\s]{1,35}$'
                 - name: parentSiteId
+                  type: string
                   displayName: Parent Site Id
                   validationRegex: ''
                 - name: siteType
+                  type: string
                   displayName: Site Type
+                  validationRegex: ''
+              custom:
+                - name: address
+                  type: address
+                  displayName: The Address
                   validationRegex: ''

@@ -67,11 +67,18 @@ public class Site {
         this.siteId = siteId;
     }
 
+    public Site(final String siteId, String name, String alias, String parentSiteId, String siteType, Address address) {
+        this(name, alias, parentSiteId, siteType);
+        this.siteId = siteId;
+        this.address = address;
+    }
+
     private String name;
     private String alias;
     private String siteId;
     private String parentSiteId;
     private String siteType;
+    private Address address;
 
     /**
      * Returns the name associated with the Site.
@@ -160,5 +167,13 @@ public class Site {
      */
     public void setSiteId(String siteId) {
         this.siteId = siteId;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

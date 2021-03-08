@@ -33,6 +33,17 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
         if (input.getSiteType() != null) {
             fhirOrganization.setImplicitRules(input.getSiteType());
         }
+
+        if (input.getAddress() != null) {
+            fhirOrganization.addAddress().addLine(input.getAddress().getAddress1())
+                    .addLine(input.getAddress().getAddress2())
+                    .addLine(input.getAddress().getAddress3())
+                    .addLine(input.getAddress().getAddress4())
+                    .addLine(input.getAddress().getAddress5())
+                    .setCity(input.getAddress().getCity())
+                    .setCountry(input.getAddress().getCountry())
+                    .setPostalCode(input.getAddress().getPostcode());
+        }
         return fhirOrganization;
     }
 
