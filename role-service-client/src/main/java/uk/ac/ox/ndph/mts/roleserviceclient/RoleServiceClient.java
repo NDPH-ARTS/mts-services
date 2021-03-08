@@ -115,11 +115,11 @@ public class RoleServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                        serviceName, resp.statusCode(),
-                                        "page=" + page + "; size=" + size))))
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
+                            ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
+                                    serviceName, resp.statusCode(),
+                                    "page=" + page + "; size=" + size))))
                 .bodyToMono(RolePageImpl.class)
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
@@ -139,10 +139,10 @@ public class RoleServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
-                                        serviceName, resp.statusCode(), parsedRoleIds))))
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
+                            ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
+                                    serviceName, resp.statusCode(), parsedRoleIds))))
                 .bodyToMono(RoleDTO[].class)
                 .map(Arrays::asList)
                 .retryWhen(retryPolicy.get())
@@ -161,10 +161,10 @@ public class RoleServiceClient {
                 .bodyValue(role)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                        serviceName, resp.statusCode(), "role=" + role))))
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
+                            ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
+                                    serviceName, resp.statusCode(), "role=" + role))))
                 .bodyToMono(RoleDTO.class)
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
@@ -187,12 +187,12 @@ public class RoleServiceClient {
                 .bodyValue(permissionsDTOs)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                        serviceName,
-                                        resp.statusCode(),
-                                        "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
+                            ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
+                                    serviceName,
+                                    resp.statusCode(),
+                                    "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
                 .bodyToMono(RoleDTO.class)
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
