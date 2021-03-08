@@ -37,10 +37,10 @@ public class FhirPractitionerConverter implements EntityConverter<org.hl7.fhir.r
 
         HumanName humanName = input.getName().get(0);
 
-        return new Practitioner(input.getIdElement().getIdPart(), 
+        return new Practitioner(input.getIdElement().getIdPart(),
                 humanName.getPrefixAsSingleString(),
-                humanName.getGivenAsSingleString(), 
-                humanName.getFamily(), 
+                humanName.getGivenAsSingleString(),
+                humanName.getFamily(),
                 userAccountId);
     }
 
