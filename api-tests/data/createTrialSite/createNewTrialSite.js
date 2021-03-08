@@ -1,4 +1,4 @@
-const utils = require('../../common/utils')
+const utils = require('../../common/globalUtils')
 //creating a parent as CCO with no existing node
 const validSiteCCO = {
     "name": "CCOUK",

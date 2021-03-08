@@ -1,6 +1,6 @@
 const requests = require('../../data/practitioner-service/createperson')
 const conf = require('../../config/conf')
-const utils = require('../../common/utils')
+const utils = require('../../common/globalUtils')
 const fetch = require("node-fetch");
 const { expect } = require('chai');
 const endpointUri = '/api/practitioner';

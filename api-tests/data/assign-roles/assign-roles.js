@@ -1,4 +1,4 @@
-const utils = require('../../common/utils')
+const utils = require('../../common/globalUtils')
 
 const roleWithPermissions = {
     "id": utils.getRandomString(7),

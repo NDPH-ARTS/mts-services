@@ -4,7 +4,7 @@ const sitesEndpointUri = '/api/sites';
 const rolesEndpointUri = '/api/roles';
 const practitionerEndpointUri = '/api/practitioner'
 let assignRoleEndpointUri = '/api/practitioner/{personId}/roles'
-const utils = require('../../common/utils')
+const utils = require('../../common/globalUtils')
 const fetch = require("node-fetch");
 
 

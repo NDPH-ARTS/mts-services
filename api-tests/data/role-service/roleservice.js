@@ -1,4 +1,4 @@
-const utils = require('../../common/utils')
+const utils = require('../../common/globalUtils')
 
 const validRole = {
     "id": utils.getRandomString(7),
