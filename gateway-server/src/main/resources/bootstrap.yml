@@ -32,6 +32,15 @@ spring:
             - Path=/api/roles/**
           filters:
             - StripPrefix=1
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*" # TODO : limit origins - or reconsider CORS approach?
+            allowedMethods:
+              - GET
+              - POST
+              - OPTIONS
+            allowedHeaders: "*"
 
 eureka:
   client:
