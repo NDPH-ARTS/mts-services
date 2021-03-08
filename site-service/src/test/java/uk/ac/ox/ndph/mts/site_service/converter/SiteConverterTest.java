@@ -18,6 +18,7 @@ class SiteConverterTest {
     private static final String SERVER_PARENT_ID = "http://fhir-api/Organization/cccccccc-ccc-cccc-cccc-cccccccccccc";
     private static final String ORG_NAME = "The Organization";
     private static final String ORG_ALIAS = "aka-org";
+    private static final String ADDRESS_1 = "address1";
 
     private final SiteConverter siteConverter = new SiteConverter();
 
@@ -36,6 +37,25 @@ class SiteConverterTest {
         assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
         assertThat(site.getAlias(), is(equalTo(ORG_ALIAS)));
         assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
+    }
+
+    @Test
+    void TestConvert_AllPropertiesIncludingAddressSpecified_returnsMatchingSite() {
+        // arrange
+        final Organization org = new Organization();
+        org.setName(ORG_NAME);
+        org.setId(SERVER_ORG_ID);
+        org.addAlias(ORG_ALIAS);
+        org.setPartOf(new Reference(SERVER_PARENT_ID));
+        org.addAddress().addLine(ADDRESS_1);
+        // act
+        final Site site = siteConverter.convert(org);
+        // assert
+        assertThat(site.getName(), is(equalTo(org.getName())));
+        assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
+        assertThat(site.getAlias(), is(equalTo(ORG_ALIAS)));
+        assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
+        assertThat(site.getAddress().getAddress1(), is(equalTo("address1")));
     }
 
     @Test
