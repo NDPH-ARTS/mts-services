@@ -3,7 +3,8 @@ role:
   service:
     uri: http://localhost:8082
     endpoint:
-      roles: /roles
+      roles:
+        create: /roles
     name: role-service
 site:
   service:
