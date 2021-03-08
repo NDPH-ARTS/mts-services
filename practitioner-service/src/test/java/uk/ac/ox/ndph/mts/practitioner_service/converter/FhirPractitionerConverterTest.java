@@ -54,14 +54,14 @@ class FhirPractitionerConverterTest {
         HumanName nameOne = new HumanName();
         nameOne.setFamily("One");
         one.addName(nameOne);
-        
+
         Practitioner two = new Practitioner();
         HumanName nameTwo = new HumanName();
         nameTwo.setFamily("Two");
         two.addName(nameTwo);
-        
+
         var converted = converter.convertList(Arrays.asList(one, two));
-        
+
         assertEquals(2, converted.size());
         assertTrue(converted.stream().anyMatch(p -> p.getFamilyName().equals("One")));
         assertTrue(converted.stream().anyMatch(p -> p.getFamilyName().equals("Two")));
