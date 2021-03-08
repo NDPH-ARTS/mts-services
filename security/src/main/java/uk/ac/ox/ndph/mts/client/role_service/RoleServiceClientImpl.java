@@ -22,7 +22,7 @@ public class RoleServiceClientImpl implements RoleServiceClient {
     @Value("${role.service.name}")
     private String serviceName;
 
-    @Value("${role.service.endpoint.roles}")
+    @Value("${role.service.endpoint.roles.create}")
     private String rolesRoute;
 
     public RoleServiceClientImpl(final WebClient.Builder webClientBuilder,

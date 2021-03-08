@@ -1,7 +1,7 @@
 role:
   service:
     name: role-service
-    url: '<role-service-url>'
+    uri: http://role-service
     endpoint:
       exists: '/roles/{id}'
       paged: '/roles/'
@@ -12,3 +12,7 @@ role:
           ids: 'roles'
       update:
         permissions: '/roles/{id}/permissions'
+
+role-service:
+  ribbon:
+    listOfServers: ${ROLE_SERVICE_URI:localhost:8082}
