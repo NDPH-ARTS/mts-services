@@ -14,6 +14,7 @@ class globalUtils {
         return result;
     }
 
+
     async getHeadersWithAuth() {
         const tokenId = await this.getTokenId();
         let headers = {
