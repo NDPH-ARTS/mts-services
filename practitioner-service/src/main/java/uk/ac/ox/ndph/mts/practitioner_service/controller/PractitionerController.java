@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
+import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -35,6 +38,7 @@ import java.util.List;
 @RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerController.class);
     private final EntityService entityService;
     private final SecurityContextUtil securityContextUtil;
 
@@ -62,6 +66,9 @@ public class PractitionerController {
     @PostMapping(path = "/{practitionerId}/link")
     public ResponseEntity<Response> linkPractitioner(@PathVariable String practitionerId,
                                                      @RequestBody PractitionerUserAccount link) {
+
+        LOGGER.debug("prac id is - " + practitionerId);
+        LOGGER.debug("user acc id is - " + link.getUserAccountId());
         link.setPractitionerId(practitionerId);
         entityService.linkPractitioner(link);
         return ResponseEntity.status(OK).build();

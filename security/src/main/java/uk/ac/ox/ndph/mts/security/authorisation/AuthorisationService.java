@@ -106,6 +106,7 @@ public class AuthorisationService {
 
             LOGGER.debug("userId is - " + userId);
             LOGGER.debug("managed identity is - " + managedIdentity);
+            LOGGER.debug("req permission is - " + requiredPermission);
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
@@ -120,6 +121,8 @@ public class AuthorisationService {
                 LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
                 return false;
             }
+
+            roleAssignments.stream().forEach(ra -> LOGGER.debug("ra is - " + ra.getRoleId()));
 
             if (!hasValidPermissions(requiredPermission, roleAssignments)) {
                 return false;
