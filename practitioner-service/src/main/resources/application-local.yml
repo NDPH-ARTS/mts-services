@@ -3,16 +3,32 @@ server:
   port: 8081
   error:
     include-message: always
+
 fhir:
   uri: http://localhost:8099
+
+practitioner:
+  service:
+    uri: http://practitioner-service
+    name: practitioner-service
+    endpoint:
+      roles: /practitioner/roles
+
 role:
   service:
     uri: http://role-service
+    name: role-service
+    endpoint:
+      roles: /roles
+
 site:
   service:
     uri: http://site-service
+    name: site-service
+
 init-service:
   identity: <init-service-identity>
+
 
 ---
 config:
@@ -48,17 +64,6 @@ azure:
   activedirectory:
     client-id: <client-id>
     session-stateless: true
-practitioner:
-  service:
-    uri: http://practitioner-service
-    endpoint:
-      roles: /practitioner/roles
-    name: practitioner-service
-role:
-  service:
-    endpoint:
-      roles: /roles
-    name: role-service
 logging:
   level:
     uk:
