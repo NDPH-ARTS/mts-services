@@ -31,15 +31,9 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         personId = parsePersonResponseData.id
 
         //request posted to role service endpoint
-        let headersz = await utils.getHeadersWithAuth()
-        let fetchResponsez = await fetch(conf.baseUrl + rolesEndpointUri, {
-            headers: headersz,
-            method: 'POST',
-            body: JSON.stringify(requests.roleWithPermissions),
-        })
-        let roleResponse = await fetchResponsez.json();
-        const captureRoleResponseData = roleResponse
-        let parseRoleResponseData = captureRoleResponseData
+        const roleResponse = await baseRequest.post(rolesEndpointUri).send(requests.roleWithPermissions)
+        const captureRoleResponseData = roleResponse.text
+        let parseRoleResponseData = JSON.parse(captureRoleResponseData)
         roleId = parseRoleResponseData.id
 
         //assign roles to a person
