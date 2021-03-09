@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -181,7 +183,8 @@ class PractitionerControllerTests {
         // Arrange
         String returnedValue = "123";
         when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenReturn(returnedValue);
-        String jsonString = "{}";
+
+        String jsonString = "{\"siteId\": \"abc\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -193,7 +196,7 @@ class PractitionerControllerTests {
     void TestPostRoleAssignment_WhenServiceFails_Returns502() throws Exception {
         // Arrange
         when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenThrow(RestException.class);
-        String jsonString = "{}";
+        String jsonString = "{\"siteId\": \"abc\", \"roleId\": \"123\"}";
 
         // Act + Assert
         this.mockMvc
