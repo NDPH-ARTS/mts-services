@@ -1,7 +1,5 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,13 +15,9 @@ import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClient;
 import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClient;
-import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
