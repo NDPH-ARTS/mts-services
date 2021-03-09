@@ -38,8 +38,8 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
             body: JSON.stringify(requests.roleWithPermissions),
         })
         let roleResponse = await fetchResponsez.json();
-        const captureRoleResponseData = roleResponse.text
-        let parseRoleResponseData = JSON.parse(captureRoleResponseData)
+        const captureRoleResponseData = roleResponse
+        let parseRoleResponseData = captureRoleResponseData
         roleId = parseRoleResponseData.id
 
         //assign roles to a person
