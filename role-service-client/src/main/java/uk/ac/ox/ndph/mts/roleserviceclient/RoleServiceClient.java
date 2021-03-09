@@ -61,7 +61,7 @@ public class RoleServiceClient {
     @Autowired
     public RoleServiceClient(final WebClient.Builder webClientBuilder,
                              final Supplier<Retry> retryPolicy,
-                             @Value("${role.service.uri}") String roleServiceUrl) {
+                             @Value("${role.service.url}") String roleServiceUrl) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
         this.retryPolicy = retryPolicy;
     }

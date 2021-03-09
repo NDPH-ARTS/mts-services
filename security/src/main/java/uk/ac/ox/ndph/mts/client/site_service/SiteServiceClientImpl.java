@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.client.site_service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class SiteServiceClientImpl implements SiteServiceClient {
     @Value("${site.service.endpoint.sites}")
     private String sitesRoute;
 
+    @Autowired
     public SiteServiceClientImpl(final WebClient.Builder webClientBuilder,
                                  @Value("${site.service.uri}") String assignmentRolesUrl) {
         this.webClient = webClientBuilder.baseUrl(assignmentRolesUrl).build();

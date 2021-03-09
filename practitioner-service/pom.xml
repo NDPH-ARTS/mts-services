@@ -13,8 +13,8 @@
     <artifactId>practitioner-service</artifactId>
     <description>CRUD service for practitioners and their role assignments</description>
     <properties>
-        <hapifhir.version>5.0.2</hapifhir.version>
-        <okhttp.version>4.9.0</okhttp.version>
+        <hapifhir.version>5.3.0</hapifhir.version>
+        <okhttp.version>4.9.1</okhttp.version>
     </properties>
 
     <dependencies>
