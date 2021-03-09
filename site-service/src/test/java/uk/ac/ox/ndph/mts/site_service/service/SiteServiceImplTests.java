@@ -134,6 +134,25 @@ class SiteServiceImplTests {
     }
 
     @Test
+    void TestSaveSite_WhenInvalidSiteCustomAttribute_ThrowsValidationException_DoesntSavesToStore() {
+        // Arrange
+        String name = "name";
+        String alias = "alias";
+        final var config = new SiteConfiguration(
+                "Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
+
+        Site site = new Site(name, alias);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
+        when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(invalid("No Address in payload"));
+
+        //Act + Assert
+        assertThrows(ValidationException.class, () -> siteService.save(site),
+                "Expecting save to throw validation exception");
+        Mockito.verify(siteStore, Mockito.times(0)).saveEntity(any(Site.class));
+    }
+
+    @Test
     void TestSaveSite_WhenValidSiteWithValidParent_SavesToStore() {
         // Arrange
         final var config =

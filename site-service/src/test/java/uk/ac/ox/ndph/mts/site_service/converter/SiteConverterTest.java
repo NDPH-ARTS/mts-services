@@ -75,6 +75,32 @@ class SiteConverterTest {
     }
 
     @Test
+    void TestConvert_AllPropertiesIncludingEmptyAddressSpecified_returnsMatchingSite() {
+        // arrange
+        final Organization org = new Organization();
+        org.setName(ORG_NAME);
+        org.setId(SERVER_ORG_ID);
+        org.addAlias(ORG_ALIAS);
+        org.setPartOf(new Reference(SERVER_PARENT_ID));
+        org.addAddress().setId("1");
+        // act
+        final Site site = siteConverter.convert(org);
+        // assert
+        assertThat(site.getName(), is(equalTo(org.getName())));
+        assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
+        assertThat(site.getAlias(), is(equalTo(ORG_ALIAS)));
+        assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
+        assertThat(site.getAddress().getAddress1(), is(equalTo("")));
+        assertThat(site.getAddress().getAddress2(), is(equalTo("")));
+        assertThat(site.getAddress().getAddress3(), is(equalTo("")));
+        assertThat(site.getAddress().getAddress4(), is(equalTo("")));
+        assertThat(site.getAddress().getAddress5(), is(equalTo("")));
+        assertThat(site.getAddress().getCity(), is(equalTo("")));
+        assertThat(site.getAddress().getCountry(), is(equalTo("")));
+        assertThat(site.getAddress().getPostcode(), is(equalTo("")));
+    }
+
+    @Test
     void TestConvert_NotPartof_returnsSiteWithNoParent() {
         // arrange
         final Organization org = new Organization();
