@@ -16,6 +16,8 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Controller for site endpoint of site-service
@@ -53,6 +55,14 @@ public class SiteController {
     @PostAuthorize("@authorisationService.filterMySites(returnObject)")
     @GetMapping
     public ResponseEntity<List<Site>> sites() {
+        List<Site> sites = siteService.findSites();
+        Map<String, String> siteNames = sites.stream()
+                .collect(Collectors.toMap(Site::getSiteId, (Site s) -> s.getName()));
+        sites.forEach(site -> {
+            if (site.getParentSiteId() != null) {
+                site.setParentSiteName(siteNames.get(site.getParentSiteId()));
+            }
+        });
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 

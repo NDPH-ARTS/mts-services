@@ -71,6 +71,7 @@ public class Site {
     private String alias;
     private String siteId;
     private String parentSiteId;
+    private String parentSiteName;
     private String siteType;
 
     /**
@@ -124,6 +125,24 @@ public class Site {
      */
     public void setParentSiteId(String parentSiteId) {
         this.parentSiteId = parentSiteId;
+    }
+
+    /**
+     * Returns the parentSiteName associated with the Site.
+     * @return parentSiteName the Site parentSiteName.
+     *
+     */
+    public String getParentSiteName() {
+        return parentSiteName;
+    }
+
+    /**
+     * Sets the parentSiteName of the Site.
+     * @param parentSiteName the Site parentSiteName
+     *
+     */
+    public void setParentSiteName(String parentSiteName) {
+        this.parentSiteName = parentSiteName;
     }
 
     /**
