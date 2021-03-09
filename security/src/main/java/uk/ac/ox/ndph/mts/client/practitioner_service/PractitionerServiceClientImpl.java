@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.client.practitioner_service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ public class PractitionerServiceClientImpl implements PractitionerServiceClient 
     @Value("${practitioner.service.endpoint.roles}")
     private String roleAssignmentRoute;
 
+    @Autowired
     public PractitionerServiceClientImpl(final WebClient.Builder webClientBuilder,
                                          @Value("${practitioner.service.uri}") String roleAssignmentsUrl) {
         this.webClient = webClientBuilder.baseUrl(roleAssignmentsUrl).build();

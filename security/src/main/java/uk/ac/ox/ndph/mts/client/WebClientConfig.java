@@ -1,9 +1,8 @@
-package uk.ac.ox.ndph.mts.practitioner_service.configuration;
+package uk.ac.ox.ndph.mts.client;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,6 @@ import reactor.netty.http.client.HttpClient;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@ConfigurationProperties(prefix = "http")
 public class WebClientConfig {
 
     @Value("${http.connectTimeOutMs:1000}")
@@ -27,9 +25,10 @@ public class WebClientConfig {
     public ClientHttpConnector connectorWithConnectAndReadTimeOuts() {
         return new ReactorClientHttpConnector(HttpClient.create()
                 .tcpConfiguration(tcpClient ->
-                    tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeOutMs())
-                        .doOnConnected(conn -> conn
-                            .addHandlerLast(new ReadTimeoutHandler(getReadTimeOutMs(), TimeUnit.MILLISECONDS)))));
+                        tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeOutMs())
+                                .doOnConnected(conn -> conn
+                                        .addHandlerLast(new ReadTimeoutHandler(getReadTimeOutMs(),
+                                                TimeUnit.MILLISECONDS)))));
     }
 
     @Bean
