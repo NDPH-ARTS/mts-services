@@ -1,8 +1,8 @@
 package uk.ac.ox.ndph.mts.security.authentication;
 
 // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
-import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 
+import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -43,8 +43,10 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
         // disable csrf because we are using another token mechanism
         http.csrf().disable(); //NOSONAR
 
+        http.cors(); // See https://www.baeldung.com/spring-cors
+
         // Do not create user sessions
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // This requires all requests to have a valid token
         http.authorizeRequests() //NOSONAR
