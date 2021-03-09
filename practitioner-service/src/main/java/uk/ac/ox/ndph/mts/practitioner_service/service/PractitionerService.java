@@ -20,6 +20,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
 
+import static uk.ac.ox.ndph.mts.practitioner_service.service.Services.USER_ID_CANNOT_BE_NULL;
+
 /**
  * Implement an EntityService interface.
  * Validation of practitioner based on the input configuration regex fields before
@@ -120,7 +122,13 @@ public class PractitionerService implements EntityService {
 
     @Override
     public List<RoleAssignment> getRoleAssignmentsByUserIdentity(@NotNull String userIdentity) {
-        Objects.requireNonNull(userIdentity, "User identifier can not be null.");
+        Objects.requireNonNull(userIdentity, USER_ID_CANNOT_BE_NULL.message());
         return roleAssignmentStore.findEntitiesByUserIdentity(userIdentity);
+    }
+
+    @Override
+    public List<Practitioner> getPractitionersByUserIdentity(String userIdentity) {
+        Objects.requireNonNull(userIdentity, USER_ID_CANNOT_BE_NULL.message());
+        return practitionerStore.findEntitiesByUserIdentity(userIdentity);
     }
 }

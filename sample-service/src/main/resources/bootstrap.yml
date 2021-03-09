@@ -1,12 +1,11 @@
 spring:
   application:
-    name: practitioner-service
+    name: sample-service
   cloud:
     config:
       discovery:
         enabled: true
         service-id: CONFIG-SERVER
-      fail-fast: true
 
 eureka:
   client:
