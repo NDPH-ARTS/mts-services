@@ -114,11 +114,13 @@ public class AuthorisationService {
                 return true;
             }
 
-        /*    // Site IDis should not be null - unless this is init service setting up the root node but that user is AManagedServiceIdentity
-            if(entitiesSiteIds==null || entitiesSiteIds.stream().anyMatch(siteid->siteid==null)){
-                LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})", requiredPermission, userId);
+            // Site IDis should not be null - unless this is init service setting up the root node,
+            // but that user is AManagedServiceIdentity
+            if(entitiesSiteIds == null || entitiesSiteIds.stream().anyMatch(siteid->siteid == null)){
+                LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})",
+                        requiredPermission, userId);
                 return false;
-            }*/
+            }
 
 
             //get practitioner role assignment

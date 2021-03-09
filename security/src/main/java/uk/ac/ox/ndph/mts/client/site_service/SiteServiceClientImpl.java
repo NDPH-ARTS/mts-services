@@ -32,9 +32,10 @@ public class SiteServiceClientImpl implements SiteServiceClient {
 
     @Autowired
     public SiteServiceClientImpl(final WebClient.Builder webClientBuilder,
-                                 @Value("${site.service.uri}") String assignmentRolesUrl, SecurityContextUtil securityContextUtil) {
+                                 @Value("${site.service.uri}") String assignmentRolesUrl,
+                                 SecurityContextUtil securityContextUtil) {
         this.webClient = webClientBuilder.baseUrl(assignmentRolesUrl).build();
-        this.securityContextUtil=securityContextUtil;
+        this.securityContextUtil = securityContextUtil;
     }
 
     /**
