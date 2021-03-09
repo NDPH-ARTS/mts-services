@@ -6,7 +6,7 @@ on:
       - "**.md"
   push:
     # ONLY main branch should be listed below!
-    branches: [main]
+    branches: [ main ]
   # schedule only runs on the main branch
   schedule:
     # * is a special character in YAML so you have to quote this string
@@ -20,14 +20,14 @@ jobs:
       matrix:
         service_name:
           [
-            "sample-service",
-            "practitioner-service",
-            "site-service",
-            "role-service",
-            "init-service",
-            "config-server",
-            "discovery-server",
-            "gateway-server",
+              "sample-service",
+              "practitioner-service",
+              "site-service",
+              "role-service",
+              "init-service",
+              "config-server",
+              "discovery-server",
+              "gateway-server",
           ]
     env:
       GHCR: ghcr.io/ndph-arts
@@ -42,17 +42,67 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_LOGIN }}
-      - name: Build & publish runtime image
+
+      - name: Check docker images
+        id: check_docker_images
+        run: |
+          set -o nounset
+          RUNTIME_TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
+          echo "::set-output name=runtime_tag::${RUNTIME_TAG}"
+
+          # Hashing most files that can change the full dependency stage and using as a tag.
+          DEPS_TAG=$GHCR/mts-services-deps-cache-full:${{ hashFiles('Dockerfile', '**/pom*.xml') }}
+          echo "::set-output name=deps_tag::${DEPS_TAG}"
+
+          echo "Checking if the runtime image exists..."
+          # We might have failures, but shouldn't exit.
+          set +o errexit
+          docker manifest inspect $RUNTIME_TAG > /dev/null
+          RUNTIME_VALUE=$?
+          set -o errexit
+          if [ ${RUNTIME_VALUE} -eq 0 ]
+          then
+            echo "Runtime image already exists for this commit SHA, no need to rebuild it."
+            echo "::set-output name=runtime_exists::true"
+            exit 0
+          fi
+
+          set +o errexit
+          docker pull $DEPS_TAG
+          DEPS_VALUE=$?
+          set -o errexit
+          if [ ${DEPS_VALUE} -eq 0 ]
+          then
+            echo "Deps stage exists with the required tag, no need to rebuild it."
+            echo "::set-output name=deps_exists::true"
+          fi
+
+      - name: Build & publish deps stage
+        # If both images don't exist we need to build the deps (since we'll build the runtime image in the next step)
+        if: ${{ steps.check_docker_images.outputs.runtime_exists != 'true' && steps.check_docker_images.outputs.deps_exists != 'true' }}
         env:
           DOCKER_BUILDKIT: 1
         run: |
-          set -o errexit
           set -o nounset
+          set -o errexit
+          # Using stage deps-cache-full to share in all services.
+          docker build --target deps-cache-full --cache-from ${{ steps.check_docker_images.outputs.deps_tag }} \
+            --tag  ${{ steps.check_docker_images.outputs.deps_tag }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+          docker push ${{ steps.check_docker_images.outputs.deps_tag }}
 
-          TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
+      - name: Build & publish runtime image
+        if: ${{ steps.check_docker_images.outputs.runtime_exists != 'true' }}
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          set -o nounset
+          set -o errexit
+          docker build --build-arg SVC="${{ matrix.service_name }}" --build-arg DEPS_CACHE=full \
+            --cache-from ${{ steps.check_docker_images.outputs.deps_tag }} \
+            --cache-from ${{ steps.check_docker_images.outputs.runtime_tag }} \
+            --tag ${{ steps.check_docker_images.outputs.runtime_tag }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+          docker push ${{ steps.check_docker_images.outputs.runtime_tag }}
 
-          docker build --build-arg SVC="${{ matrix.service_name }}" -t $TAG .
-          docker push $TAG
       - name: Publish named image
         # The way to run this only on "merge" to main branch is to catch the "push" event into it (and schedule).
         if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push')
@@ -62,12 +112,8 @@ jobs:
         run: |
           set -o errexit
           set -o nounset
-
-          FROM_TAG=$GHCR/${{ matrix.service_name }}:${{ github.sha }}
           TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
-
-          # assume the step before created the image with the sha tag
-          docker tag $FROM_TAG $TO_TAG
+          docker tag ${{ steps.check_docker_images.outputs.runtime_tag }} $TO_TAG
           docker push $TO_TAG
 
   buildall:
