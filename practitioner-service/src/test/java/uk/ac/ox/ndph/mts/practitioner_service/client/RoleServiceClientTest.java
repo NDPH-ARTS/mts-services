@@ -8,11 +8,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.practitioner_service.configuration.WebClientConfig;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import java.io.IOException;
 
@@ -27,6 +30,9 @@ public class RoleServiceClientTest {
     private AbstractEntityServiceClient roleServiceClient;
 
     private static WebClient.Builder builder;
+
+    @MockBean
+    private SecurityContextUtil securityContextUtil;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -48,7 +54,8 @@ public class RoleServiceClientTest {
     @BeforeEach
     void initialize() {
         String baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
-        roleServiceClient = new RoleServiceClient(builder, baseUrl);
+        roleServiceClient = new RoleServiceClient(builder, baseUrl, securityContextUtil);
+        Mockito.when(securityContextUtil.getToken()).thenReturn("mocktoken");
     }
 
     @Test
