@@ -1,0 +1,14 @@
+role:
+  service:
+    name: role-service
+    url: '<role-service-url>'
+    endpoint:
+      exists: '/roles/{id}'
+      paged: '/roles/'
+      role: '/roles/{id}'
+      roles:
+        create: '/roles'
+        by:
+          ids: 'roles'
+      update:
+        permissions: '/roles/{id}/permissions'
