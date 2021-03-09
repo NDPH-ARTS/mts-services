@@ -63,11 +63,12 @@ public class Loader implements CommandLineRunner {
             var persons = trialConfig.getPersons();
 
             initProgressService.submitProgress("creating practitioner.");
-            String siteIdForUserRoles = siteIds.get(0); // This yuk but it is the assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
+            // This yuk but it is the assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
+            String siteIdForUserRoles = siteIds.get(0);
             practitionerServiceInvoker.execute(persons, siteIdForUserRoles);
             initProgressService.submitProgress("***SUCCESS***");
         }
-        catch (Exception ex){
+        catch (Exception ex) {
             initProgressService.submitProgress(ex.toString());
             initProgressService.submitProgress("***FAILURE***");
             throw ex;

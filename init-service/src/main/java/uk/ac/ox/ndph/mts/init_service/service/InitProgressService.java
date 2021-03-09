@@ -8,11 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 @Service
-public class InitProgressService implements AutoCloseable{
+public class InitProgressService implements AutoCloseable {
     private BufferedWriter writer;
 
     @Autowired
-    public InitProgressService(@Value("${INIT_PROGRESS_LOG_PATH}") String initLogMountPath) throws IOException{
+    public InitProgressService(@Value("${INIT_PROGRESS_LOG_PATH}") String initLogMountPath) throws IOException {
         writer = new BufferedWriter(new FileWriter(initLogMountPath, true));
     }
 
