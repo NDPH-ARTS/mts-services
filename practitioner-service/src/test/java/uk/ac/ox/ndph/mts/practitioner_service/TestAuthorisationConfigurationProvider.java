@@ -18,6 +18,7 @@ public class TestAuthorisationConfigurationProvider {
     public AuthorisationService authorisationService() {
         var mockService = Mockito.mock(AuthorisationService.class);
         Mockito.when(mockService.authorise(anyString())).thenReturn(true);
+        Mockito.when(mockService.authorise(anyString(), anyString())).thenReturn(true);
         return mockService;
     }
 }
