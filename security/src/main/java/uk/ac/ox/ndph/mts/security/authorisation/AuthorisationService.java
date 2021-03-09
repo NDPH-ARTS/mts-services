@@ -99,19 +99,27 @@ public class AuthorisationService {
      */
     public boolean authorise(String requiredPermission, List<String> entitiesSiteIds)  {
 
+
         try {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
 
-            LOGGER.debug("userId is - " + userId);
-            LOGGER.debug("managed identity is - " + managedIdentity);
+            LOGGER.info("userId Is - " + userId);
+            LOGGER.info("managed identity is - " + managedIdentity);
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
             if (isUserAManagedServiceIdentity(userId)) {
                 return true;
             }
+
+        /*    // Site IDis should not be null - unless this is init service setting up the root node but that user is AManagedServiceIdentity
+            if(entitiesSiteIds==null || entitiesSiteIds.stream().anyMatch(siteid->siteid==null)){
+                LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})", requiredPermission, userId);
+                return false;
+            }*/
+
 
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);

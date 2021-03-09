@@ -340,6 +340,20 @@ class AuthorisationServiceTests {
         assertThrows(AuthorisationException.class, () -> authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
     }
 
+    @Test
+    void TestAuthorise_WithNullSiteId_ReturnsFalse() {
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        List<String> siteIds = Collections.singletonList(null);
+        assertFalse(authorisationService.authorise("some_permission", siteIds));
+    }
+
+
+
     private RoleDTO getRoleWithPermissions(String roleId, String permission){
         PermissionDTO permissionDTO = new PermissionDTO();
         permissionDTO.setId(permission);
