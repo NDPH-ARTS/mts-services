@@ -7,19 +7,19 @@ fhir:
   uri: http://localhost:8099
 role:
   service:
-    uri: http://localhost:8082
+    uri: http://role-service
     endpoint:
       roles: /roles
     name: role-service
 site:
   service:
-    uri: http://localhost:8083
+    uri: http://site-service
     name: site-service
     endpoint:
       sites: /sites
 practitioner:
   service:
-    uri: http://localhost:8081
+    uri: http://practitioner-service
     name: practitioner-service
     endpoint:
       roles: /practitioner/roles

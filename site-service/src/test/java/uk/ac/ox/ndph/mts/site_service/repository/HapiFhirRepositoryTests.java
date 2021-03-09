@@ -19,8 +19,15 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThrows;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.anyString;
@@ -313,9 +320,9 @@ class HapiFhirRepositoryTests {
                 .setPartOfTarget(root);
         child.setId("the-child-id");
         final var child2 = new Organization()
-            .setName("RCC2")
-            .addAlias("Child2")
-            .setPartOfTarget(root);
+                .setName("RCC2")
+                .addAlias("Child2")
+                .setPartOfTarget(root);
         child2.setId("the-child-id-2");
         final var responseBundle = new Bundle();
         responseBundle.addEntry().setResource(child);
