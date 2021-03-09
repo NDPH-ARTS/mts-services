@@ -25,14 +25,16 @@ is_healthy() {
 docker-compose pull -q
 docker-compose up --no-build -d gateway-server config-server discovery-server
 
+# start it here to save some time
+docker-compose up --no-build -d fhir-api
+
 echo "Waiting for services to become healthy..."
 while ! is_healthy discovery-server; do sleep 10; done
 while ! is_healthy config-server; do sleep 10; done
 while ! is_healthy gateway-server; do sleep 10; done
 
 docker-compose up --no-build -d practitioner-service site-service role-service
-while ! is_healthy site-service; do sleep 10; done
-while ! is_healthy role-service; do sleep 10; done
-while ! is_healthy practitioner-service; do sleep 10; done
+
+sleep 10
 
 echo "Services started."

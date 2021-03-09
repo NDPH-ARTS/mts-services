@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
-import uk.ac.ox.ndph.mts.practitioner_service.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.client.WebClientConfig;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 
 import java.io.IOException;
