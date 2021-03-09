@@ -57,7 +57,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     private static final String REGEX_ALL = ".*";
 
     private final Logger logger = LoggerFactory.getLogger(SiteValidation.class);
-    private final Map<String, SiteConfiguration> configurationsOfSiteTypes = new HashMap<String, SiteConfiguration>();
+    private final Map<String, SiteConfiguration> configurationsOfSiteTypes = new HashMap<>();
 
     /**
      * Construct the site attribute validator. Note this class does not validate references between sites.
