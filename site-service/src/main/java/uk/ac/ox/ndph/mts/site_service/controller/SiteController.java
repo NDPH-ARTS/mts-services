@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +51,8 @@ public class SiteController {
      * Get complete sites list
      * @return ResponseEntity
      */
-    @PostAuthorize("@authorisationService.filterMySites(returnObject)")
+    @PostAuthorize(
+        "@authorisationService.filterMyFilterableSites(T(uk.ac.ox.ndph.mts.security.authorisation.FilterableSites).fromMethodNames(returnObject.getBody(), 'getParentSiteId', 'getSiteId'))")
     @GetMapping
     public ResponseEntity<List<Site>> sites() {
         List<Site> sites = siteService.findSites();

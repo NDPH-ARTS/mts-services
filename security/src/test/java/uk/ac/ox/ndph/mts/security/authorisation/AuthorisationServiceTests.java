@@ -1,24 +1,31 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.assertj.core.util.Lists;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
-import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClientImpl;
 import uk.ac.ox.ndph.mts.client.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleDTO;
+import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
+import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClientImpl;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClientImpl;
-import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClientImpl;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -280,13 +287,55 @@ class AuthorisationServiceTests {
         assertThrows(AuthorisationException.class, () -> authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
     }
 
+    @Test
+    void TestFilter_WithAuthorisedFilterable_ReturnsAll() {
+        //Arrange
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
+        List<Object> entitiesList = new ArrayList<>(
+            List.of(new TestEntityWithParentObject(null, "siteId")));
+        //Act
+        authorisationService.filterMyFilterableSites(
+            FilterableSites.fromMethodNames(entitiesList, "getParentSiteId", "getSiteId"));
+        //Assert
+        assertThat(entitiesList, containsInAnyOrder(hasProperty("siteId", Matchers.equalTo(authorisedSiteId))));
+    }
+
+    @Test
+    void TestFilter_WithMixedFiterable_ReturnsAuthorised() {
+        //Arrange
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
+        List<TestEntityWithParentObject> entitiesList = new ArrayList<>(List.of(new TestEntityWithParentObject(null, "root-id"),
+            new TestEntityWithParentObject( "root-id", authorisedSiteId),
+            new TestEntityWithParentObject( "root-id", "unauth-id")
+        ));
+        //Act
+        authorisationService.filterMyFilterableSites(
+            FilterableSites.fromMethodNames(entitiesList, "getParentSiteId", "getSiteId"));
+        System.out.println("entitiesList: " + entitiesList);
+        //Assert
+        assertThat(entitiesList, containsInAnyOrder(hasProperty("siteId", Matchers.equalTo(authorisedSiteId))));
+    }
+
     private RoleDTO getRoleWithPermissions(String roleId, String permission){
         PermissionDTO permissionDTO = new PermissionDTO();
         permissionDTO.setId(permission);
         RoleDTO roleDto = new RoleDTO();
         roleDto.setId(roleId);
         roleDto.setPermissions(Collections.singletonList(permissionDTO));
-
         return roleDto;
     }
 
@@ -300,7 +349,7 @@ class AuthorisationServiceTests {
         return roleAssignmentDTOS;
     }
 
-    private class TestEntityObject{
+    public class TestEntityObject {
 
         private String siteId;
 
@@ -312,4 +361,25 @@ class AuthorisationServiceTests {
             return this.siteId;
         }
     }
+
+    public class TestEntityWithParentObject {
+
+        private String parentSiteId;
+
+        private String siteId;
+
+        public TestEntityWithParentObject(String parentSiteId, String siteId) {
+            this.parentSiteId = parentSiteId;
+            this.siteId = siteId;
+        }
+
+        public String getParentSiteId() { return this.parentSiteId; }
+
+        public String getSiteId() { return this.siteId; }
+
+        public String toString() {
+            return "{" + this.siteId + " <- " + this.parentSiteId + "}";
+        }
+    }
+
 }

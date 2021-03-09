@@ -1,27 +1,23 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
-
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClient;
 import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClient;
-import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
-import java.lang.reflect.Method;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -192,11 +188,7 @@ public class AuthorisationService {
                     .isEmpty();
 
             //validate the required permission is present
-            if (hasNoRoleWithPermission) {
-                return false;
-            }
-
-            return true;
+            return !hasNoRoleWithPermission;
 
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed on validating user assignment role permissions. "
@@ -240,4 +232,57 @@ public class AuthorisationService {
     private boolean isUserAManagedServiceIdentity(String userId) {
         return userId.equals(managedIdentity);
     }
+
+
+
+    // version of filterMySites using FilterableSites
+
+    private <T> Set<String> getUserSitesFromFilterableSites(final FilterableSites<T> filterable,
+                                                            List<RoleAssignmentDTO> roleAssignments) {
+        final Map<String, List<String>> tree = getSiteSubTrees(filterable);
+        return roleAssignments.stream()
+            .map(role -> tree.get(role.getSiteId()))
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(Collectors.toSet());
+    }
+
+    public <T> boolean filterMyFilterableSites(final FilterableSites<T> filterable) {
+        try {
+            String userId = securityContextUtil.getUserId();
+            String token = securityContextUtil.getToken();
+            final List<RoleAssignmentDTO> roleAssignments =
+                practitionerServiceClient.getUserRoleAssignments(userId, token);
+            final Set<String> userSiteIds = getUserSitesFromFilterableSites(filterable, roleAssignments);
+            filterable.removeIf(filterableObject -> !userSiteIds.contains(filterable.getSiteId(filterableObject)));
+            return true;
+        } catch (Exception e) {
+            // empty out the filterable just in case
+            filterable.removeEvery();
+            return false;
+        }
+    }
+
+    public <T> Map<String, List<String>> getSiteSubTrees(final FilterableSites<T> filterable) {
+        final Map<String, String> parentsBySiteId = new HashMap<>();
+        for (final T t : filterable) {
+            parentsBySiteId.put(filterable.getSiteId(t), filterable.getParentSiteId(t));
+        }
+        final Map<String, List<String>> siteSubTrees = new HashMap<>();
+        for (final String siteId : parentsBySiteId.keySet()) {
+            if (!siteSubTrees.containsKey(siteId)) {
+                siteSubTrees.put(siteId,
+                    new ArrayList<>(Collections.singletonList(siteId)));
+            }
+            String parentSiteId = parentsBySiteId.get(siteId);
+            while (parentSiteId != null) {
+                siteSubTrees.computeIfAbsent(parentSiteId,
+                    k -> new ArrayList<>(Collections.singletonList(k)))
+                    .add(siteId);
+                parentSiteId = parentsBySiteId.get(parentSiteId);
+            }
+        }
+        return siteSubTrees;
+    }
+
 }
