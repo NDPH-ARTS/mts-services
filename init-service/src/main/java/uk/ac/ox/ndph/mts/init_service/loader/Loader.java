@@ -10,7 +10,6 @@ import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressService;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.ServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 
 import java.io.IOException;
