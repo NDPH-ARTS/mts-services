@@ -1,7 +1,5 @@
 package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +35,6 @@ import java.util.List;
 @RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerController.class);
     private final EntityService entityService;
     private final SecurityContextUtil securityContextUtil;
 
