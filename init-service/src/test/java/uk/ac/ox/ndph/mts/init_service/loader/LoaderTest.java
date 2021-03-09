@@ -9,10 +9,12 @@ import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
+import uk.ac.ox.ndph.mts.init_service.service.InitProgressService;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.anyList;
@@ -34,9 +36,12 @@ class LoaderTest {
     @Mock
     PractitionerServiceInvoker practitionerServiceInvoker;
 
+    @Mock
+    InitProgressService initProgressService;
+
     @Test
-    void testLoader() throws InterruptedException {
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
+    void testLoader() throws InterruptedException, IOException {
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressService);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).execute(anyList());
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());

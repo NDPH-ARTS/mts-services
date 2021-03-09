@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
+import uk.ac.ox.ndph.mts.init_service.service.InitProgressService;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.ServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -21,36 +23,56 @@ public class Loader implements CommandLineRunner {
     private final RoleServiceInvoker roleServiceInvoker;
     private final SiteServiceInvoker siteServiceInvoker;
     private final Trial trialConfig;
+    private final InitProgressService initProgressService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
     @Value("${delay-start:1}")
     private long delayStartInSeconds;
 
-    @Value("${INIT_STORAGE_ACCOUNT_CONNECTION_STRING}")
-    private String initStorageConnectionString;
-
     @Autowired
     public Loader(Trial trialConfig, PractitionerServiceInvoker practitionerServiceInvoker,
-                  RoleServiceInvoker roleServiceInvoker, SiteServiceInvoker siteServiceInvoker) {
+                  RoleServiceInvoker roleServiceInvoker, SiteServiceInvoker siteServiceInvoker,
+                  InitProgressService initProgressService) {
         this.trialConfig = trialConfig;
         this.practitionerServiceInvoker = practitionerServiceInvoker;
         this.roleServiceInvoker = roleServiceInvoker;
         this.siteServiceInvoker = siteServiceInvoker;
+        this.initProgressService = initProgressService;
     }
 
     @Override
-    public void run(String... args) throws InterruptedException {
+    public void run(String... args) throws InterruptedException, IOException {
         // Give the other services some time to come online.
+        initProgressService.submitProgress(String.format("init service delaying for %d seconds.", delayStartInSeconds));
         Thread.sleep(delayStartInSeconds * 1000);
 
-        LOGGER.info("init connection string=" + initStorageConnectionString);
+        try {
+            initProgressService.submitProgress("getting roles from config.");
+            var roles = trialConfig.getRoles();
 
-        roleServiceInvoker.execute(trialConfig.getRoles());
-        List<String> siteIds = siteServiceInvoker.execute(trialConfig.getSites());
-        // This yuk but it is the assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
-        String siteIdForUserRoles = siteIds.get(0);
-        practitionerServiceInvoker.execute(trialConfig.getPersons(), siteIdForUserRoles);
+            initProgressService.submitProgress("creating roles.");
+            roleServiceInvoker.execute(roles);
+
+            initProgressService.submitProgress("getting sites from config.");
+            var sites = trialConfig.getSites();
+
+            initProgressService.submitProgress("creating sites.");
+            List<String> siteIds = siteServiceInvoker.execute(sites);
+
+            initProgressService.submitProgress("getting persons from config.");
+            var persons = trialConfig.getPersons();
+
+            initProgressService.submitProgress("creating practitioner.");
+            String siteIdForUserRoles = siteIds.get(0); // This yuk but it is the assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
+            practitionerServiceInvoker.execute(persons, siteIdForUserRoles);
+            initProgressService.submitProgress("***SUCCESS***");
+        }
+        catch (Exception ex){
+            initProgressService.submitProgress(ex.toString());
+            initProgressService.submitProgress("***FAILURE***");
+            throw ex;
+        }
     }
 }
 
