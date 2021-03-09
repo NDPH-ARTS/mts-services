@@ -18,29 +18,29 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThrows;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RoleAssignmentValidationTests {
 
-    @Mock
-    private RoleServiceClient roleServiceClient;
     @Captor
     ArgumentCaptor<String> roleIdCaptor;
-
-    @Mock
-    private SiteServiceClient siteServiceClient;
     @Captor
     ArgumentCaptor<String> siteIdCaptor;
-
+    @Mock
+    private RoleServiceClient roleServiceClient;
+    @Mock
+    private SiteServiceClient siteServiceClient;
     private RoleAssignmentValidation validator;
 
     @BeforeEach
     void setup() {
-         this.validator = new RoleAssignmentValidation(roleServiceClient, siteServiceClient);
+        this.validator = new RoleAssignmentValidation(roleServiceClient, siteServiceClient);
     }
 
     @ParameterizedTest
