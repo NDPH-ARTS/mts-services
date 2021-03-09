@@ -186,19 +186,20 @@ class PractitionerControllerTests {
         // Arrange
         String returnedValue = "123";
         when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenReturn(returnedValue);
-        String jsonString = "{}";
+        String jsonString = "{\"siteId\": \"siteId\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(returnedValue)));
     }
+
     @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenServiceFails_Returns502() throws Exception {
         // Arrange
         when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenThrow(RestException.class);
-        String jsonString = "{}";
+        String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
 
         // Act + Assert
         this.mockMvc
