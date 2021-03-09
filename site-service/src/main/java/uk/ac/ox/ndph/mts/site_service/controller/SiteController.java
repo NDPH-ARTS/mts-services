@@ -63,7 +63,7 @@ public class SiteController {
                 site.setParentSiteName(siteNames.get(site.getParentSiteId()));
             }
         });
-        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
+        return ResponseEntity.status(HttpStatus.OK).body(sites);
     }
 
     /**

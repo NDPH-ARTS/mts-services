@@ -1,12 +1,18 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.springframework.stereotype.Component;
+import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
+import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -57,6 +63,24 @@ public class SiteTreeUtil {
                         new ArrayList<>(Collections.singletonList(parentSite.getSiteId())));
             }
             sitesSubTrees.get(parentSite.getSiteId()).add(siteToAdd.getSiteId());
+        }
+    }
+
+    public Set<String> getUserSites(List<SiteDTO> sites, List<RoleAssignmentDTO> roleAssignments) {
+        Map<String, ArrayList<String>> tree = getSiteSubTrees(sites);
+
+        return roleAssignments.stream()
+                .flatMap(roleAssignmentDTO ->
+                        tree.getOrDefault(roleAssignmentDTO.getSiteId(), new ArrayList<>()).stream())
+                .collect(Collectors.toSet());
+    }
+
+    public String getSiteIdFromObj(Object obj, String methodName) {
+        try {
+            Method getSiteMethod = obj.getClass().getMethod(methodName);
+            return Objects.toString(getSiteMethod.invoke(obj), null);
+        } catch (Exception e) {
+            throw new AuthorisationException("Error parsing sites from request body.", e);
         }
     }
 }

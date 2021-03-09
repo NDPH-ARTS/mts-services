@@ -16,6 +16,11 @@ public class SiteDTO {
         //constructor used for deserialization
     }
 
+    public SiteDTO(String siteId, String parentSiteId) {
+        this.siteId = siteId;
+        this.parentSiteId = parentSiteId;
+    }
+
     public String getSiteId() {
         return siteId;
     }

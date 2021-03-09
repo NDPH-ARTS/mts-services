@@ -73,7 +73,7 @@ public class AuthorisationService {
         // The reason we are using reflection is because we should be able to authorise any object in the system
         // it should have a site id property and should have a method to retrieve it
         List<String> siteIds = requestEntities.stream()
-                .map(site -> getSiteIdFromObj(site, methodName))
+                .map(site -> siteTreeUtil.getSiteIdFromObj(site, methodName))
                 .collect(Collectors.toList());
         return authorise(requiredPermission, siteIds);
     }
@@ -146,18 +146,26 @@ public class AuthorisationService {
     public boolean filterMySites(ResponseEntity<List<?>> returnObject) {
 
         try {
-            var body = MAPPER.writeValueAsString(returnObject.getBody());
-            List<SiteDTO> sites = MAPPER.readValue(body, new TypeReference<List<SiteDTO>>() { });
+            var body = Objects.requireNonNull(returnObject.getBody());
+
+            List<SiteDTO> sites = body.stream()
+                    .map(siteObject -> {
+                        var siteId =  siteTreeUtil.getSiteIdFromObj(siteObject, "getSiteId");
+                        var parentSiteId =  siteTreeUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
+                        return new SiteDTO(siteId, parentSiteId);
+                    }).collect(Collectors.toList());
+
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
-            Set<String> userSites = getUserSites(sites, roleAssignments);
+            Set<String> userSites = siteTreeUtil.getUserSites(sites, roleAssignments);
 
             Objects.requireNonNull(returnObject.getBody())
-                    .removeIf(siteObject -> !userSites.contains(getSiteIdFromObj(siteObject, "getSiteId")));
+                    .removeIf(siteObject ->
+                            !userSites.contains(siteTreeUtil.getSiteIdFromObj(siteObject, "getSiteId")));
 
             return true;
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return false;
         }
 
@@ -219,27 +227,9 @@ public class AuthorisationService {
                                           List<RoleAssignmentDTO> roleAssignments,
                                           List<String> entitiesSiteIds) {
 
-        Set<String> allSitesInRoles = getUserSites(sites, roleAssignments);
+        Set<String> allSitesInRoles = siteTreeUtil.getUserSites(sites, roleAssignments);
 
         return allSitesInRoles.containsAll(entitiesSiteIds);
-    }
-
-    private Set<String> getUserSites(List<SiteDTO> sites, List<RoleAssignmentDTO> roleAssignments) {
-        Map<String, ArrayList<String>> tree = siteTreeUtil.getSiteSubTrees(sites);
-
-        return roleAssignments.stream()
-                .flatMap(roleAssignmentDTO ->
-                        tree.getOrDefault(roleAssignmentDTO.getSiteId(), new ArrayList<>()).stream())
-                .collect(Collectors.toSet());
-    }
-
-    private String getSiteIdFromObj(Object obj, String methodName) {
-        try {
-            Method getSiteMethod = obj.getClass().getMethod(methodName);
-            return getSiteMethod.invoke(obj).toString();
-        } catch (Exception e) {
-            throw new AuthorisationException("Error parsing sites from request body.", e);
-        }
     }
 
     /**
