@@ -52,7 +52,7 @@ public class SiteController {
      * @return ResponseEntity
      */
     @PostAuthorize(
-        "@authorisationService.filterMyFilterableSites(T(uk.ac.ox.ndph.mts.security.authorisation.FilterableSites).fromMethodNames(returnObject.getBody(), 'getParentSiteId', 'getSiteId'))")
+        "@authorisationService.filterMyFilterableSites(@authorisationService.asFilterable(returnObject.getBody()))")
     @GetMapping
     public ResponseEntity<List<Site>> sites() {
         List<Site> sites = siteService.findSites();

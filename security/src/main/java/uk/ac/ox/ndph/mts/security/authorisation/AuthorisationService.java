@@ -16,6 +16,7 @@ import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClient;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -236,6 +237,11 @@ public class AuthorisationService {
 
 
     // version of filterMySites using FilterableSites
+
+    // convenience factory for default filterable implementation with usual method names
+    public <T> FilterableSites<T> asFilterable(final Collection<T> source) {
+        return FilterableSites.fromMethodNames(source, "getParentSiteId", "getSiteId");
+    }
 
     private <T> Set<String> getUserSitesFromFilterableSites(final FilterableSites<T> filterable,
                                                             List<RoleAssignmentDTO> roleAssignments) {
