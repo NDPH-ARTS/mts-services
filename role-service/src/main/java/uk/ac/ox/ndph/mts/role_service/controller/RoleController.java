@@ -2,8 +2,6 @@ package uk.ac.ox.ndph.mts.role_service.controller;
 
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +32,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/roles")
 public class RoleController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoleController.class);
     private final RoleRepository roleRepository;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
