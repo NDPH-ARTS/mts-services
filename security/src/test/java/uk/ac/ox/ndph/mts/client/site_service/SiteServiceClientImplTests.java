@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes=SecurityContextUtil.class)
+@SpringBootTest(classes = {SecurityContextUtil.class})
 class SiteServiceClientImplTests {
 
     public static TestServiceBackend mockBackEnd;

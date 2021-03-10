@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.client;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
@@ -22,7 +23,7 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
         Objects.requireNonNull(id, "id must be non-null");
         return webClient.get()
                 .uri(serviceExistsRoute, id)
-                .header("Authorization", "Bearer " + securityContextUtil.getToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityContextUtil.getToken())
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
