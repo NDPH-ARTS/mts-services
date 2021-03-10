@@ -47,7 +47,7 @@ public class SiteServiceClientImpl implements SiteServiceClient {
     public List<SiteDTO> getAllSites() {
 
         return webClient.get().uri(sitesRoute)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityContextUtil.getToken())
+                .headers( (headers) -> headers.setBearerAuth(securityContextUtil.getToken()) )
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),

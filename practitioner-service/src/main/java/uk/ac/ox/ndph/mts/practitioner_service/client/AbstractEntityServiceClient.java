@@ -23,7 +23,7 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
         Objects.requireNonNull(id, "id must be non-null");
         return webClient.get()
                 .uri(serviceExistsRoute, id)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityContextUtil.getToken())
+                .headers( (headers) -> headers.setBearerAuth(securityContextUtil.getToken()) )
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
