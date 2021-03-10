@@ -12,35 +12,13 @@ const roleWithPermissions = {
     ]
 }
 
-const createPerson = {
-    "prefix": "Ms",
-    "givenName": "Cookie",
-    "familyName": "Cookie"
-}
-
-const createCCO = {
-    "name": utils.getRandomString(5),
-    "alias": utils.getRandomString(3),
-    "siteType": "CCO"
-}
-
-const createSite = {
-    "name": utils.getRandomString(5),
-    "alias": utils.getRandomString(3),
-    "parentSiteId": "",
-    "siteType": "REGION"
-}
-
 const assignRole = {
+    "practionerId": "",
     "siteId": "",
     "roleId": ""
 }
 
 module.exports = {
     roleWithPermissions,
-    createPerson,
-    createSite,
-    assignRole,
-    createCCO
+    assignRole
 };
-

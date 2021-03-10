@@ -2,35 +2,33 @@ const requests = require('../../data/assign-roles/assign-roles')
 const conf = require('../../config/conf')
 const sitesEndpointUri = '/api/sites';
 const rolesEndpointUri = '/api/roles';
+const profileEndpointUri = '/api/practitioner/profile'
 const practitionerEndpointUri = '/api/practitioner'
-let assignRoleEndpointUri = '/api/practitioner/{personId}/roles'
+let assignRoleEndpointUri = '/api/practitioner/{profileId}/roles'
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");
 
 
 describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
 
-    it('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
+    it.only('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
 
-        //get parent site Id from sites endpoint
+        // get parent site Id from sites endpoint
         const getSitesResponse = await baseRequest.get(sitesEndpointUri);
         const captureParentSiteId = getSitesResponse.text
         let parseParentSiteIdData = JSON.parse(captureParentSiteId)
         parentSiteId = parseParentSiteIdData[0].siteId
 
-        //request posted to practitioner end point
-        let headers = await utils.getHeadersWithAuth()
-        let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
+        // get the profile Id from profile endpoint
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + profileEndpointUri, {
             headers: headers,
-            method: 'POST',
-            body: JSON.stringify(requests.createPerson),
+            method: 'GET',
         })
-        let personResponse = await fetchResponse.json();
-        const capturePersonResponseData = personResponse
-        let parsePersonResponseData = capturePersonResponseData
-        personId = parsePersonResponseData.id
+        let response = await fetchResponse.json();
+        profileId = response[0].id
 
-        //request posted to role service endpoint
+        // request posted to role service endpoint
         const roleResponse = await baseRequest.post(rolesEndpointUri).send(requests.roleWithPermissions)
         const captureRoleResponseData = roleResponse.text
         let parseRoleResponseData = JSON.parse(captureRoleResponseData)
@@ -39,15 +37,16 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
         //assign roles to a person
         let assignRoleJSON = requests.assignRole
         assignRoleJSON.siteId = parentSiteId
+        assignRoleJSON.practionerId = profileId
         assignRoleJSON.roleId = roleId
-        let headers1 = await utils.getHeadersWithAuth()
-        assignRoleEndpointUri = assignRoleEndpointUri.replace("{personId}", personId);
-        let fetchResponse1 = await fetch(conf.baseUrl + assignRoleEndpointUri, {
-            headers: headers1,
+        assignRoleEndpointUri = conf.baseUrl + assignRoleEndpointUri.replace("{profileId}", profileId);
+
+        let fetchResponse2 = await fetch(assignRoleEndpointUri, {
+            headers: headers,
             method: 'POST',
             body: JSON.stringify(assignRoleJSON),
         })
-
-        expect(fetchResponse1.status).to.equal(HttpStatus.CREATED)
+        expect(fetchResponse2.status).to.equal(HttpStatus.CREATED)
     });
+
 });
