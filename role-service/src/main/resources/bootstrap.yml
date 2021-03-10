@@ -3,11 +3,10 @@ spring:
     name: role-service
   cloud:
     config:
-      enabled: false
       discovery:
-        enabled: false
-    discovery:
-      enabled: true
+        enabled: true
+        service-id: CONFIG-SERVER
+      fail-fast: true
 
 eureka:
   client:
