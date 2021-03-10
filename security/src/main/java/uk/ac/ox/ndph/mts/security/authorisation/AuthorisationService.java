@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -105,8 +106,8 @@ public class AuthorisationService {
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
 
-            LOGGER.info("userId Is - " + userId);
-            LOGGER.info("managed identity is - " + managedIdentity);
+            LOGGER.debug("userId Is - {}", userId);
+            LOGGER.debug("managed identity is - {}", managedIdentity);
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
@@ -116,7 +117,7 @@ public class AuthorisationService {
 
             // Site IDis should not be null - unless this is init service setting up the root node,
             // but that user is AManagedServiceIdentity
-            if (entitiesSiteIds == null || entitiesSiteIds.stream().anyMatch(siteid -> siteid == null)) {
+            if (entitiesSiteIds == null || entitiesSiteIds.stream().anyMatch(Objects::isNull)) {
                 LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})",
                         requiredPermission, userId);
                 return false;
