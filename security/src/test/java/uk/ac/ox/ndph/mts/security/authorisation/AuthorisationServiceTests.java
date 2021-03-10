@@ -39,7 +39,7 @@ class AuthorisationServiceTests {
     @Mock
     private SecurityContextUtil securityContextUtil;
 
-    private SiteTreeUtil siteTreeUtil;
+    private SiteUtil siteUtil;
 
     private AuthorisationService authorisationService;
 
@@ -48,7 +48,7 @@ class AuthorisationServiceTests {
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
-                new SiteTreeUtil(),
+                new SiteUtil(),
                 practitionerServiceClient,
                 roleServiceClient,
                 siteServiceClient);

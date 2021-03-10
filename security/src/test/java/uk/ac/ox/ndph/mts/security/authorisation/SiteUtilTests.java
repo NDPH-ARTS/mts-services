@@ -10,13 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SiteTreeUtilTests {
+class SiteUtilTests {
 
-    private SiteTreeUtil siteTreeUtil;
+    private SiteUtil siteUtil;
 
     @BeforeEach
     void setUp()  {
-        this.siteTreeUtil = new SiteTreeUtil();
+        this.siteUtil = new SiteUtil();
     }
 
     @Test
@@ -24,7 +24,7 @@ class SiteTreeUtilTests {
 
         List<SiteDTO> sites = Lists.emptyList();
 
-        assertTrue(siteTreeUtil.getSiteSubTrees(sites).isEmpty());
+        assertTrue(siteUtil.getSiteSubTrees(sites).isEmpty());
     }
 
     @Test
@@ -33,7 +33,7 @@ class SiteTreeUtilTests {
         SiteDTO expectedSiteDto = getSiteDto("siteId", "parentSiteId");
         List<SiteDTO> sites = Collections.singletonList(expectedSiteDto);
 
-        var actualTree = siteTreeUtil.getSiteSubTrees(sites);
+        var actualTree = siteUtil.getSiteSubTrees(sites);
         assertAll(
                 ()-> assertEquals(1, actualTree.size()),
                 ()-> assertEquals(1, actualTree.get("siteId").size()),
@@ -48,7 +48,7 @@ class SiteTreeUtilTests {
         SiteDTO childSiteDto = getSiteDto("childSiteId", "parentSiteId");
         List<SiteDTO> sites = List.of(parentSiteDto, childSiteDto);
 
-        var actualTrees = siteTreeUtil.getSiteSubTrees(sites);
+        var actualTrees = siteUtil.getSiteSubTrees(sites);
 
         assertAll(
                 //The tree contains all subtrees
@@ -72,7 +72,7 @@ class SiteTreeUtilTests {
 
         List<SiteDTO> sites = List.of(childSiteDto, parentSiteDto, childSiteDto2);
 
-        var actualTrees = siteTreeUtil.getSiteSubTrees(sites);
+        var actualTrees = siteUtil.getSiteSubTrees(sites);
 
         assertAll(
                 //The tree contains all subtrees

@@ -17,7 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class SiteTreeUtil {
+public class SiteUtil {
 
     /**
      * Get all subtrees
@@ -66,6 +66,12 @@ public class SiteTreeUtil {
         }
     }
 
+    /**
+     * Return all user sites
+     * @param sites all trial sites
+     * @param roleAssignments user's role assignments
+     * @return set of siteIds
+     */
     public Set<String> getUserSites(List<SiteDTO> sites, List<RoleAssignmentDTO> roleAssignments) {
         Map<String, ArrayList<String>> tree = getSiteSubTrees(sites);
 
@@ -75,6 +81,12 @@ public class SiteTreeUtil {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Get site id from an object
+     * @param obj object
+     * @param methodName object's method name to retrieve sited id
+     * @return String site id
+     */
     public String getSiteIdFromObj(Object obj, String methodName) {
         try {
             Method getSiteMethod = obj.getClass().getMethod(methodName);

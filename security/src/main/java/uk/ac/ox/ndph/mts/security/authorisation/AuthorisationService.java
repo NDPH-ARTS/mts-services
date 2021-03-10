@@ -31,7 +31,7 @@ public class AuthorisationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
     private final SecurityContextUtil securityContextUtil;
-    private final SiteTreeUtil siteTreeUtil;
+    private final SiteUtil siteUtil;
 
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
@@ -44,12 +44,12 @@ public class AuthorisationService {
 
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityContextUtil,
-                                final SiteTreeUtil siteTreeUtil,
+                                final SiteUtil siteUtil,
                                 final PractitionerServiceClient practitionerServiceClient,
                                 final RoleServiceClient roleServiceClient,
                                 final SiteServiceClient siteServiceClient) {
         this.securityContextUtil = securityContextUtil;
-        this.siteTreeUtil = siteTreeUtil;
+        this.siteUtil = siteUtil;
         this.practitionerServiceClient = practitionerServiceClient;
         this.roleServiceClient = roleServiceClient;
         this.siteServiceClient = siteServiceClient;
@@ -67,7 +67,7 @@ public class AuthorisationService {
         // The reason we are using reflection is because we should be able to authorise any object in the system
         // it should have a site id property and should have a method to retrieve it
         List<String> siteIds = requestEntities.stream()
-                .map(site -> siteTreeUtil.getSiteIdFromObj(site, methodName))
+                .map(site -> siteUtil.getSiteIdFromObj(site, methodName))
                 .collect(Collectors.toList());
         return authorise(requiredPermission, siteIds);
     }
@@ -137,26 +137,31 @@ public class AuthorisationService {
         }
     }
 
-    public boolean filterMySites(ResponseEntity<List<?>> returnObject) {
+    /**
+     * Filter unauthorised sites
+     * @param sitesReturnObject all sites returned object
+     * @return true if filtering finished successfully
+     */
+    public boolean filterMySites(ResponseEntity<List<?>> sitesReturnObject) {
 
         try {
-            var body = Objects.requireNonNull(returnObject.getBody());
+            var body = Objects.requireNonNull(sitesReturnObject.getBody());
 
             List<SiteDTO> sites = body.stream()
                     .map(siteObject -> {
-                        var siteId =  siteTreeUtil.getSiteIdFromObj(siteObject, "getSiteId");
-                        var parentSiteId =  siteTreeUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
+                        var siteId =  siteUtil.getSiteIdFromObj(siteObject, "getSiteId");
+                        var parentSiteId =  siteUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
                         return new SiteDTO(siteId, parentSiteId);
                     }).collect(Collectors.toList());
 
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
-            Set<String> userSites = siteTreeUtil.getUserSites(sites, roleAssignments);
+            Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
 
-            Objects.requireNonNull(returnObject.getBody())
+            Objects.requireNonNull(sitesReturnObject.getBody())
                     .removeIf(siteObject ->
-                            !userSites.contains(siteTreeUtil.getSiteIdFromObj(siteObject, "getSiteId")));
+                            !userSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
 
             return true;
         } catch (Exception e) {
@@ -221,7 +226,7 @@ public class AuthorisationService {
                                           List<RoleAssignmentDTO> roleAssignments,
                                           List<String> entitiesSiteIds) {
 
-        Set<String> allSitesInRoles = siteTreeUtil.getUserSites(sites, roleAssignments);
+        Set<String> allSitesInRoles = siteUtil.getUserSites(sites, roleAssignments);
 
         return allSitesInRoles.containsAll(entitiesSiteIds);
     }
