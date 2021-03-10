@@ -1,0 +1,6 @@
+application:
+  message: '"My app settings value here"'
+azure:
+  keyvault:
+    enabled: false
+    uri: https://ityekv.vault.azure.net/

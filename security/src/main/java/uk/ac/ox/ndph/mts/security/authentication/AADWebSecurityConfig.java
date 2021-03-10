@@ -46,7 +46,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors(); // See https://www.baeldung.com/spring-cors
 
         // Do not create user sessions
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // This requires all requests to have a valid token
         http.authorizeRequests() //NOSONAR

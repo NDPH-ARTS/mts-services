@@ -15,7 +15,7 @@
         data
     </description>
     <properties>
-        <okhttp.version>4.9.0</okhttp.version>
+        <okhttp.version>4.9.1</okhttp.version>
     </properties>
 
     <dependencies>
