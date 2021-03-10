@@ -11,7 +11,8 @@ public class SiteServiceClient extends AbstractEntityServiceClient {
 
     @Autowired
     public SiteServiceClient(final WebClient.Builder webClientBuilder,
-                             @Value("${site.service.uri}") String serviceUrlBase, SecurityContextUtil securityContextUtil) {
+                             @Value("${site.service.uri}") String serviceUrlBase,
+                             SecurityContextUtil securityContextUtil) {
         this.serviceUrlBase = serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
         this.serviceExistsRoute = "/sites/{siteId}";
