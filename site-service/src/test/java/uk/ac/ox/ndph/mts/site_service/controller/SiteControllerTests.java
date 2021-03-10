@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.TestSiteConfiguration;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8099"})
+@ActiveProfiles("no-authZ")
 @AutoConfigureMockMvc
 class SiteControllerTests {
 
@@ -73,7 +75,7 @@ class SiteControllerTests {
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -85,7 +87,7 @@ class SiteControllerTests {
     void TestPostSite_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -97,7 +99,7 @@ class SiteControllerTests {
     void TestPostSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenThrow(RestException.class);
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
 
         // Act + Assert
         this.mockMvc
@@ -110,7 +112,7 @@ class SiteControllerTests {
     void TestPostSite_WhenArgumentException_Returns400() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
-        final String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        final String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         final var error = this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -118,16 +120,6 @@ class SiteControllerTests {
         assertThat(error, notNullValue());
         assertThat(error.getMessage(), containsString("name"));
     }
-
-    @Test
-    void TestPostSite_WhenNotAuthorized_Returns401() throws Exception {
-
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
-        this.mockMvc
-                .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andDo(print()).andExpect(status().isUnauthorized());
-    }
-
 
     @WithMockUser
     @Test
