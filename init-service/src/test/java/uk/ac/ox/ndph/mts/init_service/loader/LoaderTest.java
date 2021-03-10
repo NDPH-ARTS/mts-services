@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Permission;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
@@ -54,11 +55,11 @@ class LoaderTest {
 
     @Test
     void testLoader_ThrowException() throws IOException, InterruptedException {
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressService);
-        var spyLoader = Mockito.spy(loader);
-        doThrow(new IOException()).when(spyLoader).run();
+        //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
+        when(roleServiceInvoker.execute(anyList())).thenThrow(new NullEntityException(anyString()));
 
-        Assertions.assertThrows(IOException.class, ()-> spyLoader.run());
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressService);
+        Assertions.assertThrows(NullEntityException.class, ()-> loader.run());
     }
 
     Trial mockedTrial() {
