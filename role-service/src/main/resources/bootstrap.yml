@@ -1,6 +1,13 @@
 spring:
   application:
     name: role-service
+  cloud:
+    config:
+      enabled: false
+      discovery:
+        enabled: false
+    discovery:
+      enabled: false
 
 eureka:
   client:
