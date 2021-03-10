@@ -11,7 +11,8 @@ public class RoleServiceClient extends AbstractEntityServiceClient {
 
     @Autowired
     public RoleServiceClient(final WebClient.Builder webClientBuilder,
-                             @Value("${role.service.uri}") String serviceUrlBase, SecurityContextUtil securityContextUtil) {
+                             @Value("${role.service.uri}") String serviceUrlBase,
+                             SecurityContextUtil securityContextUtil) {
         this.serviceUrlBase =  serviceUrlBase;
         this.webClient = webClientBuilder.baseUrl(serviceUrlBase).build();
         this.serviceExistsRoute = "/roles/{id}";
