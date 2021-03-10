@@ -7,7 +7,7 @@ spring:
       discovery:
         enabled: false
     discovery:
-      enabled: false
+      enabled: true
 
 eureka:
   client:
