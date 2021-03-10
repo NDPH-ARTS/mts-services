@@ -24,8 +24,6 @@ public class Loader implements CommandLineRunner {
     private final Trial trialConfig;
     private final InitProgressService initProgressService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
-
     @Value("${delay-start:1}")
     private long delayStartInSeconds;
 

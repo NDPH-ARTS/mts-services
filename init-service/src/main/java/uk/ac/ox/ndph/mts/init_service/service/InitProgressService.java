@@ -17,7 +17,7 @@ public class InitProgressService implements AutoCloseable {
     }
 
     public void submitProgress(String text) throws IOException {
-        writer.append(String.format("%s: %s\n", java.time.Clock.systemUTC().instant(), text));
+        writer.append(String.format("%s: %s%n", java.time.Clock.systemUTC().instant(), text));
     }
 
     @Override

@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import static org.hamcrest.Matchers.containsString;
 
 @ExtendWith(MockitoExtension.class)
-public class InitProgressServiceTest {
+class InitProgressServiceTest {
 
     private final String filePath = "c:\\temp\\log.txt";
 
