@@ -34,12 +34,9 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
                     !line.isEmpty() && line.size() > 2 ? line.get(2).getValue() : "",
                     !line.isEmpty() && line.size() > 3 ? line.get(3).getValue() : "",
                     !line.isEmpty() && line.size() > 4 ? line.get(4).getValue() : "",
-                    org.getAddress().get(0) != null && org.getAddress().get(0).getCity() != null
-                            ? org.getAddress().get(0).getCity() : "",
-                    org.getAddress().get(0) != null && org.getAddress().get(0).getCountry() != null
-                            ? org.getAddress().get(0).getCountry() : "",
-                    org.getAddress().get(0) != null && org.getAddress().get(0).getPostalCode() != null
-                            ? org.getAddress().get(0).getPostalCode() : "");
+                    org.getAddress().get(0).getCity() != null ? org.getAddress().get(0).getCity() : "",
+                    org.getAddress().get(0).getCountry() != null ? org.getAddress().get(0).getCountry() : "",
+                    org.getAddress().get(0).getPostalCode() != null ? org.getAddress().get(0).getPostalCode() : "");
         } else {
             return null;
         }
