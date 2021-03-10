@@ -2,8 +2,6 @@ package uk.ac.ox.ndph.mts.init_service.service;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.hamcrest.Matchers.containsString;
 
 @ExtendWith(MockitoExtension.class)
 class InitProgressServiceTest {
