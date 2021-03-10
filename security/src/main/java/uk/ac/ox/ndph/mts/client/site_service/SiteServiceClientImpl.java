@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.client.site_service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -47,7 +46,7 @@ public class SiteServiceClientImpl implements SiteServiceClient {
     public List<SiteDTO> getAllSites() {
 
         return webClient.get().uri(sitesRoute)
-                .headers( (headers) -> headers.setBearerAuth(securityContextUtil.getToken()) )
+                .headers((headers) -> headers.setBearerAuth(securityContextUtil.getToken()))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
