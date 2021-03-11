@@ -14,7 +14,7 @@
         <insert tableName="permission">
             <column name="id" value="create-person"/>
             <column name="created_by" value="katesan"/>
-            <column name="modified_by" value="katesan"/>
+            <column name="modified_by" value="darrensmi"/>
         </insert>
 
 
