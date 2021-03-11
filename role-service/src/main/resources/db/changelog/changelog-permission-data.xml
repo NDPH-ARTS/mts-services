@@ -16,6 +16,18 @@
             <column name="created_by" value="katesan"/>
             <column name="modified_by" value="katesan"/>
         </insert>
+      
+        <insert tableName="permission">
+            <column name="id" value="assign-role"/>
+            <column name="created_by" value="katesan"/>
+            <column name="modified_by" value="katesan"/>
+        </insert>
+      
+        <insert tableName="permission">
+            <column name="id" value="link-user"/>
+            <column name="created_by" value="katesan"/>
+            <column name="modified_by" value="katesan"/>
+        </insert>
 
 
     </changeSet>
