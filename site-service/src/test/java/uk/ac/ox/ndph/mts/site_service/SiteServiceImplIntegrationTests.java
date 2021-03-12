@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8099" })
-@ActiveProfiles("test-all-required")
+@ActiveProfiles({"no-authZ", "test-all-required"})
 @AutoConfigureMockMvc
 class SiteServiceImplIntegrationTests {
 
@@ -43,6 +44,7 @@ class SiteServiceImplIntegrationTests {
     @MockBean
     public FhirRepository repository;
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
@@ -62,6 +64,7 @@ class SiteServiceImplIntegrationTests {
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
         // Arrange
@@ -74,6 +77,7 @@ class SiteServiceImplIntegrationTests {
         assertThat(error, containsString("Name"));
     }
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange
@@ -92,6 +96,7 @@ class SiteServiceImplIntegrationTests {
         assertThat(error, containsString("test error"));
     }
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenValidParentInput_Returns201AndId() throws Exception {
         // Arrange
@@ -108,6 +113,7 @@ class SiteServiceImplIntegrationTests {
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestGetSites_ReturnsList() throws Exception {
         // Arrange
@@ -122,6 +128,7 @@ class SiteServiceImplIntegrationTests {
                 .andExpect(status().isOk()).andExpect(content().string(containsString("\"this-is-my-id\"")));
     }
 
+    @WithMockUser
     @Test
     void TestGetSites_WhenNoSites_ReturnsInternalServerError() throws Exception {
         // Arrange
@@ -133,6 +140,7 @@ class SiteServiceImplIntegrationTests {
         assertThat(message, containsString("No root site"));
     }
 
+    @WithMockUser
     @Test
     void TestGetSiteById_WhenSiteExists_ReturnsSite() throws Exception {
         // arrange
@@ -152,6 +160,7 @@ class SiteServiceImplIntegrationTests {
         assertThat(content, stringContainsInOrder("\"alias\":", org.getAlias().get(0).toString()));
     }
 
+    @WithMockUser
     @Test
     void TestGetSiteById_WhenRepositoryThrows_ReturnBadGateway() throws Exception {
         // Arrange
@@ -164,6 +173,7 @@ class SiteServiceImplIntegrationTests {
         assertThat(error, containsString("test error"));
     }
 
+    @WithMockUser
     @Test
     void TestGetSiteById_WhenSiteDoesNotExist_ReturnsNotFoundError() throws Exception {
         // Arrange

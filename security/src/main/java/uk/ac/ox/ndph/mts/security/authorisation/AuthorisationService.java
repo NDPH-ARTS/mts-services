@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -99,19 +100,29 @@ public class AuthorisationService {
      */
     public boolean authorise(String requiredPermission, List<String> entitiesSiteIds)  {
 
+
         try {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
 
-            LOGGER.debug("userId is - " + userId);
-            LOGGER.debug("managed identity is - " + managedIdentity);
+            LOGGER.debug("userId Is - {}", userId);
+            LOGGER.debug("managed identity is - {}", managedIdentity);
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
             if (isUserAManagedServiceIdentity(userId)) {
                 return true;
             }
+
+            // Site IDis should not be null - unless this is init service setting up the root node,
+            // but that user is AManagedServiceIdentity
+            if (entitiesSiteIds == null || entitiesSiteIds.stream().anyMatch(Objects::isNull)) {
+                LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})",
+                        requiredPermission, userId);
+                return false;
+            }
+
 
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);

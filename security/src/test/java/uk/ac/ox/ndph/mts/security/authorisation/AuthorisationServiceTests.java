@@ -17,6 +17,8 @@ import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClientImpl;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -339,6 +341,35 @@ class AuthorisationServiceTests {
         //Assert
         assertThrows(AuthorisationException.class, () -> authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
     }
+
+    @Test
+    void TestAuthorise_WithNullSiteIdInList_ReturnsFalse() {
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        List<String> siteIdsOneNull = Collections.singletonList(null);
+        assertFalse(authorisationService.authorise("some_permission", siteIdsOneNull));
+
+        List<String> siteIdsOneNullOneNot = Arrays.asList("site42", null);
+        assertFalse(authorisationService.authorise("some_permission", siteIdsOneNullOneNot));
+    }
+
+    @Test
+    void TestAuthorise_WithNullSiteIdList_ReturnsFalse() {
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        List<String> siteIds = null;
+        assertFalse(authorisationService.authorise("some_permission", siteIds));
+    }
+
+
 
     private RoleDTO getRoleWithPermissions(String roleId, String permission){
         PermissionDTO permissionDTO = new PermissionDTO();
