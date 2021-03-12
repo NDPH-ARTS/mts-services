@@ -71,6 +71,7 @@ public class PractitionerController {
         return ResponseEntity.ok(entityService.findPractitionerById(id));
     }
 
+    @PreAuthorize("@authorisationService.authorise('assign-role', #roleAssignment.siteId)") //NOSONAR
     @PostMapping(path = "/{practitionerId}/roles")
     public ResponseEntity<Response> saveRoleAssignment(@PathVariable String practitionerId,
                                                        @RequestBody RoleAssignment roleAssignment) {
@@ -81,7 +82,7 @@ public class PractitionerController {
 
     @GetMapping(path = "/roles")
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
-            @NotBlank @NotNull @RequestParam String userIdentity) {
+        @NotBlank @NotNull @RequestParam String userIdentity) {
         if (!StringUtils.hasText(userIdentity)) {
             throw new RestException("Required String parameter 'userIdentity' is blank");
         }

@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,9 @@ import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import java.util.Collections;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -64,11 +67,11 @@ class PractitionerControllerTests {
         // Arrange
         String practitionerId = "practitionerId";
         when(entityService.findPractitionerById(practitionerId))
-                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "site not found"));
+            .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "site not found"));
         // Act + Assert
         this.mockMvc
-                .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+            .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 
     @WithMockUser
@@ -77,12 +80,12 @@ class PractitionerControllerTests {
         // Arrange
         String practitionerId = "practitionerId";
         when(entityService.findPractitionerById(practitionerId))
-                .thenReturn(new Practitioner("42", "prefix", "given", "family", "userAccountId"));
+            .thenReturn(new Practitioner("42", "prefix", "given", "family", "userAccountId"));
         // Act + Assert
         this.mockMvc
-                .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("42"));
+            .perform(get(practitionerUri + "/" + practitionerId).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("42"));
     }
 
     @WithMockUser
@@ -90,7 +93,7 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
         this.mockMvc.perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest());
     }
 
     @WithMockUser
@@ -101,8 +104,8 @@ class PractitionerControllerTests {
         String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+            .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+            .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @WithMockUser
@@ -113,8 +116,8 @@ class PractitionerControllerTests {
         String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
+            .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+            .andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
     @WithMockUser
@@ -126,8 +129,8 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isBadGateway());
+            .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+            .andExpect(status().isBadGateway());
     }
 
     @WithMockUser
@@ -139,8 +142,8 @@ class PractitionerControllerTests {
 
         // Act + Assert
         String error = this.mockMvc
-                .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
+            .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+            .andExpect(status().isUnprocessableEntity()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("prefix"));
     }
 
@@ -149,8 +152,8 @@ class PractitionerControllerTests {
     void TestLinkPractitioner_whenParamsNotPresent_error() throws Exception {
         // Act
         this.mockMvc.perform(post(practitionerLinkUri)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
         // Assert
         verify(entityService, never()).linkPractitioner((any(PractitionerUserAccount.class)));
     }
@@ -163,10 +166,10 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(post(practitionerLinkUri)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .content(new ObjectMapper().writeValueAsString(new PractitionerUserAccount("", "directoryId"))))
-                                 .andExpect(status().isOk());
+            .perform(post(practitionerLinkUri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(new PractitionerUserAccount("", "directoryId"))))
+            .andExpect(status().isOk());
     }
 
     // RoleAssignment Tests
@@ -176,7 +179,7 @@ class PractitionerControllerTests {
     void TestPostRoleAssignment_WhenNoBody_Returns400() throws Exception {
         // Act + Assert
         this.mockMvc.perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest());
     }
 
     @WithMockUser
@@ -186,24 +189,25 @@ class PractitionerControllerTests {
         // Arrange
         String returnedValue = "123";
         when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenReturn(returnedValue);
-        String jsonString = "{}";
+
+        String jsonString = "{\"siteId\": \"abc\"}";
         // Act + Assert
         this.mockMvc
-                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString(returnedValue)));
+            .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+            .andExpect(status().isCreated())
+            .andExpect(content().string(containsString(returnedValue)));
     }
     @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenServiceFails_Returns502() throws Exception {
         // Arrange
         when(entityService.saveRoleAssignment(any(RoleAssignment.class))).thenThrow(RestException.class);
-        String jsonString = "{}";
+        String jsonString = "{\"siteId\": \"abc\", \"roleId\": \"123\"}";
 
         // Act + Assert
         this.mockMvc
-                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(status().isBadGateway());
+            .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+            .andExpect(status().isBadGateway());
     }
 
     @WithMockUser
@@ -213,8 +217,8 @@ class PractitionerControllerTests {
         // Arrange
         // Act + Assert
         String error = this.mockMvc
-                .perform(get(roleAssignmentByUserIdentityUri).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is4xxClientError()).andReturn().getResolvedException().getMessage();
+            .perform(get(roleAssignmentByUserIdentityUri).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is4xxClientError()).andReturn().getResolvedException().getMessage();
 
         assertThat(error, equalTo("Required String parameter 'userIdentity' is not present"));
     }
@@ -226,9 +230,9 @@ class PractitionerControllerTests {
         // Arrange
         // Act + Assert
         String error = this.mockMvc
-                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", Strings.EMPTY)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
+            .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", Strings.EMPTY)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is5xxServerError()).andReturn().getResolvedException().getMessage();
 
         assertThat(error, equalTo("Required String parameter 'userIdentity' is blank"));
     }
@@ -245,10 +249,10 @@ class PractitionerControllerTests {
 
         // Act + Assert
         this.mockMvc
-                .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", "123").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(
-                        content().string(containsString(jsonExpectedRoleAssignment)));
+            .perform(get(roleAssignmentByUserIdentityUri).param("userIdentity", "123").contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(
+                content().string(containsString(jsonExpectedRoleAssignment)));
     }
 
     @WithMockUser
@@ -262,18 +266,18 @@ class PractitionerControllerTests {
         when(securityContextUtil.getUserId()).thenReturn(userID);
 
         List<Practitioner> practitionersFromService = Collections.singletonList(
-                new Practitioner("dummy-id", "dummy-prefix", "dummy-given-name", familyName, userID));
+            new Practitioner("dummy-id", "dummy-prefix", "dummy-given-name", familyName, userID));
         when(entityService.getPractitionersByUserIdentity(userID)).thenReturn(practitionersFromService);
 
 
 
         this.mockMvc
-                .perform(get(practitionerProfileUri))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].userAccountId").value(userID))
-                .andExpect(jsonPath("$[0].familyName").value(familyName));
+            .perform(get(practitionerProfileUri))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$[0].userAccountId").value(userID))
+            .andExpect(jsonPath("$[0].familyName").value(familyName));
     }
 
 }
