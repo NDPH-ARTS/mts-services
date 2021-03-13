@@ -3,7 +3,7 @@ package uk.ac.ox.ndph.mts.site_service.model;
 /**
  * Address Model - Common could be UK, US, encapsulates common address attributes
  */
-public class Address {
+public class SiteAddress {
     private String address1;
     private String address2;
     private String address3;
@@ -13,8 +13,8 @@ public class Address {
     private String country;
     private String postcode;
 
-    public Address(String address1, String address2, String address3, String address4,
-                   String address5, String city, String country, String postcode) {
+    public SiteAddress(String address1, String address2, String address3, String address4,
+                       String address5, String city, String country, String postcode) {
         this.address1 = address1;
         this.address2 = address2;
         this.address3 = address3;

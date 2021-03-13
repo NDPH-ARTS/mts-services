@@ -2,7 +2,7 @@ package uk.ac.ox.ndph.mts.site_service.converter;
 
 import org.hl7.fhir.r4.model.Organization;
 import org.junit.jupiter.api.Test;
-import uk.ac.ox.ndph.mts.site_service.model.Address;
+import uk.ac.ox.ndph.mts.site_service.model.SiteAddress;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,16 +26,19 @@ class OrganizationConverterTest {
     private static final String CITY = "city";
     private static final String COUNTRY = "country";
     private static final String POSTCODE = "postcode";
-    private static final Address ADDRESS = new Address(ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, ADDRESS5, CITY, COUNTRY, POSTCODE);
+    private static final SiteAddress SITE_ADDRESS = new SiteAddress(ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, ADDRESS5, CITY, COUNTRY, POSTCODE);
 
     private final OrganizationConverter orgConverter = new OrganizationConverter();
+    private final AddressConverter addressConverter = new AddressConverter();
 
     @Test
     void TestConvert_AllPropertiesSpecified_returnsMatchingOrg() {
         // arrange
         final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, SITE_TYPE);
+        orgConverter.setConverter(addressConverter);
         // act
         final Organization org = orgConverter.convert(site);
+
         // assert
         assertThat(org.getName(), equalTo(site.getName()));
         assertThat(org.getIdElement().getIdPart(), equalTo(ORG_ID));
@@ -49,7 +52,9 @@ class OrganizationConverterTest {
     @Test
     void TestConvert_AllPropertiesSpecifiedIncludingAddress_returnsMatchingOrg() {
         // arrange
-        final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, SITE_TYPE, ADDRESS);
+        final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, SITE_TYPE);
+        site.setAddress(SITE_ADDRESS);
+        orgConverter.setConverter(addressConverter);
         // act
         final Organization org = orgConverter.convert(site);
         // assert

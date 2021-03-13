@@ -28,6 +28,8 @@ class SiteConverterTest {
     private static final String POSTCODE = "postcode";
 
     private final SiteConverter siteConverter = new SiteConverter();
+    private final SiteAddressConverter siteAddressConverter = new SiteAddressConverter();
+
 
     @Test
     void TestConvert_AllPropertiesSpecified_returnsMatchingSite() {
@@ -57,6 +59,7 @@ class SiteConverterTest {
         org.addAddress().addLine(ADDRESS_1).addLine(ADDRESS_2).
                 addLine(ADDRESS_3).addLine(ADDRESS_4).addLine(ADDRESS_5).
                 setCity(CITY).setCountry(COUNTRY).setPostalCode(POSTCODE);
+        siteConverter.setConverter(siteAddressConverter);
         // act
         final Site site = siteConverter.convert(org);
         // assert
@@ -84,6 +87,7 @@ class SiteConverterTest {
         org.setPartOf(new Reference(SERVER_PARENT_ID));
         org.addAddress().addLine(ADDRESS_1).
                 setCity(CITY).setCountry(COUNTRY).setPostalCode(POSTCODE);
+        siteConverter.setConverter(siteAddressConverter);
         // act
         final Site site = siteConverter.convert(org);
         // assert
@@ -105,6 +109,7 @@ class SiteConverterTest {
         org.addAlias(ORG_ALIAS);
         org.setPartOf(new Reference(SERVER_PARENT_ID));
         org.addAddress().setId("1");
+        siteConverter.setConverter(siteAddressConverter);
         // act
         final Site site = siteConverter.convert(org);
         // assert
