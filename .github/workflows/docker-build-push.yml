@@ -97,7 +97,9 @@ jobs:
         run: |
           set -o nounset
           set -o errexit
-          docker build --build-arg SVC="${{ matrix.service_name }}" --build-arg DEPS_CACHE=full \
+          # prepare the version used for runtime telemetry
+          VERSION=${{ github.sha }}:$(mvn help:evaluate --projects ${{ matrix.service_name }} -Dexpression=project.version -q -DforceStdout)
+          docker build --build-arg SVC="${{ matrix.service_name }}" --build-arg DEPS_CACHE=full --build-arg VERSION=${VERSION} \
             --cache-from ${{ steps.check_docker_images.outputs.deps_tag }} \
             --cache-from ${{ steps.check_docker_images.outputs.runtime_tag }} \
             --tag ${{ steps.check_docker_images.outputs.runtime_tag }} --build-arg BUILDKIT_INLINE_CACHE=1 .
@@ -113,6 +115,8 @@ jobs:
           set -o errexit
           set -o nounset
           TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
+          # Sscheduled runs skip the build, so need to pull for the image to be present to retag/push.
+          docker pull ${{ steps.check_docker_images.outputs.runtime_tag }}
           docker tag ${{ steps.check_docker_images.outputs.runtime_tag }} $TO_TAG
           docker push $TO_TAG
 
