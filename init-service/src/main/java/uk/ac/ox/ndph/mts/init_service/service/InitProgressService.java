@@ -15,9 +15,7 @@ public class InitProgressService implements AutoCloseable {
 
     @Autowired
     public InitProgressService(@Value("${INIT_PROGRESS_LOG_PATH:}") String initLogMountPath) throws IOException {
-        //if (!StringUtils.hasText(initLogMountPath)) {
-            writer = new BufferedWriter(new FileWriter(initLogMountPath, true));
-        //}
+        writer = new BufferedWriter(new FileWriter(initLogMountPath, true));
     }
 
     public void submitProgress(String text) throws IOException {
