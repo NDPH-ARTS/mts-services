@@ -39,7 +39,8 @@ public class Loader implements CommandLineRunner {
     @Override
     public void run(String... args) throws InterruptedException, IOException {
         // Give the other services some time to come online.
-        initProgressReporter.submitProgress(String.format("init service delaying for %d seconds.", delayStartInSeconds));
+        initProgressReporter.submitProgress(String.format("init service delaying for %d seconds.",
+                delayStartInSeconds));
         Thread.sleep(delayStartInSeconds * 1000);
 
         try {

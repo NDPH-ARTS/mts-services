@@ -18,7 +18,7 @@ public class InitProgressReporter implements AutoCloseable {
 
     @Autowired
     public InitProgressReporter(@Value("${INIT_PROGRESS_LOG_PATH:}") String initLogMountPath) throws IOException {
-        LOGGER.info(String.format("initializing InitProgressReporter with log file [%s]",initLogMountPath));
+        LOGGER.info(String.format("initializing InitProgressReporter with log file [%s]", initLogMountPath));
         if (StringUtils.hasText(initLogMountPath)) {
             writer = new BufferedWriter(new FileWriter(initLogMountPath, true));
         }
