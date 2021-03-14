@@ -23,6 +23,7 @@ public class InitProgressReporter implements AutoCloseable {
     public void submitProgress(String text) throws IOException {
         if (writer != null) {
             writer.append(String.format("%s: %s%n", java.time.Clock.systemUTC().instant(), text));
+            writer.flush();
         }
     }
 
