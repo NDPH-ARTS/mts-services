@@ -14,9 +14,7 @@ import java.io.IOException;
 @Service
 public class InitProgressReporter implements AutoCloseable {
     private BufferedWriter writer;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(InitProgressReporter.class);
-
 
     @Autowired
     public InitProgressReporter(@Value("${INIT_PROGRESS_LOG_PATH:}") String initLogMountPath) throws IOException {
