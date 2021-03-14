@@ -1,14 +1,14 @@
 package uk.ac.ox.ndph.mts.site_service.converter;
 
+import org.hamcrest.core.IsNull;
 import org.hl7.fhir.r4.model.Organization;
 import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAddress;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class OrganizationConverterTest {
@@ -27,6 +27,7 @@ class OrganizationConverterTest {
     private static final String COUNTRY = "country";
     private static final String POSTCODE = "postcode";
     private static final SiteAddress SITE_ADDRESS = new SiteAddress(ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, ADDRESS5, CITY, COUNTRY, POSTCODE);
+    private static final SiteAddress SITE_ADDRESS_WITH_NULLS = new SiteAddress(null, null, null, null, null, null, null, null);
 
     private final OrganizationConverter orgConverter = new OrganizationConverter();
     private final AddressConverter addressConverter = new AddressConverter();
@@ -50,7 +51,7 @@ class OrganizationConverterTest {
     }
 
     @Test
-    void TestConvert_AllPropertiesSpecifiedIncludingAddress_returnsMatchingOrg() {
+    void TestConvert_AllPropertiesSpecifiedWithAddress_returnsMatchingOrg() {
         // arrange
         final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, SITE_TYPE);
         site.setAddress(SITE_ADDRESS);
@@ -73,6 +74,28 @@ class OrganizationConverterTest {
         assertThat(org.getAddress().get(0).getCity(), containsString(CITY));
         assertThat(org.getAddress().get(0).getCountry(), containsString(COUNTRY));
         assertThat(org.getAddress().get(0).getPostalCode(), containsString(POSTCODE));
+    }
+
+    @Test
+    void TestConvert_AllPropertiesSpecifiedWithNullAddress_returnsMatchingOrg() {
+        // arrange
+        final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, SITE_TYPE);
+        site.setAddress(SITE_ADDRESS_WITH_NULLS);
+        orgConverter.setConverter(addressConverter);
+        // act
+        final Organization org = orgConverter.convert(site);
+        // assert
+        assertThat(org.getName(), equalTo(site.getName()));
+        assertThat(org.getIdElement().getIdPart(), equalTo(ORG_ID));
+        assertThat(org.getAlias().size(), equalTo(1));
+        final String alias = org.getAlias().get(0).getValueAsString();
+        assertThat(alias, containsString(ALIAS));
+        assertThat(org.getPartOf().getReference(), containsString(PARENT_ID));
+        assertThat(org.getImplicitRules(), containsString(SITE_TYPE));
+        assertEquals(org.getAddress().get(0).getLine().size(), 0);
+        assertThat(org.getAddress().get(0).getCity(), is(IsNull.nullValue()));
+        assertThat(org.getAddress().get(0).getCountry(), is(IsNull.nullValue()));
+        assertThat(org.getAddress().get(0).getPostalCode(), is(IsNull.nullValue()));
     }
 
     @Test
