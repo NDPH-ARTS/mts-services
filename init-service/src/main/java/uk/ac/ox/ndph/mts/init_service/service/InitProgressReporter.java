@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,12 @@ import java.io.IOException;
 public class InitProgressReporter implements AutoCloseable {
     private BufferedWriter writer;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitProgressReporter.class);
+
+
     @Autowired
     public InitProgressReporter(@Value("${INIT_PROGRESS_LOG_PATH:}") String initLogMountPath) throws IOException {
+        LOGGER.info(String.format("initializing InitProgressReporter with log file [%s]",initLogMountPath));
         if (StringUtils.hasText(initLogMountPath)) {
             writer = new BufferedWriter(new FileWriter(initLogMountPath, true));
         }
@@ -22,6 +28,7 @@ public class InitProgressReporter implements AutoCloseable {
 
     public void submitProgress(String text) throws IOException {
         if (writer != null) {
+            LOGGER.info(text);
             writer.append(String.format("%s: %s%n", java.time.Clock.systemUTC().instant(), text));
             writer.flush();
         }
