@@ -92,7 +92,7 @@ class OrganizationConverterTest {
         assertThat(alias, containsString(ALIAS));
         assertThat(org.getPartOf().getReference(), containsString(PARENT_ID));
         assertThat(org.getImplicitRules(), containsString(SITE_TYPE));
-        assertEquals(org.getAddress().get(0).getLine().size(), 0);
+        assertEquals(0, org.getAddress().get(0).getLine().size());
         assertThat(org.getAddress().get(0).getCity(), is(IsNull.nullValue()));
         assertThat(org.getAddress().get(0).getCountry(), is(IsNull.nullValue()));
         assertThat(org.getAddress().get(0).getPostalCode(), is(IsNull.nullValue()));
