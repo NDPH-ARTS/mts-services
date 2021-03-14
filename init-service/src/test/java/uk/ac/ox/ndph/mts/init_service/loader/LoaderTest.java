@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Permission;
@@ -12,7 +11,7 @@ import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
-import uk.ac.ox.ndph.mts.init_service.service.InitProgressService;
+import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
@@ -36,11 +35,11 @@ class LoaderTest {
     PractitionerServiceInvoker practitionerServiceInvoker;
 
     @Mock
-    InitProgressService initProgressService;
+    InitProgressReporter initProgressReporter;
 
     @Test
     void testLoader() throws InterruptedException, IOException {
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressService);
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).execute(anyList());
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
@@ -58,8 +57,8 @@ class LoaderTest {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
         when(roleServiceInvoker.execute(anyList())).thenThrow(new NullEntityException(anyString()));
 
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressService);
-        Assertions.assertThrows(NullEntityException.class, ()-> loader.run());
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter);
+        Assertions.assertThrows(NullEntityException.class, loader::run);
     }
 
     Trial mockedTrial() {

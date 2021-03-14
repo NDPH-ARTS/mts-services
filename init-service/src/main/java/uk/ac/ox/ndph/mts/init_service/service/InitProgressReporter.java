@@ -10,11 +10,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 @Service
-public class InitProgressService implements AutoCloseable {
+public class InitProgressReporter implements AutoCloseable {
     private BufferedWriter writer;
 
     @Autowired
-    public InitProgressService(@Value("${INIT_PROGRESS_LOG_PATH:}") String initLogMountPath) throws IOException {
+    public InitProgressReporter(@Value("${INIT_PROGRESS_LOG_PATH:}") String initLogMountPath) throws IOException {
         if (StringUtils.hasText(initLogMountPath)) {
             writer = new BufferedWriter(new FileWriter(initLogMountPath, true));
         }
