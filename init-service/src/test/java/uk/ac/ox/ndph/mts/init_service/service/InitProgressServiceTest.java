@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 @ExtendWith(MockitoExtension.class)
 class InitProgressServiceTest {
 
-    private final String filePath = "c:\\temp\\log.txt";
+    private final String filePath = "log.txt";
 
     @Test
     void testSubmitProgress() throws IOException {
