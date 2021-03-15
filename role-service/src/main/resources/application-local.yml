@@ -1,0 +1,19 @@
+# for local work we specify the uri's manually using env vars
+server:
+  port: 8083
+  error:
+    include-message: always
+    include-binding-errors: always
+ 
+spring:
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-role-service-master.xml
+    drop-first: true
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+  hateos:
+    use-hal-as-default-json-media-type: false
+
+
