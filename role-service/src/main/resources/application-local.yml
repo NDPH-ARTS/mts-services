@@ -7,13 +7,13 @@ server:
  
 spring:
   liquibase:
-    change-log: classpath:/db/changelog/changelog-role-service-master.xml
-    drop-first: true
+    change-log: classpath:db/changelog/changelog-role-service-master.xml
+    drop-first: false
     enabled: true
   jpa:
     hibernate:
       ddl-auto: none
-  hateos:
+  hateoas:
     use-hal-as-default-json-media-type: false
 
 
