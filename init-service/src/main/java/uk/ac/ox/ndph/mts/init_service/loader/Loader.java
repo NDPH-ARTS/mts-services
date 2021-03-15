@@ -39,35 +39,36 @@ public class Loader implements CommandLineRunner {
     @Override
     public void run(String... args) throws InterruptedException, IOException {
         // Give the other services some time to come online.
-        initProgressReporter.submitProgress(String.format("init service delaying for %d seconds.",
-                delayStartInSeconds));
+        initProgressReporter.submitProgress(String.format(LoaderProgress.ENTRY_POINT.message(), delayStartInSeconds));
         Thread.sleep(delayStartInSeconds * 1000);
 
         try {
-            initProgressReporter.submitProgress("getting roles from config.");
+            initProgressReporter.submitProgress(LoaderProgress.GET_ROLES_FROM_CONFIG.message());
             var roles = trialConfig.getRoles();
 
-            initProgressReporter.submitProgress("creating roles.");
+            initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
             roleServiceInvoker.execute(roles);
 
-            initProgressReporter.submitProgress("getting sites from config.");
+            initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();
 
-            initProgressReporter.submitProgress("creating sites.");
+            initProgressReporter.submitProgress(LoaderProgress.CREATE_SITES.message());
             List<String> siteIds = siteServiceInvoker.execute(sites);
 
-            initProgressReporter.submitProgress("getting persons from config.");
+            initProgressReporter.submitProgress(LoaderProgress.GET_PERSONS_FROM_CONFIG.message());
             var persons = trialConfig.getPersons();
 
-            initProgressReporter.submitProgress("creating practitioner.");
+            initProgressReporter.submitProgress(String.format(
+                    LoaderProgress.SELECT_FIRST_SITE_FROM_COLLECTION_OF_SIZE.message(), siteIds.size()));
             // Assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
             String siteIdForUserRoles = siteIds.get(0);
+            initProgressReporter.submitProgress(LoaderProgress.CREATE_PRACTITIONER.message());
             practitionerServiceInvoker.execute(persons, siteIdForUserRoles);
-            initProgressReporter.submitProgress("***SUCCESS***");
+            initProgressReporter.submitProgress(LoaderProgress.FINISHED_SUCCESSFULY.message());
         }
         catch (Exception ex) {
             initProgressReporter.submitProgress(ex.toString());
-            initProgressReporter.submitProgress("***FAILURE***");
+            initProgressReporter.submitProgress(LoaderProgress.FAILURE.message());
             throw ex;
         }
     }

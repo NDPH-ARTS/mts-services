@@ -27,9 +27,9 @@ class InitProgressReporterTest {
         initProgressService.close();
 
         Path path = Paths.get(filePath);
-
         String read = Files.readString(path);
         MatcherAssert.assertThat(read, CoreMatchers.containsString(expectedData));
+        Files.deleteIfExists(path);
     }
 
     @Test
