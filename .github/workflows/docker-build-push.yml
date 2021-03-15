@@ -115,7 +115,7 @@ jobs:
           set -o errexit
           set -o nounset
           TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
-          # Sscheduled runs skip the build, so need to pull for the image to be present to retag/push.
+          # Scheduled runs skip the build, so need to pull for the image to be present to retag/push.
           docker pull ${{ steps.check_docker_images.outputs.runtime_tag }}
           docker tag ${{ steps.check_docker_images.outputs.runtime_tag }} $TO_TAG
           docker push $TO_TAG
