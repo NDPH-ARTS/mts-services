@@ -49,5 +49,4 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
         }
     }
 
-
 }
