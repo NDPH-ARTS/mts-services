@@ -9,5 +9,8 @@
     "micrometer": {
       "enabled": true
     }
+  },
+  "customDimensions":{
+    "service.version": "unknown_version"
   }
 }
