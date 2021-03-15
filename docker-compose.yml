@@ -22,7 +22,7 @@ services:
       SITE_SERVICE_URI: "http://site-service:8083"
       PRACTITIONER_SERVICE_URI: "http://practitioner-service:8081"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-      SPRING_CLOUD_CONFIG_LABEL: "346fixapi"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       # This is the id of the client application
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
@@ -50,7 +50,7 @@ services:
       JDBC_URL: jdbc:sqlserver://sql:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-      SPRING_CLOUD_CONFIG_LABEL: "346fixapi"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     healthcheck:
@@ -75,7 +75,7 @@ services:
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
       FHIR_URI: "http://fhir-api:8099"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-      SPRING_CLOUD_CONFIG_LABEL: "346fixapi"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     healthcheck:
@@ -104,7 +104,7 @@ services:
       SITE_SERVICE_URI: "http://site-service:8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-      SPRING_CLOUD_CONFIG_LABEL: "346fixapi"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       # the following 3 entries allow getting a token to send to other services
       AZURE_USERNAME: ${INIT_SERVICE_ACCOUNT_USERNAME}
