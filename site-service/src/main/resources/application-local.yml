@@ -9,27 +9,35 @@ fhir:
 address:
   addressType:
     - name : addressLine1
+      type: string
       displayName : AddressLine1
       validationRegex: '^[a-zA-Z\s]{1,35}$'
     - name : addressLine2
+      type: string
       displayName : AddressLine2
       validationRegex: '^[a-zA-Z\s]{1,35}$'
     - name : addressLine3
+      type: string
       displayName : AddressLine3
       validationRegex: '^[a-zA-Z\s]{1,35}$'
     - name : addressLine4
+      type: string
       displayName : AddressLine4
       validationRegex: '^[a-zA-Z\s]{1,35}$'
     - name: addressLine5
+      type: string
       displayName: AddressLine5
       validationRegex: '^[a-zA-Z\s]{1,35}$'
     - name: city
+      type: string
       displayName: City
       validationRegex: '^[a-zA-Z\s]{1,80}$'
     - name: country
+      type: string
       displayName: Country
       validationRegex: '^[a-zA-Z\s]{1,40}$'
     - name: postcode
+      type: string
       displayName: Postcode
       validationRegex: '^[a-zA-Z\s]{1,8}$'
 site:

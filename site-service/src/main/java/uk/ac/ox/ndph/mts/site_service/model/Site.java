@@ -71,7 +71,7 @@ public class Site {
     private String siteId;
     private String parentSiteId;
     private String siteType;
-    private SiteAddress siteAddress;
+    private SiteAddress address;
 
     /**
      * Returns the name associated with the Site.
@@ -163,10 +163,10 @@ public class Site {
     }
 
     public SiteAddress getAddress() {
-        return siteAddress;
+        return address;
     }
 
     public void setAddress(SiteAddress siteAddress) {
-        this.siteAddress = siteAddress;
+        this.address = siteAddress;
     }
 }
