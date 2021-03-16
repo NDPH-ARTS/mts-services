@@ -121,13 +121,15 @@ public class AuthorisationService {
                 return false;
             }
 
-            if (!hasValidPermissions(requiredPermission, roleAssignments)) {
+            var rolesAssignmentsWithPermission = getRolesAssignmentsWithPermission(requiredPermission, roleAssignments);
+
+            if (rolesAssignmentsWithPermission.isEmpty()) {
                 return false;
             }
 
             List<SiteDTO> sites = siteServiceClient.getAllSites();
 
-            return isAuthorisedToAllSites(sites, roleAssignments, entitiesSiteIds);
+            return isAuthorisedToAllSites(sites, rolesAssignmentsWithPermission, entitiesSiteIds);
 
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
@@ -141,32 +143,22 @@ public class AuthorisationService {
      * @param roleAssignments user role assignments
      * @return true if required permission is present in one of the roles
      */
-    private boolean hasValidPermissions(String requiredPermission, List<RoleAssignmentDTO> roleAssignments) {
+    private List<RoleAssignmentDTO> getRolesAssignmentsWithPermission(String requiredPermission,
+                                                                      List<RoleAssignmentDTO> roleAssignments) {
 
-        try {
+        List<String> roleIds = roleAssignments.stream()
+                .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
 
-            List<String> roleIds = roleAssignments.stream()
-                    .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
+        //get permissions for the the practitioner role assignments
+        //and filter role assignments to be only those which have the required permission in them
+        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds).stream()
+                .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
+                .map(RoleDTO::getId)
+                .collect(Collectors.toSet());
 
-            //get permissions for the the practitioner role assignments
-            //and filter role assignments to be only those which have the required permission in them
-            var hasNoRoleWithPermission = roleServiceClient.getRolesByIds(roleIds).stream()
-                    .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
-                    .findFirst()
-                    .isEmpty();
-
-            //validate the required permission is present
-            if (hasNoRoleWithPermission) {
-                return false;
-            }
-
-            return true;
-
-        } catch (Exception e) {
-            LOGGER.info(String.format("Authorisation process failed on validating user assignment role permissions. "
-                    + "Error message: %s", e.getMessage()));
-            return false;
-        }
+        return roleAssignments.stream()
+                .filter(roleAssignment -> rolesWithPermission.contains(roleAssignment.getRoleId()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -181,8 +173,8 @@ public class AuthorisationService {
     }
 
     private boolean isAuthorisedToAllSites(List<SiteDTO> sites,
-                                          List<RoleAssignmentDTO> roleAssignments,
-                                          List<String> entitiesSiteIds) {
+                                           List<RoleAssignmentDTO> roleAssignments,
+                                           List<String> entitiesSiteIds) {
 
         Map<String, ArrayList<String>> tree = siteTreeUtil.getSiteSubTrees(sites);
 
