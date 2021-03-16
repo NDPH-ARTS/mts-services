@@ -46,16 +46,21 @@ RUN mvn dependency:go-offline --batch-mode -q -Dmaven.wagon.http.retryHandler.co
 
 FROM deps-cache-${DEPS_CACHE} as builder-cached
 ARG SVC
+ARG VERSION=dev
 # It's easier to copy everything due to dependencies between modules.
 # dockerignore should keep the build context focused on what's required.
 COPY . ./
 RUN mvn package --projects ${SVC} --batch-mode -q --also-make -Dmaven.wagon.http.retryHandler.count=3
+# inject the version into application insights settings.
+# jq was preferred but the builder image doesn't have it. Instead of installing it, using sed...
+RUN sed "s/unknown_version/${VERSION}/" applicationinsights.json > applicationinsights.runtime.json
 
 # This stage allows us to prepare all the files we need for runtime and copy in 1 layer
 FROM scratch as pre-runtime
 ARG SVC
 ARG JAR_FILE=${SVC}/target/*.jar
-COPY --from=builder-cached applicationinsights* ./runtime/
+COPY --from=builder-cached applicationinsights*.jar ./runtime/
+COPY --from=builder-cached applicationinsights.runtime.json ./runtime/applicationinsights.json
 COPY --from=builder-cached ${JAR_FILE} ./runtime/app.jar
 
 FROM ${RUNTIME_IMAGE}
