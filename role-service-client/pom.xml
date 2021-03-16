@@ -11,7 +11,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>role-service-client</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <description>Common client for accessing role-service</description>
 
     <properties>
