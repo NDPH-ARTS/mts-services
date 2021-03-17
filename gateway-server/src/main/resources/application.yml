@@ -1,6 +1,7 @@
 server:
   port: 8080
 
+# TODO: move to the config server (https://ndph-arts.atlassian.net/browse/ARTS-825)
 spring:
   cloud:
     gateway:
