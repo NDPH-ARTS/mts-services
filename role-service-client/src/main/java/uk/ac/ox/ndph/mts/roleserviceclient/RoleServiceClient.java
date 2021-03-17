@@ -257,8 +257,8 @@ public class RoleServiceClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
                                 ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
                                         serviceName, resp.statusCode(), parsedRoleIds))))
                 .bodyToMono(RoleDTO[].class)
