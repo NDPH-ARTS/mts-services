@@ -7,6 +7,7 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import java.util.List;
 @Component
 public class FhirContextWrapper {
     private final FhirContext fhirContext;
+
+    @Value("${fhir.resultCount:50}")
+    private String resultCount;
 
     /**
      * constructor
@@ -86,6 +90,7 @@ public class FhirContextWrapper {
         return fhirContext.newRestfulGenericClient(uri)
                 .search()
                 .forResource(resourceClass)
+                .count(Integer.parseInt(resultCount))
                 .returnBundle(Bundle.class);
     }
 
