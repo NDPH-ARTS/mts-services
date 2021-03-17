@@ -21,7 +21,7 @@ public class FhirContextWrapper {
     private final FhirContext fhirContext;
 
     @Value("${fhir.resultCount:50}")
-    private String result;
+    private String resultCount;
 
     /**
      * constructor
@@ -90,7 +90,7 @@ public class FhirContextWrapper {
         return fhirContext.newRestfulGenericClient(uri)
                 .search()
                 .forResource(resourceClass)
-                .count(Integer.parseInt(result))
+                .count(Integer.parseInt(resultCount))
                 .returnBundle(Bundle.class);
     }
 
