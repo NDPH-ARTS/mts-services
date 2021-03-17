@@ -43,7 +43,13 @@ public class RoleServiceClient {
     @Value("${role.service.endpoint.update.permissions}")
     private String serviceUpdatePermissions;
 
-    private final Supplier<Retry> retryPolicy;
+    private Supplier<Retry> retryPolicy;
+
+    @Autowired
+    public RoleServiceClient(WebClient.Builder webClientBuilder,  @Value("${role.service.uri}") String roleServiceUrl) {
+        this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
+        this.retryPolicy = retryPolicy;
+    }
 
     public static Consumer<HttpHeaders> noAuth() {
         return (headers) -> {
@@ -58,12 +64,12 @@ public class RoleServiceClient {
         return (headers) -> headers.setBearerAuth(token);
     }
 
-    @Autowired
     public RoleServiceClient(final WebClient.Builder webClientBuilder,
                              final Supplier<Retry> retryPolicy,
                              @Value("${role.service.uri}") String roleServiceUrl) {
-        this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
+        this(webClientBuilder, roleServiceUrl);
         this.retryPolicy = retryPolicy;
+
     }
 
     public RoleDTO getById(final String roleId,
@@ -238,5 +244,27 @@ public class RoleServiceClient {
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block());
+    }
+
+    public List<RoleDTO> getRolesByIds(final List<String> roleIds) {
+        Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
+        final String parsedRoleIds = String.join(",", roleIds);
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(serviceRolesByIds)
+                        .queryParam("ids", parsedRoleIds)
+                        .build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
+                                ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
+                                        serviceName, resp.statusCode(), parsedRoleIds))))
+                .bodyToMono(RoleDTO[].class)
+                .map(Arrays::asList)
+                .retryWhen(retryPolicy.get())
+                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+                .block();
     }
 }
