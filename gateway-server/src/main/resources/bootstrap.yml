@@ -1,46 +1,6 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: gateway-server
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          # https://cloud.spring.io/spring-cloud-gateway/reference/html/appendix.html
-          # Flag that enables DiscoveryClient gateway integration.
-          enabled: true
-          # Option to lower case serviceId in predicates and filters, defaults to false. Useful with eureka when it automatically uppercases serviceId. so MYSERIVCE, would match /myservice/**
-          lower-case-service-id: true
-      routes:
-        - id: practitioner-service
-          uri: 'lb://practitioner-service'
-          predicates:
-            - Path=/api/practitioner/**
-          filters:
-            - StripPrefix=1
-        - id: site-service
-          uri: 'lb://site-service'
-          predicates:
-            - Path=/api/sites/**
-          filters:
-            - StripPrefix=1
-        - id: role-service
-          uri: 'lb://role-service'
-          predicates:
-            - Path=/api/roles/**
-          filters:
-            - StripPrefix=1
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "*" # TODO : limit origins - or reconsider CORS approach?
-            allowedMethods:
-              - GET
-              - POST
-              - OPTIONS
-            allowedHeaders: "*"
 
 eureka:
   client:
