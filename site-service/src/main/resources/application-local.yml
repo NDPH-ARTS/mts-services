@@ -5,6 +5,7 @@ server:
     include-message: always
 fhir:
   uri: http://localhost:8099
+  resultCount: 50
 # trial site config - this is the default for local testing, with CCO/REGION/COUNTRY/LCC
 address:
   addressType:
