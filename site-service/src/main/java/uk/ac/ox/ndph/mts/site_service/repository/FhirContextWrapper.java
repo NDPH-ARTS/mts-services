@@ -18,6 +18,7 @@ import java.util.List;
 @Component
 public class FhirContextWrapper {
     private final FhirContext fhirContext;
+    private final int RESULT_COUNT = 50;
 
     /**
      * constructor
@@ -86,6 +87,7 @@ public class FhirContextWrapper {
         return fhirContext.newRestfulGenericClient(uri)
                 .search()
                 .forResource(resourceClass)
+                .count(RESULT_COUNT)
                 .returnBundle(Bundle.class);
     }
 
