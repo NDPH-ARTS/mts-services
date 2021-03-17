@@ -22,7 +22,7 @@ services:
       SITE_SERVICE_URI: "http://site-service:8083"
       PRACTITIONER_SERVICE_URI: "http://practitioner-service:8081"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-      SPRING_CLOUD_CONFIG_LABEL: "main"
+      SPRING_CLOUD_CONFIG_LABEL: "initAnat"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       # This is the id of the client application
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
