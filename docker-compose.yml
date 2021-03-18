@@ -177,7 +177,7 @@ services:
     ports:
       - "8761:8761"
     healthcheck:
-      test: curl http://discovery-server:8761/
+      test: curl http://localhost:8761/
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
@@ -195,7 +195,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: curl http://gateway-server:8080/
+      test: curl http://localhost:8080/
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
