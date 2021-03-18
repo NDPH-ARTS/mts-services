@@ -1,62 +1,36 @@
 package uk.ac.ox.ndph.mts.roleserviceclient.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-
-@Configuration
-@ConfigurationProperties("role")
-@PropertySource(value = "classpath:client-config.yml", factory = YamlPropertySourceFactory.class)
+import org.springframework.stereotype.Component;
+//TODO: Make this class a spring @Configuration class with @Value annotation
+@Component
 public class ClientRoutesConfig {
 
-    @Value("${role.service.name}")
-    private String serviceName;
-
     public String getServiceName() {
-        return serviceName;
+        return "role-service";
     }
 
     public String getServiceExistsRoute() {
-        return serviceExistsRoute;
+        return "/roles/{id}";
     }
 
     public String getServiceGetRole() {
-        return serviceGetRole;
+        return "/roles/{id}";
     }
 
     public String getServiceGetPaged() {
-        return serviceGetPaged;
+        return "/roles/";
     }
 
     public String getServiceRolesByIds() {
-        return serviceRolesByIds;
+        return "roles";
     }
 
     public String getServiceCreateRole() {
-        return serviceCreateRole;
+        return "/roles";
     }
 
     public String getServiceUpdatePermissions() {
-        return serviceUpdatePermissions;
+        return "/roles/{id}/permissions";
     }
-
-    @Value("${role.service.endpoint.exists}")
-    private String serviceExistsRoute;
-
-    @Value("${role.service.endpoint.role}")
-    private String serviceGetRole;
-
-    @Value("${role.service.endpoint.paged}")
-    private String serviceGetPaged;
-
-    @Value("${role.service.endpoint.roles.by.ids}")
-    private String serviceRolesByIds;
-
-    @Value("${role.service.endpoint.roles.create}")
-    private String serviceCreateRole;
-
-    @Value("${role.service.endpoint.update.permissions}")
-    private String serviceUpdatePermissions;
 
 }

@@ -39,8 +39,8 @@ public class RoleServiceClient {
                              Supplier<Retry> retryPolicy,
                              ClientRoutesConfig clientRoutes) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
-        this.clientRoutes = clientRoutes;
         this.retryPolicy = retryPolicy;
+        this.clientRoutes = clientRoutes;
     }
 
     public static Consumer<HttpHeaders> noAuth() {
