@@ -1,3 +1,7 @@
+/*
+create person data class file to run create person tests
+author - Sameera Purini
+*/
 const validPerson = {
     "prefix": "Ms",
     "givenName": "Cookie",
