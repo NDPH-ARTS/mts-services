@@ -140,7 +140,8 @@ public class SiteValidation implements ModelEntityValidation<Site> {
                                                       final Site site) {
         if (customAttributes != null) {
             for (final SiteAttributeConfiguration attr : customAttributes) {
-                if (attr.getType().equals("address") && site.getAddress() != null) {
+                if (attr.getType().equals("address") && site.getAddress() != null
+                        && !site.getAddress().checkEmptyOrNull()) {
                     return ok();
                 } else {
                     return invalid(String.format(Validations.ERROR.message(), "No Address in payload"));

@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
+import org.springframework.util.StringUtils;
+
 /**
  * Address Model - Common could be UK, US, encapsulates common address attributes
  */
@@ -87,5 +89,16 @@ public class SiteAddress {
 
     public void setPostcode(String postcode) {
         this.postcode = postcode;
+    }
+
+    public boolean checkEmptyOrNull() {
+        return !StringUtils.hasText(this.address1)
+                && !StringUtils.hasText(this.address2)
+                && !StringUtils.hasText(this.address3)
+                && !StringUtils.hasText(this.address4)
+                && !StringUtils.hasText(this.address5)
+                && !StringUtils.hasText(this.city)
+                && !StringUtils.hasText(this.country)
+                && !StringUtils.hasText(this.postcode);
     }
 }
