@@ -12,7 +12,3 @@ role:
           ids: 'roles'
       update:
         permissions: '/roles/{id}/permissions'
-
-role-service:
-  ribbon:
-    listOfServers: ${ROLE_SERVICE_URI:localhost:8082}
