@@ -1,4 +1,3 @@
-# why does gateway need to work in local mode?
 spring:
   cloud:
     gateway:
