@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorisationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
+    private final Logger logger = LoggerFactory.getLogger(AuthorisationService.class);
 
     private final SecurityContextUtil securityContextUtil;
     private final SiteTreeUtil siteTreeUtil;
@@ -104,8 +104,8 @@ public class AuthorisationService {
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
 
-            LOGGER.debug("userId is - " + userId);
-            LOGGER.debug("managed identity is - " + managedIdentity);
+            logger.debug("userId is - " + userId);
+            logger.debug("managed identity is - " + managedIdentity);
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
@@ -117,7 +117,7 @@ public class AuthorisationService {
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
 
             if (roleAssignments == null || roleAssignments.isEmpty()) {
-                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
+                logger.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
                 return false;
             }
 
@@ -130,7 +130,7 @@ public class AuthorisationService {
             return isAuthorisedToAllSites(sites, roleAssignments, entitiesSiteIds);
 
         } catch (Exception e) {
-            LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
+            logger.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
             return false;
         }
     }
@@ -163,7 +163,7 @@ public class AuthorisationService {
             return true;
 
         } catch (Exception e) {
-            LOGGER.info(String.format("Authorisation process failed on validating user assignment role permissions. "
+            logger.info(String.format("Authorisation process failed on validating user assignment role permissions. "
                     + "Error message: %s", e.getMessage()));
             return false;
         }

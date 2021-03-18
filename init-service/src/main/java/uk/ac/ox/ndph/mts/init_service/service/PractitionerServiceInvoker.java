@@ -21,7 +21,6 @@ import java.util.List;
 @Service
 public class PractitionerServiceInvoker extends ServiceInvoker {
     private static final Logger LOGGER = LoggerFactory.getLogger(PractitionerServiceInvoker.class);
-
     @Value("${practitioner-service.routes.create}")
     private String createEndpoint;
 

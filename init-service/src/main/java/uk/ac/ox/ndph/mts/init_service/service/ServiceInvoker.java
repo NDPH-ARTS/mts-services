@@ -19,7 +19,7 @@ import java.util.List;
 
 public abstract class ServiceInvoker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoker.class);
+    private final Logger logger = LoggerFactory.getLogger(ServiceInvoker.class);
 
     protected WebClient webClient;
 
@@ -45,10 +45,10 @@ public abstract class ServiceInvoker {
     protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected)
             throws DependentServiceException {
         try {
-            LOGGER.debug("About to get Token");
+            logger.debug("About to get Token");
             String token = azureTokenService.getToken();
-            LOGGER.debug("Token in invoker - " + token);
-            LOGGER.debug("Webclient calling: " + uri);
+            logger.debug("Token in invoker - " + token);
+            logger.debug("Webclient calling: " + uri);
             R result = webClient.post()
                         .uri(uri)
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -59,11 +59,11 @@ public abstract class ServiceInvoker {
                         .retryWhen(Retry.backoff(maxWebClientAttempts,
                                 Duration.ofSeconds(5)).maxBackoff(Duration.ofSeconds(30)))
                         .block();
-            LOGGER.debug("Webclient finished");
+            logger.debug("Webclient finished");
             return result;
         } catch (Exception e) {
-            LOGGER.warn("FAILURE connecting to dependent service {} {}", uri, e.getMessage());
-            LOGGER.warn("Exception", e);
+            logger.warn("FAILURE connecting to dependent service {} {}", uri, e.getMessage());
+            logger.warn("Exception", e);
             throw new DependentServiceException("FAILURE connecting to " + uri);
         }
     }
@@ -71,13 +71,13 @@ public abstract class ServiceInvoker {
     public List<String> execute(List<? extends Entity> entities) throws NullEntityException {
         List<String> entityIds = new ArrayList<>();
         if (entities != null) {
-            LOGGER.info("Starting to create {} entity(s)", entities.size());
+            logger.info("Starting to create {} entity(s)", entities.size());
             for (Entity entity : entities) {
-                LOGGER.info("Starting to create {}(s): {}", entity.getClass(), entity);
+                logger.info("Starting to create {}(s): {}", entity.getClass(), entity);
                 entityIds.add(create(entity));
-                LOGGER.info("Finished creating {}(s): {}", entity.getClass(), entity);
+                logger.info("Finished creating entity");
             }
-            LOGGER.info("Finished creating {} entity(s)", entities.size());
+            logger.info("Finished creating entities");
         } else {
             throw new NullEntityException("No entities in payload.");
         }

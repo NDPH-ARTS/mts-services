@@ -105,7 +105,7 @@ public class FhirContextWrapper {
                 .where(criterion)
                 .returnBundle(Bundle.class)
                 .execute();
-         logger.debug("Finished searching resources");
+        logger.debug("Finished searching resources");
 
         // extract first page
         List<IBaseResource> searchResults = this.toListOfResources(resultsBundle);

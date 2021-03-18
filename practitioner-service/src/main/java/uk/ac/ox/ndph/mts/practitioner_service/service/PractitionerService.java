@@ -59,7 +59,7 @@ public class PractitionerService implements EntityService {
                 Objects.requireNonNull(roleAssignmentStore, "RoleAssignment store cannot be null");
         this.roleAssignmentValidator =
                 Objects.requireNonNull(roleAssignmentValidator, "RoleAssignment entity validation cannot be null");
-        
+
         logger.info(Services.STARTUP.message());
     }
 
@@ -92,13 +92,13 @@ public class PractitionerService implements EntityService {
         if (!validationResponse.isValid()) {
             throw new ValidationException(validationResponse.getErrorMessage());
         }
-        
+
         Practitioner practitioner = findPractitionerById(userAccount.getPractitionerId());
         practitioner.setUserAccountId(userAccount.getUserAccountId());
-        
+
         practitionerStore.saveEntity(practitioner);
     }
-    
+
     @Override
     public String saveRoleAssignment(RoleAssignment roleAssignment) {
         // check if the practitioner id exist in the system.

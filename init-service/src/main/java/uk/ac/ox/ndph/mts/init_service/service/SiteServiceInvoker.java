@@ -1,7 +1,5 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,8 +11,6 @@ import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 
 @Service
 public class SiteServiceInvoker extends ServiceInvoker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceInvoker.class);
-
     @Value("${site-service.routes.create}")
     private String createEndpoint;
 

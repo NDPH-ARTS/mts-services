@@ -9,7 +9,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    final Logger logger = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
     /* Allows RestExceptions to be thrown without doing a log then re-throw */
     @ExceptionHandler(RestException.class)
