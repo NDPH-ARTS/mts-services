@@ -105,6 +105,6 @@ describe('As a user with Create Trial Sites permission I want to create a trial 
         })
         let EmptyAddressResponse = await fetchResponse6.json();
         expect(fetchResponse6.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
-        expect(EmptyAddressResponse.message).to.eql('argument No Address in payload failed validation')
+        expect(EmptyAddressResponse.message).to.eql('argument Cannot have Address failed validation')
     });
 });
