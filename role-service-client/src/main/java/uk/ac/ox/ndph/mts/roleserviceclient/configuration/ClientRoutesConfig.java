@@ -1,7 +1,7 @@
 package uk.ac.ox.ndph.mts.roleserviceclient.configuration;
 
 import org.springframework.stereotype.Component;
-//TODO: Make this class a spring @Configuration class with @Value annotation
+//Make this class a spring @Configuration class with @Value annotation
 @Component
 public class ClientRoutesConfig {
     static final String SERVICE_NAME = "role-service";
