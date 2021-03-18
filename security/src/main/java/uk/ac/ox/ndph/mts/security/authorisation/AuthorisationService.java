@@ -149,7 +149,7 @@ public class AuthorisationService {
 
             //get permissions for the the practitioner role assignments
             //and filter role assignments to be only those which have the required permission in them
-            var hasNoRoleWithPermission = roleServiceClient.getRolesByIds(roleIds,roleServiceClient.noAuth()).stream()
+            var hasNoRoleWithPermission = roleServiceClient.getRolesByIds(roleIds, roleServiceClient.noAuth()).stream()
                     .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
                     .findFirst()
                     .isEmpty();
