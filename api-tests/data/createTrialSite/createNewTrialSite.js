@@ -27,17 +27,7 @@ const validSiteLCC = {
     "name": utils.getRandomString(5),
     "alias": utils.getRandomString(5),
     "parentSiteId": "",
-    "siteType": "LCC",
-    "address": {
-        "address1": "University of Oxford",
-        "address2": "Richard Doll Building",
-        "address3": "Old Road Campus",
-        "address4": "",
-        "address5": "Headington",
-        "city": "Oxford",
-        "country": "",
-        "postcode": "OX3 7LF",
-    }
+    "siteType": "LCC"
 }
 
 //parentSiteId - rccParentSiteId
