@@ -34,13 +34,12 @@ public class RoleServiceClient {
     private Supplier<Retry> retryPolicy;
 
     @Autowired
-    public RoleServiceClient(WebClient.Builder webClientBuilder, @Value("${role.service.uri}") String roleServiceUrl, ClientRoutesConfig clientRoutes) {
+    public RoleServiceClient(WebClient.Builder webClientBuilder,
+                             @Value("${role.service.uri}") String roleServiceUrl,
+                             Supplier<Retry> retryPolicy,
+                             ClientRoutesConfig clientRoutes) {
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
         this.clientRoutes = clientRoutes;
-    }
-
-    public RoleServiceClient(WebClient.Builder webClientBuilder, Supplier<Retry> retryPolicy, String url) {
-        this(webClientBuilder, url, new ClientRoutesConfig());
         this.retryPolicy = retryPolicy;
     }
 
@@ -63,7 +62,7 @@ public class RoleServiceClient {
                            final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(clientRoutes.serviceGetRole)
+                .uri(uriBuilder -> uriBuilder.path(clientRoutes.getServiceGetRole())
                         .queryParam("id", roleId)
                         .build())
                 .headers(authHeaders)
@@ -79,7 +78,7 @@ public class RoleServiceClient {
                                   final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         return Boolean.TRUE.equals(webClient.get()
-                .uri(clientRoutes.serviceExistsRoute, roleId)
+                .uri(clientRoutes.getServiceExistsRoute(), roleId)
                 .headers(authHeaders)
                 .exchange()
                 .flatMap(clientResponse -> {
@@ -100,7 +99,7 @@ public class RoleServiceClient {
                                  final Consumer<HttpHeaders> authHeaders) throws RestException {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(clientRoutes.serviceGetPaged)
+                        .path(clientRoutes.getServiceGetPaged())
                         .queryParam("page", page)
                         .queryParam("size", size)
                         .build())
@@ -111,7 +110,7 @@ public class RoleServiceClient {
                     httpStatus -> !httpStatus.is2xxSuccessful(),
                     resp -> Mono.error(new RestException(
                             ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                    clientRoutes.serviceName, resp.statusCode(),
+                                    clientRoutes.getServiceName(), resp.statusCode(),
                                     "page=" + page + "; size=" + size))))
                 .bodyToMono(RolePageImpl.class)
                 .retryWhen(retryPolicy.get())
@@ -125,7 +124,7 @@ public class RoleServiceClient {
         final String parsedRoleIds = String.join(",", roleIds);
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(clientRoutes.serviceRolesByIds)
+                        .path(clientRoutes.getServiceRolesByIds())
                         .queryParam("ids", parsedRoleIds)
                         .build())
                 .headers(authHeaders)
@@ -135,7 +134,7 @@ public class RoleServiceClient {
                     httpStatus -> !httpStatus.is2xxSuccessful(),
                     resp -> Mono.error(new RestException(
                             ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
-                                    clientRoutes.serviceName, resp.statusCode(), parsedRoleIds))))
+                                    clientRoutes.getServiceName(), resp.statusCode(), parsedRoleIds))))
                 .bodyToMono(RoleDTO[].class)
                 .map(Arrays::asList)
                 .retryWhen(retryPolicy.get())
@@ -147,7 +146,7 @@ public class RoleServiceClient {
                                 final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
         return webClient.post()
-                .uri(clientRoutes.serviceCreateRole, role)
+                .uri(clientRoutes.getServiceCreateRole(), role)
                 .headers(authHeaders)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -157,7 +156,7 @@ public class RoleServiceClient {
                     httpStatus -> !httpStatus.is2xxSuccessful(),
                     resp -> Mono.error(new RestException(
                             ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                    clientRoutes.serviceName, resp.statusCode(), "role=" + role))))
+                                    clientRoutes.getServiceName(), resp.statusCode(), "role=" + role))))
                 .bodyToMono(RoleDTO.class)
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
@@ -171,7 +170,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
         return webClient.post()
-                .uri(uriBuilder -> uriBuilder.path(clientRoutes.serviceUpdatePermissions)
+                .uri(uriBuilder -> uriBuilder.path(clientRoutes.getServiceUpdatePermissions())
                         .queryParam("id", roleId)
                         .build())
                 .headers(authHeaders)
@@ -183,7 +182,7 @@ public class RoleServiceClient {
                     httpStatus -> !httpStatus.is2xxSuccessful(),
                     resp -> Mono.error(new RestException(
                             ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                    clientRoutes.serviceName,
+                                    clientRoutes.getServiceName(),
                                     resp.statusCode(),
                                     "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
                 .bodyToMono(RoleDTO.class)
@@ -217,7 +216,7 @@ public class RoleServiceClient {
     public boolean entityIdExists(String roleId) {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         return Boolean.TRUE.equals(webClient.get()
-                .uri(clientRoutes.serviceExistsRoute, roleId)
+                .uri(clientRoutes.getServiceExistsRoute(), roleId)
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
@@ -238,7 +237,7 @@ public class RoleServiceClient {
         final String parsedRoleIds = String.join(",", roleIds);
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(clientRoutes.serviceRolesByIds)
+                        .path(clientRoutes.getServiceRolesByIds())
                         .queryParam("ids", parsedRoleIds)
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
@@ -247,7 +246,7 @@ public class RoleServiceClient {
                     httpStatus -> !httpStatus.is2xxSuccessful(),
                     resp -> Mono.error(new RestException(
                                 ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
-                                        clientRoutes.serviceName, resp.statusCode(), parsedRoleIds))))
+                                        clientRoutes.getServiceName(), resp.statusCode(), parsedRoleIds))))
                 .bodyToMono(RoleDTO[].class)
                 .map(Arrays::asList)
                 .retryWhen(retryPolicy.get())

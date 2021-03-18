@@ -11,24 +11,52 @@ import org.springframework.context.annotation.PropertySource;
 public class ClientRoutesConfig {
 
     @Value("${role.service.name}")
-    public String serviceName;
+    private String serviceName;
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public String getServiceExistsRoute() {
+        return serviceExistsRoute;
+    }
+
+    public String getServiceGetRole() {
+        return serviceGetRole;
+    }
+
+    public String getServiceGetPaged() {
+        return serviceGetPaged;
+    }
+
+    public String getServiceRolesByIds() {
+        return serviceRolesByIds;
+    }
+
+    public String getServiceCreateRole() {
+        return serviceCreateRole;
+    }
+
+    public String getServiceUpdatePermissions() {
+        return serviceUpdatePermissions;
+    }
 
     @Value("${role.service.endpoint.exists}")
-    public String serviceExistsRoute;
+    private String serviceExistsRoute;
 
     @Value("${role.service.endpoint.role}")
-    public String serviceGetRole;
+    private String serviceGetRole;
 
     @Value("${role.service.endpoint.paged}")
-    public String serviceGetPaged;
+    private String serviceGetPaged;
 
     @Value("${role.service.endpoint.roles.by.ids}")
-    public String serviceRolesByIds;
+    private String serviceRolesByIds;
 
     @Value("${role.service.endpoint.roles.create}")
-    public String serviceCreateRole;
+    private String serviceCreateRole;
 
     @Value("${role.service.endpoint.update.permissions}")
-    public String serviceUpdatePermissions;
+    private String serviceUpdatePermissions;
 
 }
