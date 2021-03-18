@@ -1,0 +1,5 @@
+# bootstrap should include application name and spring cloud config settings
+# other settings should be in application config
+spring:
+  application:
+    name: discovery-server
