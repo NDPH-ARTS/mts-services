@@ -124,7 +124,8 @@ public class RoleServiceClient {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(clientRoutes.getServiceRolesByIds())
-                        .build(parsedRoleIds))
+                        .queryParam("ids", parsedRoleIds)
+                        .build())
                 .headers(authHeaders)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -235,7 +236,8 @@ public class RoleServiceClient {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(clientRoutes.getServiceRolesByIds())
-                        .build(parsedRoleIds))
+                        .queryParam("ids", parsedRoleIds)
+                        .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
