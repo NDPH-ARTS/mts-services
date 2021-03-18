@@ -134,7 +134,7 @@ class AuthorisationServiceTests {
         List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, "siteId");
 
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(null);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId),roleServiceClient.noAuth())).thenReturn(null);
 
         //Act
         //Assert
@@ -155,7 +155,7 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "another_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
 
         //Act
         //Assert
@@ -176,7 +176,7 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
 
         //Act
         //Assert
@@ -198,7 +198,7 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
@@ -227,7 +227,7 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
@@ -258,7 +258,7 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
@@ -285,7 +285,7 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
@@ -314,7 +314,7 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId))).thenReturn(roleDtos);
+        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);

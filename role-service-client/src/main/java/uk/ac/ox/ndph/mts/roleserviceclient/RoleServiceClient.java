@@ -210,45 +210,5 @@ public class RoleServiceClient {
         }
         return result;
     }
-
-    public boolean entityIdExists(String roleId) {
-        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
-        return Boolean.TRUE.equals(webClient.get()
-                .uri(clientRoutes.getServiceExistsRoute(), roleId)
-                .exchange()
-                .flatMap(clientResponse -> {
-                    if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
-                        return Mono.just(false);
-                    } else if (clientResponse.statusCode().equals(HttpStatus.OK)) {
-                        return Mono.just(true);
-                    } else {
-                        return clientResponse.createException().flatMap(Mono::error);
-                    }
-                })
-                .retryWhen(retryPolicy.get())
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block());
-    }
-
-    public List<RoleDTO> getRolesByIds(final List<String> roleIds) {
-        Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
-        final String parsedRoleIds = String.join(",", roleIds);
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(clientRoutes.getServiceRolesByIds())
-                        .queryParam("ids", parsedRoleIds)
-                        .build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
-                                ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
-                                        clientRoutes.getServiceName(), resp.statusCode(), parsedRoleIds))))
-                .bodyToMono(RoleDTO[].class)
-                .map(Arrays::asList)
-                .retryWhen(retryPolicy.get())
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
-    }
 }
+
