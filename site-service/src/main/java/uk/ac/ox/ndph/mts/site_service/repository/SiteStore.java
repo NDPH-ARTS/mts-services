@@ -5,6 +5,9 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResearchStudy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.ox.ndph.mts.site_service.converter.EntityConverter;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
@@ -17,6 +20,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class SiteStore implements EntityStore<Site, String> {
+    private final Logger logger = LoggerFactory.getLogger(SiteStore.class);
 
     private final FhirRepository repository;
     private final EntityConverter<Site, org.hl7.fhir.r4.model.Organization> fromSiteConverter;
@@ -43,10 +47,13 @@ public class SiteStore implements EntityStore<Site, String> {
      */
     @Override
     public String saveEntity(Site entity) {
+        logger.debug("Saving entity");
         final Organization org = fromSiteConverter.convert(entity);
         final String orgId = repository.saveOrganization(org);
         org.setId(orgId);
         createResearchStudy(org);
+        logger.debug("Saved entity");
+
         return orgId;
     }
 
@@ -62,6 +69,8 @@ public class SiteStore implements EntityStore<Site, String> {
     }
 
     private String createResearchStudy(Organization org) {
+        logger.debug("Saving research study");
+
         ResearchStudy rs = new ResearchStudy();
         rs.setTitle(org.getName());
         rs.setStatus(ResearchStudy.ResearchStudyStatus.ACTIVE);

@@ -9,6 +9,8 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.List;
  */
 @Component
 public class FhirContextWrapper {
+    private final Logger logger = LoggerFactory.getLogger(FhirContextWrapper.class);
+
     private final FhirContext fhirContext;
 
     @Value("${fhir.resultCount:50}")
@@ -49,8 +53,11 @@ public class FhirContextWrapper {
      */
     public Bundle executeTransaction(String uri, Bundle input) throws FhirServerResponseException {
         try {
-            return fhirContext.newRestfulGenericClient(uri).transaction()
+            logger.debug("Executing transaction");
+            Bundle bundle =  fhirContext.newRestfulGenericClient(uri).transaction()
                     .withBundle(input).execute();
+            logger.debug("Finished executing transaction");
+            return bundle;
         } catch (BaseServerResponseException ex) {
             final String message = String.format(Repository.TRANSACTION_ERROR.message(), uri);
             throw new FhirServerResponseException(message, ex);
@@ -87,6 +94,7 @@ public class FhirContextWrapper {
      * @return IQuery Bundle to return in bundle
      */
     public IQuery<Bundle> search(final String uri, final Class<? extends IBaseResource> resourceClass) {
+        logger.debug("Searching for resources");
         return fhirContext.newRestfulGenericClient(uri)
                 .search()
                 .forResource(resourceClass)
@@ -108,11 +116,14 @@ public class FhirContextWrapper {
                                                 final Class<T> resourceClass,
                                                 final String id)
             throws ResourceNotFoundException {
-        return fhirContext.newRestfulGenericClient(uri)
-                .read()
-                .resource(resourceClass)
-                .withId(id)
-                .execute();
+        logger.debug("Executing query read");
+        T result = fhirContext.newRestfulGenericClient(uri)
+                    .read()
+                    .resource(resourceClass)
+                    .withId(id)
+                    .execute();
+        logger.debug("Finished executing query read");
+        return result;
     }
 
 

@@ -48,17 +48,19 @@ public abstract class ServiceInvoker {
             LOGGER.debug("About to get Token");
             String token = azureTokenService.getToken();
             LOGGER.debug("Token in invoker - " + token);
-            return webClient.post()
-                    .uri(uri)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .headers(h -> h.setBearerAuth(token))
-                    .body(Mono.just(payload), payload.getClass())
-                    .retrieve()
-                    .bodyToMono(responseExpected)
-                    .retryWhen(Retry.backoff(maxWebClientAttempts,
-                            Duration.ofSeconds(5)).maxBackoff(Duration.ofSeconds(30)))
-                    .block();
-
+            LOGGER.debug("Webclient calling: " + uri);
+            R result = webClient.post()
+                        .uri(uri)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .headers(h -> h.setBearerAuth(token))
+                        .body(Mono.just(payload), payload.getClass())
+                        .retrieve()
+                        .bodyToMono(responseExpected)
+                        .retryWhen(Retry.backoff(maxWebClientAttempts,
+                                Duration.ofSeconds(5)).maxBackoff(Duration.ofSeconds(30)))
+                        .block();
+            LOGGER.debug("Webclient finished");
+            return result;
         } catch (Exception e) {
             LOGGER.warn("FAILURE connecting to dependent service {} {}", uri, e.getMessage());
             LOGGER.warn("Exception", e);
@@ -73,7 +75,9 @@ public abstract class ServiceInvoker {
             for (Entity entity : entities) {
                 LOGGER.info("Starting to create {}(s): {}", entity.getClass(), entity);
                 entityIds.add(create(entity));
+                LOGGER.info("Finished creating {}(s): {}", entity.getClass(), entity);
             }
+            LOGGER.info("Finished creating {} entity(s)", entities.size());
         } else {
             throw new NullEntityException("No entities in payload.");
         }

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper around a Fhir Context
@@ -18,6 +20,7 @@ import java.util.List;
 @Component
 public class FhirContextWrapper {
     private final FhirContext fhirContext;
+    private final Logger logger = LoggerFactory.getLogger(FhirContextWrapper.class);
 
     @SuppressWarnings("FieldMayBeFinal") // Value injection shouldn't be final
     @Value("${fhir.uri}")
@@ -66,7 +69,10 @@ public class FhirContextWrapper {
      */
     public Bundle executeTransaction(Bundle input) throws FhirServerResponseException {
         try {
-            return fhirContext.newRestfulGenericClient(fhirUri).transaction().withBundle(input).execute();
+            logger.debug("Executing transaction");
+            Bundle bundle = fhirContext.newRestfulGenericClient(fhirUri).transaction().withBundle(input).execute();
+            logger.debug("Finished executing transaction");
+            return bundle;
         } catch (BaseServerResponseException ex) {
             final String message = String.format(FhirRepo.PROBLEM_EXECUTING_TRANSACTION.message(), fhirUri);
             throw new FhirServerResponseException(message, ex);
@@ -93,13 +99,15 @@ public class FhirContextWrapper {
                                                          ICriterion<?> criterion) {
         var client = fhirContext.newRestfulGenericClient(fhirUri);
 
+        logger.debug("Searching resources");
         var resultsBundle = client.search()
                 .forResource(resourceClass)
                 .where(criterion)
                 .returnBundle(Bundle.class)
                 .execute();
+         logger.debug("Finished searching resources");
 
-                // extract first page
+        // extract first page
         List<IBaseResource> searchResults = this.toListOfResources(resultsBundle);
 
         // loop on next pages

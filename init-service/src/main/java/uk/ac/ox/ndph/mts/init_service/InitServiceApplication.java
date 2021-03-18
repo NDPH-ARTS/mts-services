@@ -12,6 +12,7 @@ public class InitServiceApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(InitServiceApplication.class);
 
     public static void main(String[] args) {
+        LOGGER.info(Application.STARTUP.message());
         SpringApplication.run(InitServiceApplication.class, args);
         LOGGER.info("Complete");
     }

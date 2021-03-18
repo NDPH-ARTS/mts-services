@@ -66,6 +66,7 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public String save(final Site site) {
+        logger.debug("Validating site");
         var validationResponse = entityValidation.validate(site);
         String siteTypeForSite = StringUtils.defaultString(site.getSiteType());
         if (!validationResponse.isValid()) {
@@ -92,6 +93,8 @@ public class SiteServiceImpl implements SiteService {
                 throw new ValidationException(Services.INVALID_CHILD_SITE_TYPE.message());
             }
         }
+
+        logger.debug("Saving site");
         return siteStore.saveEntity(site);
     }
 
@@ -105,6 +108,7 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public List<Site> findSites() {
+        logger.debug("Finding sites");
         final List<Site> sites = this.siteStore.findAll();
         if (sites.isEmpty()) {
             throw new InvariantException(Services.NO_ROOT_SITE.message());

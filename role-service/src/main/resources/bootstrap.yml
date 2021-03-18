@@ -7,6 +7,10 @@ spring:
         enabled: true
         service-id: CONFIG-SERVER
       fail-fast: true
+  liquibase:
+    change-log: classpath:db/changelog/changelog-role-service-master.xml
+    drop-first: false
+    enabled: true
 
 eureka:
   client:

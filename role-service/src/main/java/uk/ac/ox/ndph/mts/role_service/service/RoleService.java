@@ -8,6 +8,8 @@ import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.PermissionRepository;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @Service
 public class RoleService {
 
+    private static final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
@@ -26,18 +29,24 @@ public class RoleService {
 
     public Role createRoleWithPermissions(Role role) throws DuplicateRoleException {
 
+        logger.debug("Creating role with permissions");
         if (roleRepository.existsById(role.getId())) {
+            logger.debug("Duplicate role");
+
             throw new DuplicateRoleException();
         }
 
         validatePermissions(role.getPermissions());
 
-        return roleRepository.save(role);
+        Role roleResult = roleRepository.save(role);
+        logger.debug("Created role with permissions");
+        return roleResult;
     }
 
     public Role updatePermissionsForRole(String roleId, List<Permission> newPermissions)
             throws ResponseStatusException {
 
+        logger.debug("Updating permissions for role");
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (roleOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -47,7 +56,9 @@ public class RoleService {
 
         Role role = roleOptional.get();
         role.setPermissions(newPermissions);
-        return roleRepository.save(role);
+        Role roleResult = roleRepository.save(role);
+        logger.debug("Updated permissions for role");
+        return roleResult;
     }
 
 

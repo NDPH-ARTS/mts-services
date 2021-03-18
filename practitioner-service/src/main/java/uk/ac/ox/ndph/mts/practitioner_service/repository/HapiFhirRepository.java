@@ -142,7 +142,7 @@ public class HapiFhirRepository implements FhirRepository {
 
         List<Practitioner> practitioners = new ArrayList<>();
 
-        var results = fhirContextWrapper.searchResource(Practitioner.class, 
+        var results = fhirContextWrapper.searchResource(Practitioner.class,
             Practitioner.IDENTIFIER.exactly().identifier(userIdentity));
 
         for (var result : results) {
@@ -173,12 +173,12 @@ public class HapiFhirRepository implements FhirRepository {
 
         String url = resource.fhirType();
         HTTPVerb httpMethod = Bundle.HTTPVerb.POST;
-        
+
         if (StringUtils.hasText(resource.getId())) {
             url += "/" + resource.getId();
             httpMethod = Bundle.HTTPVerb.PUT;
         }
-        
+
         bundle.addEntry()
             .setFullUrl(resource.getIdElement().getValue())
             .setResource(resource)
