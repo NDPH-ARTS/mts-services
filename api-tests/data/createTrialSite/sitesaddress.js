@@ -1,3 +1,7 @@
+/*
+sites address data class file to run sites address tests
+author - Sameera Purini
+*/
 const utils = require('../../common/utils')
 
 const InvalidRegion = {

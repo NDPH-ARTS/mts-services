@@ -1,3 +1,7 @@
+/*
+Sites address class file that contain scenarios covering site address entities
+author - Sameera Purini
+*/
 const requests = require('../../data/createTrialSite/sitesaddress')
 const conf = require('../../config/conf')
 const endpointUri = '/api/sites';
