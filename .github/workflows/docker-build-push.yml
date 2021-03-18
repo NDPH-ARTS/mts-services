@@ -97,7 +97,9 @@ jobs:
         run: |
           set -o nounset
           set -o errexit
-          docker build --build-arg SVC="${{ matrix.service_name }}" --build-arg DEPS_CACHE=full \
+          # prepare the version used for runtime telemetry
+          VERSION=${{ github.sha }}:$(mvn help:evaluate --projects ${{ matrix.service_name }} -Dexpression=project.version -q -DforceStdout)
+          docker build --build-arg SVC="${{ matrix.service_name }}" --build-arg DEPS_CACHE=full --build-arg VERSION=${VERSION} \
             --cache-from ${{ steps.check_docker_images.outputs.deps_tag }} \
             --cache-from ${{ steps.check_docker_images.outputs.runtime_tag }} \
             --tag ${{ steps.check_docker_images.outputs.runtime_tag }} --build-arg BUILDKIT_INLINE_CACHE=1 .
@@ -113,6 +115,8 @@ jobs:
           set -o errexit
           set -o nounset
           TO_TAG=$GHCR/${{ matrix.service_name }}:$TAG
+          # Scheduled runs skip the build, so need to pull for the image to be present to retag/push.
+          docker pull ${{ steps.check_docker_images.outputs.runtime_tag }}
           docker tag ${{ steps.check_docker_images.outputs.runtime_tag }} $TO_TAG
           docker push $TO_TAG
 
@@ -169,6 +173,16 @@ jobs:
           AUTOMATION_USER_PASSWORD: ${{ secrets.AUTOMATION_USER_PASSWORD }}
         run: |
           npm run --prefix api-tests api-test-ci
+      - name: Prepare docker-compose logs
+        if: always()
+        run: |
+          docker-compose logs --tail="all" > docker-compose.log
+      - name: Upload docker-compose logs
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-compose-logs
+          path: docker-compose.log
       - name: Process API Tests Report
         if: always()
         uses: scacap/action-surefire-report@v1
@@ -178,7 +192,3 @@ jobs:
           report_paths: "api-tests/api-test-results.xml"
           fail_on_test_failures: true
           fail_if_no_tests: true
-      - name: Stop compose services
-        # this step might be redundant since the job is finishing anyway...
-        run: |
-          docker-compose down
