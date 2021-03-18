@@ -1,4 +1,4 @@
-const requests = require('../../data/createTrialSite/sitesAddress')
+const requests = require('../../data/createTrialSite/sitesaddress')
 const conf = require('../../config/conf')
 const endpointUri = '/api/sites';
 const utils = require('../../common/utils')
