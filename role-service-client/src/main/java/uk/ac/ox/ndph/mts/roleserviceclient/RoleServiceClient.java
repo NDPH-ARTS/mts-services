@@ -63,8 +63,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(clientRoutes.getServiceGetRole())
-                        .queryParam("id", roleId)
-                        .build())
+                        .build(roleId))
                 .headers(authHeaders)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -125,8 +124,7 @@ public class RoleServiceClient {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(clientRoutes.getServiceRolesByIds())
-                        .queryParam("ids", parsedRoleIds)
-                        .build())
+                        .build(parsedRoleIds))
                 .headers(authHeaders)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -171,8 +169,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder.path(clientRoutes.getServiceUpdatePermissions())
-                        .queryParam("id", roleId)
-                        .build())
+                        .build(roleId))
                 .headers(authHeaders)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -238,8 +235,7 @@ public class RoleServiceClient {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(clientRoutes.getServiceRolesByIds())
-                        .queryParam("ids", parsedRoleIds)
-                        .build())
+                        .build(parsedRoleIds))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(

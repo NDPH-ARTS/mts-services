@@ -1,14 +1,3 @@
 role:
   service:
-    name: role-service
     uri: http://role-service
-    endpoint:
-      exists: '/roles/{id}'
-      paged: '/roles/'
-      role: '/roles/{id}'
-      roles:
-        create: '/roles'
-        by:
-          ids: 'roles'
-      update:
-        permissions: '/roles/{id}/permissions'
