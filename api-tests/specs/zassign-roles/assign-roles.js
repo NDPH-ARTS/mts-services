@@ -1,3 +1,9 @@
+/**
+ * Assign Role Service class covering roles regression test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
 const requests = require('../../data/assign-roles/assign-roles')
 const conf = require('../../config/conf')
 const sitesEndpointUri = '/api/sites';

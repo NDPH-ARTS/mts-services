@@ -1,3 +1,10 @@
+/**
+ * Utils class class covering functions to use across the api tests
+ * 
+ * Author Sameera Purini
+ * 
+ */
+
 let formData = require('form-data');
 const authUri = 'https://login.microsoftonline.com/5d23383f-2acb-448e-8353-4b4573b82276/oauth2/v2.0/token'
 const fetch = require("node-fetch");

@@ -1,3 +1,9 @@
+/**
+ * Permission class covering roles regression test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
 const requests = require('../../data/role-service/permissions')
 const conf = require('../../config/conf')
 const endpointUri = '/api/roles';

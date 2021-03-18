@@ -1,3 +1,10 @@
+/**
+ * Role services data covering roles egression test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
+
 const utils = require('../../common/utils')
 
 const validRole = {

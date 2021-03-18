@@ -1,3 +1,9 @@
+/**
+ * Create person class covering roles regression test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
 const requests = require('../../data/practitioner-service/createperson')
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')

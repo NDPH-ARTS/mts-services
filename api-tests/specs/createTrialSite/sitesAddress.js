@@ -1,4 +1,9 @@
-// author - Sameera Purini
+/**
+ * Site address class covering roles regression test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
 const requests = require('../../data/createTrialSite/sitesAddress')
 const conf = require('../../config/conf')
 const endpointUri = '/api/sites';

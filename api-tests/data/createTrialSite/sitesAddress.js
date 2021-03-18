@@ -1,4 +1,9 @@
-// author - Sameera Purini
+/**
+ * Site Address data covering assign roles regression test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
 const utils = require('../../common/utils')
 
 const InvalidRegion = {

@@ -1,3 +1,10 @@
+/**
+ * Assign roles class file with data to run the assign roles test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
+
 const utils = require('../../common/utils')
 
 const roleWithPermissions = {

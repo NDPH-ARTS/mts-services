@@ -1,3 +1,10 @@
+/**
+ * Profile class covering roles regression test scenarios
+ * 
+ * Author Sameera Purini
+ * 
+ */
+
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");
