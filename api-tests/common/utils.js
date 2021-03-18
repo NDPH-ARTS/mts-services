@@ -17,10 +17,10 @@ class utils {
     async getTokenId() {
         let form = new formData();
         form.append('grant_type', 'password')
-        form.append('client_id', (process.env.MTS_AZURE_APP_CLIENT_ID))
+        form.append('client_id', 'f352ce15-0142-4dfa-8e18-801ee6391557')
         form.append('scope', 'openid profile')
-        form.append('username', process.env.AUTOMATION_USER_NAME)
-        form.append('password', process.env.AUTOMATION_USER_PASSWORD)
+        form.append('username', 'test-automation@mtsdevndph.onmicrosoft.com')
+        form.append('password', 'kjrUB5$_S.19dTTR')
         let response = await fetch(authUri, {
             method: 'POST',
             body: form
