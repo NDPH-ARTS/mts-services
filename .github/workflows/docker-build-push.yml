@@ -5,12 +5,6 @@ on:
     paths-ignore:
       - "**.md"
   push:
-    # ONLY main branch should be listed below!
-    branches: [ main ]
-  # schedule only runs on the main branch
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron: "1 1 * * *"
   workflow_dispatch:
 
 jobs:
@@ -192,3 +186,139 @@ jobs:
           report_paths: "api-tests/api-test-results.xml"
           fail_on_test_failures: true
           fail_if_no_tests: true
+
+  integration:
+    name: "Azure integration"
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: './mts-trial-deployment-config/terraform'
+    env:
+      ARM_CLIENT_ID: 2620bfcd-13ee-4f8b-81fd-bd128efdb707
+      ARM_CLIENT_SECRET: ${{secrets.TF_ARM_CLIENT_SECRET}}
+      ARM_SUBSCRIPTION_ID: f3fba52d-c7db-46f8-9e7a-766ca869972e
+      ARM_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
+      ARM_ACCESS_KEY: ${{secrets.TF_ARM_ACCESS_KEY}}
+      TRIAL_NAME: mainnightly
+      DEFINITION_PATH: ${{github.workspace}}/mts-trial-deployment-config/trials/mainnightly/definition.yml
+    steps:
+      - name: Checkout deployment/config repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository_owner }}/mts-trial-deployment-config
+          path: mts-trial-deployment-config
+
+      - name: Install yq
+        run: |
+          sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.1/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform workspace
+        id: tf_workspace
+        run: |
+          set -o errexit
+          set -o pipefail
+          set -o nounset
+          # set -o xtrace
+
+          # github ref comes with "/" which is not valid for workspace names
+          ref_for_workspace="${GITHUB_REF//\//_}"
+          workspace_name="${{ github.run_number }}-${ref_for_workspace}"
+          terraform workspace select ${workspace_name} || terraform workspace new ${workspace_name}
+          echo "::set-output name=workspace_name::${workspace_name}"
+
+      - name: Update definition file for this run
+        run: |
+          set -o errexit
+          set -o pipefail
+          set -o nounset
+          # set -o xtrace
+
+          # yq support multiple expressions in a single command but this is more readable
+          # override the trial name
+          yq eval '.name = strenv(GITHUB_RUN_NUMBER)' ${DEFINITION_PATH} --inplace
+          # override the image tag to the currect sha
+          yq eval '(.. | select(. | has("image_tag"))).image_tag = strenv(GITHUB_SHA)' ${DEFINITION_PATH} --inplace
+
+      - name: Prepare deployment variables
+        env:
+          TFVARS_TEMPLATE: 'tfvars.template'
+        run: |
+          set -o errexit
+          set -o pipefail
+          set -o nounset
+          # set -o xtrace
+
+          # Return 0 if file $1 exists and ending by end of line character, else return 1
+          check_ending_eol() {
+            [[ -s "$1" && -z "$(tail -c 1 "$1")" ]]
+          }
+
+          if ! check_ending_eol ${TFVARS_TEMPLATE}
+          then
+            echo "ERROR: ${TFVARS_TEMPLATE} doesn't exist or doesn't end with new line." >&2
+            exit 1
+          fi
+
+          cat ${TFVARS_TEMPLATE} | while read line
+          do
+              # no need to process comment lines that start with "#", or empty ones.
+              if [[ $line == \#* ]] || [[ -z "$line" ]]; then continue; fi
+
+              # split the line text with the = char as a separator
+              line_array=(${line//=/ })
+
+              var_name=${line_array[0]}
+              property_path=${line_array[1]}
+              property_value=$(yq eval ${property_path} $DEFINITION_PATH)
+              echo "${var_name}=\"${property_value}\"" >> $TRIAL_NAME.tfvars
+          done
+
+          cat $TRIAL_NAME.tfvars
+
+      - name: Terraform plan
+        run: |
+          set -o errexit
+          set -o pipefail
+          set -o nounset
+          # set -o xtrace
+
+          terraform plan -out=tfplan -var-file=$TRIAL_NAME.tfvars \
+            -var="owner=${{ github.actor }}" \
+            -var="github_ref=${{ github.ref }}" \
+            -var="init_username=${{secrets.INIT_USERNAME}}" \
+            -var="init_password=${{secrets.INIT_PASSWORD}}" \
+            -var="init_client_id=${{secrets.INIT_CLIENT_ID}}" \
+            -var="environment=pr" -var="location=eastus2"
+
+      - name: Terraform apply
+        run: |
+          terraform apply -auto-approve tfplan
+
+      - name: Terraform destroy
+        run: |
+          set -o errexit
+          set -o pipefail
+          set -o nounset
+          # set -o xtrace
+
+          # destroy should get all vars as the plan/apply command. A plan file isn't valid here.
+          terraform destroy -auto-approve -var-file=$TRIAL_NAME.tfvars \
+            -var="owner=${{ github.actor }}" \
+            -var="github_ref=${{ github.ref }}" \
+            -var="init_username=${{secrets.INIT_USERNAME}}" \
+            -var="init_password=${{secrets.INIT_PASSWORD}}" \
+            -var="init_client_id=${{secrets.INIT_CLIENT_ID}}" \
+            -var="environment=pr" -var="location=eastus2"
+
+          terraform workspace select default
+          terraform workspace delete ${{ steps.tf_workspace.outputs.workspace_name }}
