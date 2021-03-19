@@ -181,6 +181,7 @@ jobs:
         if: always()
         run: |
           docker-compose logs --tail="all" > docker-compose.log
+          docker-compose ps
       - name: Upload docker-compose logs
         if: always()
         uses: actions/upload-artifact@v2
