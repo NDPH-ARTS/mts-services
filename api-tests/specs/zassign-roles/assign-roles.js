@@ -1,3 +1,7 @@
+/*
+Assign role class file that has scenarios to run assign role tests
+author - Sameera Purini
+*/
 const requests = require('../../data/assign-roles/assign-roles')
 const conf = require('../../config/conf')
 const sitesEndpointUri = '/api/sites';

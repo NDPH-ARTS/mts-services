@@ -1,3 +1,7 @@
+/*
+assign roles class file to run assign role tests
+author - Sameera Purini
+*/
 const utils = require('../../common/utils')
 
 const roleWithPermissions = {
