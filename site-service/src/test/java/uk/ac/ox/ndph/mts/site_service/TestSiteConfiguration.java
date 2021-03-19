@@ -15,15 +15,19 @@ import java.util.List;
 public class TestSiteConfiguration {
     
     private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP = List.of(
-        new SiteAttributeConfiguration("name", "Name", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("alias", "Alias", "^[a-zA-Z]{1,35}$"),
-        new SiteAttributeConfiguration("parentSiteId", "Parent Site Id", ""),
-        new SiteAttributeConfiguration("siteType", "Site Type", ""));
+        new SiteAttributeConfiguration("name", "string", "Name", "^[a-zA-Z]{1,35}$"),
+        new SiteAttributeConfiguration("alias", "string","Alias", "^[a-zA-Z]{1,35}$"),
+        new SiteAttributeConfiguration("parentSiteId", "string","Parent Site Id", ""),
+        new SiteAttributeConfiguration("siteType","string", "Site Type", ""));
+
+    private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP_CUSTOM = List.of(
+            new SiteAttributeConfiguration("address", "address", "Address", ""));
+
 
     private static final List<SiteConfiguration> SITE_CONFIGURATION_LIST  = List.of(
-            new SiteConfiguration("Organization", "site", "REGION", ALL_REQUIRED_UNDER_35_MAP,
-                    Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP,
-                            Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, null)
+            new SiteConfiguration("Organization", "site", "REGION", ALL_REQUIRED_UNDER_35_MAP, null,
+                    Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP, null,
+                            Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null)
                             )))));
 
     // use this site config for all tests unless they define their own one
@@ -31,7 +35,7 @@ public class TestSiteConfiguration {
     @Bean
     public SiteConfiguration getSiteConfiguration() {
         return new SiteConfiguration("site",
-                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, SITE_CONFIGURATION_LIST);
+                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
     }
 
 }
