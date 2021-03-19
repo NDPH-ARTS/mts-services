@@ -134,8 +134,6 @@ jobs:
           propagate_failure: true
           wait_workflow: true
            
-           
-                  
   buildall:
     runs-on: ubuntu-latest
     name: Build services check all
