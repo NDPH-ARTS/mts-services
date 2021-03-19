@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class SiteAttributeConfiguration {
 
     private String name;
+    private String type;
     private String displayName;
     private String validationRegex;
 
@@ -22,11 +23,14 @@ public class SiteAttributeConfiguration {
      * Constructor with all members initialized, no validation checks here
      *
      * @param name            attribute name can be null
+     * @param type            atttribute type can be null
      * @param displayName     atttribute display name can be null
      * @param validationRegex for regexc-based validation, can be null
      */
-    public SiteAttributeConfiguration(final String name, final String displayName, final String validationRegex) {
+    public SiteAttributeConfiguration(final String name, final String type,
+                                      final String displayName, final String validationRegex) {
         this.name = name;
+        this.type = type;
         this.displayName = displayName;
         this.validationRegex = validationRegex;
     }
@@ -37,6 +41,14 @@ public class SiteAttributeConfiguration {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDisplayName() {
@@ -59,6 +71,7 @@ public class SiteAttributeConfiguration {
     public String toString() {
         return "SiteAttributeConfiguration{"
                 + "name='" + name + '\''
+                + ", type='" + type + '\''
                 + ", displayName='" + displayName + '\''
                 + ", validationRegex='" + validationRegex + '\''
                 + '}';

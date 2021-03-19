@@ -24,12 +24,21 @@ const validSiteCountry = {
 
 //parentSiteId - the Id for the Country should be retrieved and added for parentSiteId
 const validSiteLCC = {
-    "name": utils.getRandomString(5),
-    "alias": utils.getRandomString(5),
+    "name": utils.getRandomString(4),
+    "alias": utils.getRandomString(4),
     "parentSiteId": "",
-    "siteType": "LCC"
+    "siteType": "LCC",
+    "address": {
+        "address1": "University of Oxford",
+        "address2": "Richard Doll Building",
+        "address3": "Old Road Campus",
+        "address4": "",
+        "address5": "Headington",
+        "city": "Oxford",
+        "country": "",
+        "postcode": "OX3 7LF",
+    }
 }
-
 //parentSiteId - rccParentSiteId
 const missingName = {
     "name": "",

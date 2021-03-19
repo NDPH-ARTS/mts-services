@@ -1,3 +1,7 @@
+/*
+permissions data class file to run Permissions tests
+author - Sameera Purini
+*/
 const utils = require('../../common/utils')
 
 const assignPermission = {

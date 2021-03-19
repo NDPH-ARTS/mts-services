@@ -12,5 +12,6 @@ public interface ModelEntityValidation<T> {
      * @param entity - the entity to validate
      * @return ValidationReponse
      */
-    ValidationResponse validate(T entity);
+    ValidationResponse validateCoreAttributes(T entity);
+    ValidationResponse validateCustomAttributes(T entity);
 }

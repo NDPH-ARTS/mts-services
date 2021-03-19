@@ -69,7 +69,7 @@ class SiteServiceImplIntegrationTests {
     void TestPostSite_WhenInvalidInput_ReturnsUnprocessableEntityAndDescription() throws Exception {
         // Arrange
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
-        String jsonString = "{\"name\": \"\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"siteType\"}";
+        String jsonString = "{\"name\": \"\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"CCO\"}";
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))

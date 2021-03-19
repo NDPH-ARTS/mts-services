@@ -66,10 +66,16 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public String save(final Site site) {
-        var validationResponse = entityValidation.validate(site);
+        var validationCoreAttributesResponse = entityValidation.validateCoreAttributes(site);
+        var validationCustomAttributesResponse = entityValidation.validateCustomAttributes(site);
+
         String siteTypeForSite = StringUtils.defaultString(site.getSiteType());
-        if (!validationResponse.isValid()) {
-            throw new ValidationException(validationResponse.getErrorMessage());
+        if (!validationCoreAttributesResponse.isValid()) {
+            throw new ValidationException(validationCoreAttributesResponse.getErrorMessage());
+        }
+
+        if (!validationCustomAttributesResponse.isValid()) {
+            throw new ValidationException(validationCustomAttributesResponse.getErrorMessage());
         }
 
         if (siteStore.existsByName(site.getName())) {

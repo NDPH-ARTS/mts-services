@@ -1,3 +1,7 @@
+/*
+Roles data class file to run Role services tests
+author - Sameera Purini
+*/
 const utils = require('../../common/utils')
 
 const validRole = {
