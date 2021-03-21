@@ -1,3 +1,8 @@
+/*
+Profile class file that has scenarios to run profile tests
+author - Sameera Purini
+*/
+
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");

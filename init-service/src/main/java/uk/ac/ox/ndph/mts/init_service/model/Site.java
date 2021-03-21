@@ -4,6 +4,7 @@ public class Site implements Entity {
     private String name;
     private String alias;
     private String siteType;
+    private SiteAddress address;
 
     public String getName() {
         return name;
@@ -29,9 +30,17 @@ public class Site implements Entity {
         this.siteType = siteType;
     }
 
+    public SiteAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(SiteAddress address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
-        return String.format("Site{name='%s', alias='%s', type='%s'}", name, alias, siteType);
+        return String.format("Site{name='%s', alias='%s', type='%s', address='%s'}", name, alias, siteType, address);
     }
 
 }

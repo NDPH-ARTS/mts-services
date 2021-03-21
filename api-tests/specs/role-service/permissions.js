@@ -1,3 +1,7 @@
+/*
+Permissions class file that has scenarios to run permissions tests
+author - Sameera Purini
+*/
 const requests = require('../../data/role-service/permissions')
 const conf = require('../../config/conf')
 const endpointUri = '/api/roles';
