@@ -1,18 +1,30 @@
 package uk.ac.ox.ndph.mts.site_service.converter;
 
 
+import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteAddress;
+
+import java.util.Collections;
 
 /**
  * Implement an EntityConverter for {@link Site} to {@link Organization}.
  */
 @Component
 public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir.r4.model.Organization> {
+
+    EntityConverter<SiteAddress, Address> fromAddressConverter;
+
+    @Autowired
+    public void setConverter(EntityConverter<SiteAddress, Address> fromAddressConverter) {
+        this.fromAddressConverter = fromAddressConverter;
+    }
 
     /**
      * Convert a Site to an hl7 model Organization
@@ -33,6 +45,14 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
         if (input.getSiteType() != null) {
             fhirOrganization.setImplicitRules(input.getSiteType());
         }
+
+        if (input.getAddress() != null) {
+            final Address address = fromAddressConverter.convert(input.getAddress());
+            if (address != null) {
+                fhirOrganization.setAddress(Collections.singletonList(address));
+            }
+        }
+
         return fhirOrganization;
     }
 
