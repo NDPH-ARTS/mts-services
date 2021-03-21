@@ -1,3 +1,7 @@
+/*
+Role services class file that has scenarios to run role service tests
+author - Sameera Purini
+*/
 const requests = require('../../data/role-service/roleservice')
 const conf = require('../../config/conf')
 const endpointUri = '/api/roles';
