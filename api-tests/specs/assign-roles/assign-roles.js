@@ -17,7 +17,7 @@ let ccoParentSiteId;
 
 describe('As a user with Assign Roles permission and authorisation I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
 
-    it('A Person, a Role and more than one site exists in the Trial Instance when I submit an API request to assign an existing role to an existing person at an existing trial site then the person is updated and I receive a success acknowledgement', async () => {
+    it.only('A Person, a Role and more than one site exists in the Trial Instance when I submit an API request to assign an existing role to an existing person at an existing trial site then the person is updated and I receive a success acknowledgement', async () => {
 
         // get parent site Id from sites endpoint
         const headers = await utils.getHeadersWithAuthBootStrapUser()
@@ -27,6 +27,7 @@ describe('As a user with Assign Roles permission and authorisation I want to ass
         })
         let ParentSiteIdData = await fetchResponse.json();
         ccoParentSiteId = ParentSiteIdData[0].siteId
+        console.log('the cco parensite id is' + ccoParentSiteId)
 
         // get the profile Id from profile endpoint
         let fetchResponse1 = await fetch(conf.baseUrl + profileEndpointUri, {
@@ -35,6 +36,7 @@ describe('As a user with Assign Roles permission and authorisation I want to ass
         })
         let response = await fetchResponse1.json();
         profileId = response[0].id
+        console.log('the profil id is' + profileId)
 
         // request posted to role service endpoint
         let fetchResponse2 = await fetch(conf.baseUrl + rolesEndpointUri, {
@@ -45,7 +47,7 @@ describe('As a user with Assign Roles permission and authorisation I want to ass
 
         const roleResponse = await fetchResponse2.json();
         roleId = roleResponse.id
-
+        console.log('the role id is' + roleId)
         //assign roles to a person
         let assignRoleJSON = requests.assignRole
         assignRoleJSON.siteId = ccoParentSiteId
@@ -58,6 +60,7 @@ describe('As a user with Assign Roles permission and authorisation I want to ass
             method: 'POST',
             body: JSON.stringify(assignRoleJSON),
         })
+        console.log('the request posted  is' + JSON.stringify(assignRoleJSON))
         expect(fetchResponse3.status).to.equal(HttpStatus.CREATED)
     });
 });
