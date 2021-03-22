@@ -6,17 +6,21 @@ const requests = require('../../data/assign-roles/assign-roles')
 const conf = require('../../config/conf')
 const sitesEndpointUri = '/api/sites';
 const rolesEndpointUri = '/api/roles';
+const profileEndpointUri = '/api/practitioner/profile'
 const practitionerEndpointUri = '/api/practitioner'
-let assignRoleEndpointUri = '/api/practitioner/{personId}/roles'
+let assignRoleEndpointUri = '/api/practitioner/{profileId}/roles'
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");
+let ccoParentSiteId;
 
 
-describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
 
-    it('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
+describe('As a user with Assign Roles permission and authorisation I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
+
+    it.only('A Person, a Role and more than one site exists in the Trial Instance when I submit an API request to assign an existing role to an existing person at an existing trial site then the person is updated and I receive a success acknowledgement', async () => {
+
         // get parent site Id from sites endpoint
-        const headers = await utils.getHeadersWithAuth()
+        const headers = await utils.getHeadersWithAuthBootStrapUser()
         let fetchResponse = await fetch(conf.baseUrl + sitesEndpointUri, {
             headers: headers,
             method: 'GET',
