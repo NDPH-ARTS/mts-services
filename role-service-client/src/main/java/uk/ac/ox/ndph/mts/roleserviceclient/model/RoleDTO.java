@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
-public class RoleDTO {
+public class RoleDTO implements Entity {
 
     @JsonProperty(value = "id")
     private String id;

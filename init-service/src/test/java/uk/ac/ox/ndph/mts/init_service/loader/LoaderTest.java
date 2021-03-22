@@ -4,14 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.ac.ox.ndph.mts.init_service.model.Permission;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
+import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
+import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
+import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.util.Collections;
 
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 class LoaderTest {
 
     @Mock
-    RoleServiceInvoker roleServiceInvoker;
+    RoleServiceClient roleServiceClient;
 
     @Mock
     SiteServiceInvoker siteServiceInvoker;
@@ -36,15 +36,15 @@ class LoaderTest {
 
     @Test
     void testLoader() throws InterruptedException {
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceClient, siteServiceInvoker);
 
-        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).execute(anyList());
+        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceClient).createMany(anyList(), roleServiceClient.noAuth());
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         loader.run();
 
-        verify(roleServiceInvoker, times(1)).execute(anyList());
+        verify(roleServiceClient, times(1)).createMany(anyList(), roleServiceClient.noAuth());
         verify(siteServiceInvoker, times(1)).execute(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
@@ -62,10 +62,10 @@ class LoaderTest {
         practitioner.setGivenName("testGivenName");
         practitioner.setPrefix("Mr");
 
-        Permission permission = new Permission();
+        PermissionDTO permission = new PermissionDTO();
         permission.setId("testPermission");
 
-        Role role = new Role();
+        RoleDTO role = new RoleDTO();
         role.setId("testId");
         role.setPermissions(Collections.singletonList(permission));
 

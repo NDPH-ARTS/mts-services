@@ -4,14 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfig;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
+import uk.ac.ox.ndph.mts.roleserviceclient.model.Entity;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RolePageImpl;
@@ -22,16 +23,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceClient {
 
-    private  WebClient webClient;
+    private final WebClient webClient;
 
-    private ClientRoutesConfig clientRoutes;
+    private final ClientRoutesConfig clientRoutes;
 
-    private Supplier<Retry> retryPolicy;
+    private final Supplier<Retry> retryPolicy;
 
     @Autowired
     public RoleServiceClient(WebClient.Builder webClientBuilder,
@@ -57,140 +57,88 @@ public class RoleServiceClient {
     }
 
 
+    public boolean entityIdExists(final String roleId,
+                                  final Consumer<HttpHeaders> authHeaders) throws RestException { //TODO: Find out how to simplfy this as well
+        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
+        try {
+            getById(roleId, authHeaders);
+        } catch (RestException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public RoleDTO createEntity(final RoleDTO role,
+                                final Consumer<HttpHeaders> authHeaders) throws RestException {
+        Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
+        return sendBlockingPostRequest(clientRoutes.getServiceCreateRole(), role, RoleDTO.class, authHeaders);
+    }
 
     public RoleDTO getById(final String roleId,
                            final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(clientRoutes.getServiceGetRole())
-                        .build(roleId))
-                .headers(authHeaders)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(RoleDTO.class)
-                .retryWhen(retryPolicy.get())
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
-    }
-
-    public boolean entityIdExists(final String roleId,
-                                  final Consumer<HttpHeaders> authHeaders) throws RestException {
-        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
-        return Boolean.TRUE.equals(webClient.get()
-                .uri(clientRoutes.getServiceExistsRoute(), roleId)
-                .headers(authHeaders)
-                .exchange()
-                .flatMap(clientResponse -> {
-                    if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
-                        return Mono.just(false);
-                    } else if (clientResponse.statusCode().equals(HttpStatus.OK)) {
-                        return Mono.just(true);
-                    } else {
-                        return clientResponse.createException().flatMap(Mono::error);
-                    }
-                })
-                .retryWhen(retryPolicy.get())
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block());
-    }
-
-    public Page<RoleDTO> getPage(final int page, final int size,
-                                 final Consumer<HttpHeaders> authHeaders) throws RestException {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(clientRoutes.getServiceGetPaged())
-                        .queryParam("page", page)
-                        .queryParam("size", size)
-                        .build())
-                .headers(authHeaders)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
-                            ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                    clientRoutes.getServiceName(), resp.statusCode(),
-                                    "page=" + page + "; size=" + size))))
-                .bodyToMono(RolePageImpl.class)
-                .retryWhen(retryPolicy.get())
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
+        String uri = UriComponentsBuilder.fromUriString(clientRoutes.getServiceGetRole()).build(roleId).toString();
+        return sendBlockingGetRequest(uri, RoleDTO.class, authHeaders);
     }
 
     public List<RoleDTO> getRolesByIds(final List<String> roleIds,
                                        final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
         final String parsedRoleIds = String.join(",", roleIds);
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(clientRoutes.getServiceRolesByIds())
-                        .queryParam("ids", parsedRoleIds)
-                        .build())
-                .headers(authHeaders)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
-                            ResponseMessages.SERVICE_NAME_STATUS_AND_ID.format(
-                                    clientRoutes.getServiceName(), resp.statusCode(), parsedRoleIds))))
-                .bodyToMono(RoleDTO[].class)
-                .map(Arrays::asList)
-                .retryWhen(retryPolicy.get())
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
+        String uri = UriComponentsBuilder.fromUriString(clientRoutes.getServiceRolesByIds()).queryParam("ids", parsedRoleIds).build().toString();
+        return Arrays.asList(sendBlockingGetRequest(uri, RoleDTO[].class, authHeaders));
     }
-
-    public RoleDTO createEntity(final RoleDTO role,
-                                final Consumer<HttpHeaders> authHeaders) throws RestException {
-        Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
-        return webClient.post()
-                .uri(clientRoutes.getServiceCreateRole(), role)
-                .headers(authHeaders)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(role)
-                .retrieve()
-                .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
-                            ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                    clientRoutes.getServiceName(), resp.statusCode(), "role=" + role))))
-                .bodyToMono(RoleDTO.class)
-                .retryWhen(retryPolicy.get())
-                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
-                .block();
-    }
-
 
     public RoleDTO updatePermissions(final String roleId,
                                      final List<PermissionDTO> permissionsDTOs,
                                      final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
+        String uri = UriComponentsBuilder.fromUriString(clientRoutes.getServiceUpdatePermissions()).build(roleId).toString();
+        return sendBlockingPostRequest(uri, (Entity) permissionsDTOs, RoleDTO.class, authHeaders);
+    }
+
+    public Page<RoleDTO> getPage(final int page, final int size,
+                                 final Consumer<HttpHeaders> authHeaders) throws RestException {
+        String uri = UriComponentsBuilder.fromUriString(clientRoutes.getServiceRolesByIds()).queryParam("page", page).queryParam("size", size).build().toString();
+        return sendBlockingGetRequest(uri, RolePageImpl.class, authHeaders);
+    }
+
+    protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected, final Consumer<HttpHeaders> authHeaders) {
         return webClient.post()
-                .uri(uriBuilder -> uriBuilder.path(clientRoutes.getServiceUpdatePermissions())
-                        .build(roleId))
+                .uri(uri)
                 .headers(authHeaders)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(permissionsDTOs)
+                .body(Mono.just(payload), payload.getClass())
                 .retrieve()
                 .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
-                    resp -> Mono.error(new RestException(
-                            ResponseMessages.SERVICE_NAME_STATUS_AND_ARGUMENTS.format(
-                                    clientRoutes.getServiceName(),
-                                    resp.statusCode(),
-                                    "roleId=" + roleId + "; permissions=" + listToString(permissionsDTOs)))))
-                .bodyToMono(RoleDTO.class)
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
+                                ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
+                                        clientRoutes.getServiceName(), resp.statusCode(), uri))))
+
+                .bodyToMono(responseExpected)
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
                 .block();
     }
 
-    private String listToString(final List<?> list) {
-        return list.stream().map(Object::toString).collect(Collectors.joining(", "));
+    protected <R> R sendBlockingGetRequest(String uri, Class<R> responseExpected, final Consumer<HttpHeaders> authHeaders) {
+        return webClient.get()
+                .uri(uri)
+                .headers(authHeaders)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(
+                        httpStatus -> !httpStatus.is2xxSuccessful(),
+                        resp -> Mono.error(new RestException(
+                                ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
+                                        clientRoutes.getServiceName(), resp.statusCode(), uri))))
+                .bodyToMono(responseExpected)
+                .retryWhen(retryPolicy.get())
+                .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
+                .block();
     }
 
     public List<RoleDTO> createMany(final List<? extends RoleDTO> entities,
