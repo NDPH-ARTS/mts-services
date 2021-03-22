@@ -122,7 +122,7 @@ jobs:
 
       - name: Deploy main-nightly image
         if: github.ref == 'refs/heads/main' && github.event_name == 'schedule'
-      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+        uses: convictional/trigger-workflow-and-wait@v1.3.0
         with:
           owner: ndph-arts
           repo: mts-deployment-config
