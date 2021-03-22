@@ -2,7 +2,7 @@ package uk.ac.ox.ndph.mts.json_schema_generator.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TrialConfigFile {
+public class TrialDefinitionFile {
     @JsonProperty(required = true)
     private String name;
 
