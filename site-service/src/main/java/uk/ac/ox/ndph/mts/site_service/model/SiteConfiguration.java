@@ -28,16 +28,18 @@ public class SiteConfiguration {
      * @param name the Site name
      * @param displayName the Site displayName
      * @param type the Site type
-     * @param attributes the List of SiteAttributeConfiguration attributes
+     * @param attributes the List of SiteAttributeConfiguration core attributes
+     * @param custom the List of SiteAttributeConfiguration custom attributes
      * @param child the List of SiteAttributeConfiguration child / children.
      *
      */
-    public SiteConfiguration(String name, String displayName, String type,
-                             List<SiteAttributeConfiguration> attributes, List<SiteConfiguration> child) {
+    public SiteConfiguration(String name, String displayName, String type, List<SiteAttributeConfiguration> attributes,
+                             List<SiteAttributeConfiguration> custom, List<SiteConfiguration> child) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
         this.attributes = attributes;
+        this.custom = custom;
         this.child = child;
     }
 
@@ -45,6 +47,7 @@ public class SiteConfiguration {
     private String displayName;
     private String type;
     private List<SiteAttributeConfiguration> attributes;
+    private List<SiteAttributeConfiguration> custom;
     private List<SiteConfiguration> child;
 
     /**
@@ -115,6 +118,14 @@ public class SiteConfiguration {
         this.attributes = attributes;
     }
 
+    public List<SiteAttributeConfiguration> getCustom() {
+        return custom;
+    }
+
+    public void setCustom(List<SiteAttributeConfiguration> custom) {
+        this.custom = custom;
+    }
+
     /**
      * Returns the child / children associated with the SiteConfiguration.
      * @return child the SiteConfiguration List of child.
@@ -143,6 +154,7 @@ public class SiteConfiguration {
                 + ", displayName='" + displayName + '\''
                 + ", type='" + type + '\''
                 + ", attributes=" + attributes
+                + ", custom=" + custom
                 + ", child=" + child
                 + '}';
     }

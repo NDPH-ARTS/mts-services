@@ -41,9 +41,6 @@ services:
       args:
         SVC: role-service
     image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
-    depends_on:
-      sql:
-        condition: service_healthy
     environment:
       SERVER_PORT: "8082"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -53,6 +50,8 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
+    depends_on:
+      - sql
     healthcheck:
       test: curl http://localhost:8082
       interval: 10s
@@ -69,7 +68,6 @@ services:
     image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
     depends_on:
       - fhir-api
-      - config-server
     environment:
       SERVER_PORT: "8083"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
@@ -115,12 +113,9 @@ services:
       restart_policy:
           condition: none
     depends_on:
-      practitioner-service:
-        condition: service_healthy
-      role-service:
-        condition: service_healthy
-      site-service:
-        condition: service_healthy
+      - practitioner-service
+      - role-service
+      - site-service
 
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
@@ -151,7 +146,7 @@ services:
     environment:
       SERVER_PORT: "8888"
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: "https://github.com/NDPH-ARTS/mts-trial-deployment-config.git"
-      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "sample_trial/services, sample_trial/services/*"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCHPATHS: "trials/ci-trial/services, trials/ci-trial/services/*"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
     image: ghcr.io/ndph-arts/config-server:${GITHUB_SHA}
@@ -182,7 +177,7 @@ services:
     ports:
       - "8761:8761"
     healthcheck:
-      test: curl http://discovery-server:8761/
+      test: curl http://localhost:8761/
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
@@ -200,7 +195,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: curl http://gateway-server:8080/
+      test: curl http://localhost:8080/
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service

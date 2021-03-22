@@ -1,3 +1,7 @@
+/*
+Create person class file that has scenarios to run create person tests
+author - Sameera Purini
+*/
 const requests = require('../../data/practitioner-service/createperson')
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')
