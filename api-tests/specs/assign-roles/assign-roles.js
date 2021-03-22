@@ -15,26 +15,24 @@ const fetch = require("node-fetch");
 describe('As a user with Assign Roles permission I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
 
     it('GIVEN a Person, a Role and more than one site exists in the Trial Instance WHEN I submit an API request to assign an existing role to an existing person at an existing trial site THEN the person is updated and I receive a success acknowledgement ', async () => {
-
-        //get parent site Id from sites endpoint
-        const getSitesResponse = await baseRequest.get(sitesEndpointUri);
-        const captureParentSiteId = getSitesResponse.text
-        let parseParentSiteIdData = JSON.parse(captureParentSiteId)
-        parentSiteId = parseParentSiteIdData[0].siteId
-
-        //request posted to practitioner end point
-        let headers = await utils.getHeadersWithAuthBootStrapUser()
-        let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
+        // get parent site Id from sites endpoint
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + sitesEndpointUri, {
             headers: headers,
-            method: 'POST',
-            body: JSON.stringify(requests.createPerson),
+            method: 'GET',
         })
-        let personResponse = await fetchResponse.json();
-        const capturePersonResponseData = personResponse
-        let parsePersonResponseData = capturePersonResponseData
-        personId = parsePersonResponseData.id
+        let ParentSiteIdData = await fetchResponse.json();
+        ccoParentSiteId = ParentSiteIdData[0].siteId
 
-        //request posted to role service endpoint
+        // get the profile Id from profile endpoint
+        let fetchResponse1 = await fetch(conf.baseUrl + profileEndpointUri, {
+            headers: headers,
+            method: 'GET',
+        })
+        let response = await fetchResponse1.json();
+        profileId = response[0].id
+
+        // request posted to role service endpoint
         const roleResponse = await baseRequest.post(rolesEndpointUri).send(requests.roleWithPermissions)
         const captureRoleResponseData = roleResponse.text
         let parseRoleResponseData = JSON.parse(captureRoleResponseData)
@@ -42,15 +40,16 @@ describe('As a user with Assign Roles permission I want to assign roles to a use
 
         //assign roles to a person
         let assignRoleJSON = requests.assignRole
-        assignRoleJSON.siteId = parentSiteId
+        assignRoleJSON.siteId = ccoParentSiteId
+        assignRoleJSON.practionerId = profileId
         assignRoleJSON.roleId = roleId
-        assignRoleEndpointUri = assignRoleEndpointUri.replace("{personId}", personId);
-        let fetchResponse1 = await fetch(conf.baseUrl + assignRoleEndpointUri, {
+        let assignRoleEndpointUri1 = conf.baseUrl + assignRoleEndpointUri.replace("{profileId}", profileId);
+
+        let fetchResponse2 = await fetch(assignRoleEndpointUri1, {
             headers: headers,
             method: 'POST',
             body: JSON.stringify(assignRoleJSON),
         })
-
-        expect(fetchResponse1.status).to.equal(HttpStatus.CREATED)
+        expect(fetchResponse2.status).to.equal(HttpStatus.CREATED)
     });
 });
