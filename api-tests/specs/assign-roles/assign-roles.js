@@ -17,7 +17,7 @@ let ccoParentSiteId;
 
 describe('As a user with Assign Roles permission and authorisation I want to assign roles to a user at one or more sites So that I can control what functionality they have at different parts of the site hierarchy', function () {
 
-    it.only('A Person, a Role and more than one site exists in the Trial Instance when I submit an API request to assign an existing role to an existing person at an existing trial site then the person is updated and I receive a success acknowledgement', async () => {
+    it('A Person, a Role and more than one site exists in the Trial Instance when I submit an API request to assign an existing role to an existing person at an existing trial site then the person is updated and I receive a success acknowledgement', async () => {
 
         // get parent site Id from sites endpoint
         const headers = await utils.getHeadersWithAuthBootStrapUser()
@@ -37,10 +37,14 @@ describe('As a user with Assign Roles permission and authorisation I want to ass
         profileId = response[0].id
 
         // request posted to role service endpoint
-        const roleResponse = await baseRequest.post(rolesEndpointUri).send(requests.roleWithPermissions)
-        const captureRoleResponseData = roleResponse.text
-        let parseRoleResponseData = JSON.parse(captureRoleResponseData)
-        roleId = parseRoleResponseData.id
+        let fetchResponse2 = await fetch(conf.baseUrl + rolesEndpointUri, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(requests.roleWithPermissions),
+        })
+
+        const roleResponse = await fetchResponse2.json();
+        roleId = roleResponse.id
 
         //assign roles to a person
         let assignRoleJSON = requests.assignRole
@@ -49,11 +53,11 @@ describe('As a user with Assign Roles permission and authorisation I want to ass
         assignRoleJSON.roleId = roleId
         let assignRoleEndpointUri1 = conf.baseUrl + assignRoleEndpointUri.replace("{profileId}", profileId);
 
-        let fetchResponse2 = await fetch(assignRoleEndpointUri1, {
+        let fetchResponse3 = await fetch(assignRoleEndpointUri1, {
             headers: headers,
             method: 'POST',
             body: JSON.stringify(assignRoleJSON),
         })
-        expect(fetchResponse2.status).to.equal(HttpStatus.CREATED)
+        expect(fetchResponse3.status).to.equal(HttpStatus.CREATED)
     });
 });
