@@ -10,9 +10,6 @@ const addCreateSitePermission =
         },
         {
             "id": "view-person"
-        },
-        {
-            "id": "assign-role"
         }
     ]
 

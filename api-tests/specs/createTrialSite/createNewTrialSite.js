@@ -15,7 +15,7 @@ let countryParentSiteId;
 describe('As a user with Create Trial Sites permission I want to have the system constrain the type of trial site I can add as a child of an existing trial site and enforce validation rules defined for the site type so that I can ensure the integrity of the trial site structure meets the needs of my trial', function () {
 
     //sending a  GET request to view CCO site ID
-    it('GIVEN I have Trial Site Type fields and site structure rules defined AND I DO NOT have an existing trial site to act as the ‘parent’ (e.g. top node in the tree) WHEN I submit an API request to create a Trial site with a value for all mandatory fields, a unique name and a permitted parent trial site ‘type’ with no fields exceeding their specified maximum length THEN a new Trial site record is created in the system, a unique identifier for itself and an acknowledgement is returned', async () => {
+    it.only('GIVEN I have Trial Site Type fields and site structure rules defined AND I DO NOT have an existing trial site to act as the ‘parent’ (e.g. top node in the tree) WHEN I submit an API request to create a Trial site with a value for all mandatory fields, a unique name and a permitted parent trial site ‘type’ with no fields exceeding their specified maximum length THEN a new Trial site record is created in the system, a unique identifier for itself and an acknowledgement is returned', async () => {
         const headers1 = await utils.getHeadersWithAuth()
         let fetchResponse1 = await fetch(conf.baseUrl + endpointUri, {
             headers: headers1,
