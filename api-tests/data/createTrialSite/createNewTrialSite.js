@@ -1,10 +1,20 @@
 const utils = require('../../common/utils')
-//creating a parent as CCO with no existing node
-const validSiteCCO = {
-    "name": "CCOUK",
-    "alias": "CCO",
-    "parentSiteId": ""
-}
+//POST: <https://as-<new branch2>-sc-gateway-dev.azurewebsites.net//api/roles/superuser/permissions
+const addCreateSitePermission =
+    [
+        {
+            "id": "create-site"
+        },
+        {
+            "id": "create-person"
+        },
+        {
+            "id": "view-person"
+        },
+        {
+            "id": "assign-role"
+        }
+    ]
 
 //parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
 const validSiteRCC = {
@@ -94,7 +104,7 @@ const missingParent = {
     "siteType": "REGION"
 }
 
-const invalidParentType = {
+const invalidSiteType = {
     "name": utils.getRandomString(5),
     "alias": utils.getRandomString(5),
     "parentSiteId": "",
@@ -126,7 +136,7 @@ const duplicateBoth = {
 }
 
 module.exports = {
-    validSiteCCO,
+    addCreateSitePermission,
     validSiteRCC,
     validSiteCountry,
     validSiteLCC,
@@ -137,7 +147,7 @@ module.exports = {
     exceedingAlias,
     exceedingBoth,
     missingParent,
-    invalidParentType,
+    invalidSiteType,
     duplicateName,
     duplicateAlias,
     duplicateBoth
