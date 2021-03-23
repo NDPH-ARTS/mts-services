@@ -14,9 +14,8 @@ let countryParentSiteId;
 
 describe('As a user with Create Trial Sites permission I want to have the system constrain the type of trial site I can add as a child of an existing trial site and enforce validation rules defined for the site type so that I can ensure the integrity of the trial site structure meets the needs of my trial', function () {
 
-    //sending a
-    //GET request to view CCO site ID
-    it.only('GIVEN I have Trial Site Type fields and site structure rules defined AND I DO NOT have an existing trial site to act as the ‘parent’ (e.g. top node in the tree) WHEN I submit an API request to create a Trial site with a value for all mandatory fields, a unique name and a permitted parent trial site ‘type’ with no fields exceeding their specified maximum length THEN a new Trial site record is created in the system, a unique identifier for itself and an acknowledgement is returned', async () => {
+    //sending a  GET request to view CCO site ID
+    it('GIVEN I have Trial Site Type fields and site structure rules defined AND I DO NOT have an existing trial site to act as the ‘parent’ (e.g. top node in the tree) WHEN I submit an API request to create a Trial site with a value for all mandatory fields, a unique name and a permitted parent trial site ‘type’ with no fields exceeding their specified maximum length THEN a new Trial site record is created in the system, a unique identifier for itself and an acknowledgement is returned', async () => {
         const headers1 = await utils.getHeadersWithAuth()
         let fetchResponse1 = await fetch(conf.baseUrl + endpointUri, {
             headers: headers1,
@@ -24,21 +23,21 @@ describe('As a user with Create Trial Sites permission I want to have the system
         })
         let ParentSiteIdData = await fetchResponse1.json();
         ccoParentSiteId = ParentSiteIdData[0].siteId
-        expect(response.status).to.equal(HttpStatus.OK)
+        expect(fetchResponse1.status).to.equal(HttpStatus.OK)
     });
 
-    //adding create-site permission to create a site
-    it('Assigning create-site permission to a superuser', async () => {
-        const headers2 = await utils.getHeadersWithAuth()
-        let fetchResponse2 = await fetch(conf.baseUrl + addPermitUri, {
-            headers: headers2,
-            method: 'POST',
-            body: JSON.stringify(requests.addCreateSitePermission),
-        })
-        // const validRegionSiteResponse = await fetchResponse2.json();
-        //validRegionSite = validRegionSiteResponse.id
-        expect(fetchResponse2.status).to.equal(HttpStatus.OK)
-    });
+    // //adding create-site permission to create a site
+    // it('Assigning create-site permission to a superuser', async () => {
+    //     const headers2 = await utils.getHeadersWithAuth()
+    //     let fetchResponse2 = await fetch(conf.baseUrl + addPermitUri, {
+    //         headers: headers2,
+    //         method: 'POST',
+    //         body: JSON.stringify(requests.addCreateSitePermission),
+    //     })
+    //     // const validRegionSiteResponse = await fetchResponse2.json();
+    //     //validRegionSite = validRegionSiteResponse.id
+    //     expect(fetchResponse2.status).to.equal(HttpStatus.OK)
+    // });
 
     //POST a request to create RCC
     it('GIVEN I have Trial Site Type fields and site structure rules defined AND I have an existing trial site to act as the ‘parent’ (e.g. top node in the tree) WHEN I submit an API request to create a Trial site with a value for all mandatory fields, a unique name and a permitted parent trial site ‘type’ with no fields exceeding their specified maximum length THEN AC1 a new Trial site record is created in the system (added to the Site structure as a child of its parent) with its parent identifier, a unique identifier for itself and an acknowledgement is returned', async () => {
@@ -56,7 +55,7 @@ describe('As a user with Create Trial Sites permission I want to have the system
         rccParentSiteId = regionResponse.id
     });
 
-//POST a request to create COUNTRY
+    //POST a request to create COUNTRY
     it('GIVEN I have Trial Site Type fields and site structure rules defined AND I have an existing trial site to act as the ‘parent’ (e.g. top node in the tree) WHEN I submit an API request to create a Trial site with a value for all mandatory fields, a unique name and a permitted parent trial site ‘type’ with no fields exceeding their specified maximum length THEN AC1 a new Trial site record is created in the system (added to the Site structure as a child of its parent) with its parent identifier, a unique identifier for itself and an acknowledgement is returned', async () => {
         let rccAsParent = requests.validSiteCountry;
         rccAsParent.parentSiteId = rccParentSiteId
@@ -71,7 +70,7 @@ describe('As a user with Create Trial Sites permission I want to have the system
         countryParentSiteId = countryResponse.id
     });
 
-////POST a request to create LCC
+    ////POST a request to create LCC
     it('GIVEN I have Trial Site Type fields and site structure rules defined AND I have an existing trial site to act as the ‘parent’ (e.g. top node in the tree) WHEN I submit an API request to create a Trial site with a value for all mandatory fields, a unique name and a permitted parent trial site ‘type’ with no fields exceeding their specified maximum length THEN AC1 a new Trial site record is created in the system (added to the Site structure as a child of its parent) with its parent identifier, a unique identifier for itself and an acknowledgement is returned', async () => {
         let countryAsParent = requests.validSiteLCC
         countryAsParent.parentSiteId = countryParentSiteId
@@ -244,8 +243,8 @@ describe('As a user with Create Trial Sites permission I want to have the system
             headers: headers17,
             method: 'GET',
         })
-        let ParentSiteIdData = await fetchResponse17.json();
-        ccoParentSiteId = ParentSiteIdData[0].siteId
-        expect(response.status).to.equal(HttpStatus.OK)
+        let sitesResponse = await fetchResponse17.json();
+        ccoParentSiteId = sitesResponse[0].siteId
+        expect(fetchResponse17.status).to.equal(HttpStatus.OK)
     })
 });

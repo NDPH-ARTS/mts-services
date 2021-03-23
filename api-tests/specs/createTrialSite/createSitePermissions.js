@@ -2,7 +2,7 @@
 Create New Trial Sites class file that contain scenarios covering create site entities
 author: Samee Syed
 */
-const requests = require('../../data/createTrialSite/createSitePermission')
+const requests = require('../../data/createTrialSite/createSitePermissions')
 const conf = require('../../config/conf')
 const endpointUri = '/api/sites';
 const addPermitUri = '/api/roles/superuser/permissions';
@@ -21,7 +21,6 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
         })
         let ParentSiteIdData = await fetchResponse1.json();
         ccoParentSiteId = ParentSiteIdData[0].siteId
-        //expect(response.status).to.equal(HttpStatus.OK)
     });
 
     // attempting to create a site WITHOUT create-site permission as a superuser
@@ -29,14 +28,13 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
     it('User cannot create new trial site without create-site permission', async () => {
         let ccoAsParent = requests.createSite;
         ccoAsParent.parentSiteId = ccoParentSiteId
-        const headers2 = await utils.getHeadersWithAuth()
+        const headers2 = await utils.testAuth()
         let fetchResponse2 = await fetch(conf.baseUrl + endpointUri, {
             headers: headers2,
             method: 'POST',
             body: JSON.stringify(ccoAsParent),
         })
-        let regionResponse = await fetchResponse3.json();
-        console.log('checking line 54' +fetchResponse3);
+        let regionResponse = await fetchResponse2.json();
         expect(fetchResponse2.status).to.equal(HttpStatus.FORBIDDEN)
     });
 
@@ -48,7 +46,7 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
             method: 'POST',
             body: JSON.stringify(requests.addCreateSitePermission),
         })
-        const validRegionSiteResponse = await fetchResponse2.json();
+        const validRegionSiteResponse = await fetchResponse3.json();
         validRegionSite = validRegionSiteResponse.id
         expect(fetchResponse3.status).to.equal(HttpStatus.OK)
     });
@@ -66,6 +64,5 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
         })
         let regionResponse = await fetchResponse4.json();
         expect(fetchResponse4.status).to.equal(HttpStatus.CREATED)
-        rccParentSiteId = regionResponse.id
     });
 });
