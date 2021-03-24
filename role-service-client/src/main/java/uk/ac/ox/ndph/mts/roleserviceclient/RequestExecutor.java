@@ -9,7 +9,6 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 @Component
@@ -24,7 +23,7 @@ public class RequestExecutor {
 
     protected <R, T> R sendBlockingPostRequest(WebClient webClient,
                                               String uri,
-                                              List<T> payload,
+                                              T payload,
                                               Class<R> responseExpected,
                                               final Consumer<HttpHeaders> authHeaders) {
         return webClient.post()
