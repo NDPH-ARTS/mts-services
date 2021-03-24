@@ -1,10 +1,18 @@
 # security
 role:
   service:
-    uri: http://localhost:8082
     endpoint:
-      roles: /roles
+      exists: /roles/{id}
+      paged: /roles/
+      role: /roles/{id}
+      roles:
+        create: /roles
+        by:
+          ids: roles
+      update:
+        permissions: /roles/{id}/permissions
     name: role-service
+    uri: http://role-service
 site:
   service:
     uri: http://localhost:8083
