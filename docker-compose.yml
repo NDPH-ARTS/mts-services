@@ -109,7 +109,6 @@ services:
       AZURE_PASSWORD: ${INIT_SERVICE_ACCOUNT_PASSWORD}
       AZURE_CLIENT_ID: ${MTS_AZURE_APP_CLIENT_ID}
       LOGGING_LEVEL_UK_AC_OX_NDPH_MTS: DEBUG
-      PROGRESS_LOG_PATH: ""
     deploy:
       restart_policy:
           condition: none
