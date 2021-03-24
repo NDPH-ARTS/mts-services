@@ -29,4 +29,10 @@ public class TrialDefinitionFile {
 
     @JsonProperty(value = "spring_cloud", required = true)
     private SpringCloud springCloud;
+
+    @JsonProperty(value = "spring_profile", required = true)
+    private String springProfile;
+
+    @JsonProperty(value = "spring_config_label", required = true)
+    private String springConfigLabel;
 }

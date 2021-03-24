@@ -8,7 +8,7 @@ import java.util.List;
 
 @Component
 @Configuration
-@ConfigurationProperties("trial")
+@ConfigurationProperties("mts.trial")
 public class Trial {
     private List<Practitioner> persons;
     private List<Site> sites;
