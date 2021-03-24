@@ -12,6 +12,9 @@ const roleWithPermissions = {
         },
         {
             "id": "view-person"
+        },
+        {
+            "id": "assign-role"
         }
     ]
 }
