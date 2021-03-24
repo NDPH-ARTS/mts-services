@@ -66,7 +66,9 @@ public class RoleServiceClient {
     public RoleDTO createEntity(final RoleDTO role,
                                 final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
-        return requestExecutor.sendBlockingPostRequest(webClient, clientRoutes.getServiceCreateRole(), List.of(role), RoleDTO.class, authHeaders);
+        return requestExecutor.sendBlockingPostRequest(webClient,
+                clientRoutes.getServiceCreateRole(),
+                List.of(role), RoleDTO.class, authHeaders);
     }
 
     public RoleDTO getById(final String roleId,
