@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 
 @SpringBootApplication
-@ComponentScan({"uk.ac.ox.ndph.mts.roleserviceclient"})
+@ComponentScan({"uk.ac.ox.ndph.mts.roleserviceclient", "uk.ac.ox.ndph.mts.init_service"})
 public class InitServiceApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InitServiceApplication.class);

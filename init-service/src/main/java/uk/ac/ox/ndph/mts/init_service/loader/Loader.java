@@ -24,10 +24,10 @@ public class Loader implements CommandLineRunner {
     private long delayStartInSeconds;
 
     @Autowired
-    public Loader(final Trial trialConfig,
-                  final PractitionerServiceInvoker practitionerServiceInvoker,
-                  final RoleServiceClient roleServiceClient,
-                  final SiteServiceInvoker siteServiceInvoker) {
+    public Loader(Trial trialConfig,
+                   PractitionerServiceInvoker practitionerServiceInvoker,
+                   RoleServiceClient roleServiceClient,
+                   SiteServiceInvoker siteServiceInvoker) {
         this.trialConfig = trialConfig;
         this.practitionerServiceInvoker = practitionerServiceInvoker;
         this.roleServiceClient = roleServiceClient;
