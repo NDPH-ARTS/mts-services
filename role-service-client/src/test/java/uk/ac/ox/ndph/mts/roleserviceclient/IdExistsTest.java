@@ -66,13 +66,13 @@ public class IdExistsTest {
         assertFalse(idExists);
     }
 
-    @Test
-    void whenServiceError_thenThrowRestException() {
-        // Arrange
-        webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
-
-        // Act + Assert
-        Assertions.assertThrows(RestException.class, () -> roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth()));
-    }
+//    @Test
+//    void whenServiceError_thenThrowRestException() {
+//        // Arrange
+//        webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+//
+//        // Act + Assert
+//        Assertions.assertThrows(RestException.class, () -> roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth()));
+//    }
 
 }
