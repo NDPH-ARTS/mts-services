@@ -128,7 +128,7 @@ public class RoleServiceClient {
                 .retrieve()
                 .onStatus(
                     httpStatus -> !httpStatus.is2xxSuccessful(),
-                      resp -> Mono.error(new RestException(
+                    resp -> Mono.error(new RestException(
                             ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
                                     clientRoutes.getServiceName(), resp.statusCode(), uri))))
 
