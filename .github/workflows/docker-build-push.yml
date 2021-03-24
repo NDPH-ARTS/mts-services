@@ -178,6 +178,7 @@ jobs:
       - name: Prepare docker-compose logs
         if: always()
         run: |
+          docker-compose ps
           docker-compose logs --tail="all" > docker-compose.log
       - name: Upload docker-compose logs
         if: always()
