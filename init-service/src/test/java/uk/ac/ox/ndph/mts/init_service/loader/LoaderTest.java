@@ -14,7 +14,9 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.util.Collections;
+import java.util.function.Consumer;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -38,13 +40,13 @@ class LoaderTest {
     void testLoader() throws InterruptedException {
         Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceClient, siteServiceInvoker);
 
-        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceClient).createMany(anyList(), roleServiceClient.noAuth());
+        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceClient).createMany(anyList(), any(Consumer.class));
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         loader.run();
 
-        verify(roleServiceClient, times(1)).createMany(anyList(), roleServiceClient.noAuth());
+        verify(roleServiceClient, times(1)).createMany(anyList(), any(Consumer.class));
         verify(siteServiceInvoker, times(1)).execute(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
