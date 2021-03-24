@@ -58,7 +58,8 @@ public class RoleServiceClient {
 
 
     public boolean entityIdExists(final String roleId,
-                                  final Consumer<HttpHeaders> authHeaders) throws RestException { //TODO: Find out how to simplfy this as well
+                                  final Consumer<HttpHeaders> authHeaders)
+            throws RestException { //TODO: Find out how to simplify this as well
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         try {
             getById(roleId, authHeaders);
@@ -115,7 +116,9 @@ public class RoleServiceClient {
         return sendBlockingGetRequest(uri, RolePageImpl.class, authHeaders);
     }
 
-    protected <R> R sendBlockingPostRequest(String uri, Entity payload, Class<R> responseExpected, final Consumer<HttpHeaders> authHeaders) {
+    protected <R> R sendBlockingPostRequest(String uri, Entity payload,
+                                            Class<R> responseExpected,
+                                            final Consumer<HttpHeaders> authHeaders) {
         return webClient.post()
                 .uri(uri)
                 .headers(authHeaders)
@@ -124,10 +127,10 @@ public class RoleServiceClient {
                 .body(Mono.just(payload), payload.getClass())
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
-                                        clientRoutes.getServiceName(), resp.statusCode(), uri))))
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                      resp -> Mono.error(new RestException(
+                            ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
+                                    clientRoutes.getServiceName(), resp.statusCode(), uri))))
 
                 .bodyToMono(responseExpected)
                 .retryWhen(retryPolicy.get())
@@ -135,17 +138,19 @@ public class RoleServiceClient {
                 .block();
     }
 
-    protected <R> R sendBlockingGetRequest(String uri, Class<R> responseExpected, final Consumer<HttpHeaders> authHeaders) {
+    protected <R> R sendBlockingGetRequest(String uri,
+                                           Class<R> responseExpected,
+                                           final Consumer<HttpHeaders> authHeaders) {
         return webClient.get()
                 .uri(uri)
                 .headers(authHeaders)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
-                        httpStatus -> !httpStatus.is2xxSuccessful(),
-                        resp -> Mono.error(new RestException(
-                                ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
-                                        clientRoutes.getServiceName(), resp.statusCode(), uri))))
+                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                    resp -> Mono.error(new RestException(
+                            ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
+                                    clientRoutes.getServiceName(), resp.statusCode(), uri))))
                 .bodyToMono(responseExpected)
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))
