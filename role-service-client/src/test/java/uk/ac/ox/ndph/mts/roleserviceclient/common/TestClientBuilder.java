@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.roleserviceclient.common;
 
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
+import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfig;
 import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
 
 public class TestClientBuilder {
@@ -17,7 +18,7 @@ public class TestClientBuilder {
     }
 
     public RoleServiceClient build(final String url) {
-        return new RoleServiceClient(config.webClientBuilder(), config.retryPolicy(), url);
+        return new RoleServiceClient(config.webClientBuilder(), url, config.retryPolicy(), new ClientRoutesConfig());
     }
 
 }

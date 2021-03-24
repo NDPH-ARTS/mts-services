@@ -1,0 +1,3 @@
+role:
+  service:
+    uri: http://role-service
