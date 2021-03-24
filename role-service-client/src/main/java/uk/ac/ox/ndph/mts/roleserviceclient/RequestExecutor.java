@@ -22,7 +22,7 @@ public class RequestExecutor {
         this.retryPolicy = retryPolicy;
     }
 
-    protected <R,T> R sendBlockingPostRequest(WebClient webClient,
+    protected <R, T> R sendBlockingPostRequest(WebClient webClient,
                                               String uri,
                                               List<T> payload,
                                               Class<R> responseExpected,
