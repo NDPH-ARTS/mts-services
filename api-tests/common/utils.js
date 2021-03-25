@@ -25,7 +25,23 @@ class utils {
             method: 'POST',
             body: form
         })
+        let jsonResponse = await response.json();
+        return jsonResponse.id_token;
+    };
 
+    async getQaWithCreateUserTokenId() {
+        let form = new formData();
+        form.append('grant_type', 'password')
+        form.append('client_id', 'f352ce15-0142-4dfa-8e18-801ee6391557')
+        form.append('scope', 'openid profile')
+        form.append('username', 'qa.with-create@mtsdevndph.onmicrosoft.com')
+        form.append('password', 'Withcreate909')
+        // form.append('username', process.env.BOOTSTRAP_USER_NAME)
+        //form.append('password', process.env.BOOTSTRAP_USER_PASSWORD)
+        let response = await fetch(authUri, {
+            method: 'POST',
+            body: form
+        })
         let jsonResponse = await response.json();
         return jsonResponse.id_token;
     };
@@ -41,7 +57,6 @@ class utils {
             method: 'POST',
             body: form
         })
-
         let jsonResponse = await response.json();
         return jsonResponse.id_token;
     };
@@ -57,7 +72,6 @@ class utils {
         return headers;
     }
 
-
     async getHeadersWithAuth() {
         const tokenId = await this.getTokenId();
         let headers = {
@@ -69,6 +83,16 @@ class utils {
         return headers;
     }
 
+    async getQAHeadersWithAuth() {
+        const tokenId = await this.getQaWithCreateUserTokenId();
+        let headers = {
+            'Authorization': 'Bearer ' + tokenId,
+            'Content-Type': 'application/json',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive'
+        };
+        return headers;
+    }
 }
 
 module.exports = new utils;
