@@ -12,11 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
-import uk.ac.ox.ndph.mts.init_service.configuration.WebClientConfig;
 import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
+import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
 
 import java.io.IOException;
 import java.util.Collections;
