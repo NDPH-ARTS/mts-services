@@ -36,6 +36,10 @@ while ! is_healthy gateway-server; do sleep 10; done
 
 docker-compose up --no-build -d practitioner-service site-service role-service
 
+while ! is_healthy practitioner-service; do sleep 10; done
+while ! is_healthy site-service; do sleep 10; done
+while ! is_healthy role-service; do sleep 10; done
+
 sleep 10
 
 echo "Services started."
