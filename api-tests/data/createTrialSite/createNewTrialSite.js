@@ -1,10 +1,5 @@
 const utils = require('../../common/utils')
-//creating a parent as CCO with no existing node
-const validSiteCCO = {
-    "name": "CCOUK",
-    "alias": "CCO",
-    "parentSiteId": ""
-}
+//POST: <https://as-<new branch2>-sc-gateway-dev.azurewebsites.net//api/roles/superuser/permissions
 
 //parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
 const validSiteRCC = {
@@ -39,6 +34,7 @@ const validSiteLCC = {
         "postcode": "OX3 7LF",
     }
 }
+
 //parentSiteId - rccParentSiteId
 const missingName = {
     "name": "",
@@ -94,7 +90,7 @@ const missingParent = {
     "siteType": "REGION"
 }
 
-const invalidParentType = {
+const invalidSiteType = {
     "name": utils.getRandomString(5),
     "alias": utils.getRandomString(5),
     "parentSiteId": "",
@@ -109,24 +105,7 @@ const duplicateName = {
     "siteType": "REGION"
 }
 
-//parentSiteId - rccParentSiteId
-const duplicateAlias = {
-    "name": utils.getRandomString(5),
-    "alias": "rcc",
-    "parentSiteId": "",
-    "siteType": "REGION"
-}
-
-//parentSiteId - rccParentSiteId
-const duplicateBoth = {
-    "name": "uk",
-    "alias": "uk",
-    "parentSiteId": "",
-    "siteType": "REGION"
-}
-
 module.exports = {
-    validSiteCCO,
     validSiteRCC,
     validSiteCountry,
     validSiteLCC,
@@ -137,8 +116,6 @@ module.exports = {
     exceedingAlias,
     exceedingBoth,
     missingParent,
-    invalidParentType,
-    duplicateName,
-    duplicateAlias,
-    duplicateBoth
+    invalidSiteType,
+    duplicateName
 }
