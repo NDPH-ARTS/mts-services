@@ -187,6 +187,8 @@ jobs:
           AUTOMATION_USER_PASSWORD: ${{ secrets.AUTOMATION_USER_PASSWORD }}
           BOOTSTRAP_USER_NAME: bootstrap@mtsdevndph.onmicrosoft.com
           BOOTSTRAP_USER_PASSWORD: ${{ secrets.BOOTSTRAP_USER_PASSWORD }}
+          QAWITHCREATE_USER_NAME: qa.with-create@mtsdevndph.onmicrosoft.com
+          QAWITHCREATE_USER_PASSWORD: ${{ secrets.QA_WITH_CREATE_USER_PASSWORD }}
         run: |
           npm run --prefix api-tests api-test-ci
       - name: Prepare docker-compose logs

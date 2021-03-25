@@ -1,26 +1,26 @@
 package uk.ac.ox.ndph.mts.init_service.loader;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Permission;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
+import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LoaderTest {
@@ -34,9 +34,12 @@ class LoaderTest {
     @Mock
     PractitionerServiceInvoker practitionerServiceInvoker;
 
+    @Mock
+    InitProgressReporter initProgressReporter;
+
     @Test
-    void testLoader() throws InterruptedException {
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker);
+    void testLoader() throws InterruptedException, IOException {
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).execute(anyList());
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
@@ -47,6 +50,15 @@ class LoaderTest {
         verify(roleServiceInvoker, times(1)).execute(anyList());
         verify(siteServiceInvoker, times(1)).execute(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
+    }
+
+    @Test
+    void testLoader_ThrowException() throws IOException, InterruptedException {
+        //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
+        when(roleServiceInvoker.execute(anyList())).thenThrow(new NullEntityException(anyString()));
+
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter);
+        Assertions.assertThrows(NullEntityException.class, loader::run);
     }
 
     Trial mockedTrial() {

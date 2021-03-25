@@ -2,10 +2,10 @@ package uk.ac.ox.ndph.mts.practitioner_service.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.practitioner_service.client.RoleServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
+import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 
 /**
  * Implements a ModelEntityValidation for RoleAssignment
@@ -35,7 +35,7 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
             return new ValidationResponse(false, "roleId must have a value");
         }
 
-        if (!this.roleServiceClient.entityIdExists(entity.getRoleId())) {
+        if (!this.roleServiceClient.entityIdExists(entity.getRoleId(), roleServiceClient.noAuth())) {
             return new ValidationResponse(false,
                     String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "roleId"));
         }
