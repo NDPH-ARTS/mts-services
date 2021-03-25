@@ -1,23 +1,22 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
-
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
-import uk.ac.ox.ndph.mts.client.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClient;
-import uk.ac.ox.ndph.mts.client.role_service.RoleServiceClient;
 import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClient;
+import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
+import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -159,10 +158,10 @@ public class AuthorisationService {
 
         List<String> roleIds = roleAssignments.stream()
                 .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
-
+      
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
-        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds).stream()
+        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds, roleServiceClient.noAuth()).stream()
                 .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
                 .map(RoleDTO::getId)
                 .collect(Collectors.toSet());
