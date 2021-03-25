@@ -94,5 +94,4 @@ class utils {
         return headers;
     }
 }
-
 module.exports = new utils;

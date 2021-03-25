@@ -198,7 +198,7 @@ describe('As a user with Create Trial Sites permission I want to have the system
         })
         //expect(fetchResponse15.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
         expect(fetchResponse15.status).to.equal(HttpStatus.CREATED)
-        //validation failing for this, can create site with duplicate Alias(returning 201 CREATED)
+        //validation failing for this, can create site with duplicate Alias(returns 201 CREATED)
     });
 
     //attempting to create an RCC with duplicate Name and Alias using POST

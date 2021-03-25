@@ -24,7 +24,7 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
         expect(fetchResponse1.status).to.equal(HttpStatus.OK)
     });
 
-    //sending a POST request with create-site permission(superuser)
+    //sending a POST request with create-site permission(superuser-bootstrap user)
     it.only('User can create new trial site with create-site permission', async () => {
         let ccoAsParent = requests.createSite;
         ccoAsParent.parentSiteId = ccoParentSiteId
@@ -39,7 +39,7 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
         rccParentSiteId = regionResponse.id
     });
 
-    // attempting to create a site WITHOUT create-site permission (admin)
+    // attempting to create a site WITHOUT create-site permission (admin-qa create)
     // Sending a POST request
     it.only('User cannot create new trial site without create-site permission', async () => {
         let ccoAsParent = requests.createSite;
