@@ -7,10 +7,18 @@ fhir:
   uri: http://localhost:8099
 role:
   service:
+    name: role-service
     uri: http://role-service
     endpoint:
-      roles: /roles
-    name: role-service
+      exists: '/roles/{id}'
+      paged: '/roles/'
+      role: '/roles/{id}'
+      roles:
+        create: '/roles'
+        by:
+          ids: 'roles'
+      update:
+        permissions: '/roles/{id}/permissions'
 site:
   service:
     uri: http://site-service
