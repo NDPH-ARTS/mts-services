@@ -14,13 +14,6 @@ practitioner:
     endpoint:
       roles: /practitioner/roles
 
-role:
-  service:
-    uri: http://role-service
-    name: role-service
-    endpoint:
-      roles: /roles
-
 site:
   service:
     uri: http://site-service
