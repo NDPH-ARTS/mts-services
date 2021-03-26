@@ -1,10 +1,7 @@
+/* data class file with/out create-site permission
+author: Samee Syed
+ */
 const utils = require('../../common/utils')
-//creating a parent as CCO with no existing node
-const validSiteCCO = {
-    "name": "CCOUK",
-    "alias": "CCO",
-    "parentSiteId": ""
-}
 
 //parentSiteId - the Id for the CCO should be retrieved and added for parentSiteId
 const validSiteRCC = {
@@ -32,13 +29,14 @@ const validSiteLCC = {
         "address1": "University of Oxford",
         "address2": "Richard Doll Building",
         "address3": "Old Road Campus",
-        "address4": "",
+        "address4": "RDrive",
         "address5": "Headington",
         "city": "Oxford",
-        "country": "",
+        "country": "UK",
         "postcode": "OX3 7LF",
     }
 }
+
 //parentSiteId - rccParentSiteId
 const missingName = {
     "name": "",
@@ -94,7 +92,7 @@ const missingParent = {
     "siteType": "REGION"
 }
 
-const invalidParentType = {
+const invalidSiteType = {
     "name": utils.getRandomString(5),
     "alias": utils.getRandomString(5),
     "parentSiteId": "",
@@ -103,30 +101,13 @@ const invalidParentType = {
 
 //parentSiteId - rccParentSiteId
 const duplicateName = {
-    "name": "rccuk",
-    "alias": utils.getRandomString(5),
-    "parentSiteId": "",
-    "siteType": "REGION"
-}
-
-//parentSiteId - rccParentSiteId
-const duplicateAlias = {
-    "name": utils.getRandomString(5),
-    "alias": "rcc",
-    "parentSiteId": "",
-    "siteType": "REGION"
-}
-
-//parentSiteId - rccParentSiteId
-const duplicateBoth = {
-    "name": "uk",
-    "alias": "uk",
+    "name": "duplicateName",
+    "alias": "duplicateName",
     "parentSiteId": "",
     "siteType": "REGION"
 }
 
 module.exports = {
-    validSiteCCO,
     validSiteRCC,
     validSiteCountry,
     validSiteLCC,
@@ -137,8 +118,6 @@ module.exports = {
     exceedingAlias,
     exceedingBoth,
     missingParent,
-    invalidParentType,
-    duplicateName,
-    duplicateAlias,
-    duplicateBoth
+    invalidSiteType,
+    duplicateName
 }
