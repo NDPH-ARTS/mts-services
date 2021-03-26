@@ -22,14 +22,7 @@
             <column name="created_by" value="darrsmi"/>
             <column name="modified_by" value="darrsmi"/>
         </insert>
-        <insert tableName="permission">
-            <column name="id" value="link-user"/>
-            <column name="created_by" value="darrsmi"/>
-            <column name="modified_by" value="darrsmi"/>
-        </insert>
-
-
-
+        
         <insert tableName="permission">
             <column name="id" value="link-user"/>
             <column name="created_by" value="darrsmi"/>
