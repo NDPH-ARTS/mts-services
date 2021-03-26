@@ -51,6 +51,7 @@ services:
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
     depends_on:
+      - config-server
       - sql
     healthcheck:
       test: curl http://localhost:8082
