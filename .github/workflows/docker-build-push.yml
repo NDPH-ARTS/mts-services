@@ -67,6 +67,7 @@ jobs:
             exit 0
           fi
 
+          echo "Trying to pull the deps image (if exists) ..."
           set +o errexit
           docker pull $DEPS_TAG
           DEPS_VALUE=$?
@@ -148,8 +149,8 @@ jobs:
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
-        run: |
-          ./.ci/docker/check-docker-compose-services.sh
+          LOGGING_LEVEL_ROOT: DEBUG
+        run: ./.ci/docker/check-docker-compose-services.sh
       - name: Run init
         env:
           PROFILE: dev
@@ -180,13 +181,20 @@ jobs:
       - name: Prepare docker-compose logs
         if: always()
         run: |
-          docker-compose logs --tail="all" > docker-compose.log
+          docker-compose ps
+
+          mkdir run-logs
+          docker-compose logs --no-color --timestamps --tail="all" > ./run-logs/all.log
+          for service_name in discovery-server config-server gateway-server role-service site-service practitioner-service; do
+            docker-compose logs --no-color --timestamps --tail="all" ${service_name} > ./run-logs/${service_name}.log
+          done
+
       - name: Upload docker-compose logs
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: docker-compose-logs
-          path: docker-compose.log
+          name: logs
+          path: run-logs/
       - name: Process API Tests Report
         if: always()
         uses: scacap/action-surefire-report@v1
