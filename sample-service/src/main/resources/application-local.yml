@@ -4,3 +4,10 @@ azure:
   keyvault:
     enabled: false
     uri: https://ityekv.vault.azure.net/
+
+spring:
+    main:
+      allow-bean-definition-overriding: true
+
+init-service:
+  identity: <init-service-identity>
