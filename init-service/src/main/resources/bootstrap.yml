@@ -7,6 +7,10 @@ spring:
         enabled: true
         service-id: CONFIG-SERVER
       fail-fast: true
+      retry:
+        max-attempts: 10
+        max-interval: 5000
+        multiplier: 1.5
 
 eureka:
   client:
