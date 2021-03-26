@@ -101,8 +101,8 @@ const invalidSiteType = {
 
 //parentSiteId - rccParentSiteId
 const duplicateName = {
-    "name": "rccuk",
-    "alias": utils.getRandomString(5),
+    "name": "duplicateName",
+    "alias": "duplicateName",
     "parentSiteId": "",
     "siteType": "REGION"
 }

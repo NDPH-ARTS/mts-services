@@ -173,13 +173,20 @@ describe('As a user with Create Trial Sites permission I want to have the system
 
     //attempting to create an RCC with duplicate Name using POST
     it.only('WHEN I submit an API request to create a Trial site and do not provide a unique name THEN AC6 a new record is not created and I receive an error notification', async () => {
+        let duplicateNameRequest = requests.duplicateName;
+        duplicateNameRequest.parentSiteId = ccoParentSiteId
         const headers13 = await utils.getHeadersWithAuth()
         let fetchResponse13 = await fetch(conf.baseUrl + endpointUri, {
             headers: headers13,
             method: 'POST',
-            body: JSON.stringify(requests.duplicateName),
+            body: JSON.stringify(duplicateNameRequest),
         })
-        expect(fetchResponse13.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
+        let fetchResponse22 = await fetch(conf.baseUrl + endpointUri, {
+            headers: headers13,
+            method: 'POST',
+            body: JSON.stringify(duplicateNameRequest),
+        })
+        expect(fetchResponse22.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
     });
 
     //attempting to view the created trial site using Get
