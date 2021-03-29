@@ -9,7 +9,6 @@ Author - Ben Deinde
 const requests = require('../../data/practitioner-service/linkperson')
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')
-/*const fetch = require("node-fetch");*/
 const { expect } = require('chai');
 const practitionerEndpointUri = 'api/practitioner'
 let linkpersonEndpointUri = 'api/practitioner/{personId}/link'
