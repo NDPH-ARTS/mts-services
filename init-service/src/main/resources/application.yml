@@ -1,9 +1,6 @@
 spring:
   main:
     web-application-type: NONE # init-service is just a console app, should quit when done.
-azure:
-  activedirectory:
-    scope: api://mts-dev/default
 role-service:
   uri: http://role-service
   routes:

@@ -22,6 +22,12 @@ public class SecurityContextUtil {
         return userPrincipal.getClaim("oid").toString();
     }
 
+    public boolean isInitService() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = ((UserPrincipal) authentication.getPrincipal());
+        return userPrincipal.getRoles().contains("internal.service");
+    }
+
     /**
      * Get user id from security context
      * @return string user id
