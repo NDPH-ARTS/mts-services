@@ -1,7 +1,9 @@
+const utils = require('../../common/utils')
+
 const createFirstPerson = {
     "prefix": "Mr",
     "givenName": "Adam",
-    "familyName": "Rich"
+    "familyName": "Mayweather"
 }
 
 const createSecondPerson = {
@@ -23,7 +25,7 @@ const createFourthPerson = {
 }
 
 const linkUser = {
-    "userAccountId": "user007"
+    "userAccountId": utils.getRandomString(15),
 }
 
 const linkEmptyUser = {

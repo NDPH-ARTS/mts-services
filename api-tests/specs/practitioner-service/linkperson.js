@@ -5,38 +5,39 @@ based on Sameera Purini's createperson class file
 Author - Ben Deinde
 */
 
-
 const requests = require('../../data/practitioner-service/linkperson')
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')
+const fetch = require("node-fetch");
 const { expect } = require('chai');
-const practitionerEndpointUri = 'api/practitioner'
-let linkpersonEndpointUri = 'api/practitioner/{personId}/link'
+const practitionerEndpointUri = '/api/practitioner'
+const linkpersonEndpointUri = '/api/practitioner/{personId}/link'
 
 
 describe('As a user with Update Person permission I want to link a Person to an existing User So that they have the Persons roles when they login to the system', function () {
 
-    it.only('Given a Person exists who is not linked to a User AND a User exists that is not linked to a Person When I submit an API request to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are linked and I receive a success acknowledgement ', async () => {
+    it('Given a Person exists who is not linked to a User AND a User exists that is not linked to a Person When I submit an API request to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are linked and I receive a success acknowledgement ', async () => {
 
         //post a request to practitioner end point to create first Practitioner
-        const headers = await utils.getHeadersWithAuth()
-        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+        const headers = await utils.getBootStrapUserHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
             headers: headers,
             method: 'POST',
-            body: JSON.stringify(requests.validPerson),
+            body: JSON.stringify(requests.createFirstPerson),
         })
-        const firstPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createFirstPerson)
-        const captureFirstPersonResponseData = firstPersonResponse.text
-        let parseFirstPersonResponseData = JSON.parse(captureFirstPersonResponseData)
-        firstPersonId = parseFirstPersonResponseData.id
-        
+        let response = await fetchResponse.json()
+        firstPersonId = response.id
+
         //link person to a user
         let linkUserJSON = requests.linkUser;
-        linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", firstPersonId);
-        const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
+        linkpersonEndpointUri1 = conf.baseUrl + linkpersonEndpointUri.replace("{personId}", firstPersonId);
 
-        //check application response confirms link success
-        expect(response.status).to.equal(HttpStatus.OK)
+        let fetchResponse1 = await fetch(linkpersonEndpointUri1, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(linkUserJSON),
+        })
+        expect(fetchResponse1.status).to.equal(HttpStatus.OK)
 
     });
 
@@ -44,23 +45,26 @@ describe('As a user with Update Person permission I want to link a Person to an 
 
         //post a request to practitioner end point to create second Practitioner
         const headers = await utils.getHeadersWithAuth()
-        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+        let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
             headers: headers,
             method: 'POST',
-            body: JSON.stringify(requests.validPerson),
+            body: JSON.stringify(requests.createSecondPerson),
         })
-        const secondPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createSecondPerson)
-        const captureSecondPersonResponseData = secondPersonResponse.text
-        let parseSecondPersonResponseData = JSON.parse(captureSecondPersonResponseData);
-        secondPersonId = parseSecondPersonResponseData.id;
+        let response2 = await fetchResponse.json()
+        secondPersonId = response2.id;
 
         //link person to a user who is already linked
         let linkUserJSON = requests.linkUser;
-        linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", secondPersonId);
-        const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
-
+        linkpersonEndpointUri2 = conf.baseUrl + linkpersonEndpointUri.replace("{personId}", firstPersonId);
+        
         //check application response confirms link failure
-        expect(response.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
+        
+        let fetchResponse2 = await fetch(linkpersonEndpointUri2, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(linkUserJSON),
+        })
+        expect(fetchResponse2.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
 
     });
 
@@ -68,23 +72,26 @@ describe('As a user with Update Person permission I want to link a Person to an 
 
         //post a request to practitioner end point to create third Practitioner
         const headers = await utils.getHeadersWithAuth()
-        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+        let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
             headers: headers,
             method: 'POST',
-            body: JSON.stringify(requests.validPerson),
+            body: JSON.stringify(requests.createSecondPerson),
         })
-        const thirdPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createThirdPerson)
-        const captureThirdPersonResponseData = thirdPersonResponse.text
-        let parseThirdPersonResponseData = JSON.parse(captureThirdPersonResponseData);
-        thirdPersonId = parseThirdPersonResponseData.id;
+        let response3 = await fetchResponse.json()
+        thirdPersonId = response3.id;
                 
         //link person to a user with request missing practitioner ID
         let linkUserJSON = requests.linkUser;
-        linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", " ");
-        const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
+        linkpersonEndpointUri3 = conf.baseUrl + linkpersonEndpointUri.replace("{personId}", " ");
 
         //check application response confirms link failure
-        expect(response.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
+        
+        let fetchResponse3 = await fetch(linkpersonEndpointUri3, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(linkUserJSON),
+        })
+        expect(fetchResponse3.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
 
     });
 
@@ -92,23 +99,26 @@ describe('As a user with Update Person permission I want to link a Person to an 
 
         //post a request to practitioner end point to create fourth Practitioner
         const headers = await utils.getHeadersWithAuth()
-        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+        let fetchResponse = await fetch(conf.baseUrl + practitionerEndpointUri, {
             headers: headers,
             method: 'POST',
-            body: JSON.stringify(requests.validPerson),
+            body: JSON.stringify(requests.createFourthPerson),
         })
-        const fourthPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createFourthPerson)
-        const captureFourthPersonResponseData = fourthPersonResponse.text
-        let parseFourthPersonResponseData = JSON.parse(captureFourthPersonResponseData);
-        fourthPersonId = parseFourthPersonResponseData.id;
+        let response4 = await fetchResponse.json()
+        fourthPersonId = response4.id;
                 
         //link person to a user with request missing practitioner ID
         let linkUserJSON = requests.linkEmptyUser;
-        linkpersonEndpointUri = linkpersonEndpointUri.replace("{personId}", fourthPersonId);
-        const response = await baseRequest.post(linkpersonEndpointUri).send(linkUserJSON)
+        linkpersonEndpointUri4 = conf.baseUrl + linkpersonEndpointUri.replace("{personId}", fourthPersonId);
 
         //check application response confirms link failure
-        expect(response.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
+        
+        let fetchResponse4 = await fetch(linkpersonEndpointUri4, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(linkUserJSON),
+        })
+        expect(fetchResponse4.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
 
     });
     
