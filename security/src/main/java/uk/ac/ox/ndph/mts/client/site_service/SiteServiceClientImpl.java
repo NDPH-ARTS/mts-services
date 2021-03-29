@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.client.Response;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
 
 import java.util.Arrays;
@@ -21,6 +22,8 @@ public class SiteServiceClientImpl implements SiteServiceClient {
 
     private final WebClient webClient;
 
+    private final SecurityContextUtil securityContextUtil;
+
     @Value("${site.service.name}")
     private String serviceName;
 
@@ -29,8 +32,10 @@ public class SiteServiceClientImpl implements SiteServiceClient {
 
     @Autowired
     public SiteServiceClientImpl(final WebClient.Builder webClientBuilder,
-                                 @Value("${site.service.uri}") String assignmentRolesUrl) {
+                                 @Value("${site.service.uri}") String assignmentRolesUrl,
+                                 SecurityContextUtil securityContextUtil) {
         this.webClient = webClientBuilder.baseUrl(assignmentRolesUrl).build();
+        this.securityContextUtil = securityContextUtil;
     }
 
     /**
@@ -41,6 +46,7 @@ public class SiteServiceClientImpl implements SiteServiceClient {
     public List<SiteDTO> getAllSites() {
 
         return webClient.get().uri(sitesRoute)
+                .headers(headers -> headers.setBearerAuth(securityContextUtil.getToken()))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
