@@ -53,7 +53,7 @@ public class RoleServiceClient {
 
     public boolean entityIdExists(final String roleId,
                                   final Consumer<HttpHeaders> authHeaders)
-            throws RestException { //TODO: Find out how to simplify this as well
+                                  throws RestException {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         try {
             getById(roleId, authHeaders);
