@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.practitioner_service.client;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import java.util.Objects;
 
@@ -11,6 +12,9 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
     protected WebClient webClient;
     protected String serviceUrlBase;
     protected String serviceExistsRoute;
+    protected SecurityContextUtil securityContextUtil;
+
+
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -18,6 +22,7 @@ public abstract class AbstractEntityServiceClient implements EntityServiceClient
         Objects.requireNonNull(id, "id must be non-null");
         return webClient.get()
                 .uri(serviceExistsRoute, id)
+                .headers(headers -> headers.setBearerAuth(securityContextUtil.getToken()))
                 .exchange()
                 .flatMap(clientResponse -> {
                     if (clientResponse.statusCode().is4xxClientError()) {
