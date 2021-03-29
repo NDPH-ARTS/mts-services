@@ -51,7 +51,7 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleServiceClient.createMany(trialConfig.getRoles(), roleServiceClient.noAuth());
+            roleServiceClient.createMany(roles, RoleServiceClient.noAuth());
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();
