@@ -30,7 +30,7 @@ public class WebClientConfig {
     @Value("${http-client.maxRetryAttempts:9}")
     private int maxRetryAttempts;
 
-    @Value("${http-client.initialRetryDurationMs:5000}")
+    @Value("${http-client.initialRetryDurationMs:6000}")
     private long initialRetryDurationMs;
 
     @Value("${http-client.maxRetryDurationMs:30000}")
