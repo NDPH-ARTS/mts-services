@@ -7,15 +7,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.AzureTokenService;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
@@ -29,20 +25,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.lenient;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class CreateManyTest {
 
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
-
-    @Mock
-    AzureTokenService mockTokenService;
-
+    private static String token = "123ert";
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -55,7 +45,7 @@ public class CreateManyTest {
 
     @BeforeEach
     void beforeEach() {
-        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
+
         roleServiceClient = builder.build(webServer.getUrl());
     }
 
@@ -114,7 +104,7 @@ public class CreateManyTest {
 
     @Test
      void whenDependentServiceFailsWhenNull_CorrectException() {
-         assertThrows(Exception.class, () -> roleServiceClient.createMany(null, roleServiceClient.noAuth()));
+         assertThrows(Exception.class, () -> roleServiceClient.createMany(null, RoleServiceClient.noAuth()));
      }
 
      @Test
@@ -125,7 +115,7 @@ public class CreateManyTest {
          webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
          List<RoleDTO> roles = Collections.singletonList(testRole);
-         assertThrows(RestException.class, () -> roleServiceClient.createMany(roles, roleServiceClient.bearerAuth(mockTokenService.getToken())));
+         assertThrows(RestException.class, () -> roleServiceClient.createMany(roles, RoleServiceClient.bearerAuth(token)));
      }
 
      @Test
@@ -142,7 +132,7 @@ public class CreateManyTest {
          final ObjectMapper mapper = new ObjectMapper();
          webServer.queueResponse(mapper.writeValueAsString(testRole));
          try {
-             roleServiceClient.createMany(roles, roleServiceClient.bearerAuth(mockTokenService.getToken()));
+             roleServiceClient.createMany(roles, RoleServiceClient.bearerAuth(token));
          } catch(Exception e) {
              fail("Should not have thrown any exception");
          }

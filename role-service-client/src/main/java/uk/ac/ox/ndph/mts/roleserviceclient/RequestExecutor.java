@@ -2,11 +2,13 @@ package uk.ac.ox.ndph.mts.roleserviceclient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfig;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 
 import java.util.function.Consumer;
@@ -15,10 +17,12 @@ import java.util.function.Supplier;
 public class RequestExecutor {
 
     private final Supplier<Retry> retryPolicy;
+    private final ClientRoutesConfig clientRoutesConfig;
 
     @Autowired
-    public RequestExecutor(Supplier<Retry> retryPolicy) {
+    public RequestExecutor(Supplier<Retry> retryPolicy, ClientRoutesConfig clientRoutesConfig) {
         this.retryPolicy = retryPolicy;
+        this.clientRoutesConfig = clientRoutesConfig;
     }
 
     protected <R, T> R sendBlockingPostRequest(WebClient webClient,
@@ -33,11 +37,10 @@ public class RequestExecutor {
                 .accept(MediaType.APPLICATION_JSON)
                 .body(Mono.just(payload), payload.getClass())
                 .retrieve()
-                .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                .onStatus(HttpStatus::isError,
                     resp -> Mono.error(new RestException(
                             ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
-                                    "role-service", resp.statusCode(), uri))))
+                                    clientRoutesConfig.getServiceName(), resp.statusCode(), uri))))
 
                 .bodyToMono(responseExpected)
                 .retryWhen(retryPolicy.get())
@@ -54,11 +57,10 @@ public class RequestExecutor {
                 .headers(authHeaders)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(
-                    httpStatus -> !httpStatus.is2xxSuccessful(),
+                .onStatus(HttpStatus::isError,
                     resp -> Mono.error(new RestException(
                             ResponseMessages.SERVICE_NAME_STATUS_AND_PATH.format(
-                                    "role-service", resp.statusCode(), uri))))
+                                    clientRoutesConfig.getServiceName(), resp.statusCode(), uri))))
                 .bodyToMono(responseExpected)
                 .retryWhen(retryPolicy.get())
                 .onErrorResume(e -> Mono.error(new RestException(e.getMessage(), e)))

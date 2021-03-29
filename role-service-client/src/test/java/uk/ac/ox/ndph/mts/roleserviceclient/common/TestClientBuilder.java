@@ -22,7 +22,7 @@ public class TestClientBuilder {
         return new RoleServiceClient(config.webClientBuilder(),
                 url,
                 new ClientRoutesConfig(),
-                new RequestExecutor(config.retryPolicy()));
+                new RequestExecutor(config.retryPolicy(), new ClientRoutesConfig()));
     }
 
 }

@@ -14,12 +14,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.init_service.model.RoleAssignment;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.AzureTokenService;
 import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
 
 import java.io.IOException;

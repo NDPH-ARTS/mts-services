@@ -105,7 +105,7 @@ public class RoleServiceClient {
     public Page<RoleDTO> getPage(final int page, final int size,
                                  final Consumer<HttpHeaders> authHeaders) throws RestException {
         String uri = UriComponentsBuilder
-                .fromUriString(clientRoutes.getServiceRolesByIds())
+                .fromUriString(clientRoutes.getServiceGetPaged())
                 .queryParam("page", page)
                 .queryParam("size", size)
                 .build().toString();

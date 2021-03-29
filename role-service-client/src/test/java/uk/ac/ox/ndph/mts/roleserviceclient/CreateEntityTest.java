@@ -7,15 +7,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.AzureTokenService;
 import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,15 +23,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.lenient;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class CreateEntityTest {
 
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
+    private static String token = "123ert";
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -46,12 +41,8 @@ public class CreateEntityTest {
         webServer = MockWebServerWrapper.newStartedInstance();
     }
 
-    @Mock
-    AzureTokenService mockTokenService;
-
     @BeforeEach
     void beforeEach() {
-        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
         roleServiceClient = builder.build(webServer.getUrl());
 
     }
@@ -91,7 +82,7 @@ public class CreateEntityTest {
         testRole.setId("testId");
         final ObjectMapper mapper = new ObjectMapper();
         webServer.queueResponse(mapper.writeValueAsString(testRole));
-        var returnedRoleId = roleServiceClient.createEntity(testRole, roleServiceClient.bearerAuth(mockTokenService.getToken()));
+        var returnedRoleId = roleServiceClient.createEntity(testRole, RoleServiceClient.bearerAuth(token));
         assertNotNull(returnedRoleId);
      }
 

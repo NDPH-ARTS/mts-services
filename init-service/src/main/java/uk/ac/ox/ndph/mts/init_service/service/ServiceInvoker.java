@@ -8,10 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.AzureTokenService;
 
 import java.time.Duration;
 import java.util.ArrayList;

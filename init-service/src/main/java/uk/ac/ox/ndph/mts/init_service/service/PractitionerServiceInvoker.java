@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
@@ -14,7 +15,6 @@ import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.init_service.model.RoleAssignment;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.AzureTokenService;
 
 import java.util.List;
 

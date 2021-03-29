@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
 import uk.ac.ox.ndph.mts.init_service.model.Entity;
 import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.AzureTokenService;
 
 @Service
 public class SiteServiceInvoker extends ServiceInvoker {
