@@ -158,8 +158,7 @@ jobs:
           PROFILE: dev
           SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
-          INIT_SERVICE_ACCOUNT_OBJECTID: e6fd67af-ef25-4a4b-af7c-0ed8a7bd40cf
-          MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
+          MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
@@ -170,9 +169,8 @@ jobs:
           PROFILE: dev
           GITHUB_SHA: ${{github.sha}}
           # The following is used by the init-service to generate a token
-          MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
-          INIT_SERVICE_ACCOUNT_USERNAME: init-service@mtsdevndph.onmicrosoft.com
-          INIT_SERVICE_ACCOUNT_PASSWORD: ${{ secrets.INIT_SERVICE_ACCOUNT_PASSWORD }}
+          MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
+          INIT_SERVICE_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
         run: |
           set -o nounset
           set -o errexit
@@ -180,7 +178,7 @@ jobs:
       - name: Run API Tests
         env:
           BASE_URL: http://localhost:8080
-          MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
+          MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
