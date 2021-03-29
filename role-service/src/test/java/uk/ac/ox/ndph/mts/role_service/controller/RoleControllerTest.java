@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,9 +37,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@TestPropertySource(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
+@TestPropertySource(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "azure.activedirectory.client-id=client-id", "azure.activedirectory.stateless=true" })
 @RunWith(SpringRunner.class)
 @WebMvcTest(RoleController.class)
+@ActiveProfiles({"no-authZ", "SECURITY_MOCK"})
 class RoleControllerTest {
 
     @Autowired
@@ -61,6 +64,7 @@ class RoleControllerTest {
     private String URI_ROLE = "/roles/%s";
     private String URI_PERMISSIONS_FOR_ROLE = "/roles/%s/permissions";
 
+    @WithMockUser
     @Test
     void whenPostValidRole_thenReturnSuccess() throws Exception {
 
@@ -75,6 +79,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenPostInvalidRole_thenReturn400() throws Exception {
 
@@ -87,6 +92,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenConvertRoleDtoToEntity_thenSameData() {
 
@@ -104,6 +110,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenGetRolesPaged_thenReceiveSuccess() throws Exception {
 
@@ -111,7 +118,7 @@ class RoleControllerTest {
     }
 
 
-
+    @WithMockUser
     @Test
     void whenGetOneRole_thenReceiveSuccess() throws Exception {
 
@@ -124,6 +131,7 @@ class RoleControllerTest {
                 .andExpect(status().isOk()).andExpect(content().string(containsString(dummyId)));
     }
 
+    @WithMockUser
     @Test
     void whenGetNonExistentRole_thenReceive404() throws Exception {
 
@@ -132,6 +140,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenGetRole_thenAlsoReceivePermissionsForRole() throws Exception {
 
@@ -149,6 +158,7 @@ class RoleControllerTest {
                 .andExpect(content().string(containsString(dummyPermissionId)));
     }
 
+    @WithMockUser
     @Test
     void whenPostValidPermissionForRole_thenReceiveSuccess() throws Exception {
 
@@ -165,6 +175,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenGetMultipleRolesById_thenReceiveMultipleRolesAndPermissionsJson() throws Exception {
 
