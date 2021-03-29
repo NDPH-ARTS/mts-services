@@ -121,6 +121,20 @@ jobs:
           docker tag ${{ steps.check_docker_images.outputs.runtime_tag }} $TO_TAG
           docker push $TO_TAG
 
+      - name: Deploy main-nightly image
+        if: github.ref == 'refs/heads/main' && github.event_name == 'schedule'
+        uses: convictional/trigger-workflow-and-wait@v1.3.0
+        with:
+          owner: ndph-arts
+          repo: mts-deployment-config
+          github_token: ${{ secrets.DEPLOYMENT_TRIGGER_PAT }}
+          workflow_file_name: terraform-plan-apply.yml
+          ref: main
+          wait_interval: 60
+          inputs: '{ trialDefinitionPath": "trials/mainnightly/definition.yml" }'
+          propagate_failure: true
+          wait_workflow: true
+           
   buildall:
     runs-on: ubuntu-latest
     name: Build services check all
