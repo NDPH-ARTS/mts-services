@@ -17,6 +17,9 @@ logging:
               client:
                 ExchangeFunctions: TRACE
 
+mts:
+  scope: api://fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290/.default
+
 # for local work we specify the uri's manually using env vars
 # When Eureka is disabled Ribbon client defaults to a configured server list
 role-service:
