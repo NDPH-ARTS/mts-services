@@ -21,10 +21,10 @@ import java.util.function.Supplier;
 @ConfigurationProperties(prefix = "http-client")
 public class WebClientConfig {
 
-    @Value("${http-client.connectTimeOutMs:1000}")
+    @Value("${http-client.connectTimeOutMs:3000}")
     private int connectTimeOutMs;
 
-    @Value("${http-client.readTimeOutMs:10000}")
+    @Value("${http-client.readTimeOutMs:30000}")
     private long readTimeOutMs;
 
     @Value("${http-client.maxRetryAttempts:9}")
