@@ -1,17 +1,31 @@
+/*
+Link person class file that has scenarios to run link person tests
+based on Sameera Purini's createperson class file
+
+Author - Ben Deinde
+*/
+
+
 const requests = require('../../data/practitioner-service/linkperson')
 const conf = require('../../config/conf')
 const utils = require('../../common/utils')
-const fetch = require("node-fetch");
+/*const fetch = require("node-fetch");*/
 const { expect } = require('chai');
-const practitionerEndpointUri = ':8081/practitioner'
-let linkpersonEndpointUri = ':8081/practitioner/{personId}/link'
+const practitionerEndpointUri = 'api/practitioner'
+let linkpersonEndpointUri = 'api/practitioner/{personId}/link'
 
 
 describe('As a user with Update Person permission I want to link a Person to an existing User So that they have the Persons roles when they login to the system', function () {
 
-    it('Given a Person exists who is not linked to a User AND a User exists that is not linked to a Person When I submit an API request to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are linked and I receive a success acknowledgement ', async () => {
+    it.only('Given a Person exists who is not linked to a User AND a User exists that is not linked to a Person When I submit an API request to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are linked and I receive a success acknowledgement ', async () => {
 
         //post a request to practitioner end point to create first Practitioner
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(requests.validPerson),
+        })
         const firstPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createFirstPerson)
         const captureFirstPersonResponseData = firstPersonResponse.text
         let parseFirstPersonResponseData = JSON.parse(captureFirstPersonResponseData)
@@ -30,6 +44,12 @@ describe('As a user with Update Person permission I want to link a Person to an 
     it('Given a Person exists who is not linked to a User When I submit an API request to link the Person to a User who is already linked to a Person in this trial Then the Person and User are NOT linked and I receive an error notification ', async () => {
 
         //post a request to practitioner end point to create second Practitioner
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(requests.validPerson),
+        })
         const secondPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createSecondPerson)
         const captureSecondPersonResponseData = secondPersonResponse.text
         let parseSecondPersonResponseData = JSON.parse(captureSecondPersonResponseData);
@@ -48,6 +68,12 @@ describe('As a user with Update Person permission I want to link a Person to an 
     it('When I submit an API request with missing Practitioner ID to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are NOT linked and I receive a failure acknowledgement ', async () => {
 
         //post a request to practitioner end point to create third Practitioner
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(requests.validPerson),
+        })
         const thirdPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createThirdPerson)
         const captureThirdPersonResponseData = thirdPersonResponse.text
         let parseThirdPersonResponseData = JSON.parse(captureThirdPersonResponseData);
@@ -66,6 +92,12 @@ describe('As a user with Update Person permission I want to link a Person to an 
     it('When I submit an API request with missing User ID to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are NOT linked and I receive a failure acknowledgement ', async () => {
 
         //post a request to practitioner end point to create fourth Practitioner
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(requests.validPerson),
+        })
         const fourthPersonResponse = await baseRequest.post(practitionerEndpointUri).send(requests.createFourthPerson)
         const captureFourthPersonResponseData = fourthPersonResponse.text
         let parseFourthPersonResponseData = JSON.parse(captureFourthPersonResponseData);
