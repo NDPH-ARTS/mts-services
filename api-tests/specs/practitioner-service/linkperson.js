@@ -107,7 +107,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
         let response4 = await fetchResponse.json()
         fourthPersonId = response4.id;
                 
-        //link person to a user with request missing practitioner ID
+        //link fourth person to a user with request missing practitioner ID
         let linkUserJSON = requests.linkEmptyUser;
         linkpersonEndpointUri4 = conf.baseUrl + linkpersonEndpointUri.replace("{personId}", fourthPersonId);
 
