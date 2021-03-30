@@ -11,7 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>site-service-client</artifactId>
-    <description>Common client for accessing role-service</description>
+    <description>Common client for accessing site-service</description>
 
     <properties>
         <okhttp.version>4.9.0</okhttp.version>

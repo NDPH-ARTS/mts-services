@@ -1,91 +1,93 @@
-//package uk.ac.ox.ndph.mts.siteserviceclient;
-//
-//import org.junit.jupiter.api.AfterAll;
-//import org.junit.jupiter.api.BeforeAll;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
-//import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-//import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
-//import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
-//import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
-//
-//import java.net.HttpURLConnection;
-//import java.util.Collections;
-//
-//import static org.junit.jupiter.api.Assertions.assertAll;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//
-//@SpringBootTest
-//class GetByIdTest {
-//
-//    public static MockWebServerWrapper webServer;
-//    private static final TestClientBuilder builder = new TestClientBuilder();
-//    private RoleServiceClient roleServiceClient;
-//
-//    @SpringBootApplication
-//    static class TestConfiguration {
-//    }
-//
-//    @BeforeAll
-//    static void beforeAll() {
-//        webServer = MockWebServerWrapper.newStartedInstance();
-//    }
-//
-//    @BeforeEach
-//    void beforeEach() {
-//        roleServiceClient = builder.build(webServer.getUrl());
-//    }
-//
-//    @AfterAll
-//    static void afterAll() {
-//        webServer.shutdown();
-//    }
-//
-//    @Test
-//    void withValidResponse_ReturnsRolesWithPermissionsAsExpected() {
-//        // Arrange
-//        final var roleId = "roleId";
-//
-//        PermissionDTO permissionDTO = new PermissionDTO();
-//        permissionDTO.setId("some-permission");
-//        RoleDTO expectedRoleResponse = new RoleDTO();
-//        expectedRoleResponse.setId(roleId);
-//        expectedRoleResponse.setPermissions(Collections.singletonList(permissionDTO));
-//
-//
-//        String expectedBodyResponse = String.format(
-//            "{\"createdDateTime\":\"2021-02-07T17:56:23.837542\",\"createdBy\":\"fake-id\"," +
-//                "\"modifiedDateTime\":\"2021-02-07T17:56:23.837542\",\"modifiedBy\":\"fake-id\"," +
-//                "\"id\":\"%s\",\"permissions\":[{\"createdDateTime\":null,\"createdBy\":\"test\"," +
-//                "\"modifiedDateTime\":null,\"modifiedBy\":\"test\",\"id\":\"some-permission\"}]}", roleId);
-//
-//        webServer.queueResponse(expectedBodyResponse);
-//
-//        // Act
-//        final RoleDTO actualResponse =
-//            roleServiceClient.getById(roleId, RoleServiceClient.noAuth());
-//
-//        //Assert
-//        assertAll(
-//            () -> assertEquals(expectedRoleResponse.getId(), actualResponse.getId()),
-//            () -> assertEquals(expectedRoleResponse.getPermissions().size(),
-//                actualResponse.getPermissions().size()),
-//            () -> assertEquals(expectedRoleResponse.getPermissions().get(0).getId(),
-//                actualResponse.getPermissions().get(0).getId())
-//        );
-//    }
-//
-//    @Test
-//    void whenServiceFails_ThrowsRestException() {
-//        // Arrange
-//        webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
-//
-//        // Act + Assert
-//        assertThrows(RestException.class,
-//            () -> roleServiceClient.getById("any-role-id", RoleServiceClient.noAuth()));
-//    }
-//
-//}
+package uk.ac.ox.ndph.mts.siteserviceclient;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
+import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
+import uk.ac.ox.ndph.mts.siteserviceclient.exception.RestException;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddress;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+
+import java.net.HttpURLConnection;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@SpringBootTest
+class GetByIdTest {
+
+    public static MockWebServerWrapper webServer;
+    private static final TestClientBuilder builder = new TestClientBuilder();
+    private SiteServiceClient siteServiceClient;
+    private String token = "some-token";
+
+    @SpringBootApplication
+    static class TestConfiguration {
+    }
+
+    @BeforeAll
+    static void beforeAll() {
+        webServer = MockWebServerWrapper.newStartedInstance();
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        siteServiceClient = builder.build(webServer.getUrl());
+    }
+
+    @AfterAll
+    static void afterAll() {
+        webServer.shutdown();
+    }
+
+    @Test
+    void withValidResponse_ReturnsSiteWithParentAsExpected() {
+        // Arrange
+        final var siteId = "siteId";
+        final var parentSiteId = "some-parent-site-id";
+        SiteAddress siteAddress = new SiteAddress();
+
+        SiteDTO expectedSiteResponse = new SiteDTO();
+        expectedSiteResponse.setSiteId(siteId);
+        expectedSiteResponse.setParentSiteId(parentSiteId);
+        expectedSiteResponse.setAddress(siteAddress);
+
+        String expectedBodyResponse = String.format(
+            "{\"createdDateTime\":\"2021-02-07T17:56:23.837542\",\"createdBy\":\"fake-id\"," +
+                "\"modifiedDateTime\":\"2021-02-07T17:56:23.837542\",\"modifiedBy\":\"fake-id\"," +
+                    "\"name\":\"CCO\"," +
+                    "\"alias\":\"CCO\"," +
+                    "\"siteId\":\"%s\"," +
+                    "\"parentSiteId\":\"%s\"," +
+                    "\"address\": %s }", siteId, parentSiteId, siteAddress.toString());
+
+        webServer.queueResponse(expectedBodyResponse);
+
+        // Act
+        final SiteDTO actualResponse =
+                siteServiceClient.getById(siteId, SiteServiceClient.bearerAuth(token));
+
+        //Assert
+        assertAll(
+            () -> assertEquals(expectedSiteResponse.getSiteId(), actualResponse.getSiteId()),
+            () -> assertEquals(expectedSiteResponse.getParentSiteId(),
+                actualResponse.getParentSiteId())
+        );
+    }
+
+    @Test
+    void whenServiceFails_ThrowsRestException() {
+        // Arrange
+        webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
+
+        // Act + Assert
+        assertThrows(RestException.class,
+            () -> siteServiceClient.getById("any-site-id", SiteServiceClient.bearerAuth(token)));
+    }
+
+}

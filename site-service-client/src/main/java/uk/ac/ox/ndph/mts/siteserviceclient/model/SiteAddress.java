@@ -79,8 +79,8 @@ public class SiteAddress {
 
     @Override
     public String toString() {
-        return String.format("SiteAddress{address1='%s', address2='%s', address3='%s', "
-                + "address4='%s', address5='%s', city='%s', country='%s', postcode='%s'}",
+        return String.format("{\"address1\": %s, \"address2\": %s, \"address3\": %s, "
+                + "\"address4\": %s, \"address5\": %s, \"city\": %s, \"country\": %s, \"postcode\": %s}",
                 address1, address2, address3, address4, address5, city, country, postcode);
     }
 
