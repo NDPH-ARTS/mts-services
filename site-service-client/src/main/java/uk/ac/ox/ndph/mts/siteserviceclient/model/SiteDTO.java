@@ -34,7 +34,7 @@ public class SiteDTO implements Entity {
         return alias;
     }
 
-        public void setAlias(String alias) {
+    public void setAlias(String alias) {
         this.alias = alias;
     }
 
