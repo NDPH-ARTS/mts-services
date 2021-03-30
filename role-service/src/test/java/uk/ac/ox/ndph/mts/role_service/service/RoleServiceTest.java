@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.ac.ox.ndph.mts.role_service.service.LoggedRoleServiceException;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.PermissionRepository;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
@@ -38,7 +38,7 @@ class RoleServiceTest {
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
         Role r = new Role();
         r.setId(duplicateRoleName);
-        LoggedRoleServiceException thrown = assertThrows(LoggedRoleServiceException.class,
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,
                 () -> roleService.createRoleWithPermissions(r));
         assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
     }
@@ -75,7 +75,7 @@ class RoleServiceTest {
         when(roleRepository.existsById(newRoleName)).thenReturn(false);
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
 
-        LoggedRoleServiceException thrown = assertThrows(LoggedRoleServiceException.class,
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,
                 () -> roleService.createRoleWithPermissions(r));
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
 
@@ -88,7 +88,7 @@ class RoleServiceTest {
         when(roleRepository.findById(badRoleId)).thenReturn(Optional.empty());
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
         List<Permission> dummyPermissionList = Collections.singletonList(new Permission());
-        LoggedRoleServiceException thrown =  assertThrows(LoggedRoleServiceException.class,
+        ResponseStatusException thrown =  assertThrows(ResponseStatusException.class,
                 () -> roleService.updatePermissionsForRole(badRoleId, dummyPermissionList));
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
@@ -115,7 +115,7 @@ class RoleServiceTest {
 
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
 
-        LoggedRoleServiceException thrown = assertThrows(LoggedRoleServiceException.class,  () -> roleService.updatePermissionsForRole(goodRoleId, permissionList));
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,  () -> roleService.updatePermissionsForRole(goodRoleId, permissionList));
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 

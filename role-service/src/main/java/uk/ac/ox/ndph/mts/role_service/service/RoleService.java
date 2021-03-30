@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.role_service.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.PermissionRepository;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
@@ -22,10 +23,10 @@ public class RoleService {
         this.permissionRepository = permissionRepository;
     }
 
-    public Role createRoleWithPermissions(Role role) throws LoggedRoleServiceException {
+    public Role createRoleWithPermissions(Role role) throws ResponseStatusException {
 
         if (roleRepository.existsById(role.getId())) {
-            throw new LoggedRoleServiceException(HttpStatus.CONFLICT,
+            throw ResponseFactory.loggedException(HttpStatus.CONFLICT,
                     String.format(ResponseMessages.DUPLICATE_ROLE_ID.message(), role.getId()));
         }
 
@@ -35,11 +36,11 @@ public class RoleService {
     }
 
     public Role updatePermissionsForRole(String roleId, List<Permission> newPermissions)
-            throws LoggedRoleServiceException {
+            throws ResponseStatusException {
 
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (roleOptional.isEmpty()) {
-            throw new LoggedRoleServiceException(HttpStatus.NOT_FOUND,
+            throw ResponseFactory.loggedException(HttpStatus.NOT_FOUND,
                     String.format(ResponseMessages.ROLE_NOT_FOUND.message(), roleId));
         }
         validatePermissions(newPermissions);
@@ -50,13 +51,13 @@ public class RoleService {
     }
 
 
-    private void validatePermissions(List<Permission> newPermissions) throws LoggedRoleServiceException {
+    private void validatePermissions(List<Permission> newPermissions) throws ResponseStatusException {
         if (newPermissions == null) {
             return;
         }
         for (Permission newPermission : newPermissions) {
             if (!permissionRepository.existsById(newPermission.getId())) {
-                throw new LoggedRoleServiceException(
+                throw ResponseFactory.loggedException(
                         HttpStatus.BAD_REQUEST,
                         String.format(ResponseMessages.PERMISSION_NOT_FOUND.message(), newPermission.getId()));
             }
