@@ -16,4 +16,8 @@ public class ResponseFactory {
         LOGGER.warn(String.format(LOG_MESSAGE, reason, status.value()));
         return new ResponseStatusException(status, reason);
     }
+
+    private ResponseFactory() {
+        throw new IllegalStateException("Factory class");
+    }
 }

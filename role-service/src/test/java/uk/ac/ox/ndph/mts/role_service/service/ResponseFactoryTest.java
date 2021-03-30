@@ -10,21 +10,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 import ch.qos.logback.classic.Logger;
 
-public class ResponseFactoryTest {
+class ResponseFactoryTest {
 
     private ListAppender<ILoggingEvent> appender;
     private Logger appLogger = (Logger) LoggerFactory.getLogger(ResponseFactory.class);
 
 
     @Test
-    public void testWhenCreateResponseException_LogsMessage() {
+   void testWhenCreateResponseException_LogsMessage() {
         String logMessage = "some log message e.g. about permissions";
         ResponseStatusException ex = ResponseFactory.loggedException(
                 HttpStatus.BAD_REQUEST,
@@ -44,22 +42,5 @@ public class ResponseFactoryTest {
     public void tearDown() {
         appLogger.detachAppender(appender);
     }
-
-
-
-    /*
-    @Test
-    public void testLogging(){
-
-        String logMessage = "some log message e.g. about permissions";
-        TestLogger logger = TestLoggerFactory.getTestLogger(ResponseFactory.class);
-
-        ResponseStatusException ex = ResponseFactory.loggedException(
-                HttpStatus.BAD_REQUEST,
-                logMessage);
-
-        assertTrue(logger.getLoggingEvents().stream().anyMatch(event-> event.getMessage().contains(logMessage)));
-
-    }*/
 
 }
