@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-public class ResponseFactory {
+public final class ResponseFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResponseFactory.class);
     private static final String LOG_MESSAGE = "Role-service exception: %s.  Responding with code %s";
