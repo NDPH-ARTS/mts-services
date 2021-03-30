@@ -16,7 +16,7 @@ const linkpersonEndpointUri = '/api/practitioner/{personId}/link'
 
 describe('As a user with Update Person permission I want to link a Person to an existing User So that they have the Persons roles when they login to the system', function () {
 
-    it('Given a Person exists who is not linked to a User AND a User exists that is not linked to a Person When I submit an API request to link a Person who is NOT linked to a User to a User who is not linked to a Person in this trial Then the Person and User are linked and I receive a success acknowledgement ', async () => {
+    it('Given PersonA exists with no linked UserID When I submit an API request to link PersonA to unused UserID in this trial Then the PersonA and the UserID are linked and I receive a success acknowledgement ', async () => {
 
         //post a request to practitioner end point to create first Practitioner
         const headers = await utils.getBootStrapUserHeadersWithAuth()
@@ -41,7 +41,7 @@ describe('As a user with Update Person permission I want to link a Person to an 
 
     });
 
-    it('Given a Person exists who is not linked to a User When I submit an API request to link the Person to a User who is already linked to a Person in this trial Then the Person and User are NOT linked and I receive an error notification ', async () => {
+    it('Given a PersonB exists with no UserID When I submit an API request to link PersonB to a UserID already in use in this trial Then PersonB and the UserID are NOT linked and I receive an error notification ', async () => {
 
         //post a request to practitioner end point to create second Practitioner
         const headers = await utils.getHeadersWithAuth()
