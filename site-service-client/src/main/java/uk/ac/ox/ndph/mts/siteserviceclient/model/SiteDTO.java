@@ -2,7 +2,7 @@ package uk.ac.ox.ndph.mts.siteserviceclient.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SiteDTO implements Entity{
+public class SiteDTO implements Entity {
 
     private String name;
 
@@ -34,7 +34,7 @@ public class SiteDTO implements Entity{
         return alias;
     }
 
-    public void setAlias(String alias) {
+        public void setAlias(String alias) {
         this.alias = alias;
     }
 
