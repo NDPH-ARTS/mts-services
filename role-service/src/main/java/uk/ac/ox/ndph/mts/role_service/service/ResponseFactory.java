@@ -7,13 +7,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class ResponseFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResponseFactory.class);
-    private static final String logMessage = "Role-service exception: %s.  Responding with code %s";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResponseFactory.class);
+    private static final String LOG_MESSAGE = "Role-service exception: %s.  Responding with code %s";
 
 
     public static ResponseStatusException loggedException(HttpStatus status, String reason) {
 
-        logger.warn(String.format(logMessage, reason, status.value()));
+        LOGGER.warn(String.format(LOG_MESSAGE, reason, status.value()));
         return new ResponseStatusException(status, reason);
     }
 }
