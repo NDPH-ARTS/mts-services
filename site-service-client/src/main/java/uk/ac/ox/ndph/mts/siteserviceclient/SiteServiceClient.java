@@ -70,7 +70,7 @@ public class SiteServiceClient {
 
     public List<SiteDTO> getAllSites(final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
-                .fromUriString(clientRoutes.getServiceCreateSite())
+                .fromUriString(clientRoutes.getServiceGetAllSites())
                 .build().toString();
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO[].class, authHeaders));
     }
