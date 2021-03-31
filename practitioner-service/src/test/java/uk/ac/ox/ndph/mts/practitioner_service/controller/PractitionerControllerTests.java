@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -24,6 +25,8 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import java.util.Collections;
 import java.util.List;
+
+import com.azure.spring.autoconfigure.aad.AADAuthenticationFilterAutoConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
@@ -42,7 +45,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest(properties = {"debug=true", "spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles({"no-authZ", "test-all-required"})
 @AutoConfigureMockMvc
 class PractitionerControllerTests {

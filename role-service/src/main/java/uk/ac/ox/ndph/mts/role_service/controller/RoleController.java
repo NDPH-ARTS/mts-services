@@ -62,7 +62,6 @@ public class RoleController {
         return roleRepository.findAllById(ids);
     }
 
-
     @PostMapping("")
     public Role createRole(@Valid @RequestBody RoleDTO roleDto) {
 

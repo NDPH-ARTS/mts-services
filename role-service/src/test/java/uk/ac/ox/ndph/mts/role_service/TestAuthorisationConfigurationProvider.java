@@ -23,4 +23,5 @@ public class TestAuthorisationConfigurationProvider {
         //Add more mocks if needed
         return mockService;
     }
+    
 }

@@ -29,10 +29,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
 public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
     private AADAppRoleStatelessAuthenticationFilter aadAuthFilter;
-
+    
+    @Autowired
+    public AADWebSecurityConfig(AADAppRoleStatelessAuthenticationFilter aadAuthFilter) {
+        this.aadAuthFilter = aadAuthFilter;
+    }
+    
     /**
      * Http security configuration
      * @param http - http security
