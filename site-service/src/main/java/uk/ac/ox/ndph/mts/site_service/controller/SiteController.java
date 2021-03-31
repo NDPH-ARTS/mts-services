@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.site_service.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
+    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody())")
     @GetMapping
     public ResponseEntity<List<Site>> sites() {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
