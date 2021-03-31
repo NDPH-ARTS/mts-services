@@ -1,16 +1,12 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import javax.validation.constraints.NotBlank;
 
-
-@Configuration
-@ConfigurationProperties(prefix = "attributes")
-@EnableConfigurationProperties
 public class PractitionerAttributeConfiguration {
 
+    @NotBlank
     private String name;
+    @NotBlank
     private String displayName;
     private String validationRegex;
 
@@ -32,20 +28,20 @@ public class PractitionerAttributeConfiguration {
         return name;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public String getValidationRegex() {
-        return validationRegex;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getValidationRegex() {
+        return validationRegex;
     }
 
     public void setValidationRegex(String validationRegex) {
