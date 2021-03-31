@@ -8,7 +8,7 @@ fhir:
   resultCount: 50
 role:
   service:
-    uri: http://localhost:8020
+    uri: http://localhost:8082
 # trial site config - this is the default for local testing, with CCO/REGION/COUNTRY/LCC
 address:
   addressType:
