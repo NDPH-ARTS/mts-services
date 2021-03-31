@@ -21,6 +21,9 @@ import uk.ac.ox.ndph.mts.security.exception.RestException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -305,6 +308,95 @@ class AuthorisationServiceTests {
 
         List<String> siteIds = null;
         assertFalse(authorisationService.authorise("some_permission", siteIds));
+    }
+
+    @Test
+    void TestFilterMySites_ForUserWithRootRoleAssignment_ReturnsAllSites(){
+        //Arrange
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+
+        var sitesToFilter = Lists.list(parentSite, childSite1, childSite2);
+
+        var roleAssignments = getRoleAssignments("roleId", parentSite.getSiteId());
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignments);
+
+        //Act
+        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+
+        //Assert
+        assertAll(
+                () -> assertTrue(authResponse),
+                () -> assertEquals(3, sitesToFilter.size()),
+                () -> assertTrue(sitesToFilter.contains(parentSite)),
+                () -> assertTrue(sitesToFilter.contains(childSite1)),
+                () -> assertTrue(sitesToFilter.contains(childSite2))
+        );
+
+    }
+
+    @Test
+    void TestFilterMySites_ForUserWithRoleAssignment_ReturnsAuthorisedSitesOnly(){
+        //Arrange
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite = new SiteDTO("hospital", childSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+
+        List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite, childSite2);
+
+        var roleAssignments = getRoleAssignments("roleId", childSite1.getSiteId());
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignments);
+
+        //Act
+        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+
+        //Assert
+        assertAll(
+                () -> assertTrue(authResponse),
+                () -> assertEquals(2, sitesToFilter.size()),
+                () -> assertTrue(sitesToFilter.contains(childSite1)),
+                () -> assertTrue(sitesToFilter.contains(grandChildSite))
+        );
+
+    }
+
+    @Test
+    void TestFilterMySites_ForUserWithNoRoleAssignment_ReturnsFalse(){
+        //Arrange
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite = new SiteDTO("hospital", childSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+
+        List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite, childSite2);
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Lists.emptyList());
+
+        //Act
+        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+
+        //Assert
+        assertFalse(authResponse);
+
     }
 
 
