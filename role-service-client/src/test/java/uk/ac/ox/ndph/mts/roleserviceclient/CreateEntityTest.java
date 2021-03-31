@@ -12,14 +12,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -28,6 +29,7 @@ public class CreateEntityTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
+    private static String token = "123ert";
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -41,6 +43,7 @@ public class CreateEntityTest {
     @BeforeEach
     void beforeEach() {
         roleServiceClient = builder.build(webServer.getUrl());
+
     }
 
     @AfterAll
@@ -69,7 +72,17 @@ public class CreateEntityTest {
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());
         // Act + Assert
-        assertThrows(RestException.class, () -> roleServiceClient.createEntity(role, RoleServiceClient.noAuth()));
+        assertThrows(Exception.class, () -> roleServiceClient.createEntity(role, RoleServiceClient.noAuth()));
     }
+
+    @Test
+     void testRoleService_WithRoleNoPermissions_WhenValidInput() throws IOException {
+        RoleDTO testRole = new RoleDTO();
+        testRole.setId("testId");
+        final ObjectMapper mapper = new ObjectMapper();
+        webServer.queueResponse(mapper.writeValueAsString(testRole));
+        var returnedRoleId = roleServiceClient.createEntity(testRole, RoleServiceClient.bearerAuth(token));
+        assertNotNull(returnedRoleId);
+     }
 
 }

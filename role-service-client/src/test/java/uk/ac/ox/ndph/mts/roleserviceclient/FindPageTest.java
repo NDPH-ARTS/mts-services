@@ -70,7 +70,7 @@ public class FindPageTest {
         // Arrange
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         // Act + Assert
-        assertThrows(RestException.class, () -> roleServiceClient.getPage(0, 5, RoleServiceClient.noAuth()));
+        assertThrows(Exception.class, () -> roleServiceClient.getPage(0, 5, RoleServiceClient.noAuth()));
     }
 
 }
