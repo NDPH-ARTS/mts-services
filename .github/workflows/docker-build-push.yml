@@ -208,14 +208,14 @@ jobs:
   deploy_nightly:
     name: Deploy nightly image
     if: github.ref == 'refs/heads/main' && github.event_name == 'schedule'
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Deploy main-nightly image
         uses: convictional/trigger-workflow-and-wait@v1.3.0
         with:
           owner: ndph-arts
-          repo: mts-deployment-config
+          repo: mts-trial-deployment-config
           github_token: ${{ secrets.DEPLOYMENT_TRIGGER_PAT }}
           workflow_file_name: terraform-plan-apply.yml
           ref: main
