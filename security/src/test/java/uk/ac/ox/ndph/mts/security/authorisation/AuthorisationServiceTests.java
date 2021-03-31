@@ -41,8 +41,6 @@ class AuthorisationServiceTests {
     @Mock
     private SecurityContextUtil securityContextUtil;
 
-    private SiteTreeUtil siteTreeUtil;
-
     private AuthorisationService authorisationService;
 
     private final String managedIdentity = "999";
@@ -50,7 +48,7 @@ class AuthorisationServiceTests {
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
-                new SiteTreeUtil(),
+                new SiteUtil(),
                 practitionerServiceClient,
                 roleServiceClient,
                 siteServiceClient);
@@ -183,66 +181,6 @@ class AuthorisationServiceTests {
         //Act
         //Assert
         assertTrue(authorisationService.authorise("some_permission"));
-    }
-
-    @Test
-    void TestAuthorise_WithUnauthorisedSite_ReturnsFalse(){
-        //Arrange
-        String userId = "123";
-        String token = "token";
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(token);
-
-        String roleId = "roleId";
-        String authorisedSiteId = "siteId";
-        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
-
-        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
-                "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
-
-        var siteDto = new SiteDTO();
-        siteDto.setSiteId(authorisedSiteId);
-
-        var unauthorisedSiteDto = new SiteDTO();
-        unauthorisedSiteDto.setSiteId("unauthorizedSiteId");
-        when(siteServiceClient.getAllSites()).thenReturn(List.of(siteDto, unauthorisedSiteDto));
-
-        //Act
-        //Assert
-        assertFalse(authorisationService.authorise("some_permission", "unauthorizedSiteId" ));
-    }
-
-    @Test
-    void TestAuthorise_WithUnauthorisedSiteInList_ReturnsFalse(){
-        //Arrange
-        String userId = "123";
-        String token = "token";
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(token);
-
-        String roleId = "roleId";
-        String authorisedSiteId = "siteId";
-        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
-        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
-
-        List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
-                "some_permission"));
-        when(roleServiceClient.getRolesByIds(Collections.singletonList(roleId), roleServiceClient.noAuth())).thenReturn(roleDtos);
-
-        var siteDto = new SiteDTO();
-        siteDto.setSiteId(authorisedSiteId);
-
-        String unauthorizedSiteId = "unauthorizedSiteId";
-        var unauthorisedSiteDto = new SiteDTO();
-        unauthorisedSiteDto.setSiteId(unauthorizedSiteId);
-
-        when(siteServiceClient.getAllSites()).thenReturn(List.of(siteDto, unauthorisedSiteDto));
-
-        //Act
-        //Assert
-        assertFalse(authorisationService.authorise("some_permission", List.of(authorisedSiteId, unauthorizedSiteId )));
     }
 
     @Test
