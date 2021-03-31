@@ -170,9 +170,9 @@ jobs:
           GITHUB_SHA: ${{github.sha}}
           # The following is used by the init-service to generate a token
           MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
-          INIT_AZURE_CLIENT_ID: 1a38570c-ddbf-4e8e-8156-2ab88d7bdeef
-          INIT_AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
-          INIT_AZURE_CLIENT_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
+          AZURE_CLIENT_ID: 1a38570c-ddbf-4e8e-8156-2ab88d7bdeef
+          AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
+          AZURE_CLIENT_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
         run: |
           set -o nounset
           set -o errexit
