@@ -107,7 +107,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "liza729d"
       AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
       AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
-      AZURE_CLIENT_TENANT_ID: ${AZURE_CLIENT_TENANT_ID}
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID}
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       # the following 3 entries allow getting a token to send to other services
       LOGGING_LEVEL_ROOT: DEBUG # always debug
