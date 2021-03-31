@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,18 +32,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8099","role.service.uri=http://role-service:8082" })
-@ActiveProfiles({"no-authZ", "test-all-required"})
+@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8099", "role.service.uri=http://role-service:8082"})
+@ActiveProfiles({"no-authZ"})
 @AutoConfigureMockMvc
+@Import(TestSiteConfiguration.class)
 class SiteServiceImplIntegrationTests {
 
     private static final String SITES_ROUTE = "/sites";
-
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     public FhirRepository repository;
+    @Autowired
+    private MockMvc mockMvc;
 
     @WithMockUser
     @Test
