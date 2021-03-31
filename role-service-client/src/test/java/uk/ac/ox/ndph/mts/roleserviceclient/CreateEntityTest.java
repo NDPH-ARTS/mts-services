@@ -12,9 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -22,6 +20,7 @@ import java.util.Collections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -73,7 +72,7 @@ public class CreateEntityTest {
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());
         // Act + Assert
-        assertThrows(RestException.class, () -> roleServiceClient.createEntity(role, RoleServiceClient.noAuth()));
+        assertThrows(Exception.class, () -> roleServiceClient.createEntity(role, RoleServiceClient.noAuth()));
     }
 
     @Test

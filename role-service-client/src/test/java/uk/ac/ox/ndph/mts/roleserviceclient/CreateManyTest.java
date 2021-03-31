@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
@@ -81,7 +80,7 @@ public class CreateManyTest {
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());
         // Act + Assert
-        assertThrows(RestException.class,
+        assertThrows(Exception.class,
             () -> roleServiceClient.createMany(Collections.singletonList(role), RoleServiceClient.noAuth()));
     }
 
@@ -98,7 +97,7 @@ public class CreateManyTest {
         webServer.queueResponse(mapper.writeValueAsString(role));
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         // Act + Assert
-        assertThrows(RestException.class,
+        assertThrows(Exception.class,
             () -> roleServiceClient.createMany(Arrays.asList(role, role2), RoleServiceClient.noAuth()));
     }
 
@@ -115,7 +114,7 @@ public class CreateManyTest {
          webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
          List<RoleDTO> roles = Collections.singletonList(testRole);
-         assertThrows(RestException.class, () -> roleServiceClient.createMany(roles, RoleServiceClient.bearerAuth(token)));
+         assertThrows(Exception.class, () -> roleServiceClient.createMany(roles, RoleServiceClient.bearerAuth(token)));
      }
 
      @Test

@@ -24,17 +24,13 @@ public class RoleServiceClient {
 
     private final WebClient webClient;
 
-    private final ClientRoutesConfig clientRoutes;
-
     private final RequestExecutor requestExecutor;
     @Autowired
     public RoleServiceClient(WebClient.Builder webClientBuilder,
                              @Value("${role.service.uri}") String roleServiceUrl,
-                             ClientRoutesConfig clientRoutes,
                              RequestExecutor requestExecutor) {
         this.requestExecutor = requestExecutor;
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
-        this.clientRoutes = clientRoutes;
     }
 
     public static Consumer<HttpHeaders> noAuth() {
@@ -67,7 +63,7 @@ public class RoleServiceClient {
                                 final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
         return requestExecutor.sendBlockingPostRequest(webClient,
-                clientRoutes.getServiceCreateRole(),
+                ClientRoutesConfig.getServiceCreateRole(),
                 role, RoleDTO.class, authHeaders);
     }
 
@@ -75,7 +71,7 @@ public class RoleServiceClient {
                            final Consumer<HttpHeaders> authHeaders) throws RestException {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(clientRoutes.getServiceGetRole())
+                .fromUriString(ClientRoutesConfig.getServiceGetRole())
                 .build(roleId).toString();
         return requestExecutor.sendBlockingGetRequest(webClient, uri, RoleDTO.class, authHeaders);
     }
@@ -85,7 +81,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
         final String parsedRoleIds = String.join(",", roleIds);
         String uri = UriComponentsBuilder
-                .fromUriString(clientRoutes.getServiceRolesByIds())
+                .fromUriString(ClientRoutesConfig.getServiceRolesByIds())
                 .queryParam("ids", parsedRoleIds)
                 .build().toString();
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, RoleDTO[].class, authHeaders));
@@ -97,7 +93,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(clientRoutes.getServiceUpdatePermissions())
+                .fromUriString(ClientRoutesConfig.getServiceUpdatePermissions())
                 .build(roleId).toString();
         return requestExecutor.sendBlockingPostRequest(webClient, uri, permissionsDTOs, RoleDTO.class, authHeaders);
     }
@@ -105,7 +101,7 @@ public class RoleServiceClient {
     public Page<RoleDTO> getPage(final int page, final int size,
                                  final Consumer<HttpHeaders> authHeaders) throws RestException {
         String uri = UriComponentsBuilder
-                .fromUriString(clientRoutes.getServiceGetPaged())
+                .fromUriString(ClientRoutesConfig.getServiceGetPaged())
                 .queryParam("page", page)
                 .queryParam("size", size)
                 .build().toString();
