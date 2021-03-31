@@ -54,6 +54,7 @@ services:
       INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     depends_on:
+      - config-server
       - sql
     healthcheck:
       test: curl --fail http://localhost:8082/actuator/health
