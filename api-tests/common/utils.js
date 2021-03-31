@@ -27,7 +27,7 @@ class utils {
         })
 
         let jsonResponse = await response.json();
-        return jsonResponse.id_token;
+        return jsonResponse.access_token;
     };
 
 
@@ -44,7 +44,7 @@ class utils {
         })
 
         let jsonResponse = await response.json();
-        return jsonResponse.id_token;
+        return jsonResponse.access_token;
     };
 
     async getQaWithCreateUserTokenId() {
@@ -60,7 +60,7 @@ class utils {
         })
 
         let jsonResponse = await response.json();
-        return jsonResponse.id_token;
+        return jsonResponse.access_token;
     };
 
 
