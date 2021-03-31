@@ -17,8 +17,8 @@ class utils {
     async getTokenId() {
         let form = new formData();
         form.append('grant_type', 'password')
-        form.append('client_id', process.env.MTS_AZURE_APP_CLIENT_ID)
-        form.append('scope', 'openid profile')
+        form.append('client_id', process.env.MTS_AZURE_UI_APP_CLIENT_ID)
+        form.append('scope', 'api://fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290/default')
         form.append('username', process.env.AUTOMATION_USER_NAME)
         form.append('password', process.env.AUTOMATION_USER_PASSWORD)
         let response = await fetch(authUri, {

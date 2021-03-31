@@ -158,7 +158,7 @@ jobs:
           PROFILE: dev
           SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
-          MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
+          MTS_AZURE_UI_APP_CLIENT_ID: 59a2b30f-844b-4a69-b034-19e3d2d4d805
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}

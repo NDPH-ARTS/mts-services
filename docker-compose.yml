@@ -105,11 +105,11 @@ services:
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "liza729d"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      # the following 3 entries allow getting a token to send to other services
       AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
       AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
       AZURE_TENANT_ID: ${AZURE_TENANT_ID}
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      # the following 3 entries allow getting a token to send to other services
       LOGGING_LEVEL_ROOT: DEBUG # always debug
     depends_on:
       - practitioner-service
