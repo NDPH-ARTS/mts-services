@@ -1,10 +1,7 @@
 package uk.ac.ox.ndph.mts.roleserviceclient.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class PermissionDTO implements Entity {
 
-public class PermissionDTO {
-
-    @JsonProperty(value = "id")
     private String id;
 
     public PermissionDTO() {

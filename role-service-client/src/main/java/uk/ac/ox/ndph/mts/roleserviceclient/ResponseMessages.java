@@ -3,8 +3,7 @@ package uk.ac.ox.ndph.mts.roleserviceclient;
 import java.util.function.Supplier;
 
 public enum ResponseMessages implements Supplier<String> {
-    SERVICE_NAME_STATUS_AND_ID("service: %s responded with status: %s for id: %s"),
-    SERVICE_NAME_STATUS_AND_ARGUMENTS("service: %s responded with status: %s for argument: %s"),
+    SERVICE_NAME_STATUS_AND_PATH("service: %s responded with status: %s for path: %s"),
     ID_NOT_NULL("role ID must not be null"),
     LIST_NOT_NULL("list must not be null"),
     ROLE_NOT_NULL("list must not be null");
