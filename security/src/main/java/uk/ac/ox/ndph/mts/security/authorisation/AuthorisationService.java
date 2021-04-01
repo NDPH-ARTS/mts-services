@@ -165,10 +165,14 @@ public class AuthorisationService {
             String token = securityContextUtil.getToken();
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
 
+            roleAssignments.stream().forEach(ra -> LOGGER.debug(ra.getRoleId(), ra.getSiteId()));
+
             if (role != null) {
                 roleAssignments.removeIf(ra ->
                         !ra.getRoleId().equalsIgnoreCase(role));
             }
+
+            roleAssignments.stream().forEach(ra -> LOGGER.debug(ra.getRoleId(), ra.getSiteId()));
 
             Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
 
