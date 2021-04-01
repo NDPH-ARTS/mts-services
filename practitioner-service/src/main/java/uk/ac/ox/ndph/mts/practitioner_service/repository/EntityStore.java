@@ -2,9 +2,8 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 
-import java.util.Optional;
-
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface for a store of a data model entity

@@ -1,7 +1,8 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
-import java.util.function.Function;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.InitialisationError;
+
+import java.util.function.Function;
 
 /**
  * The known Practitioner attributes.

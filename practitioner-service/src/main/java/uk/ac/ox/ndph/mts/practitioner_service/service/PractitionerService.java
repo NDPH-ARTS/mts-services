@@ -1,17 +1,11 @@
 package uk.ac.ox.ndph.mts.practitioner_service.service;
 
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import uk.ac.ox.ndph.mts.practitioner_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
@@ -19,6 +13,10 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.model.ValidationResponse;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.practitioner_service.validation.ModelEntityValidation;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Objects;
 
 import static uk.ac.ox.ndph.mts.practitioner_service.service.Services.USER_ID_CANNOT_BE_NULL;
 
