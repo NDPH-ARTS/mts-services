@@ -97,7 +97,7 @@ public class PractitionerController {
         return ResponseEntity.ok(practitioners);
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/all", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<List<Practitioner>> all() {
         List<Practitioner> practitioners = entityService.getAllPractitioners();
         return ResponseEntity.ok(practitioners);
