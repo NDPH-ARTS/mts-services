@@ -20,19 +20,19 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
-@RequestMapping(path = "/practitioner")
+@RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 public class PractitionerController {
 
     private final EntityService entityService;
@@ -81,14 +81,14 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(roleAssignmentId));
     }
 
-    @GetMapping(path = "/roles")
+    @GetMapping(path = "/roles/{id}")
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
-            @NotBlank @NotNull @RequestParam String userIdentity) {
-        if (!StringUtils.hasText(userIdentity)) {
+        @PathVariable String id) {
+        if (!StringUtils.hasText(id)) {
             throw new RestException("Required String parameter 'userIdentity' is blank");
         }
 
-        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(userIdentity);
+        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(id);
         return ResponseEntity.ok(roleAssignments);
     }
 

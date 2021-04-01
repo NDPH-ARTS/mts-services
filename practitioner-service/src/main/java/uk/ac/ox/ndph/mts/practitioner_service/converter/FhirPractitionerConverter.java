@@ -1,14 +1,15 @@
 package uk.ac.ox.ndph.mts.practitioner_service.converter;
 
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Identifier;
-import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Identifier;
+import org.springframework.stereotype.Component;
+
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 
 /**
  * Implement an EntityConverter for Practitioner
