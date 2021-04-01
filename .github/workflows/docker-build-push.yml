@@ -208,7 +208,7 @@ jobs:
   deploy_nightly:
     name: Deploy nightly image
     if: github.ref == 'refs/heads/main' && github.event_name == 'schedule'
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Deploy main-nightly image
