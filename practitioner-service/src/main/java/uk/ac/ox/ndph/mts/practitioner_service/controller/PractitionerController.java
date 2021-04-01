@@ -32,7 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * Controller for practitioner endpoint of practitioner-service
  */
 @RestController
-@RequestMapping(path = "/practitioner", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/practitioner")
 public class PractitionerController {
 
     private final EntityService entityService;
