@@ -79,7 +79,7 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(roleAssignmentId));
     }
 
-    @GetMapping(path = "/roles")
+    @GetMapping(path = "/roles", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
             @RequestParam String userIdentity) {
         if (!StringUtils.hasText(userIdentity)) {
