@@ -165,7 +165,7 @@ public class AuthorisationService {
             String token = securityContextUtil.getToken();
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
 
-            if(role != null){
+            if (role != null) {
                 roleAssignments.removeIf(ra ->
                         !ra.getRoleId().equalsIgnoreCase(role));
             }
