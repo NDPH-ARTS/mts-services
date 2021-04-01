@@ -149,7 +149,7 @@ public class AuthorisationService {
      * @param sitesReturnObject all sites returned object
      * @return true if filtering finished successfully
      */
-    public boolean filterUserSites(List<?> sitesReturnObject) {
+    public boolean filterUserSites(List<?> sitesReturnObject, String role) {
 
         try {
             Objects.requireNonNull(sitesReturnObject, "sites can not be bull");
@@ -164,6 +164,12 @@ public class AuthorisationService {
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+
+            if(role != null){
+                roleAssignments.removeIf(ra ->
+                        !ra.getRoleId().equalsIgnoreCase(role));
+            }
+
             Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
 
             sitesReturnObject.removeIf(siteObject ->

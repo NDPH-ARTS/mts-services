@@ -23,6 +23,7 @@ import java.util.List;
 public class SiteController {
 
     private final SiteService siteService;
+    private String admin = "admin";
 
     @Autowired
     public SiteController(SiteService siteService) {
@@ -36,9 +37,15 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
-    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody())")
+    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), null)")
     @GetMapping
     public ResponseEntity<List<Site>> sites() {
+        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
+    }
+
+    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), admin)")
+    @GetMapping("/admin")
+    public ResponseEntity<List<Site>> adminSites() {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 

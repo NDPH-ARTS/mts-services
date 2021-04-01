@@ -329,7 +329,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertAll(
@@ -362,7 +362,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertAll(
@@ -392,7 +392,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Lists.emptyList());
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertFalse(authResponse);
