@@ -131,4 +131,9 @@ public class PractitionerService implements EntityService {
         Objects.requireNonNull(userIdentity, USER_ID_CANNOT_BE_NULL.message());
         return practitionerStore.findEntitiesByUserIdentity(userIdentity);
     }
+
+    @Override
+    public List<Practitioner> getAllPractitioners() {
+        return practitionerStore.getAll();
+    }
 }

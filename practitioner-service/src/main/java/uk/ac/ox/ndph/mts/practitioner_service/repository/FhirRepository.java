@@ -25,4 +25,6 @@ public interface FhirRepository {
     List<PractitionerRole> getPractitionerRolesByUserIdentity(String userIdentity);
 
     List<Practitioner> getPractitionersByUserIdentity(String userIdentity);
+
+    List<Practitioner> findAllPractitioners();
 }

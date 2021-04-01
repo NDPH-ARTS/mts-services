@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.util.BundleUtil;
 import ca.uhn.fhir.rest.gclient.ICriterion;
@@ -84,6 +85,18 @@ public class FhirContextWrapper {
     }
 
     /**
+     * Typed version of to list of resources
+     *
+     * @param <T>           The resource type to support
+     * @param bundle        the bundle to extract
+     * @param resourceClass the Resource
+     * @return the list of IBaseResource in the bundle
+     */
+    public <T extends IBaseResource> List<T> toListOfResourcesOfType(Bundle bundle, Class<T> resourceClass) {
+        return new ArrayList<>(BundleUtil.toListOfResourcesOfType(this.fhirContext, bundle, resourceClass));
+    }
+
+    /**
      * Search for a list of resources by type and criterion
      * @param resourceClass resource class to return
      * @param criterion criterion to filter search results
@@ -112,5 +125,20 @@ public class FhirContextWrapper {
         }
 
         return  searchResults;
+    }
+
+    /**
+     * Return a search instance which can be configured and executed, returning a single type of resource
+     *
+     * @param uri FHIR endpoint URI
+     * @param resourceClass class of resource to return in bundle
+     * @return IQuery Bundle to return in bundle
+     */
+    public IQuery<Bundle> search(final String uri, final Class<? extends IBaseResource> resourceClass) {
+        return fhirContext.newRestfulGenericClient(uri)
+            .search()
+            .forResource(resourceClass)
+            .count(50)
+            .returnBundle(Bundle.class);
     }
 }

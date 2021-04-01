@@ -35,6 +35,10 @@ public class PractitionerStore implements EntityStore<Practitioner> {
                 .map(fhirToModelConverter::convert);
     }
 
+    public List<Practitioner> getAll() {
+        return fhirToModelConverter.convertList(repository.findAllPractitioners());
+    }
+
     @Override
     public String saveEntity(Practitioner practitioner) {
         return repository.savePractitioner(modelToFhirConverter.convert(practitioner));

@@ -2,8 +2,10 @@ package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Resource;
@@ -102,6 +104,20 @@ public class HapiFhirRepository implements FhirRepository {
             throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
         }
     }
+
+    public List<Practitioner> findAllPractitioners() {
+        try {
+            final Bundle responseBundle = fhirContextWrapper
+                .search(fhirUri, Practitioner.class)
+                .execute();
+            return fhirContextWrapper.toListOfResourcesOfType(responseBundle, Practitioner.class);
+        } catch (BaseServerResponseException e) {
+            throw new RestException(String.format(FhirRepo.SEARCH_ERROR.message(), e.getMessage()), e);
+        }
+    }
+
+
+
 
     @SuppressWarnings("squid:S2629")
     @Override

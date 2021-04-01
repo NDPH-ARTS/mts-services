@@ -4,6 +4,7 @@ import org.hl7.fhir.r4.model.PractitionerRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitioner_service.converter.EntityConverter;
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 
 import java.util.Optional;
@@ -45,6 +46,11 @@ public class RoleAssignmentStore implements EntityStore<RoleAssignment> {
     @Override
     public Optional<RoleAssignment> getEntity(String id) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public List<Practitioner> getAll() {
+        return null;
     }
 
 

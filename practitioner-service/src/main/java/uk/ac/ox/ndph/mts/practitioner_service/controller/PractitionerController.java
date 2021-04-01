@@ -98,4 +98,10 @@ public class PractitionerController {
         List<Practitioner> practitioners = entityService.getPractitionersByUserIdentity(userIdFromToken);
         return ResponseEntity.ok(practitioners);
     }
+
+    @GetMapping(path = "/all")
+    public ResponseEntity<List<Practitioner>> all() {
+        List<Practitioner> practitioners = entityService.getAllPractitioners();
+        return ResponseEntity.ok(practitioners);
+    }
 }

@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.practitioner_service.repository;
 
+import uk.ac.ox.ndph.mts.practitioner_service.model.Practitioner;
+
 import java.util.Optional;
 
 import java.util.List;
@@ -25,4 +27,6 @@ public interface EntityStore<T> {
      *  @return entity or none() if none found
      */
     Optional<T> getEntity(String id);
+
+    List<Practitioner> getAll();
 }

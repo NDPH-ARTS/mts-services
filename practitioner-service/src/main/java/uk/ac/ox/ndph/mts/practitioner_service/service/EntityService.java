@@ -22,4 +22,6 @@ public interface EntityService {
     List<RoleAssignment> getRoleAssignmentsByUserIdentity(String userIdentity);
 
     List<Practitioner> getPractitionersByUserIdentity(String userIdentity);
+
+    List<Practitioner> getAllPractitioners();
 }
