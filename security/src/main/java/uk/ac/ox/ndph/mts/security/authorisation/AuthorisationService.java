@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
+import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,8 +169,7 @@ public class AuthorisationService {
             roleAssignments.stream().forEach(ra -> LOGGER.debug(ra.getRoleId(), ra.getSiteId()));
 
             if (role != null) {
-                roleAssignments.removeIf(ra ->
-                        !ra.getRoleId().equalsIgnoreCase(role));
+                roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase("superuser"));
             }
 
             roleAssignments.stream().forEach(ra -> LOGGER.debug(ra.getRoleId(), ra.getSiteId()));
