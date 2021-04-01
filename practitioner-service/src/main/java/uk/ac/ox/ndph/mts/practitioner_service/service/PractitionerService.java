@@ -134,6 +134,7 @@ public class PractitionerService implements EntityService {
 
     @Override
     public List<Practitioner> getAllPractitioners() {
+        logger.debug("getting all practitioners");
         return practitionerStore.getAll();
     }
 }
