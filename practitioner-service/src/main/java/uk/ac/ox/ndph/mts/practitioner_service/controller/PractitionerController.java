@@ -81,14 +81,14 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(roleAssignmentId));
     }
 
-    @GetMapping(path = "/roles/{id}")
+    @GetMapping(path = "/roles")
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
-        @PathVariable String id) {
-        if (!StringUtils.hasText(id)) {
+            @RequestParam String userIdentity) {
+        if (!StringUtils.hasText(userIdentity)) {
             throw new RestException("Required String parameter 'userIdentity' is blank");
         }
 
-        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(id);
+        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(userIdentity);
         return ResponseEntity.ok(roleAssignments);
     }
 
