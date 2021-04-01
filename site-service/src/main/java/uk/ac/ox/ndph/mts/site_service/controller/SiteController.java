@@ -46,6 +46,8 @@ public class SiteController {
     @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), admin)")
     @GetMapping("/admin")
     public ResponseEntity<List<Site>> adminSites() {
+        List<Site> sites = siteService.findSites();
+        sites.size();
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 
