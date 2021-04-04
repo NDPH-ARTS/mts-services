@@ -11,8 +11,8 @@ import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
+import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
-import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 class LoaderTest {
 
     @Mock
-    RoleServiceClient roleServiceClient;
+    RoleServiceInvoker roleServiceInvoker;
 
     @Mock
     SiteServiceInvoker siteServiceInvoker;
@@ -47,17 +47,17 @@ class LoaderTest {
     void testLoader() throws Exception {
         Loader loader = new Loader(mockedTrial(),
                             practitionerServiceInvoker,
-                            roleServiceClient,
+                            roleServiceInvoker,
                             siteServiceInvoker,
                             initProgressReporter);
 
-        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceClient).createMany(anyList(), any(Consumer.class));
+        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         loader.run();
 
-        verify(roleServiceClient, times(1)).createMany(anyList(), any(Consumer.class));
+        verify(roleServiceInvoker, times(1)).createManyRoles(anyList(), any(Consumer.class));
         verify(siteServiceInvoker, times(1)).execute(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
@@ -65,9 +65,9 @@ class LoaderTest {
     @Test
     void testLoader_ThrowException() throws Exception {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
-        when(roleServiceClient.createMany(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
+        when(roleServiceInvoker.createManyRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceClient, siteServiceInvoker, initProgressReporter);
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter);
         Assertions.assertThrows(NullEntityException.class, loader::run);
     }
 
