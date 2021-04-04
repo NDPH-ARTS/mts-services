@@ -25,7 +25,7 @@ import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class RoleServiceInvokerTest {
+class RoleServiceInvokerTest {
     private static MockWebServer mockBackEnd;
     private static String token = "123ert";
 
