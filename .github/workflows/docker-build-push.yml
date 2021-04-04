@@ -155,10 +155,8 @@ jobs:
           PROFILE: dev
           GITHUB_SHA: ${{github.sha}}
           # The following is used by the init-service to generate a token
-          MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
-          AZURE_CLIENT_ID: 1a38570c-ddbf-4e8e-8156-2ab88d7bdeef
-          AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
-          AZURE_CLIENT_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
+          INIT_AZURE_CLIENT_ID: 1a38570c-ddbf-4e8e-8156-2ab88d7bdeef
+          INIT_AZURE_CLIENT_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
         run: |
           set -o nounset
           set -o errexit
@@ -166,7 +164,6 @@ jobs:
       - name: Run API Tests
         env:
           BASE_URL: http://localhost:8080
-          MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
           MTS_AZURE_UI_APP_CLIENT_ID: 59a2b30f-844b-4a69-b034-19e3d2d4d805
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
@@ -224,4 +221,3 @@ jobs:
           inputs: '{ "trialDefinitionPath": "trials/mainnightly/definition.yml" }'
           propagate_failure: true
           wait_workflow: true
-          

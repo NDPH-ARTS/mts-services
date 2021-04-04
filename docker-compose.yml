@@ -25,7 +25,6 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "liza729dd"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       # This is the id of the client application
-      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     healthcheck:
       test: curl --fail http://localhost:8081/actuator/health
@@ -78,7 +77,6 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "liza729dd"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     healthcheck:
       test: curl --fail http://localhost:8083/actuator/health
@@ -108,10 +106,9 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "liza729dd"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      # the following 3 entries allow getting a token to send to other services
-      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
-      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
-      AZURE_TENANT_ID: ${AZURE_TENANT_ID}
+      # the following 2 entries allow getting a token to send to other services
+      AZURE_CLIENT_ID: ${INIT_AZURE_CLIENT_ID}
+      AZURE_CLIENT_SECRET: ${INIT_AZURE_CLIENT_SECRET}
       LOGGING_LEVEL_ROOT: DEBUG # always debug
     depends_on:
       - practitioner-service
