@@ -12,7 +12,6 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RolePageImpl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -108,23 +107,5 @@ public class RoleServiceClient {
                 .queryParam("size", size)
                 .build().toString();
         return requestExecutor.sendBlockingGetRequest(webClient, uri, RolePageImpl.class, authHeaders);
-    }
-
-    public List<RoleDTO> createMany(final List<? extends RoleDTO> entities,
-                                    final Consumer<HttpHeaders> authHeaders) throws Exception {
-        Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
-        Exception error = null;
-        final List<RoleDTO> result = new ArrayList<>();
-        for (final RoleDTO role : entities) {
-            try {
-                result.add(createEntity(role, authHeaders));
-            } catch (Exception ex) {
-                error = ex;
-            }
-        }
-        if (error != null) {
-            throw error;
-        }
-        return result;
     }
 }

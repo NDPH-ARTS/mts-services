@@ -3,16 +3,20 @@ package uk.ac.ox.ndph.mts.init_service.loader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
+import uk.ac.ox.ndph.mts.roleserviceclient.ResponseMessages;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
+import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
-
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 @Component
 public class Loader implements CommandLineRunner {
@@ -41,7 +45,7 @@ public class Loader implements CommandLineRunner {
 
 
     @Override
-    public void run(String... args) throws InterruptedException, IOException {
+    public void run(String... args) throws Exception {
         // Give the other services some time to come online.
         initProgressReporter.submitProgress(String.format(LoaderProgress.ENTRY_POINT.message(), delayStartInSeconds));
         Thread.sleep(delayStartInSeconds * 1000);
@@ -51,7 +55,7 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleServiceClient.createMany(roles, RoleServiceClient.noAuth());
+            createManyRoles(roles, RoleServiceClient.noAuth());
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();
@@ -76,6 +80,25 @@ public class Loader implements CommandLineRunner {
             throw ex;
         }
     }
+
+    private List<RoleDTO> createManyRoles(final List<? extends RoleDTO> entities,
+                                          final Consumer<HttpHeaders> authHeaders) throws Exception {
+        Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
+        Exception error = null;
+        final List<RoleDTO> result = new ArrayList<>();
+        for (final RoleDTO role : entities) {
+            try {
+                result.add(roleServiceClient.createEntity(role, authHeaders));
+            } catch (Exception ex) {
+                error = ex;
+            }
+        }
+        if (error != null) {
+            throw error;
+        }
+        return result;
+    }
+
 }
 
 
