@@ -215,7 +215,7 @@ jobs:
         uses: convictional/trigger-workflow-and-wait@v1.3.0
         with:
           owner: ndph-arts
-          repo: mts-deployment-config
+          repo: mts-trial-deployment-config
           github_token: ${{ secrets.DEPLOYMENT_TRIGGER_PAT }}
           workflow_file_name: terraform-plan-apply.yml
           ref: main
