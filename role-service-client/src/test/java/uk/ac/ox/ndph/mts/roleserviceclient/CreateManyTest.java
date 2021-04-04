@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
@@ -16,9 +17,12 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -53,6 +57,24 @@ public class CreateManyTest {
         webServer.shutdown();
     }
 
+    private List<RoleDTO> createManyRoles(final List<? extends RoleDTO> entities,
+                                          final Consumer<HttpHeaders> authHeaders) throws Exception {
+        Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
+        Exception error = null;
+        final List<RoleDTO> result = new ArrayList<>();
+        for (final RoleDTO role : entities) {
+            try {
+                result.add(roleServiceClient.createEntity(role, authHeaders));
+            } catch (Exception ex) {
+                error = ex;
+            }
+        }
+        if (error != null) {
+            throw error;
+        }
+        return result;
+    }
+
     @Test
     void whenCreateSucceeds_responseIdsMatch() throws Exception {
         final RoleDTO role = new RoleDTO();
@@ -65,7 +87,7 @@ public class CreateManyTest {
         webServer.queueResponse(mapper.writeValueAsString(role));
         webServer.queueResponse(mapper.writeValueAsString(role2));
         final List<RoleDTO> actual =
-            roleServiceClient.createMany(Arrays.asList(role, role2), RoleServiceClient.noAuth());
+                createManyRoles(Arrays.asList(role, role2), RoleServiceClient.noAuth());
         //Assert
         assertThat(actual.size(), equalTo(2));
         assertThat(actual.get(0).getId(), equalTo(role.getId()));
@@ -81,7 +103,7 @@ public class CreateManyTest {
         role.setPermissions(Collections.emptyList());
         // Act + Assert
         assertThrows(Exception.class,
-            () -> roleServiceClient.createMany(Collections.singletonList(role), RoleServiceClient.noAuth()));
+            () -> createManyRoles(Collections.singletonList(role), RoleServiceClient.noAuth()));
     }
 
     @Test
@@ -98,12 +120,12 @@ public class CreateManyTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         // Act + Assert
         assertThrows(Exception.class,
-            () -> roleServiceClient.createMany(Arrays.asList(role, role2), RoleServiceClient.noAuth()));
+            () -> createManyRoles(Arrays.asList(role, role2), RoleServiceClient.noAuth()));
     }
 
     @Test
      void whenDependentServiceFailsWhenNull_CorrectException() {
-         assertThrows(Exception.class, () -> roleServiceClient.createMany(null, RoleServiceClient.noAuth()));
+         assertThrows(Exception.class, () -> createManyRoles(null, RoleServiceClient.noAuth()));
      }
 
      @Test
@@ -114,7 +136,7 @@ public class CreateManyTest {
          webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
          List<RoleDTO> roles = Collections.singletonList(testRole);
-         assertThrows(Exception.class, () -> roleServiceClient.createMany(roles, RoleServiceClient.bearerAuth(token)));
+         assertThrows(Exception.class, () -> createManyRoles(roles, RoleServiceClient.bearerAuth(token)));
      }
 
      @Test
@@ -131,7 +153,7 @@ public class CreateManyTest {
          final ObjectMapper mapper = new ObjectMapper();
          webServer.queueResponse(mapper.writeValueAsString(testRole));
          try {
-             roleServiceClient.createMany(roles, RoleServiceClient.bearerAuth(token));
+             createManyRoles(roles, RoleServiceClient.bearerAuth(token));
          } catch(Exception e) {
              fail("Should not have thrown any exception");
          }
