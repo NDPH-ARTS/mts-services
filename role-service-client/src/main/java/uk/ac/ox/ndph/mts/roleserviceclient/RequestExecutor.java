@@ -11,12 +11,12 @@ import reactor.util.retry.Retry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 @Component
-public class RequestExecutor {
+public class RequestExecutorSite {
 
     private final Supplier<Retry> retryPolicy;
 
     @Autowired
-    public RequestExecutor(Supplier<Retry> retryPolicy) {
+    public RequestExecutorSite(Supplier<Retry> retryPolicy) {
         this.retryPolicy = retryPolicy;
     }
 
