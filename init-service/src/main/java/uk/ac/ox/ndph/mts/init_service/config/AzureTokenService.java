@@ -15,7 +15,7 @@ public class AzureTokenService implements TokenService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AzureTokenService.class);
 
-    @Value("${mts.scope}")
+    @Value("${auth.scope}")
     private String scope;
 
     @Override
