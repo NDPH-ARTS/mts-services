@@ -52,6 +52,7 @@ public class SiteServiceClient {
             if (ex.getCause().getMessage().contains("404")) {
                 return false;
             }
+            throw ex;
         }
 
         return true;

@@ -54,6 +54,7 @@ public class RoleServiceClient {
             if (ex.getCause().getMessage().contains("404")) {
                 return false;
             }
+            throw ex;
         }
 
         return true;
