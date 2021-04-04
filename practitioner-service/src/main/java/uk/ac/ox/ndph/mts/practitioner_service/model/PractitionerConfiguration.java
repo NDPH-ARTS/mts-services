@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@ConfigurationProperties(prefix = "config")
+@ConfigurationProperties(prefix = "mts.practitioner")
 @EnableConfigurationProperties
 public class PractitionerConfiguration {
 

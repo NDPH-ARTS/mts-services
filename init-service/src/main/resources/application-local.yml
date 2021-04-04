@@ -38,33 +38,34 @@ practitioner-service:
 
 ---
 # for local work we use this static trial config
-trial:
-  trialName: "My Local Trial"
-  persons:
-    - givenName: Bootstrap
-      familyName: User
-      prefix: Mr
-      roles:
-        - superuser
-      userAccount: some-user-account-id
-  sites:
-    - name: CCO
-      alias: CCO
-      siteType: CCO
-      address:
-        address1: address1
-        address2: address2
-        address3: address3
-        address4: address4
-        address5: address5
-        city: city
-        country: country
-        postcode: postcode
-  roles:
-    - id: superuser
-      permissions:
-        - id: create-person
-        - id: view-person
-    - id: country-admin
-      permissions:
-        - id: create-person
+mts:
+  trial:
+    trialName: "My Local Trial"
+    persons:
+      - givenName: Bootstrap
+        familyName: User
+        prefix: Mr
+        roles:
+          - superuser
+        userAccount: some-user-account-id
+    sites:
+      - name: CCO
+        alias: CCO
+        siteType: CCO
+        address:
+          address1: address1
+          address2: address2
+          address3: address3
+          address4: address4
+          address5: address5
+          city: city
+          country: country
+          postcode: postcode
+    roles:
+      - id: superuser
+        permissions:
+          - id: create-person
+          - id: view-person
+      - id: country-admin
+        permissions:
+          - id: create-person
