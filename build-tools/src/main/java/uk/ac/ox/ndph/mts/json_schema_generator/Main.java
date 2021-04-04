@@ -3,7 +3,6 @@ package uk.ac.ox.ndph.mts.json_schema_generator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.Lists;
 import uk.ac.ox.ndph.mts.json_schema_generator.model.InitTrialConfig;
 import uk.ac.ox.ndph.mts.json_schema_generator.model.PractitionerConfig;
 import uk.ac.ox.ndph.mts.json_schema_generator.model.SiteConfig;
@@ -11,16 +10,17 @@ import uk.ac.ox.ndph.mts.json_schema_generator.model.TrialDefinitionFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public final class Main {
 
     private static class GeneratedTuple {
-        private Class cls;
-        private String filename;
+        private final Class<?> cls;
+        private final String filename;
 
-        public Class getCls() {
+        public Class<?> getCls() {
             return cls;
         }
 
@@ -28,22 +28,20 @@ public final class Main {
             return filename;
         }
 
-        public GeneratedTuple(Class cls, String filename) {
+        public GeneratedTuple(Class<?> cls, String schemaName) {
             this.cls = cls;
-            this.filename = filename;
+            this.filename = schemaName + ".json";
         }
     }
 
     public static void main(final String[] args) throws IOException {
-        ArrayList<GeneratedTuple> itemToProcess = Lists.newArrayList(
-            new GeneratedTuple(TrialDefinitionFile.class, "definition-schema.json"),
-            new GeneratedTuple(InitTrialConfig.class, "init-service-trial-schema.json"),
-            new GeneratedTuple(PractitionerConfig.class, "practitioner-service-configuration-schema.json"),
-            new GeneratedTuple(SiteConfig.class, "site-service-configuration-schema.json"));
+        List<GeneratedTuple> itemToProcess = Arrays.asList(
+            new GeneratedTuple(TrialDefinitionFile.class, TrialDefinitionFile.SCHEMA_NAME),
+            new GeneratedTuple(InitTrialConfig.class, InitTrialConfig.SCHEMA_NAME),
+            new GeneratedTuple(PractitionerConfig.class, PractitionerConfig.SCHEMA_NAME),
+            new GeneratedTuple(SiteConfig.class, SiteConfig.SCHEMA_NAME));
 
-        for (int i = 0; i < itemToProcess.size(); i++) {
-            process(itemToProcess.get(i));
-        }
+            for (GeneratedTuple toProcess : itemToProcess) { process(toProcess); }
     }
 
     public static void process(GeneratedTuple tuple) throws IOException {
