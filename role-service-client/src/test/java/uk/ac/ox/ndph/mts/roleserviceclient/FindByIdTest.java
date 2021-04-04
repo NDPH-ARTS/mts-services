@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
@@ -85,7 +84,7 @@ class FindByIdTest {
         webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
 
         // Act + Assert
-        assertThrows(RestException.class,
+        assertThrows(Exception.class,
             () -> roleServiceClient.getById("any-role-id", RoleServiceClient.noAuth()));
     }
 

@@ -52,6 +52,7 @@ services:
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     depends_on:
+      - config-server
       - sql
     healthcheck:
       test: curl --fail http://localhost:8082/actuator/health
