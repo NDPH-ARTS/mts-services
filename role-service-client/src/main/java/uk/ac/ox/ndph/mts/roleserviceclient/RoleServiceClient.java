@@ -24,11 +24,11 @@ public class RoleServiceClient {
 
     private final WebClient webClient;
 
-    private final RequestExecutor requestExecutor;
+    private final RequestExecutorRole requestExecutor;
     @Autowired
     public RoleServiceClient(WebClient.Builder webClientBuilder,
                              @Value("${role.service.uri}") String roleServiceUrl,
-                             RequestExecutor requestExecutor) {
+                             RequestExecutorRole requestExecutor) {
         this.requestExecutor = requestExecutor;
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
     }

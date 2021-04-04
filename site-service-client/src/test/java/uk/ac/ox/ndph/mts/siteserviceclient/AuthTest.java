@@ -53,7 +53,7 @@ public class AuthTest {
     }
 
     @Test
-    void whenaBasicAuth_thenBasicAuthHeaderReceived() {
+    void whenABasicAuth_thenBasicAuthHeaderReceived() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
         assertTrue(siteServiceClient.entityIdExists("some-id", SiteServiceClient.basicAuth("user", "pass")));
         final RecordedRequest request = webServer.takeRequest();
@@ -61,7 +61,7 @@ public class AuthTest {
     }
 
     @Test
-    void whenaBearerAuth_thenTokenHeaderReceived() {
+    void whenABearerAuth_thenTokenHeaderReceived() {
         final String token = "this-is-the-random-token";
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
         assertTrue(siteServiceClient.entityIdExists("some-id", SiteServiceClient.bearerAuth(token)));

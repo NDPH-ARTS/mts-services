@@ -1,6 +1,6 @@
 package uk.ac.ox.ndph.mts.roleserviceclient.common;
 
-import uk.ac.ox.ndph.mts.roleserviceclient.RequestExecutor;
+import uk.ac.ox.ndph.mts.roleserviceclient.RequestExecutorRole;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
 
@@ -20,7 +20,7 @@ public class TestClientBuilder {
     public RoleServiceClient build(final String url) {
         return new RoleServiceClient(config.webClientBuilder(),
                 url,
-                new RequestExecutor(config.retryPolicy()));
+                new RequestExecutorRole(config.retryPolicy()));
     }
 
 }

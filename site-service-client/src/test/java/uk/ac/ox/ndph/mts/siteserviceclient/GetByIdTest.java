@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.siteserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddress;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
@@ -81,12 +80,12 @@ class GetByIdTest {
     }
 
     @Test
-    void whenServiceFails_ThrowsRestException() {
+    void whenServiceFails_ThrowsException() {
         // Arrange
         webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
 
         // Act + Assert
-        assertThrows(RestException.class,
+        assertThrows(Exception.class,
             () -> siteServiceClient.getById("any-site-id", SiteServiceClient.bearerAuth(token)));
     }
 

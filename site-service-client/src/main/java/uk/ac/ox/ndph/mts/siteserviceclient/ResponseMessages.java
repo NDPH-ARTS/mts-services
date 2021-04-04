@@ -3,9 +3,8 @@ package uk.ac.ox.ndph.mts.siteserviceclient;
 import java.util.function.Supplier;
 
 public enum ResponseMessages implements Supplier<String> {
-    SERVICE_NAME_STATUS_AND_PATH("service: %s responded with status: %s for path: %s"),
-    ID_NOT_NULL("role ID must not be null"),
-    ROLE_NOT_NULL("list must not be null");
+    ID_NOT_NULL("site ID must not be null"),
+    SITE_NOT_NULL("list must not be null");
 
     private final String message;
 
