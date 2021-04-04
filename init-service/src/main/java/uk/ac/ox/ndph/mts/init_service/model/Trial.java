@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.init_service.model;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 public class Trial {
     private List<Practitioner> persons;
     private List<Site> sites;
-    private List<Role> roles;
+    private List<RoleDTO> roles;
     private String trialName;
 
     public List<Practitioner> getPersons() {
@@ -31,11 +32,11 @@ public class Trial {
         this.sites = sites;
     }
 
-    public List<Role> getRoles() {
+    public List<RoleDTO> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(List<RoleDTO> roles) {
         this.roles = roles;
     }
 

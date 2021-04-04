@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
-import uk.ac.ox.ndph.mts.role_service.controller.DuplicateRoleException;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
 import uk.ac.ox.ndph.mts.role_service.model.PermissionRepository;
 import uk.ac.ox.ndph.mts.role_service.model.Role;
@@ -33,13 +32,15 @@ class RoleServiceTest {
 
 
     @Test
-    void whenAttemptToCreateDuplicateRole_thenDuplicateRoleExceptionThrown() {
+    void whenAttemptToCreateDuplicateRole_thenThrowsConflictException() {
         String duplicateRoleName = "foo";
         when(roleRepository.existsById(duplicateRoleName)).thenReturn(true);
         RoleService roleService = new RoleService(roleRepository, permissionRepository);
         Role r = new Role();
         r.setId(duplicateRoleName);
-        assertThrows(DuplicateRoleException.class, () -> roleService.createRoleWithPermissions(r));
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class,
+                () -> roleService.createRoleWithPermissions(r));
+        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
     }
 
     @Test
