@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import uk.ac.ox.ndph.mts.site_service.model.AddressConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 
 /**
@@ -17,6 +18,9 @@ public class SiteConfig {
     private class Mts {
         @JsonProperty(value = "site", required = true)
         private SiteConfiguration site;
+
+        @JsonProperty(value = "address")
+        private AddressConfiguration address;
     }
 
     @JsonIgnore
