@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 
 import java.util.Optional;
@@ -50,6 +51,8 @@ class PractitionerServiceComponentTests {
     private RoleServiceClient roleServiceClient;
     @MockBean
     private SiteServiceClient siteServiceClient;
+    @MockBean
+    private SecurityContextUtil securityContextUtil;
 
     @WithMockUser
     @Test
@@ -103,6 +106,7 @@ class PractitionerServiceComponentTests {
         when(repository.getPractitioner(anyString())).thenReturn(Optional.of(practitioner));
         when(roleServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
         when(siteServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
+        when(securityContextUtil.getToken()).thenReturn("token");
 
         String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
         // Act + Assert
@@ -177,6 +181,7 @@ class PractitionerServiceComponentTests {
         when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
         when(roleServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
         when(siteServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(false);
+        when(securityContextUtil.getToken()).thenReturn("token");
 
         String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
         // Act + Assert
@@ -187,6 +192,7 @@ class PractitionerServiceComponentTests {
         assertThat(errorMsg, both(containsString("siteId")).and(containsString("exist")));
     }
 
+    @WithMockUser
     @Test
     void TestPostRoleAssignment_WhenValidInputAndRepositoryThrows_ReturnsBadGateway() throws Exception {
         // Arrange
