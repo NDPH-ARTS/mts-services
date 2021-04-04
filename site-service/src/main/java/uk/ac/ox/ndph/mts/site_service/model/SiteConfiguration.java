@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Component
 @Configuration
-@ConfigurationProperties("site")
+@ConfigurationProperties("mts.site")
 public class SiteConfiguration {
 
     /**

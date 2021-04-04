@@ -14,6 +14,30 @@
             <artifactId>mbknor-jackson-jsonschema_2.10</artifactId>
             <version>1.0.39</version>
         </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ox.ndph.mts</groupId>
+            <artifactId>init-service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ox.ndph.mts</groupId>
+            <artifactId>practitioner-service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ox.ndph.mts</groupId>
+            <artifactId>role-service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ox.ndph.mts</groupId>
+            <artifactId>site-service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

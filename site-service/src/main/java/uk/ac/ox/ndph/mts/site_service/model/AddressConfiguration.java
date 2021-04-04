@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Component
 @Configuration
-@ConfigurationProperties("address")
+@ConfigurationProperties("mts.address")
 public class AddressConfiguration {
 
     /**
