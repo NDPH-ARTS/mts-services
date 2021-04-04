@@ -14,6 +14,12 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerConfiguration;
 @Configuration
 public class PractitionerConfig {
 
+    /**
+     * Since the configuration schema starts with mts.practioioner but the config class
+     * is annotated with a prefix which is NOT being translated into the
+     * generated schema, we needed this inner class so we can force the generated
+     * schema to match the actual structure.
+     */
     private class Mts {
         @JsonProperty(value = "practitioner", required = true)
         private PractitionerConfiguration practitioner;

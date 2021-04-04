@@ -15,6 +15,12 @@ import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 @Configuration
 public class SiteConfig {
 
+    /**
+     * Since the configuration schema starts with mts.site but the config class
+     * is annotated with a prefix which is NOT being translated into the
+     * generated schema, we needed this inner class so we can force the generated
+     * schema to match the actual structure.
+     */
     private class Mts {
         @JsonProperty(value = "site", required = true)
         private SiteConfiguration site;

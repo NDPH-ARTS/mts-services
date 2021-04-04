@@ -14,6 +14,12 @@ import uk.ac.ox.ndph.mts.init_service.model.Trial;
 @Configuration
 public class InitTrialConfig {
 
+    /**
+     * Since the configuration schema starts with mts.trial but the config class
+     * is annotated with a prefix which is NOT being translated into the
+     * generated schema, we needed this inner class so we can force the generated
+     * schema to match the actual structure.
+     */
     private class Mts {
         @JsonProperty(value = "trial", required = true)
         private Trial trial;
