@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfig;
-import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RolePageImpl;
@@ -47,20 +46,23 @@ public class RoleServiceClient {
     }
 
 
-    public boolean entityIdExists(final String roleId,
-                                  final Consumer<HttpHeaders> authHeaders)
-                                  throws RestException {
-        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
+    public boolean entityIdExists(final String siteId,
+                                  final Consumer<HttpHeaders> authHeaders) {
+        Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
         try {
-            getById(roleId, authHeaders);
-        } catch (RestException ex) {
-            return false;
+            getById(siteId, authHeaders);
+        } catch (RuntimeException ex) {
+            if (ex.getCause().getMessage().contains("404")) {
+                return false;
+            }
         }
+
         return true;
     }
 
+
     public RoleDTO createEntity(final RoleDTO role,
-                                final Consumer<HttpHeaders> authHeaders) throws RestException {
+                                final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
         return requestExecutor.sendBlockingPostRequest(webClient,
                 ClientRoutesConfig.getServiceCreateRole(),
@@ -68,7 +70,7 @@ public class RoleServiceClient {
     }
 
     public RoleDTO getById(final String roleId,
-                           final Consumer<HttpHeaders> authHeaders) throws RestException {
+                           final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         String uri = UriComponentsBuilder
                 .fromUriString(ClientRoutesConfig.getServiceGetRole())
@@ -77,7 +79,7 @@ public class RoleServiceClient {
     }
 
     public List<RoleDTO> getRolesByIds(final List<String> roleIds,
-                                       final Consumer<HttpHeaders> authHeaders) throws RestException {
+                                       final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
         final String parsedRoleIds = String.join(",", roleIds);
         String uri = UriComponentsBuilder
@@ -89,7 +91,7 @@ public class RoleServiceClient {
 
     public RoleDTO updatePermissions(final String roleId,
                                      final List<PermissionDTO> permissionsDTOs,
-                                     final Consumer<HttpHeaders> authHeaders) throws RestException {
+                                     final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
         String uri = UriComponentsBuilder
@@ -99,7 +101,7 @@ public class RoleServiceClient {
     }
 
     public Page<RoleDTO> getPage(final int page, final int size,
-                                 final Consumer<HttpHeaders> authHeaders) throws RestException {
+                                 final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
                 .fromUriString(ClientRoutesConfig.getServiceGetPaged())
                 .queryParam("page", page)
@@ -109,14 +111,14 @@ public class RoleServiceClient {
     }
 
     public List<RoleDTO> createMany(final List<? extends RoleDTO> entities,
-                                    final Consumer<HttpHeaders> authHeaders) throws RestException {
+                                    final Consumer<HttpHeaders> authHeaders) throws Exception {
         Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
-        RestException error = null;
+        Exception error = null;
         final List<RoleDTO> result = new ArrayList<>();
         for (final RoleDTO role : entities) {
             try {
                 result.add(createEntity(role, authHeaders));
-            } catch (RestException ex) {
+            } catch (Exception ex) {
                 error = ex;
             }
         }

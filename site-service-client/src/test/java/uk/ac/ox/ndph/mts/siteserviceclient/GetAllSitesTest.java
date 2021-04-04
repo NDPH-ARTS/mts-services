@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.client.site_service;
+package uk.ac.ox.ndph.mts.siteserviceclient;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;

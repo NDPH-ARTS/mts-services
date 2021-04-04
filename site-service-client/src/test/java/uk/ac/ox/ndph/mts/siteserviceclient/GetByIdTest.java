@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddress;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddressDTO;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.net.HttpURLConnection;
@@ -49,7 +49,7 @@ class GetByIdTest {
         // Arrange
         final var siteId = "siteId";
         final var parentSiteId = "some-parent-site-id";
-        SiteAddress siteAddress = new SiteAddress();
+        SiteAddressDTO siteAddress = new SiteAddressDTO();
 
         SiteDTO expectedSiteResponse = new SiteDTO();
         expectedSiteResponse.setSiteId(siteId);

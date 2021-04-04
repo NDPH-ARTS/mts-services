@@ -48,9 +48,12 @@ public class SiteServiceClient {
         Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
         try {
             getById(siteId, authHeaders);
-        } catch (Exception ex) {
-            return false;
+        } catch (RuntimeException ex) {
+            if (ex.getCause().getMessage().contains("404")) {
+                return false;
+            }
         }
+
         return true;
     }
 

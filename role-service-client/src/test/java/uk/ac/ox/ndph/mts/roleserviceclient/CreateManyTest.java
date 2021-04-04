@@ -54,7 +54,7 @@ public class CreateManyTest {
     }
 
     @Test
-    void whenCreateSucceeds_responseIdsMatch() throws JsonProcessingException {
+    void whenCreateSucceeds_responseIdsMatch() throws Exception {
         final RoleDTO role = new RoleDTO();
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());

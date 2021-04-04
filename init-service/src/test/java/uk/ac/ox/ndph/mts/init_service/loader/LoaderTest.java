@@ -16,13 +16,17 @@ import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LoaderTest {
@@ -40,7 +44,7 @@ class LoaderTest {
     InitProgressReporter initProgressReporter;
 
     @Test
-    void testLoader() throws InterruptedException, IOException {
+    void testLoader() throws Exception {
         Loader loader = new Loader(mockedTrial(),
                             practitionerServiceInvoker,
                             roleServiceClient,
@@ -59,7 +63,7 @@ class LoaderTest {
     }
 
     @Test
-    void testLoader_ThrowException() throws IOException, InterruptedException {
+    void testLoader_ThrowException() throws Exception {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
         when(roleServiceClient.createMany(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 

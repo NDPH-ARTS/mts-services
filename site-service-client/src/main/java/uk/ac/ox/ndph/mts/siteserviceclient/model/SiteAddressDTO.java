@@ -3,7 +3,7 @@ package uk.ac.ox.ndph.mts.siteserviceclient.model;
 /**
  * Address Model - Common could be UK, US, encapsulates common address attributes
  */
-public class SiteAddress {
+public class SiteAddressDTO {
     private String address1;
     private String address2;
     private String address3;
