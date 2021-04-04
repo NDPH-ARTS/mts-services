@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.siteserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.io.IOException;
@@ -71,17 +70,17 @@ public class CreateEntityTest {
         site.setSiteId("the-id");
         site.setParentSiteId("parent-id");
         // Act + Assert
-        assertThrows(RestException.class, () -> siteServiceClient.createEntity(site, SiteServiceClient.bearerAuth(token)));
+        assertThrows(Exception.class, () -> siteServiceClient.createEntity(site, SiteServiceClient.bearerAuth(token)));
     }
 
     @Test
-    void testRoleService_WithRoleNoParent_WhenValidInput() throws IOException {
+    void testSiteService_WithNoSiteParent_WhenValidInput() throws IOException {
         SiteDTO testSite = new SiteDTO();
         testSite.setSiteId("testId");
         final ObjectMapper mapper = new ObjectMapper();
         webServer.queueResponse(mapper.writeValueAsString(testSite));
-        var returnedRoleId = siteServiceClient.createEntity(testSite, SiteServiceClient.bearerAuth(token));
-        assertNotNull(returnedRoleId);
+        var returnedSiteId = siteServiceClient.createEntity(testSite, SiteServiceClient.bearerAuth(token));
+        assertNotNull(returnedSiteId);
     }
 
 }

@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.siteserviceclient.common;
 
 import uk.ac.ox.ndph.mts.siteserviceclient.RequestExecutor;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
-import uk.ac.ox.ndph.mts.siteserviceclient.configuration.ClientRoutesConfig;
 import uk.ac.ox.ndph.mts.siteserviceclient.configuration.WebClientConfig;
 
 public class TestClientBuilder {
@@ -21,8 +20,7 @@ public class TestClientBuilder {
     public SiteServiceClient build(final String url) {
         return new SiteServiceClient(config.webClientBuilder(),
                 url,
-                new ClientRoutesConfig(),
-                new RequestExecutor(config.retryPolicy(), new ClientRoutesConfig()));
+                new RequestExecutor(config.retryPolicy()));
     }
 
 }
