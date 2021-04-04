@@ -41,7 +41,9 @@ public final class Main {
             new GeneratedTuple(PractitionerConfig.class, PractitionerConfig.SCHEMA_NAME),
             new GeneratedTuple(SiteConfig.class, SiteConfig.SCHEMA_NAME));
 
-            for (GeneratedTuple toProcess : itemToProcess) { process(toProcess); }
+        for (GeneratedTuple toProcess : itemToProcess) {
+            process(toProcess);
+        }
     }
 
     public static void process(GeneratedTuple tuple) throws IOException {
