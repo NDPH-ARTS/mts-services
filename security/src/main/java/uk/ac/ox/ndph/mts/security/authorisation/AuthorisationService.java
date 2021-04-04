@@ -133,7 +133,8 @@ public class AuthorisationService {
                 return false;
             }
 
-            List<SiteDTO> sites = siteServiceClient.getAllSites(SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
+            List<SiteDTO> sites = siteServiceClient.getAllSites(
+                                                    SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
 
             Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
 
@@ -170,8 +171,11 @@ public class AuthorisationService {
             sitesReturnObject.removeIf(siteObject ->
                     !userSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
 
-            return sitesReturnObject.isEmpty();
+            if (sitesReturnObject.isEmpty()) {
+                return false;
+            }
 
+            return true;
         } catch (Exception e) {
             return false;
         }

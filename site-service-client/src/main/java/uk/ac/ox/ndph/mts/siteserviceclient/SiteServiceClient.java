@@ -22,13 +22,13 @@ public class SiteServiceClient {
 
     private final ClientRoutesConfig clientRoutes;
 
-    private final RequestExecutor requestExecutor;
+    private final RequestExecutorSite requestExecutor;
 
     @Autowired
     public SiteServiceClient(WebClient.Builder webClientBuilder,
                              @Value("${site.service.uri}") String siteServiceUri,
                              ClientRoutesConfig clientRoutes,
-                             RequestExecutor requestExecutor) {
+                             RequestExecutorSite requestExecutor) {
         this.requestExecutor = requestExecutor;
         this.webClient = webClientBuilder.baseUrl(siteServiceUri).build();
         this.clientRoutes = clientRoutes;

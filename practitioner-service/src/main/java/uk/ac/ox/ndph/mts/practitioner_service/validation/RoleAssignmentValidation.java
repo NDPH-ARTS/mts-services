@@ -20,7 +20,8 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
 
     @Autowired
     public RoleAssignmentValidation(final RoleServiceClient roleServiceClient,
-                                    final SiteServiceClient siteServiceClient, SecurityContextUtil securityContextUtil) {
+                                    final SiteServiceClient siteServiceClient,
+                                    final SecurityContextUtil securityContextUtil) {
         this.roleServiceClient = roleServiceClient;
         this.siteServiceClient = siteServiceClient;
         this.securityContextUtil = securityContextUtil;
@@ -43,7 +44,8 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
                     String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "roleId"));
         }
 
-        if (!this.siteServiceClient.entityIdExists(entity.getSiteId(), SiteServiceClient.bearerAuth(securityContextUtil.getToken()))) {
+        if (!this.siteServiceClient.entityIdExists(entity.getSiteId(),
+                                                   SiteServiceClient.bearerAuth(securityContextUtil.getToken()))) {
             return new ValidationResponse(false,
                     String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "siteId"));
         }
