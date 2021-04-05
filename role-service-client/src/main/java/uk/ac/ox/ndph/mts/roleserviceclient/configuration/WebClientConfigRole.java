@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 @Configuration
 @ConfigurationProperties(prefix = "http-client")
-public class WebClientConfig {
+public class WebClientConfigRole {
 
     @Value("${http-client.connectTimeOutMs:3000}")
     private int connectTimeOutMs;

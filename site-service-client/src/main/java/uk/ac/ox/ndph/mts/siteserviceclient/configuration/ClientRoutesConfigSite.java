@@ -3,7 +3,7 @@ package uk.ac.ox.ndph.mts.siteserviceclient.configuration;
 import org.springframework.stereotype.Component;
 //Make this class a spring @Configuration class with @Value annotation
 @Component
-public class ClientRoutesConfig {
+public class ClientRoutesConfigSite {
     static final String SERVICE_NAME = "site-service";
     static final String SERVICE_GET_SITE = "/sites/{id}";
     static final String SERVICE_CREATE_SITE =  "/sites";

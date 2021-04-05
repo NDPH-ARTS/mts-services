@@ -2,14 +2,14 @@ package uk.ac.ox.ndph.mts.siteserviceclient.common;
 
 import uk.ac.ox.ndph.mts.siteserviceclient.RequestExecutorSite;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
-import uk.ac.ox.ndph.mts.siteserviceclient.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.siteserviceclient.configuration.WebClientConfigSite;
 
 public class TestClientBuilder {
 
-    private final WebClientConfig config;
+    private final WebClientConfigSite config;
 
     public TestClientBuilder() {
-        this.config = new WebClientConfig();
+        this.config = new WebClientConfigSite();
         config.setConnectTimeOutMs(500);
         config.setReadTimeOutMs(1000);
         config.setInitialRetryDurationMs(500);

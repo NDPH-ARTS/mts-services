@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.ac.ox.ndph.mts.siteserviceclient.configuration.ClientRoutesConfig;
+import uk.ac.ox.ndph.mts.siteserviceclient.configuration.ClientRoutesConfigSite;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.util.Arrays;
@@ -48,9 +48,13 @@ public class SiteServiceClient {
         Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
         try {
             getById(siteId, authHeaders);
-        } catch (Exception ex) {
-            return false;
+        } catch (RuntimeException ex) {
+            if (ex.getCause().getMessage().contains("404")) {
+                return false;
+            }
+            throw ex;
         }
+
         return true;
     }
 
@@ -58,13 +62,13 @@ public class SiteServiceClient {
                                 final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(site, ResponseMessages.SITE_NOT_NULL);
         return requestExecutor.sendBlockingPostRequest(webClient,
-                ClientRoutesConfig.getServiceCreateSite(),
+                ClientRoutesConfigSite.getServiceCreateSite(),
                 site, SiteDTO.class, authHeaders);
     }
 
     public List<SiteDTO> getAllSites(final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceGetAllSites())
+                .fromUriString(ClientRoutesConfigSite.getServiceGetAllSites())
                 .build().toString();
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO[].class, authHeaders));
     }
@@ -74,7 +78,7 @@ public class SiteServiceClient {
              final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceGetSite())
+                .fromUriString(ClientRoutesConfigSite.getServiceGetSite())
                 .build(siteId).toString();
         return requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO.class, authHeaders);
     }

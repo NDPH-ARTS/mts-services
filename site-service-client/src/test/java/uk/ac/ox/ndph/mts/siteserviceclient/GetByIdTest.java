@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.siteserviceclient.exception.RestException;
-import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddress;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddressDTO;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.net.HttpURLConnection;

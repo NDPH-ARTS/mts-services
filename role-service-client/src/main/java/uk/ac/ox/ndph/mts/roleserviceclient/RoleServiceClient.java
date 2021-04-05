@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfig;
+import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfigRole;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RolePageImpl;
@@ -64,7 +64,7 @@ public class RoleServiceClient {
                                 final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
         return requestExecutor.sendBlockingPostRequest(webClient,
-                ClientRoutesConfig.getServiceCreateRole(),
+                ClientRoutesConfigRole.getServiceCreateRole(),
                 role, RoleDTO.class, authHeaders);
     }
 
@@ -72,7 +72,7 @@ public class RoleServiceClient {
                            final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceGetRole())
+                .fromUriString(ClientRoutesConfigRole.getServiceGetRole())
                 .build(roleId).toString();
         return requestExecutor.sendBlockingGetRequest(webClient, uri, RoleDTO.class, authHeaders);
     }
@@ -82,7 +82,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
         final String parsedRoleIds = String.join(",", roleIds);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceRolesByIds())
+                .fromUriString(ClientRoutesConfigRole.getServiceRolesByIds())
                 .queryParam("ids", parsedRoleIds)
                 .build().toString();
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, RoleDTO[].class, authHeaders));
@@ -94,7 +94,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceUpdatePermissions())
+                .fromUriString(ClientRoutesConfigRole.getServiceUpdatePermissions())
                 .build(roleId).toString();
         return requestExecutor.sendBlockingPostRequest(webClient, uri, permissionsDTOs, RoleDTO.class, authHeaders);
     }
@@ -102,7 +102,7 @@ public class RoleServiceClient {
     public Page<RoleDTO> getPage(final int page, final int size,
                                  final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceGetPaged())
+                .fromUriString(ClientRoutesConfigRole.getServiceGetPaged())
                 .queryParam("page", page)
                 .queryParam("size", size)
                 .build().toString();
