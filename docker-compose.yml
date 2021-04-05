@@ -25,6 +25,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "liza729dd"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       # This is the id of the client application
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     healthcheck:
       test: curl --fail http://localhost:8081/actuator/health
