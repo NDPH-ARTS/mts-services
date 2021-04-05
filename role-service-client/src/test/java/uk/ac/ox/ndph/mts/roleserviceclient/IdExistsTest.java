@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.roleserviceclient;
 
 import okhttp3.mockwebserver.MockResponse;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,9 @@ import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doThrow;
 
 @SpringBootTest
 public class IdExistsTest {
@@ -78,7 +79,14 @@ public class IdExistsTest {
 
 
         // Act + Assert
-        Assertions.assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", authHeaders));
+        assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", authHeaders));
     }
+
+    @Test
+    void TestEntityRoleExists_WhenServiceException_ReturnsOtherException() {
+        doThrow(RuntimeException.class).when(roleServiceClient).getById("12", authHeaders);
+        assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", authHeaders));
+    }
+
 
 }
