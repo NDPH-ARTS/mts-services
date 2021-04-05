@@ -51,8 +51,8 @@ public class Loader implements CommandLineRunner {
         initProgressReporter.submitProgress(String.format(LoaderProgress.ENTRY_POINT.message(), delayStartInSeconds));
         Thread.sleep(delayStartInSeconds * 1000);
 
-        var allReady = false;
-        while (!allReady) {
+        boolean allReady;
+        do {
             initProgressReporter.submitProgress(LoaderProgress.WAITING_FOR_ALL.message());
 
             var applications = this.discoveryClient.getServices();
@@ -65,12 +65,10 @@ public class Loader implements CommandLineRunner {
 
             allReady = applications.containsAll(
                 Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"));
-            if (allReady) {
-                break;
+            if (!allReady) {
+                Thread.sleep(5000);
             }
-
-            Thread.sleep(5000);
-        }
+        } while (!allReady);
 
         initProgressReporter.submitProgress(LoaderProgress.ALL_REGISTERED.message());
 
