@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfigRole;
+import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfig;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RolePageImpl;
@@ -22,11 +24,12 @@ public class RoleServiceClient {
 
     private final WebClient webClient;
 
-    private final RequestExecutorRole requestExecutor;
+    private final RequestExecutor requestExecutor;
+
     @Autowired
     public RoleServiceClient(WebClient.Builder webClientBuilder,
                              @Value("${role.service.uri}") String roleServiceUrl,
-                             RequestExecutorRole requestExecutor) {
+                             RequestExecutor requestExecutor) {
         this.requestExecutor = requestExecutor;
         this.webClient = webClientBuilder.baseUrl(roleServiceUrl).build();
     }
@@ -44,15 +47,17 @@ public class RoleServiceClient {
         return (headers) -> headers.setBearerAuth(token);
     }
 
-
-    public boolean entityIdExists(final String siteId,
+    public boolean entityIdExists(final String roleId,
                                   final Consumer<HttpHeaders> authHeaders) {
-        Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
+        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         try {
-            getById(siteId, authHeaders);
+            getById(roleId, authHeaders);
         } catch (RuntimeException ex) {
-            if (ex.getCause().getMessage().contains("404")) {
-                return false;
+            if (ex.getCause() instanceof WebClientResponseException) {
+                WebClientResponseException webClientException = (WebClientResponseException) ex.getCause();
+                if (webClientException.getStatusCode() == HttpStatus.NOT_FOUND) {
+                    return false;
+                }
             }
             throw ex;
         }
@@ -64,7 +69,7 @@ public class RoleServiceClient {
                                 final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
         return requestExecutor.sendBlockingPostRequest(webClient,
-                ClientRoutesConfigRole.getServiceCreateRole(),
+                ClientRoutesConfig.getServiceCreateRole(),
                 role, RoleDTO.class, authHeaders);
     }
 
@@ -72,7 +77,7 @@ public class RoleServiceClient {
                            final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfigRole.getServiceGetRole())
+                .fromUriString(ClientRoutesConfig.getServiceGetRole())
                 .build(roleId).toString();
         return requestExecutor.sendBlockingGetRequest(webClient, uri, RoleDTO.class, authHeaders);
     }
@@ -82,7 +87,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleIds, ResponseMessages.LIST_NOT_NULL);
         final String parsedRoleIds = String.join(",", roleIds);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfigRole.getServiceRolesByIds())
+                .fromUriString(ClientRoutesConfig.getServiceRolesByIds())
                 .queryParam("ids", parsedRoleIds)
                 .build().toString();
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, RoleDTO[].class, authHeaders));
@@ -94,7 +99,7 @@ public class RoleServiceClient {
         Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         Objects.requireNonNull(permissionsDTOs, ResponseMessages.LIST_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfigRole.getServiceUpdatePermissions())
+                .fromUriString(ClientRoutesConfig.getServiceUpdatePermissions())
                 .build(roleId).toString();
         return requestExecutor.sendBlockingPostRequest(webClient, uri, permissionsDTOs, RoleDTO.class, authHeaders);
     }
@@ -102,7 +107,7 @@ public class RoleServiceClient {
     public Page<RoleDTO> getPage(final int page, final int size,
                                  final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfigRole.getServiceGetPaged())
+                .fromUriString(ClientRoutesConfig.getServiceGetPaged())
                 .queryParam("page", page)
                 .queryParam("size", size)
                 .build().toString();

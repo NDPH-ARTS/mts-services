@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -84,14 +83,15 @@ class RoleServiceInvokerTest {
 
 
     @Test
-    void whenOneServiceError_thenThrowRestException() throws JsonProcessingException {
+    void whenOneServiceError_thenThrowRestException() {
         // Arrange
         Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
         RoleDTO role = new RoleDTO();
+        List<RoleDTO> entities = Arrays.asList(role, role);
         doThrow(RuntimeException.class).when(roleServiceClient).createEntity(role, authHeaders);
         // Act + Assert
         assertThrows(RuntimeException.class,
-                () -> roleServiceInvoker.createManyRoles(Arrays.asList(role, role), authHeaders));
+                () -> roleServiceInvoker.createManyRoles(entities, authHeaders));
     }
 
     @Test
