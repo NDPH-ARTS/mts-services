@@ -7,10 +7,11 @@ import uk.ac.ox.ndph.mts.roleserviceclient.ResponseMessages;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -24,20 +25,8 @@ public class RoleServiceInvoker {
     }
 
     public List<RoleDTO> createManyRoles(final List<? extends RoleDTO> entities,
-                                         final Consumer<HttpHeaders> authHeaders) throws Exception {
+                                         final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
-        Exception error = null;
-        final List<RoleDTO> result = new ArrayList<>();
-        for (final RoleDTO role : entities) {
-            try {
-                result.add(roleServiceClient.createEntity(role, authHeaders));
-            } catch (Exception ex) {
-                error = ex;
-            }
-        }
-        if (error != null) {
-            throw error;
-        }
-        return result;
+        return entities.stream().map(r -> roleServiceClient.createEntity(r, authHeaders)).collect(toList());
     }
 }
