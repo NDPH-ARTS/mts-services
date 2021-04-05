@@ -56,6 +56,9 @@ public class SiteServiceClient {
                 if (webClientException.getStatusCode() == HttpStatus.NOT_FOUND) {
                     return false;
                 }
+                else {
+                    throw ex;
+                }
             }
             else {
                 throw ex;

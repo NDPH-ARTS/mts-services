@@ -58,7 +58,11 @@ public class RoleServiceClient {
                 if (webClientException.getStatusCode() == HttpStatus.NOT_FOUND) {
                     return false;
                 }
-            } else {
+                else {
+                    throw ex;
+                }
+            }
+            else {
                 throw ex;
             }
         }
