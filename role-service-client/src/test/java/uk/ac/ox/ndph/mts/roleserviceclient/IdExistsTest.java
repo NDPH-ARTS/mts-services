@@ -18,7 +18,6 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doThrow;
 
 @SpringBootTest
 public class IdExistsTest {
@@ -81,12 +80,5 @@ public class IdExistsTest {
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", authHeaders));
     }
-
-    @Test
-    void TestEntityRoleExists_WhenServiceException_ReturnsOtherException() {
-        doThrow(new RuntimeException()).when(roleServiceClient).entityIdExists("12", authHeaders);
-        Assertions.assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", authHeaders));
-    }
-
 
 }
