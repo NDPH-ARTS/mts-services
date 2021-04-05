@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
@@ -16,6 +17,7 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -29,7 +31,7 @@ public class CreateEntityTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
-    private static String token = "123ert";
+    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -72,7 +74,7 @@ public class CreateEntityTest {
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());
         // Act + Assert
-        assertThrows(Exception.class, () -> roleServiceClient.createEntity(role, RoleServiceClient.noAuth()));
+        assertThrows(Exception.class, () -> roleServiceClient.createEntity(role, authHeaders));
     }
 
     @Test
@@ -81,7 +83,7 @@ public class CreateEntityTest {
         testRole.setId("testId");
         final ObjectMapper mapper = new ObjectMapper();
         webServer.queueResponse(mapper.writeValueAsString(testRole));
-        var returnedRoleId = roleServiceClient.createEntity(testRole, RoleServiceClient.bearerAuth(token));
+        var returnedRoleId = roleServiceClient.createEntity(testRole, authHeaders);
         assertNotNull(returnedRoleId);
      }
 

@@ -8,9 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
+
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,6 +23,7 @@ public class IdExistsTest {
 
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
+    final Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
     private RoleServiceClient roleServiceClient;
 
     @SpringBootApplication
@@ -47,7 +51,7 @@ public class IdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
 
         // Act
-        boolean idExists = roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth());
+        boolean idExists = roleServiceClient.entityIdExists("12", authHeaders);
 
         // Assert
         assertTrue(idExists);
@@ -59,7 +63,7 @@ public class IdExistsTest {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()));
 
         // Act
-        boolean idExists = roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth());
+        boolean idExists = roleServiceClient.entityIdExists("12", authHeaders);
 
         // Assert
         assertFalse(idExists);
@@ -71,8 +75,9 @@ public class IdExistsTest {
         // Arrange
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
+
         // Act + Assert
-        Assertions.assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth()));
+        Assertions.assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", authHeaders));
     }
 
 }
