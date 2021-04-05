@@ -6,19 +6,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.doThrow;
 public class IsEntityExistsTest {
 
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private SiteServiceClient siteServiceClient;
     private static String token = "123ert";
+    private Consumer<HttpHeaders> authHeaders = SiteServiceClient.bearerAuth(token);
+
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -31,8 +37,7 @@ public class IsEntityExistsTest {
 
     @BeforeEach
     void beforeEach() {
-        siteServiceClient = builder.build(webServer.getUrl());
-
+        siteServiceClient = Mockito.spy(builder.build(webServer.getUrl()));
     }
 
     @AfterAll
@@ -43,21 +48,28 @@ public class IsEntityExistsTest {
     @Test
     void TestEntitySiteExists_WhenExists_ReturnsTrue() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        boolean idExists = siteServiceClient.entityIdExists("12", SiteServiceClient.bearerAuth(token));
+        boolean idExists = siteServiceClient.entityIdExists("12", authHeaders);
         assertSame(idExists, true);
     }
 
     @Test
     void TestEntitySiteExists_WhenNotExists_ReturnsFalse() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()));
-        boolean idExists = siteServiceClient.entityIdExists("12", SiteServiceClient.bearerAuth(token));
+        boolean idExists = siteServiceClient.entityIdExists("12", authHeaders);
         assertSame(idExists, false);
     }
 
     @Test
     void TestEntitySiteExists_WhenServiceException_ReturnsRunTimeException() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
-        Assertions.assertThrows(RuntimeException.class, () -> siteServiceClient.entityIdExists("12", SiteServiceClient.bearerAuth(token)));
+        Assertions.assertThrows(RuntimeException.class, () -> siteServiceClient.entityIdExists("12", authHeaders));
     }
+
+    @Test
+    void TestEntitySiteExists_WhenServiceException_ReturnsOtherException() {
+        doThrow(new RuntimeException()).when(siteServiceClient).entityIdExists("12", authHeaders);
+        Assertions.assertThrows(RuntimeException.class, () -> siteServiceClient.entityIdExists("12", authHeaders));
+    }
+
 
 }
