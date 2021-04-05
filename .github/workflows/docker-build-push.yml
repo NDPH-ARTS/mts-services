@@ -154,7 +154,7 @@ jobs:
         env:
           PROFILE: dev
           GITHUB_SHA: ${{github.sha}}
-          # The following is used by the init-service to generate a token
+          # The following is used by the init-service to generate a token.
           INIT_AZURE_CLIENT_ID: 14fa4ff6-9396-40aa-afdf-09eb1f4e6292
           INIT_AZURE_CLIENT_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
           AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
