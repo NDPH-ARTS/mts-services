@@ -3,7 +3,6 @@ package uk.ac.ox.ndph.mts.init_service.loader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
@@ -17,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-@EnableDiscoveryClient
 public class Loader implements CommandLineRunner {
 
     private final PractitionerServiceInvoker practitionerServiceInvoker;
@@ -25,9 +23,7 @@ public class Loader implements CommandLineRunner {
     private final SiteServiceInvoker siteServiceInvoker;
     private final Trial trialConfig;
     private final InitProgressReporter initProgressReporter;
-
-    @Autowired
-    private DiscoveryClient discoveryClient;
+    private final DiscoveryClient discoveryClient;
 
     @Value("${delay-start:1}")
     private long delayStartInSeconds;
@@ -37,12 +33,14 @@ public class Loader implements CommandLineRunner {
                   PractitionerServiceInvoker practitionerServiceInvoker,
                   RoleServiceClient roleServiceClient,
                   SiteServiceInvoker siteServiceInvoker,
-                  InitProgressReporter initProgressReporter) {
+                  InitProgressReporter initProgressReporter,
+                  DiscoveryClient discoveryClient) {
         this.trialConfig = trialConfig;
         this.practitionerServiceInvoker = practitionerServiceInvoker;
         this.roleServiceClient = roleServiceClient;
         this.siteServiceInvoker = siteServiceInvoker;
         this.initProgressReporter = initProgressReporter;
+        this.discoveryClient = discoveryClient;
     }
 
 
@@ -55,12 +53,14 @@ public class Loader implements CommandLineRunner {
 
         var allReady = false;
         while (!allReady) {
-            initProgressReporter.submitProgress("Waiting for all services to be registered");
+            initProgressReporter.submitProgress(LoaderProgress.WAITING_FOR_ALL.message());
 
             var applications = this.discoveryClient.getServices();
-            initProgressReporter.submitProgress(applications.size() + " services are registered");
+            initProgressReporter.submitProgress(
+                String.format(LoaderProgress.N_SERVICES_REGISTERED.message(), applications.size()));
             for (var application : applications) {
-                initProgressReporter.submitProgress(application + " is registered");
+                initProgressReporter.submitProgress(
+                    String.format(LoaderProgress.SERVICE_REGISTERED.message(), application));
             }
 
             allReady = applications.containsAll(
@@ -69,10 +69,10 @@ public class Loader implements CommandLineRunner {
                 break;
             }
 
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         }
 
-        initProgressReporter.submitProgress("All services were registered. Continue.");
+        initProgressReporter.submitProgress(LoaderProgress.ALL_REGISTERED.message());
 
         try {
             initProgressReporter.submitProgress(LoaderProgress.GET_ROLES_FROM_CONFIG.message());
