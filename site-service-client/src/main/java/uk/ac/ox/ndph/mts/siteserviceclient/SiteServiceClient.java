@@ -57,7 +57,9 @@ public class SiteServiceClient {
                     return false;
                 }
             }
-            throw ex;
+            else {
+                throw ex;
+            }
         }
 
         return true;
