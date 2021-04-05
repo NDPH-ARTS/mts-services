@@ -3,8 +3,10 @@ package uk.ac.ox.ndph.mts.siteserviceclient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ox.ndph.mts.siteserviceclient.configuration.ClientRoutesConfig;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
@@ -49,8 +51,11 @@ public class SiteServiceClient {
         try {
             getById(siteId, authHeaders);
         } catch (RuntimeException ex) {
-            if (ex.getCause().getMessage().contains("404")) {
-                return false;
+            if (ex.getCause() instanceof WebClientResponseException) {
+                WebClientResponseException webClientException = (WebClientResponseException) ex.getCause();
+                if (webClientException.getStatusCode() == HttpStatus.NOT_FOUND) {
+                    return false;
+                }
             }
             throw ex;
         }

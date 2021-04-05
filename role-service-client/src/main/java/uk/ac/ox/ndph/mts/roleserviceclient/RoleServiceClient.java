@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ox.ndph.mts.roleserviceclient.configuration.ClientRoutesConfig;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
@@ -23,6 +25,7 @@ public class RoleServiceClient {
     private final WebClient webClient;
 
     private final RequestExecutor requestExecutor;
+
     @Autowired
     public RoleServiceClient(WebClient.Builder webClientBuilder,
                              @Value("${role.service.uri}") String roleServiceUrl,
@@ -44,15 +47,17 @@ public class RoleServiceClient {
         return (headers) -> headers.setBearerAuth(token);
     }
 
-
-    public boolean entityIdExists(final String siteId,
+    public boolean entityIdExists(final String roleId,
                                   final Consumer<HttpHeaders> authHeaders) {
-        Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
+        Objects.requireNonNull(roleId, ResponseMessages.ID_NOT_NULL);
         try {
-            getById(siteId, authHeaders);
+            getById(roleId, authHeaders);
         } catch (RuntimeException ex) {
-            if (ex.getCause().getMessage().contains("404")) {
-                return false;
+            if (ex.getCause() instanceof WebClientResponseException) {
+                WebClientResponseException webClientException = (WebClientResponseException) ex.getCause();
+                if (webClientException.getStatusCode() == HttpStatus.NOT_FOUND) {
+                    return false;
+                }
             }
             throw ex;
         }

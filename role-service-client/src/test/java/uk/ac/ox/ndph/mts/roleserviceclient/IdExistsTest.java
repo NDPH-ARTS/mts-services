@@ -67,12 +67,12 @@ public class IdExistsTest {
 
 
     @Test
-    void whenServiceError_thenThrowRestException() {
+    void whenServiceError_thenThrowRunTimeException() {
         // Arrange
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
         // Act + Assert
-        Assertions.assertThrows(Exception.class, () -> roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth()));
+        Assertions.assertThrows(RuntimeException.class, () -> roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth()));
     }
 
 }

@@ -55,10 +55,9 @@ public class IsEntityExistsTest {
     }
 
     @Test
-    void TestEntitySiteExists_WhenServiceException_ReturnsRestException() {
+    void TestEntitySiteExists_WhenServiceException_ReturnsRunTimeException() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
-        Assertions.assertThrows(Exception.class, () -> siteServiceClient.entityIdExists("12", SiteServiceClient.bearerAuth(token)));
+        Assertions.assertThrows(RuntimeException.class, () -> siteServiceClient.entityIdExists("12", SiteServiceClient.bearerAuth(token)));
     }
-
 
 }
