@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -51,6 +52,19 @@ public class IdExistsTest {
         // Assert
         assertTrue(idExists);
     }
+
+    @Test
+    void whenHttpStatus404NotFound_thenFalse() {
+        // Arrange
+        webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()));
+
+        // Act
+        boolean idExists = roleServiceClient.entityIdExists("12", RoleServiceClient.noAuth());
+
+        // Assert
+        assertFalse(idExists);
+    }
+
 
     @Test
     void whenServiceError_thenThrowRestException() {

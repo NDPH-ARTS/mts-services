@@ -11,24 +11,28 @@ import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
+import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
-import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LoaderTest {
 
     @Mock
-    RoleServiceClient roleServiceClient;
+    RoleServiceInvoker roleServiceInvoker;
 
     @Mock
     SiteServiceInvoker siteServiceInvoker;
@@ -40,30 +44,30 @@ class LoaderTest {
     InitProgressReporter initProgressReporter;
 
     @Test
-    void testLoader() throws InterruptedException, IOException {
+    void testLoader() throws Exception {
         Loader loader = new Loader(mockedTrial(),
                             practitionerServiceInvoker,
-                            roleServiceClient,
+                            roleServiceInvoker,
                             siteServiceInvoker,
                             initProgressReporter);
 
-        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceClient).createMany(anyList(), any(Consumer.class));
+        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
         doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         loader.run();
 
-        verify(roleServiceClient, times(1)).createMany(anyList(), any(Consumer.class));
+        verify(roleServiceInvoker, times(1)).createManyRoles(anyList(), any(Consumer.class));
         verify(siteServiceInvoker, times(1)).execute(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
 
     @Test
-    void testLoader_ThrowException() throws IOException, InterruptedException {
+    void testLoader_ThrowException() throws Exception {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
-        when(roleServiceClient.createMany(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
+        when(roleServiceInvoker.createManyRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceClient, siteServiceInvoker, initProgressReporter);
+        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter);
         Assertions.assertThrows(NullEntityException.class, loader::run);
     }
 

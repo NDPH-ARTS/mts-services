@@ -16,7 +16,7 @@ public class SiteDTO implements Entity {
 
     private String siteType;
 
-    private SiteAddress address;
+    private SiteAddressDTO address;
 
     public SiteDTO() {
         //constructor used for deserialization
@@ -51,11 +51,11 @@ public class SiteDTO implements Entity {
         this.siteType = siteType;
     }
 
-    public SiteAddress getAddress() {
+    public SiteAddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(SiteAddress address) {
+    public void setAddress(SiteAddressDTO address) {
         this.address = address;
     }
 
