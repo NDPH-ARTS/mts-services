@@ -60,7 +60,6 @@ public class RoleServiceClient {
         return true;
     }
 
-
     public RoleDTO createEntity(final RoleDTO role,
                                 final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(role, ResponseMessages.ROLE_NOT_NULL);
