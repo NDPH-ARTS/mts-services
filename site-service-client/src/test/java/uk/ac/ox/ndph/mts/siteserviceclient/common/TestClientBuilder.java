@@ -20,7 +20,7 @@ public class TestClientBuilder {
     public SiteServiceClient build(final String url) {
         return new SiteServiceClient(config.webClientBuilderSite(),
                 url,
-                new RequestExecutorSite(config.retryPolicy()));
+                new RequestExecutorSite(config.retryPolicySite()));
     }
 
 }

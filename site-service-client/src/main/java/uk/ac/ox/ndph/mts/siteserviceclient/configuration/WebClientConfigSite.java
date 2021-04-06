@@ -51,7 +51,7 @@ public class WebClientConfigSite {
     }
 
     @Bean
-    public Supplier<Retry> retryPolicy() {
+    public Supplier<Retry> retryPolicySite() {
         return () -> Retry.backoff(getMaxRetryAttempts(),
             Duration.ofMillis(getInitialRetryDurationMs()))
             .maxBackoff(Duration.ofMillis(getMaxRetryDurationMs()));

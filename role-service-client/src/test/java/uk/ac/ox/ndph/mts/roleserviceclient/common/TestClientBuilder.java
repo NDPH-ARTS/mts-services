@@ -20,7 +20,7 @@ public class TestClientBuilder {
     public RoleServiceClient build(final String url) {
         return new RoleServiceClient(config.webClientBuilderRole(),
                 url,
-                new RequestExecutorRole(config.retryPolicy()));
+                new RequestExecutorRole(config.retryPolicyRole()));
     }
 
 }
