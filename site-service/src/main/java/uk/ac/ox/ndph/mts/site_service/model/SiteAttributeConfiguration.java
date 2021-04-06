@@ -2,14 +2,18 @@ package uk.ac.ox.ndph.mts.site_service.model;
 
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * Site Attribute configuration Model
  */
 @Component
 public class SiteAttributeConfiguration {
 
+    @NotBlank
     private String name;
     private String type;
+    @NotBlank
     private String displayName;
     private String validationRegex;
 
@@ -22,9 +26,9 @@ public class SiteAttributeConfiguration {
     /**
      * Constructor with all members initialized, no validation checks here
      *
-     * @param name            attribute name can be null
-     * @param type            atttribute type can be null
-     * @param displayName     atttribute display name can be null
+     * @param name attribute name can be null
+     * @param type atttribute type can be null
+     * @param displayName atttribute display name can be null
      * @param validationRegex for regexc-based validation, can be null
      */
     public SiteAttributeConfiguration(final String name, final String type,
