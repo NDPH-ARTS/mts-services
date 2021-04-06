@@ -54,7 +54,7 @@ class PractitionerServiceTest {
         final WebClientConfigRole config = new WebClientConfigRole();
         config.setConnectTimeOutMs(500);
         config.setReadTimeOutMs(1000);
-        builder = config.webClientBuilder();
+        builder = config.webClientBuilderRole();
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
     }

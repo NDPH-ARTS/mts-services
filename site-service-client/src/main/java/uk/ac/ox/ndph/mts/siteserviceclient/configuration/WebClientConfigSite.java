@@ -46,7 +46,7 @@ public class WebClientConfigSite {
 
     @Bean
     @LoadBalanced
-    public WebClient.Builder webClientBuilder() {
+    public WebClient.Builder webClientBuilderSite() {
         return WebClient.builder().clientConnector(connectorWithConnectAndReadTimeOuts());
     }
 

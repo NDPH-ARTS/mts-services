@@ -46,7 +46,7 @@ public class WebClientConfigRole {
 
     @Bean
     @LoadBalanced
-    public WebClient.Builder webClientBuilder() {
+    public WebClient.Builder webClientBuilderRole() {
         return WebClient.builder().clientConnector(connectorWithConnectAndReadTimeOuts());
     }
 
