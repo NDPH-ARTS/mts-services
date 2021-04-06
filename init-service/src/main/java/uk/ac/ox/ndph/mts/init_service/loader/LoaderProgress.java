@@ -9,6 +9,10 @@ public enum LoaderProgress {
     GET_PERSONS_FROM_CONFIG("getting persons from config."),
     SELECT_FIRST_SITE_FROM_COLLECTION_OF_SIZE("selecting the first side id out of %d"),
     CREATE_PRACTITIONER("creating practitioner."),
+    WAITING_FOR_ALL("waiting for all services to be registered"),
+    N_SERVICES_REGISTERED("%d services are registered"),
+    SERVICE_REGISTERED("service '%s' is registered"),
+    ALL_REGISTERED("all services were registered. Continue"),
     //These are token messages, if you change this you need to change in github action as well!
     FINISHED_SUCCESSFULY("***SUCCESS***"),
     FAILURE("***FAILURE***");
