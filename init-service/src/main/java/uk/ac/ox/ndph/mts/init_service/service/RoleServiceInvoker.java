@@ -24,9 +24,9 @@ public class RoleServiceInvoker {
         this.roleServiceClient = roleServiceClient;
     }
 
-    public List<RoleDTO> createManyRoles(final List<? extends RoleDTO> entities,
+    public List<String> createManyRoles(final List<? extends RoleDTO> entities,
                                          final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
-        return entities.stream().map(r -> roleServiceClient.createEntity(r, authHeaders)).collect(toList());
+        return entities.stream().map(r -> (roleServiceClient.createEntity(r, authHeaders)).getId()).collect(toList());
     }
 }

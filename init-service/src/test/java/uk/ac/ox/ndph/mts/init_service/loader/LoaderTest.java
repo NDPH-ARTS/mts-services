@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
@@ -15,6 +14,7 @@ import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -52,18 +52,18 @@ class LoaderTest {
                             initProgressReporter);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
-        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
+        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createManySites(anyList());
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         loader.run();
 
         verify(roleServiceInvoker, times(1)).createManyRoles(anyList(), any(Consumer.class));
-        verify(siteServiceInvoker, times(1)).execute(anyList());
+        verify(siteServiceInvoker, times(1)).createManySites(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
 
     @Test
-    void testLoader_ThrowException() throws Exception {
+    void testLoader_ThrowException() {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
         when(roleServiceInvoker.createManyRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 
@@ -75,7 +75,7 @@ class LoaderTest {
         Trial trial = new Trial();
         trial.setTrialName("");
 
-        Site site = new Site();
+        SiteDTO site = new SiteDTO();
         site.setName("testSiteName");
         site.setAlias("testSiteAlias");
 

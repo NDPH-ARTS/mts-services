@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @ConfigurationProperties("mts.trial")
 public class Trial {
     private List<Practitioner> persons;
-    private List<Site> sites;
+    private List<SiteDTO> sites;
     private List<RoleDTO> roles;
     private String trialName;
 
@@ -24,11 +25,11 @@ public class Trial {
         this.persons = persons;
     }
 
-    public List<Site> getSites() {
+    public List<SiteDTO> getSites() {
         return sites;
     }
 
-    public void setSites(List<Site> sites) {
+    public void setSites(List<SiteDTO> sites) {
         this.sites = sites;
     }
 

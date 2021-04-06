@@ -56,7 +56,7 @@ public class Loader implements CommandLineRunner {
             var sites = trialConfig.getSites();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_SITES.message());
-            List<String> siteIds = siteServiceInvoker.execute(sites);
+            List<String> siteIds = siteServiceInvoker.createManySites(sites);
 
             initProgressReporter.submitProgress(LoaderProgress.GET_PERSONS_FROM_CONFIG.message());
             var persons = trialConfig.getPersons();

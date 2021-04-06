@@ -20,7 +20,7 @@ import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.init_service.model.RoleAssignment;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfigRole;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -51,7 +51,7 @@ class PractitionerServiceTest {
     @BeforeAll
     static void setUp() throws IOException {
         // this section uses a custom webclient props
-        final WebClientConfig config = new WebClientConfig();
+        final WebClientConfigRole config = new WebClientConfigRole();
         config.setConnectTimeOutMs(500);
         config.setReadTimeOutMs(1000);
         builder = config.webClientBuilder();

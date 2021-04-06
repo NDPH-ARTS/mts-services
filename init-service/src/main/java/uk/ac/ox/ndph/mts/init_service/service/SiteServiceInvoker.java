@@ -1,33 +1,35 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
-import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
-import uk.ac.ox.ndph.mts.init_service.model.Entity;
-import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
+import uk.ac.ox.ndph.mts.roleserviceclient.ResponseMessages;
+import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
-public class SiteServiceInvoker extends ServiceInvoker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SiteServiceInvoker.class);
+public class SiteServiceInvoker {
 
-    @Value("${site-service.routes.create}")
-    private String createEndpoint;
+    private SiteServiceClient siteServiceClient;
+    private AzureTokenService azureTokenService;
 
     @Autowired
-    public SiteServiceInvoker(final WebClient.Builder webClientBuilder,
-                              @Value("${site-service.uri}") String serviceUrlBase,
+    public SiteServiceInvoker(final SiteServiceClient siteServiceClient,
                               AzureTokenService azureTokenservice) {
-        super(webClientBuilder, serviceUrlBase, azureTokenservice);
+        this.siteServiceClient = siteServiceClient;
+        this.azureTokenService = azureTokenservice;
     }
 
-    protected String create(Entity site) throws DependentServiceException {
-        String uri = serviceUrlBase + createEndpoint;
-        IDResponse responseFromSiteService = sendBlockingPostRequest(uri, site, IDResponse.class);
-        return responseFromSiteService.getId();
+    public List<String> createManySites(final List<? extends SiteDTO> entities) {
+        Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
+        Consumer<HttpHeaders> authHeaders = SiteServiceClient.bearerAuth(azureTokenService.getToken());
+        return entities.stream().map(s -> (siteServiceClient.createEntity(s, authHeaders)).getSiteId()).collect(toList());
     }
 }
