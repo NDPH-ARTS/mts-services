@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -45,6 +46,7 @@ public class WebClientConfigRole {
     }
 
     @Bean
+    @Primary
     @LoadBalanced
     public WebClient.Builder webClientBuilderRole() {
         return WebClient.builder().clientConnector(connectorWithConnectAndReadTimeOuts());
