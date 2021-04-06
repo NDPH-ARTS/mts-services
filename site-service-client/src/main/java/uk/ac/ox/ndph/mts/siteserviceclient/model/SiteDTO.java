@@ -1,22 +1,18 @@
 package uk.ac.ox.ndph.mts.siteserviceclient.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 public class SiteDTO implements Entity {
-
+    @NotBlank
     private String name;
-
     private String alias;
-
-    @JsonProperty(value = "siteId")
-    private String siteId;
-
-    @JsonProperty(value = "parentSiteId")
-    private String parentSiteId;
-
+    @NotBlank
     private String siteType;
-
+    @Valid
     private SiteAddressDTO address;
+    private String siteId;
+    private String parentSiteId;
 
     public SiteDTO() {
         //constructor used for deserialization
