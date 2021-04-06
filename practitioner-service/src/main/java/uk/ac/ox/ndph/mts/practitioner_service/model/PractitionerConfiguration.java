@@ -1,21 +1,29 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@Component
 @Configuration
+@Validated
 @ConfigurationProperties(prefix = "mts.practitioner")
-@EnableConfigurationProperties
 public class PractitionerConfiguration {
 
+    @NotBlank
     private String name;
+    @NotBlank
     private String displayName;
-    private List<PractitionerAttributeConfiguration> attributes;
+    @NotEmpty
+    private List<@Valid PractitionerAttributeConfiguration> attributes;
 
     public PractitionerConfiguration() {
         this.name = "";
@@ -35,23 +43,23 @@ public class PractitionerConfiguration {
         return Collections.unmodifiableCollection(attributes);
     }
 
-    public String getName() {
-        return name;
+    public void setAttributes(List<PractitionerAttributeConfiguration> attributes) {
+        this.attributes = attributes;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setAttributes(List<PractitionerAttributeConfiguration> attributes) {
-        this.attributes = attributes;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }
