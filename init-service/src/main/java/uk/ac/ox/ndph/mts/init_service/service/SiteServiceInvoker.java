@@ -30,6 +30,7 @@ public class SiteServiceInvoker {
     public List<String> createManySites(final List<? extends SiteDTO> entities) {
         Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
         Consumer<HttpHeaders> authHeaders = SiteServiceClient.bearerAuth(azureTokenService.getToken());
-        return entities.stream().map(s -> (siteServiceClient.createEntity(s, authHeaders)).getSiteId()).collect(toList());
+        return entities.stream().map(s -> (siteServiceClient.createEntity(s, authHeaders))
+                                                            .getSiteId()).collect(toList());
     }
 }
