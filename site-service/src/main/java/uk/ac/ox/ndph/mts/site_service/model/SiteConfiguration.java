@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -48,12 +49,16 @@ public class SiteConfiguration {
         this.child = child;
     }
 
+    @JsonProperty(required = true)
     @NotBlank
     private String name;
+    @JsonProperty(required = true)
     @NotBlank
     private String displayName;
+    @JsonProperty(required = true)
     @NotBlank
     private String type;
+    @JsonProperty(required = true)
     @NotEmpty
     private List<@Valid SiteAttributeConfiguration> attributes;
     private List<@Valid SiteAttributeConfiguration> custom;

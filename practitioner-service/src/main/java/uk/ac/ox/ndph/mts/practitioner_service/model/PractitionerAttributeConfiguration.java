@@ -1,11 +1,15 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotBlank;
 
 public class PractitionerAttributeConfiguration {
 
+    @JsonProperty(required = true)
     @NotBlank
     private String name;
+    @JsonProperty(required = true)
     @NotBlank
     private String displayName;
     private String validationRegex;

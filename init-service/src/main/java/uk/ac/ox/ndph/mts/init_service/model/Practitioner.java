@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.init_service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -9,8 +11,10 @@ import java.util.List;
 public class Practitioner implements Entity {
 
     private String prefix;
+    @JsonProperty(required = true)
     @NotBlank
     private String givenName;
+    @JsonProperty(required = true)
     @NotBlank
     private String familyName;
     private List<@NotBlank String> roles;

@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
@@ -10,9 +11,11 @@ import javax.validation.constraints.NotBlank;
 @Component
 public class SiteAttributeConfiguration {
 
+    @JsonProperty(required = true)
     @NotBlank
     private String name;
     private String type;
+    @JsonProperty(required = true)
     @NotBlank
     private String displayName;
     private String validationRegex;

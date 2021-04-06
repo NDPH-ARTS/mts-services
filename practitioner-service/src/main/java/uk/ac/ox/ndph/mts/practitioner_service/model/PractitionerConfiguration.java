@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.practitioner_service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -18,8 +19,10 @@ import java.util.List;
 @ConfigurationProperties(prefix = "mts.practitioner")
 public class PractitionerConfiguration {
 
+    @JsonProperty(required = true)
     @NotBlank
     private String name;
+    @JsonProperty(required = true)
     @NotBlank
     private String displayName;
     @NotEmpty

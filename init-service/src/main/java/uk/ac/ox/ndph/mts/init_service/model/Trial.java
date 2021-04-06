@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.init_service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,16 @@ import java.util.List;
 @Validated
 @ConfigurationProperties("mts.trial")
 public class Trial {
+    @JsonProperty(required = true)
     @NotEmpty
     private List<@Valid Practitioner> persons;
+    @JsonProperty(required = true)
     @NotEmpty
     private List<@Valid Site> sites;
+    @JsonProperty(required = true)
     @NotEmpty
     private List<@Valid RoleDTO> roles;
+    @JsonProperty(required = true)
     @NotBlank
     private String trialName;
 
