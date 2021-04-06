@@ -78,9 +78,8 @@ public class SiteServiceClient {
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO[].class, authHeaders));
     }
 
-    public SiteDTO getById
-            (final String siteId,
-             final Consumer<HttpHeaders> authHeaders) {
+    public SiteDTO getById(final String siteId,
+                           final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
         String uri = UriComponentsBuilder
                 .fromUriString(ClientRoutesConfigSite.getServiceGetSite())
