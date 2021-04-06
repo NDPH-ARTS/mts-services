@@ -105,7 +105,7 @@ public class AuthorisationService {
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
-            if (securityContextUtil.isInitService()) {
+            if (securityContextUtil.isInIdentityProviderRole()) {
                 return true;
             }
 

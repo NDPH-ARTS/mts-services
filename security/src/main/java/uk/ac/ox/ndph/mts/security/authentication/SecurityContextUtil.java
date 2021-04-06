@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SecurityContextUtil {
 
+    private static final String IDENTITY_PROVIDER_ROLE = "internal.service";
+
     /**
      * Get user id from security context
      * @return string user id
@@ -22,10 +24,14 @@ public class SecurityContextUtil {
         return userPrincipal.getClaim("oid").toString();
     }
 
-    public boolean isInitService() {
+    /**
+     * Validate if the token contains a role of internal services identity provider
+     * @return true if is in identity provider role
+     */
+    public boolean isInIdentityProviderRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal userPrincipal = ((UserPrincipal) authentication.getPrincipal());
-        return userPrincipal.getRoles().contains("internal.service");
+        return userPrincipal.getRoles().contains(IDENTITY_PROVIDER_ROLE);
     }
 
     /**
