@@ -31,6 +31,6 @@ public class SiteServiceInvoker {
         Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
         Consumer<HttpHeaders> authHeaders = SiteServiceClient.bearerAuth(azureTokenService.getToken());
         return entities.stream().map(s -> (siteServiceClient.createEntity(s, authHeaders))
-                                                            .getSiteId()).collect(toList());
+                                                            .getId()).collect(toList());
     }
 }

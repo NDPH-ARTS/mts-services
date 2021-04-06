@@ -10,9 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
-import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteResponseDTO;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -81,11 +81,11 @@ class SiteServiceTest {
         SiteDTO testSite = new SiteDTO();
         testSite.setSiteId("test-id");
         List<SiteDTO> sites = Collections.singletonList(testSite);
-        IDResponse mockResponseFromSiteService = new IDResponse();
-        mockResponseFromSiteService.setId("test-id");
+        SiteResponseDTO siteResponseDTO = new SiteResponseDTO("test-id");
+        SiteResponseDTO mockResponseFromSiteService = siteResponseDTO;
 
         try {
-            when(siteServiceClient.createEntity(eq(testSite), any(Consumer.class))).thenReturn(testSite);
+            when(siteServiceClient.createEntity(eq(testSite), any(Consumer.class))).thenReturn(siteResponseDTO);
             List<String> returnedIds = siteServiceInvoker.createManySites(sites);
             assertEquals(returnedIds.get(0),mockResponseFromSiteService.getId());
         } catch(Exception e) {

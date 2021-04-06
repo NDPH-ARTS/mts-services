@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ox.ndph.mts.siteserviceclient.configuration.ClientRoutesConfigSite;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteResponseDTO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,12 +64,12 @@ public class SiteServiceClient {
         return true;
     }
 
-    public SiteDTO createEntity(final SiteDTO site,
-                                final Consumer<HttpHeaders> authHeaders) {
+    public SiteResponseDTO createEntity(final SiteDTO site,
+                                        final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(site, ResponseMessages.SITE_NOT_NULL);
         return requestExecutor.sendBlockingPostRequest(webClient,
                 ClientRoutesConfigSite.getServiceCreateSite(),
-                site, SiteDTO.class, authHeaders);
+                site, SiteResponseDTO.class, authHeaders);
     }
 
     public List<SiteDTO> getAllSites(final Consumer<HttpHeaders> authHeaders) {
