@@ -1,9 +1,15 @@
 package uk.ac.ox.ndph.mts.init_service.model;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
 public class Site implements Entity {
+    @NotBlank
     private String name;
     private String alias;
+    @NotBlank
     private String siteType;
+    @Valid
     private SiteAddress address;
 
     public String getName() {

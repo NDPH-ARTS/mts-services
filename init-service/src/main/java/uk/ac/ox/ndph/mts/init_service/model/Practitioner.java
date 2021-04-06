@@ -1,5 +1,6 @@
 package uk.ac.ox.ndph.mts.init_service.model;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -8,10 +9,11 @@ import java.util.List;
 public class Practitioner implements Entity {
 
     private String prefix;
+    @NotBlank
     private String givenName;
+    @NotBlank
     private String familyName;
-    private List<String> roles;
-
+    private List<@NotBlank String> roles;
     private String userAccount;
 
     public String getPrefix() {

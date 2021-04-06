@@ -2,7 +2,6 @@ package uk.ac.ox.ndph.mts.practitioner_service.controller;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true"})
-@ActiveProfiles({"no-authZ", "test-all-required"})
+@ActiveProfiles({"test-all-required", "local", "no-authZ"})
 @AutoConfigureMockMvc
 class PractitionerControllerTests {
 

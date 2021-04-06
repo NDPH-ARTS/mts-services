@@ -5,10 +5,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -20,7 +18,6 @@ import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
-import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.Collections;
@@ -40,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8099", "role.service.uri=http://role-service:8082"})
 @ActiveProfiles("no-authZ")
 @AutoConfigureMockMvc
+// Tests don't need actual config, but have to use it because we prepare an application context
+@Import(TestSiteConfiguration.class)
 class SiteControllerTests {
 
     private static final String SITES_ROUTE = "/sites";
@@ -49,17 +48,6 @@ class SiteControllerTests {
 
     @MockBean
     private SiteService siteService;
-
-    @TestConfiguration
-    static class Config {
-        private final TestSiteConfiguration configuration = new TestSiteConfiguration();
-
-        @Primary
-        @Bean
-        public SiteConfiguration getSiteConfiguration() {
-            return configuration.getSiteConfiguration();
-        }
-    }
 
     @WithMockUser
     @Test
