@@ -6,6 +6,9 @@ public class RoleAssignmentDTO implements Entity {
     private String siteId;
     private String roleId;
 
+    public RoleAssignmentDTO() {
+    }
+
     public RoleAssignmentDTO(String practitionerId, String siteId, String roleId) {
         this.practitionerId = practitionerId;
         this.siteId = siteId;
@@ -20,5 +23,18 @@ public class RoleAssignmentDTO implements Entity {
     public String getRoleId() {
         return roleId;
     }
+
+    public void setPractitionerId(String practitionerId) {
+        this.practitionerId = practitionerId;
+    }
+
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
 
 }
