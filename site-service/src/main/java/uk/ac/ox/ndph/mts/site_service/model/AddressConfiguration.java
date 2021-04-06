@@ -3,7 +3,9 @@ package uk.ac.ox.ndph.mts.site_service.model;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -11,6 +13,7 @@ import java.util.List;
  */
 @Component
 @Configuration
+@Validated
 @ConfigurationProperties("mts.address")
 public class AddressConfiguration {
 
@@ -31,7 +34,7 @@ public class AddressConfiguration {
         this.addressType = addressType;
     }
 
-    private List<SiteAttributeConfiguration> addressType;
+    private List<@Valid SiteAttributeConfiguration> addressType;
 
     /**
      * Returns the attributes associated with the SiteConfiguration.
