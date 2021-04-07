@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 @Configuration
 @ConfigurationProperties(prefix = "http-client")
-public class WebClientConfig {
+public class WebClientConfigSite {
 
     @Value("${http-client.connectTimeOutMs:3000}")
     private int connectTimeOutMs;
@@ -46,12 +46,12 @@ public class WebClientConfig {
 
     @Bean
     @LoadBalanced
-    public WebClient.Builder webClientBuilder() {
+    public WebClient.Builder webClientBuilderSite() {
         return WebClient.builder().clientConnector(connectorWithConnectAndReadTimeOuts());
     }
 
     @Bean
-    public Supplier<Retry> retryPolicy() {
+    public Supplier<Retry> retryPolicySite() {
         return () -> Retry.backoff(getMaxRetryAttempts(),
             Duration.ofMillis(getInitialRetryDurationMs()))
             .maxBackoff(Duration.ofMillis(getMaxRetryDurationMs()));

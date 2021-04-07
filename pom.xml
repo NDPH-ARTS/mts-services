@@ -40,6 +40,7 @@
         <module>init-service</module>
         <module>site-service</module>
         <module>role-service-client</module>
+        <module>site-service-client</module>
     </modules>
 
     <dependencies>
