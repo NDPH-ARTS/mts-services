@@ -3,13 +3,17 @@ package uk.ac.ox.ndph.mts.roleserviceclient.configuration;
 import org.springframework.stereotype.Component;
 //Make this class a spring @Configuration class with @Value annotation
 @Component
-public class ClientRoutesConfig {
+public final class ClientRoutesConfigRole {
     static final String SERVICE_NAME = "role-service";
     static final String SERVICE_GET_ROLE = "/roles/{id}";
     static final String SERVICE_GET_PAGED = "/roles/";
     static final String SERVICE_ROLES_BY_IDS = "roles";
     static final String SERVICE_CREATE_ROLE =  "/roles";
     static final String SERVICE_UPDATE_PERMISSIONS = "/roles/{id}/permissions";
+
+    private ClientRoutesConfigRole() {
+    }
+
     public static String getServiceName() {
         return SERVICE_NAME;
     }

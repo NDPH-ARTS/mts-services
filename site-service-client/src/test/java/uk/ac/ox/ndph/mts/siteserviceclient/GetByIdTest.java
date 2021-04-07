@@ -80,7 +80,7 @@ class GetByIdTest {
     }
 
     @Test
-    void whenServiceFails_ThrowsException() {
+    void whenServiceFails_ThrowsRestException() {
         // Arrange
         webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
 

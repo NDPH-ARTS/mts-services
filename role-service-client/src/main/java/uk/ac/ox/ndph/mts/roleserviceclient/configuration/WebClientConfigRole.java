@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
 
 @Configuration
 @ConfigurationProperties(prefix = "http-client")
-public class WebClientConfig {
+public class WebClientConfigRole {
 
     @Value("${http-client.connectTimeOutMs:3000}")
     private int connectTimeOutMs;
@@ -45,13 +46,15 @@ public class WebClientConfig {
     }
 
     @Bean
+    @Primary
     @LoadBalanced
-    public WebClient.Builder webClientBuilder() {
+    public WebClient.Builder webClientBuilderRole() {
         return WebClient.builder().clientConnector(connectorWithConnectAndReadTimeOuts());
     }
 
     @Bean
-    public Supplier<Retry> retryPolicy() {
+    @Primary
+    public Supplier<Retry> retryPolicyRole() {
         return () -> Retry.backoff(getMaxRetryAttempts(),
             Duration.ofMillis(getInitialRetryDurationMs()))
             .maxBackoff(Duration.ofMillis(getMaxRetryDurationMs()));

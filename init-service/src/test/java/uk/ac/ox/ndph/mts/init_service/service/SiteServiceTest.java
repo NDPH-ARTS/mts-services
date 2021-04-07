@@ -1,68 +1,57 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
-import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
-import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
-import uk.ac.ox.ndph.mts.init_service.model.Site;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteResponseDTO;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
-/*
- * TODO this test is meaningless because it defines a mock site-service API that does not match the site-service.
- *  May as well remove it.
- */
 @ExtendWith(MockitoExtension.class)
 class SiteServiceTest {
 
     private static MockWebServer mockBackEnd;
+    @Mock
+    SiteServiceClient siteServiceClient;
 
-    private static WebClient.Builder builder;
+    @Mock
+    AzureTokenService azureTokenService;
 
-    private static String baseUrl;
-
+    @InjectMocks
     SiteServiceInvoker siteServiceInvoker;
 
     @BeforeAll
     static void setUp() throws IOException {
         // this section uses a custom webclient props
-        final WebClientConfig config = new WebClientConfig();
-        config.setConnectTimeOutMs(500);
-        config.setReadTimeOutMs(1000);
-        builder = config.webClientBuilder();
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
     }
 
-    @Mock
-    AzureTokenService mockTokenService;
 
     @BeforeEach
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
-        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
-        siteServiceInvoker = new SiteServiceInvoker(builder, baseUrl, mockTokenService);
     }
 
     @AfterAll
@@ -72,51 +61,32 @@ class SiteServiceTest {
 
 
     @Test
-    void createOneSite() throws IOException {
-        Site testSite = new Site();
-        testSite.setName("testName");
-        testSite.setAlias("testAlias");
-        IDResponse mockResponseFromSiteService = new IDResponse();
-        mockResponseFromSiteService.setId("test-id");
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(mockResponseFromSiteService))
-               .addHeader("Content-Type", "application/json"));
-        String returnedSiteId = siteServiceInvoker.create(testSite);
-        assertEquals(returnedSiteId,mockResponseFromSiteService.getId());
-    }
-
-    @Test
     void whenDependentServiceFailsWhenNull_CorrectException() {
-        assertThrows(Exception.class, () -> siteServiceInvoker.execute(null));
+        assertThrows(Exception.class, () -> siteServiceInvoker.createManySites(null));
     }
 
     @Test
     void whenDependentServiceFails_CorrectException() {
-        Site testSite = new Site();
+        SiteDTO testSite = new SiteDTO();
         testSite.setName("testName");
         testSite.setAlias("testAlias");
 
-        mockBackEnd.enqueue(new MockResponse()
-                .setResponseCode(500));
-
-        List<Site> sites = Collections.singletonList(testSite);
-        assertThrows(DependentServiceException.class, () -> siteServiceInvoker.execute(sites));
+        List<SiteDTO> sites = Collections.singletonList(testSite);
+        doThrow(RuntimeException.class).when(siteServiceClient).createEntity(eq(testSite), any(Consumer.class));
+        assertThrows(RuntimeException.class, () -> siteServiceInvoker.createManySites(sites));
     }
 
     @Test
-    void createSiteListReturnsIds() throws IOException {
-        Site testSite = new Site();
-        testSite.setName("testName");
-        testSite.setAlias("testAlias");
-        List<Site> sites = Collections.singletonList(testSite);
-        IDResponse mockResponseFromSiteService = new IDResponse();
-        mockResponseFromSiteService.setId("test-id");
+    void createSiteListReturnsIds() {
+        SiteDTO testSite = new SiteDTO();
+        testSite.setSiteId("test-id");
+        List<SiteDTO> sites = Collections.singletonList(testSite);
+        SiteResponseDTO siteResponseDTO = new SiteResponseDTO("test-id");
+        SiteResponseDTO mockResponseFromSiteService = siteResponseDTO;
 
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(mockResponseFromSiteService))
-                .addHeader("Content-Type", "application/json"));
         try {
-            List<String> returnedIds = siteServiceInvoker.execute(sites);
+            when(siteServiceClient.createEntity(eq(testSite), any(Consumer.class))).thenReturn(siteResponseDTO);
+            List<String> returnedIds = siteServiceInvoker.createManySites(sites);
             assertEquals(returnedIds.get(0),mockResponseFromSiteService.getId());
         } catch(Exception e) {
             fail("Should not have thrown any exception");
