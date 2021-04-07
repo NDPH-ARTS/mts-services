@@ -144,10 +144,8 @@ jobs:
           PROFILE: dev
           SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
-          INIT_SERVICE_ACCOUNT_OBJECTID: e6fd67af-ef25-4a4b-af7c-0ed8a7bd40cf
-          MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
+          MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
-          AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
           LOGGING_LEVEL_ROOT: DEBUG
         run: ./.ci/docker/check-docker-compose-services.sh
@@ -155,10 +153,10 @@ jobs:
         env:
           PROFILE: dev
           GITHUB_SHA: ${{github.sha}}
-          # The following is used by the init-service to generate a token
-          MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
-          INIT_SERVICE_ACCOUNT_USERNAME: init-service@mtsdevndph.onmicrosoft.com
-          INIT_SERVICE_ACCOUNT_PASSWORD: ${{ secrets.INIT_SERVICE_ACCOUNT_PASSWORD }}
+          # The following is used by the init-service to generate a token.
+          INIT_AZURE_CLIENT_ID: 14fa4ff6-9396-40aa-afdf-09eb1f4e6292
+          INIT_AZURE_CLIENT_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
+          INIT_AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
         run: |
           set -o nounset
           set -o errexit
@@ -166,9 +164,10 @@ jobs:
       - name: Run API Tests
         env:
           BASE_URL: http://localhost:8080
-          MTS_AZURE_APP_CLIENT_ID: f352ce15-0142-4dfa-8e18-801ee6391557
+          MTS_AZURE_UI_APP_CLIENT_ID: 59a2b30f-844b-4a69-b034-19e3d2d4d805
+          MTS_AUTHORISATION_BACKEND_SCOPE: api://fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290/default
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
-          AZURE_TENANT_ID: 5d23383f-2acb-448e-8353-4b4573b82276
+          AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
           AUTOMATION_USER_NAME: test-automation@mtsdevndph.onmicrosoft.com
           AUTOMATION_USER_PASSWORD: ${{ secrets.AUTOMATION_USER_PASSWORD }}
@@ -223,4 +222,3 @@ jobs:
           inputs: '{ "trialDefinitionPath": "trials/mainnightly/definition.yml" }'
           propagate_failure: true
           wait_workflow: true
-          

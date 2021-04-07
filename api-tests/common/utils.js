@@ -17,8 +17,8 @@ class utils {
     async getTokenId() {
         let form = new formData();
         form.append('grant_type', 'password')
-        form.append('client_id', process.env.MTS_AZURE_APP_CLIENT_ID)
-        form.append('scope', 'openid profile')
+        form.append('client_id', process.env.MTS_AZURE_UI_APP_CLIENT_ID)
+        form.append('scope', process.env.MTS_AUTHORISATION_BACKEND_SCOPE)
         form.append('username', process.env.AUTOMATION_USER_NAME)
         form.append('password', process.env.AUTOMATION_USER_PASSWORD)
         let response = await fetch(authUri, {
@@ -27,15 +27,15 @@ class utils {
         })
 
         let jsonResponse = await response.json();
-        return jsonResponse.id_token;
+        return jsonResponse.access_token;
     };
 
 
     async getBootStrapUserTokenId() {
         let form = new formData();
         form.append('grant_type', 'password')
-        form.append('client_id', process.env.MTS_AZURE_APP_CLIENT_ID)
-        form.append('scope', 'openid profile')
+        form.append('client_id', process.env.MTS_AZURE_UI_APP_CLIENT_ID)
+        form.append('scope', process.env.MTS_AUTHORISATION_BACKEND_SCOPE)
         form.append('username', process.env.BOOTSTRAP_USER_NAME)
         form.append('password', process.env.BOOTSTRAP_USER_PASSWORD)
         let response = await fetch(authUri, {
@@ -44,14 +44,14 @@ class utils {
         })
 
         let jsonResponse = await response.json();
-        return jsonResponse.id_token;
+        return jsonResponse.access_token;
     };
 
     async getQaWithCreateUserTokenId() {
         let form = new formData();
         form.append('grant_type', 'password')
-        form.append('client_id', process.env.MTS_AZURE_APP_CLIENT_ID)
-        form.append('scope', 'openid profile')
+        form.append('client_id', process.env.MTS_AZURE_UI_APP_CLIENT_ID)
+        form.append('scope', process.env.MTS_AUTHORISATION_BACKEND_SCOPE)
         form.append('username', process.env.QAWITHCREATE_USER_NAME)
         form.append('password', process.env.QAWITHCREATE_USER_PASSWORD)
         let response = await fetch(authUri, {
@@ -60,7 +60,7 @@ class utils {
         })
 
         let jsonResponse = await response.json();
-        return jsonResponse.id_token;
+        return jsonResponse.access_token;
     };
 
 
