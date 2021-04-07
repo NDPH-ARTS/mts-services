@@ -30,6 +30,7 @@ COPY ./gateway-server/pom.xml ./gateway-server/
 COPY ./sample-service/pom.xml ./sample-service/
 COPY ./init-service/pom.xml ./init-service/
 COPY ./practitioner-service/pom.xml ./practitioner-service/
+COPY ./practitioner-service-client/pom.xml ./practitioner-service-client/
 COPY ./role-service/pom.xml ./role-service/
 COPY ./role-service-client/pom.xml ./role-service-client/
 COPY ./site-service/pom.xml ./site-service/
