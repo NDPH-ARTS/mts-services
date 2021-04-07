@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
-import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClient;
+import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClientImpl;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
@@ -43,7 +43,7 @@ class AuthorisationServiceTests {
     private PractitionerServiceClient practitionerServiceClient;
 
     @Mock
-    private SiteServiceClient siteServiceClient;
+    private SiteServiceClientImpl siteServiceClient;
 
     @Mock
     private SecurityContextUtil securityContextUtil;
@@ -67,7 +67,8 @@ class AuthorisationServiceTests {
     @Test
     void TestBypassAuthorise_WhenUser_ManagedIdentity(){
         //Arrange
-        when(securityContextUtil.getUserId()).thenReturn(managedIdentity);
+        String userId = managedIdentity;
+        when(securityContextUtil.isInIdentityProviderRole()).thenReturn(true);
 
         //Act
         //Assert
@@ -153,7 +154,6 @@ class AuthorisationServiceTests {
 
     @Test
     void TestAuthorise_WhenFoundRoleDoesNotContainThePermission_ReturnsFalse(){
-        //Arrange
         //Arrange
         String userId = "123";
         String tokenString = "token";
