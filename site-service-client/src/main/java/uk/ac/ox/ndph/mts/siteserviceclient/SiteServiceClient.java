@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.ac.ox.ndph.mts.siteserviceclient.configuration.ClientRoutesConfig;
+import uk.ac.ox.ndph.mts.siteserviceclient.configuration.ClientRoutesConfigSite;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteResponseDTO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,12 +22,12 @@ public class SiteServiceClient {
 
     private final WebClient webClient;
 
-    private final RequestExecutor requestExecutor;
+    private final RequestExecutorSite requestExecutor;
 
     @Autowired
     public SiteServiceClient(WebClient.Builder webClientBuilder,
                              @Value("${site.service.uri}") String siteServiceUri,
-                             RequestExecutor requestExecutor) {
+                             RequestExecutorSite requestExecutor) {
         this.requestExecutor = requestExecutor;
         this.webClient = webClientBuilder.baseUrl(siteServiceUri).build();
     }
@@ -63,27 +64,26 @@ public class SiteServiceClient {
         return true;
     }
 
-    public SiteDTO createEntity(final SiteDTO site,
-                                final Consumer<HttpHeaders> authHeaders) {
+    public SiteResponseDTO createEntity(final SiteDTO site,
+                                        final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(site, ResponseMessages.SITE_NOT_NULL);
         return requestExecutor.sendBlockingPostRequest(webClient,
-                ClientRoutesConfig.getServiceCreateSite(),
-                site, SiteDTO.class, authHeaders);
+                ClientRoutesConfigSite.getServiceCreateSite(),
+                site, SiteResponseDTO.class, authHeaders);
     }
 
     public List<SiteDTO> getAllSites(final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceGetAllSites())
+                .fromUriString(ClientRoutesConfigSite.getServiceGetAllSites())
                 .build().toString();
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO[].class, authHeaders));
     }
 
-    public SiteDTO getById
-            (final String siteId,
-             final Consumer<HttpHeaders> authHeaders) {
+    public SiteDTO getById(final String siteId,
+                           final Consumer<HttpHeaders> authHeaders) {
         Objects.requireNonNull(siteId, ResponseMessages.ID_NOT_NULL);
         String uri = UriComponentsBuilder
-                .fromUriString(ClientRoutesConfig.getServiceGetSite())
+                .fromUriString(ClientRoutesConfigSite.getServiceGetSite())
                 .build(siteId).toString();
         return requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO.class, authHeaders);
     }

@@ -30,6 +30,7 @@
     <modules>
         <!--        <module>build-tools</module>-->
         <module>role-service-client</module>
+        <module>site-service-client</module>
         <module>practitioner-service-client</module>
         <module>fhir-client</module>
         <module>security</module>

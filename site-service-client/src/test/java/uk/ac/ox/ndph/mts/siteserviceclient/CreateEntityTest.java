@@ -13,11 +13,11 @@ import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteResponseDTO;
 
 import java.io.IOException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -53,13 +53,11 @@ public class CreateEntityTest {
     void whenCreateSucceeds_responseMatchesId() throws JsonProcessingException {
         final SiteDTO site = new SiteDTO();
         site.setSiteId("the-id");
-        site.setParentSiteId("parent-id");
         final ObjectMapper mapper = new ObjectMapper();
-        webServer.queueResponse(mapper.writeValueAsString(site));
-        final SiteDTO actual = siteServiceClient.createEntity(site, SiteServiceClient.bearerAuth(token));
+        webServer.queueResponse(mapper.writeValueAsString(new SiteResponseDTO("the-id")));
+        final SiteResponseDTO actual = siteServiceClient.createEntity(site, SiteServiceClient.bearerAuth(token));
         //Assert
-        assertThat(actual.getSiteId(), equalTo(site.getSiteId()));
-        assertThat(actual.getParentSiteId(), equalTo(site.getParentSiteId()));
+        assertEquals(actual.getId(), site.getSiteId());
     }
 
     @Test
