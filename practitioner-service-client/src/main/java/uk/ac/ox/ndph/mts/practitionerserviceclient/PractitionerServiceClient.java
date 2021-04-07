@@ -26,10 +26,11 @@ public class PractitionerServiceClient {
 
     @Autowired
     public PractitionerServiceClient(WebClient.Builder webClientBuilder,
-                                     @Value("${site.service.uri}") String siteServiceUri,
+                                     @Value("${practitioner.service.uri}")
+                                     String practitionerServiceUri,
                                      RequestExecutorPractitioner requestExecutor) {
         this.requestExecutor = requestExecutor;
-        this.webClient = webClientBuilder.baseUrl(siteServiceUri).build();
+        this.webClient = webClientBuilder.baseUrl(practitionerServiceUri).build();
     }
 
     public static Consumer<HttpHeaders> bearerAuth(final String token) {
