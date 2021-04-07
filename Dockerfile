@@ -34,6 +34,7 @@ COPY ./role-service/pom.xml ./role-service/
 COPY ./role-service-client/pom.xml ./role-service-client/
 COPY ./site-service-client/pom.xml ./site-service-client/
 COPY ./site-service/pom.xml ./site-service/
+COPY ./site-service-client/pom.xml ./site-service-client/
 
 FROM builder as deps-cache-project
 ARG SVC
