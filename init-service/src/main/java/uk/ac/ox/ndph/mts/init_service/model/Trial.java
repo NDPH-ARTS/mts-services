@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import javax.validation.Valid;
@@ -17,7 +18,7 @@ import java.util.List;
 @ConfigurationProperties("mts.trial")
 public class Trial {
     @NotEmpty
-    private List<@Valid Practitioner> persons;
+    private List<@Valid PractitionerDTO> persons;
     @NotEmpty
     private List<@Valid Site> sites;
     @NotEmpty
@@ -25,11 +26,11 @@ public class Trial {
     @NotBlank
     private String trialName;
 
-    public List<Practitioner> getPersons() {
+    public List<PractitionerDTO> getPersons() {
         return persons;
     }
 
-    public void setPersons(List<Practitioner> persons) {
+    public void setPersons(List<PractitionerDTO> persons) {
         this.persons = persons;
     }
 
