@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
@@ -16,6 +15,7 @@ import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,7 +54,7 @@ class LoaderTest {
             discoveryClient);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
-        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
+        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createManySites(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
@@ -62,12 +62,12 @@ class LoaderTest {
         loader.run();
 
         verify(roleServiceInvoker, times(1)).createManyRoles(anyList(), any(Consumer.class));
-        verify(siteServiceInvoker, times(1)).execute(anyList());
+        verify(siteServiceInvoker, times(1)).createManySites(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
 
     @Test
-    void testLoader_ThrowException() throws Exception {
+    void testLoader_ThrowException() {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
@@ -85,7 +85,7 @@ class LoaderTest {
      * @throws InterruptedException
      */
     @Test
-    void testLoader_ServicesNotRegistered_LoaderBlocked() throws IOException, InterruptedException {
+    void testLoader_ServicesNotRegistered_LoaderBlocked() {
         doReturn(Arrays.asList("config-server"))
             .when(discoveryClient).getServices();
 
@@ -108,7 +108,7 @@ class LoaderTest {
     }
 
     @Test
-    void testLoader_LoaderWaitForServices_ThenContinue() throws IOException, InterruptedException {
+    void testLoader_LoaderWaitForServices_ThenContinue() {
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
 
@@ -125,7 +125,7 @@ class LoaderTest {
         Trial trial = new Trial();
         trial.setTrialName("");
 
-        Site site = new Site();
+        SiteDTO site = new SiteDTO();
         site.setName("testSiteName");
         site.setAlias("testSiteAlias");
 
