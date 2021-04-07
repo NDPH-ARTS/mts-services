@@ -1,8 +1,8 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 
 import java.lang.reflect.Method;

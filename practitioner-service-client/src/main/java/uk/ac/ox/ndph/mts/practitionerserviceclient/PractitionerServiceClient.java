@@ -42,7 +42,8 @@ public class PractitionerServiceClient {
                 .fromUriString(ClientRoutesConfigPractitioner.getServiceGetRoleAssignment())
                 .queryParam("userIdentity", userId)
                 .build().toString();
-        return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, RoleAssignmentDTO[].class, authHeaders));
+        return Arrays.asList(requestExecutor.sendBlockingGetRequest(
+                                            webClient, uri, RoleAssignmentDTO[].class, authHeaders));
 
     }
 
@@ -54,7 +55,7 @@ public class PractitionerServiceClient {
                 practitioner, ResponseDTO.class, authHeaders);
     }
 
-    protected ResponseDTO assignRoleToPractitioner(final RoleAssignmentDTO roleAssignment,
+    public ResponseDTO assignRoleToPractitioner(final RoleAssignmentDTO roleAssignment,
                                                    final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
                 .fromUriString(ClientRoutesConfigPractitioner.getServiceAssignRole())
@@ -63,7 +64,7 @@ public class PractitionerServiceClient {
         return requestExecutor.sendBlockingPostRequest(webClient, uri, roleAssignment, ResponseDTO.class, authHeaders);
     }
 
-    protected ResponseDTO linkUserAccount(final PractitionerUserAccountDTO userAccount,
+    public ResponseDTO linkUserAccount(final PractitionerUserAccountDTO userAccount,
                                           final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
                 .fromUriString(ClientRoutesConfigPractitioner.getServiceLinkUserAccount())
