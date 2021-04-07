@@ -42,9 +42,8 @@ public class PractitionerServiceClient {
                 .fromUriString(ClientRoutesConfigPractitioner.getServiceGetRoleAssignment())
                 .queryParam("userIdentity", userId)
                 .build().toString();
-        return Arrays.asList(requestExecutor.sendBlockingGetRequest(
-                                            webClient, uri, RoleAssignmentDTO[].class, authHeaders));
-
+        return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient,
+                                                                    uri, RoleAssignmentDTO[].class, authHeaders));
     }
 
     public ResponseDTO createEntity(final PractitionerDTO practitioner,
