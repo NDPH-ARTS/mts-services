@@ -17,14 +17,19 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LoaderTest {
@@ -54,7 +59,7 @@ class LoaderTest {
             discoveryClient);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
-        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
+        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createManySites(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
@@ -81,8 +86,6 @@ class LoaderTest {
      * Register only 1 service (instead of all 4), and expect the loader to be blocked.
      * We verify it is blocked by checking how many times 'getServices' were called in
      * a given time window
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
     void testLoader_ServicesNotRegistered_LoaderBlocked() {
