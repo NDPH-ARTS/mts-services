@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
@@ -27,6 +28,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +42,9 @@ class RoleServiceInvokerTest {
     RoleServiceInvoker roleServiceInvoker;
     @Mock
     RoleServiceClient roleServiceClient;
+    @Mock
+    AzureTokenService azureTokenService;
+
     @BeforeAll
     static void setUp() throws IOException {
         // this section uses a custom webclient props
@@ -70,11 +76,12 @@ class RoleServiceInvokerTest {
         final ObjectMapper mapper = new ObjectMapper();
         mockBackEnd.enqueue(new MockResponse().setBody(mapper.writeValueAsString(role)));
         mockBackEnd.enqueue(new MockResponse().setBody(mapper.writeValueAsString(role2)));
-        var auth = RoleServiceClient.noAuth();
-        when(roleServiceClient.createEntity(role, auth)).thenReturn(role);
-        when(roleServiceClient.createEntity(role2, auth)).thenReturn(role2);
+        when(azureTokenService.getToken()).thenReturn("token");
+        when(roleServiceClient.createEntity(eq(role), any(Consumer.class))).thenReturn(role);
+        when(roleServiceClient.createEntity(eq(role2), any(Consumer.class))).thenReturn(role2);
+
         final List<RoleDTO> actual =
-                roleServiceInvoker.createManyRoles(Arrays.asList(role, role2), RoleServiceClient.noAuth());
+                roleServiceInvoker.createManyRoles(Arrays.asList(role, role2));
         //Assert
         assertThat(actual.size(), is(2));
         assertThat(actual.get(0).getId(), equalTo(role.getId()));
@@ -89,14 +96,15 @@ class RoleServiceInvokerTest {
         RoleDTO role = new RoleDTO();
         List<RoleDTO> entities = Arrays.asList(role, role);
         doThrow(RuntimeException.class).when(roleServiceClient).createEntity(role, authHeaders);
+        when(azureTokenService.getToken()).thenReturn("token");
         // Act + Assert
         assertThrows(RuntimeException.class,
-                () -> roleServiceInvoker.createManyRoles(entities, authHeaders));
+                () -> roleServiceInvoker.createManyRoles(entities));
     }
 
     @Test
     void whenDependentServiceFailsWhenNull_CorrectException() {
-        assertThrows(Exception.class, () -> roleServiceInvoker.createManyRoles(null, RoleServiceClient.noAuth()));
+        assertThrows(Exception.class, () -> roleServiceInvoker.createManyRoles(null));
     }
 
     @Test
@@ -108,12 +116,13 @@ class RoleServiceInvokerTest {
         testPermission.setId("testId");
 
         testRole.setPermissions(Collections.singletonList(testPermission));
+        when(azureTokenService.getToken()).thenReturn("token");
 
         List<RoleDTO> roles = Collections.singletonList(testRole);
         final ObjectMapper mapper = new ObjectMapper();
         mockBackEnd.enqueue(new MockResponse().setBody(mapper.writeValueAsString(testRole)));
         try {
-            roleServiceInvoker.createManyRoles(roles, RoleServiceClient.bearerAuth(token));
+            roleServiceInvoker.createManyRoles(roles);
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }
