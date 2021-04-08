@@ -39,6 +39,7 @@ public class RoleAssignmentValidation implements ModelEntityValidation<RoleAssig
             return new ValidationResponse(false, "roleId must have a value");
         }
 
+        // Will be replaced once the role-client will use the security package
         if (!this.roleServiceClient.entityIdExists(entity.getRoleId(), RoleServiceClient.noAuth())) {
             return new ValidationResponse(false,
                     String.format(Validations.EXTERNAL_ENTITY_NOT_EXIST_ERROR.message(), "roleId"));
