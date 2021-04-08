@@ -54,7 +54,7 @@ class LoaderTest {
             discoveryClient);
 
         doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
-        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createManySites(anyList());
+        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
