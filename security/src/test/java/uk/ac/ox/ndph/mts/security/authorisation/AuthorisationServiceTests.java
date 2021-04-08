@@ -399,6 +399,30 @@ class AuthorisationServiceTests {
 
     }
 
+    @Test
+    void TestAuthoriseUserRoles_WithUserRequestingItsRoles_ReturnsTrue(){
+        //Arrange
+        String requestingUserId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(requestingUserId);
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authoriseUserRoles(requestingUserId));
+    }
+
+    @Test
+    void TestAuthoriseUserRoles_WithUserRequestingRolesForAnotherUSer_ReturnsFalse(){
+        //Arrange
+        String requestingUserId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(requestingUserId);
+
+        String otherUserId = "456";
+
+        //Act
+        //Assert
+        assertFalse(authorisationService.authoriseUserRoles(otherUserId));
+    }
+
 
 
     private RoleDTO getRoleWithPermissions(String roleId, String permission){

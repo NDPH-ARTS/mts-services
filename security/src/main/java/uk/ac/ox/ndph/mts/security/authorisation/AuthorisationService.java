@@ -144,6 +144,11 @@ public class AuthorisationService {
         }
     }
 
+    public boolean authoriseUserRoles(String userIdentityParam) {
+        String requestUserId = securityContextUtil.getUserId();
+        return requestUserId.equals(userIdentityParam);
+    }
+
     /**
      * Authorise to retrieve only roles the user is assigned to
      * @param ids requested role ids
