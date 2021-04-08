@@ -5,6 +5,10 @@ import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -39,6 +43,7 @@ class SiteConverterTest {
         org.setId(SERVER_ORG_ID);
         org.addAlias(ORG_ALIAS);
         org.setPartOf(new Reference(SERVER_PARENT_ID));
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         // act
         final Site site = siteConverter.convert(org);
         // assert
@@ -46,6 +51,8 @@ class SiteConverterTest {
         assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
         assertThat(site.getAlias(), is(equalTo(ORG_ALIAS)));
         assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
+        assertThat(site.getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
     }
 
     @Test
@@ -56,6 +63,7 @@ class SiteConverterTest {
         org.setId(SERVER_ORG_ID);
         org.addAlias(ORG_ALIAS);
         org.setPartOf(new Reference(SERVER_PARENT_ID));
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         org.addAddress().addLine(ADDRESS_1).addLine(ADDRESS_2).
                 addLine(ADDRESS_3).addLine(ADDRESS_4).addLine(ADDRESS_5).
                 setCity(CITY).setCountry(COUNTRY).setPostalCode(POSTCODE);
@@ -67,6 +75,8 @@ class SiteConverterTest {
         assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
         assertThat(site.getAlias(), is(equalTo(ORG_ALIAS)));
         assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
+        assertThat(site.getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
         assertThat(site.getAddress().getAddress1(), is(equalTo(ADDRESS_1)));
         assertThat(site.getAddress().getAddress2(), is(equalTo(ADDRESS_2)));
         assertThat(site.getAddress().getAddress3(), is(equalTo(ADDRESS_3)));
@@ -85,6 +95,7 @@ class SiteConverterTest {
         org.setId(SERVER_ORG_ID);
         org.addAlias(ORG_ALIAS);
         org.setPartOf(new Reference(SERVER_PARENT_ID));
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         org.addAddress().addLine(ADDRESS_1).
                 setCity(CITY).setCountry(COUNTRY).setPostalCode(POSTCODE);
         siteConverter.setConverter(siteAddressConverter);
@@ -96,6 +107,8 @@ class SiteConverterTest {
         assertThat(site.getAlias(), is(equalTo(ORG_ALIAS)));
         assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
         assertThat(site.getAddress().getAddress1(), is(equalTo(ADDRESS_1)));
+        assertThat(site.getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
         assertThat(site.getAddress().getCity(), is(equalTo(CITY)));
         assertThat(site.getAddress().getCountry(), is(equalTo(COUNTRY)));
         assertThat(site.getAddress().getPostcode(), is(equalTo(POSTCODE)));
@@ -108,6 +121,7 @@ class SiteConverterTest {
         org.setId(SERVER_ORG_ID);
         org.addAlias(ORG_ALIAS);
         org.setPartOf(new Reference(SERVER_PARENT_ID));
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         org.addAddress().setId("1");
         siteConverter.setConverter(siteAddressConverter);
         // act
@@ -125,6 +139,8 @@ class SiteConverterTest {
         assertThat(site.getAddress().getCity(), is(equalTo("")));
         assertThat(site.getAddress().getCountry(), is(equalTo("")));
         assertThat(site.getAddress().getPostcode(), is(equalTo("")));
+        assertThat(site.getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
     }
 
     @Test
@@ -134,6 +150,7 @@ class SiteConverterTest {
         org.setName(ORG_NAME);
         org.setId(SERVER_ORG_ID);
         org.addAlias(ORG_ALIAS);
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         // act
         final Site site = siteConverter.convert(org);
         // assert
@@ -141,6 +158,8 @@ class SiteConverterTest {
         assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
         assertThat(site.getAlias(), is(equalTo(ORG_ALIAS)));
         assertThat(site.getParentSiteId(), is(nullValue()));
+        assertThat(site.getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
     }
 
     @Test
@@ -149,6 +168,7 @@ class SiteConverterTest {
         final Organization org = new Organization();
         org.setName(ORG_NAME);
         org.setId(SERVER_ORG_ID);
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         org.setPartOf(new Reference(SERVER_PARENT_ID));
         // act
         final Site site = siteConverter.convert(org);
@@ -157,6 +177,8 @@ class SiteConverterTest {
         assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
         assertThat(site.getAlias(), is(nullValue()));
         assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
+        assertThat(site.getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
     }
 
     @Test
@@ -167,6 +189,7 @@ class SiteConverterTest {
         org.setId(SERVER_ORG_ID);
         org.setPartOf(new Reference(SERVER_PARENT_ID));
         org.addAlias(null);
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         // act
         final Site site = siteConverter.convert(org);
         // assert
@@ -174,6 +197,8 @@ class SiteConverterTest {
         assertThat(SERVER_ORG_ID, containsString(site.getSiteId()));
         assertThat(site.getAlias(), is(nullValue()));
         assertThat(SERVER_PARENT_ID, containsString(site.getParentSiteId()));
+        assertThat(site.getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
     }
 
 }

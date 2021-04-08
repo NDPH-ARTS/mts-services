@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ox.ndph.mts.site_service.model.Response;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
@@ -36,9 +37,9 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
-    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody())")
+    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), #role)")
     @GetMapping
-    public ResponseEntity<List<Site>> sites() {
+    public ResponseEntity<List<Site>> sites(@RequestParam(value = "role", required = false) String role) {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 

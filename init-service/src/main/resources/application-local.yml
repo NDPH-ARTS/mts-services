@@ -50,7 +50,19 @@ mts:
         prefix: Mr
         roles:
           - superuser
-        userAccount: some-user-account-id
+        userAccount: 5d995fd0-a1ff-4b2c-ba93-238ba9e349b1
+      - givenName: automation
+        familyName: tester
+        prefix: Mr
+        roles:
+          - superuser
+        userAccount: dc32d94e-1ade-4968-b83e-bab949b7e90c
+      - givenName: qacreate
+        familyName: qaadmin
+        prefix: Mr
+        roles:
+          - admin
+        userAccount: d4b73ba8-9d76-408b-b6e1-e3b8953b39e7
     sites:
       - name: CCO
         alias: CCO
@@ -66,6 +78,13 @@ mts:
           postcode: postcode
     roles:
       - id: superuser
+        permissions:
+          - id: create-person
+          - id: view-person
+          - id: assign-role
+          - id: create-site
+          - id: link-user
+      - id: admin
         permissions:
           - id: create-person
           - id: view-person

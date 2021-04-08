@@ -1,5 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
+import java.time.LocalDateTime;
+
 /**
  * Site Model
  */
@@ -66,12 +68,30 @@ public class Site {
         this(name, alias, parentSiteId, siteType);
         this.siteId = siteId;
     }
+
+    /**
+     * Site Constructor with siteId name alias parent siteType
+     * @param siteId site ID
+     * @param name the Site name
+     * @param alias the Site alias
+     * @param parentSiteId the Site parentSiteId
+     * @param siteType the Site siteType
+     * @param lastUpdated lastUpdated timestamp
+     *
+     */
+    public Site(final String siteId, String name, String alias, String parentSiteId,
+                String siteType, LocalDateTime lastUpdated) {
+        this(name, alias, parentSiteId, siteType);
+        this.siteId = siteId;
+        this.lastUpdated = lastUpdated;
+    }
     private String name;
     private String alias;
     private String siteId;
     private String parentSiteId;
     private String siteType;
     private SiteAddress address;
+    private LocalDateTime lastUpdated;
 
     /**
      * Returns the name associated with the Site.
@@ -168,5 +188,13 @@ public class Site {
 
     public void setAddress(SiteAddress siteAddress) {
         this.address = siteAddress;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }
