@@ -11,11 +11,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.context.SecurityContextHolder;
 import uk.ac.ox.ndph.mts.practitioner_service.NullableConverter;
 import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import java.util.function.Consumer;
 
@@ -26,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,11 +42,14 @@ class RoleAssignmentValidationTests {
     private RoleServiceClient roleServiceClient;
     @Mock
     private SiteServiceClient siteServiceClient;
+
+    @Mock
+    private SecurityContextUtil securityContextUtil;
     private RoleAssignmentValidation validator;
 
     @BeforeEach
     void setup() {
-        this.validator = new RoleAssignmentValidation(roleServiceClient, siteServiceClient);
+        this.validator = new RoleAssignmentValidation(roleServiceClient, siteServiceClient, securityContextUtil);
     }
 
     @ParameterizedTest
@@ -70,7 +76,7 @@ class RoleAssignmentValidationTests {
     void TestRoleAssignmentValidation_WhenValidRole_ReturnsValidResponse() {
         // Arrange
         final var roleId = "testRoleId";
-        when(roleServiceClient.entityIdExists(roleId, roleServiceClient.noAuth())).thenReturn(true);
+        when(roleServiceClient.entityIdExists(eq(roleId), any(Consumer.class))).thenReturn(true);
         when(siteServiceClient.entityIdExists(anyString())).thenReturn(true);
 
         final var roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
@@ -86,7 +92,7 @@ class RoleAssignmentValidationTests {
     void TestRoleAssignmentValidation_WhenInvalidRole_ReturnsInvalidResponse() {
         // Arrange
         var roleId = "missingRoleId";
-        when(roleServiceClient.entityIdExists(roleId, roleServiceClient.noAuth())).thenReturn(false);
+        when(roleServiceClient.entityIdExists(eq(roleId), any(Consumer.class))).thenReturn(false);
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         var result = validator.validate(roleAssignment);
@@ -102,7 +108,7 @@ class RoleAssignmentValidationTests {
     void TestRoleAssignmentValidation_WhenServiceFails_ThrowsException() {
         // Arrange
         var roleId = "testRoleId";
-        when(roleServiceClient.entityIdExists(roleId,roleServiceClient.noAuth())).thenThrow(new RestException("mock"));
+        when(roleServiceClient.entityIdExists(eq(roleId), any(Consumer.class))).thenThrow(new RestException("mock"));
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         // Assert
