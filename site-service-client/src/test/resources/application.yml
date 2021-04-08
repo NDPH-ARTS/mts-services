@@ -1,0 +1,3 @@
+site:
+  service:
+    uri: http://site-service

@@ -9,14 +9,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,6 +29,7 @@ public class UpdatePermissionsTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
+    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -61,7 +63,7 @@ public class UpdatePermissionsTest {
         final ObjectMapper mapper = new ObjectMapper();
         webServer.queueResponse(mapper.writeValueAsString(result));
         final RoleDTO actual =
-            roleServiceClient.updatePermissions(role.getId(), result.getPermissions(), RoleServiceClient.noAuth());
+            roleServiceClient.updatePermissions(role.getId(), result.getPermissions(), authHeaders);
         //Assert
         assertThat(actual.getId(), equalTo(result.getId()));
         assertThat(actual.getPermissions().size(), equalTo(result.getPermissions().size()));
@@ -78,7 +80,7 @@ public class UpdatePermissionsTest {
         role.setPermissions(Collections.emptyList());
         // Act + Assert
         assertThrows(Exception.class, () ->
-            roleServiceClient.updatePermissions("id", Collections.emptyList(), RoleServiceClient.noAuth()));
+            roleServiceClient.updatePermissions("id", Collections.emptyList(), authHeaders));
     }
 
     @Test
@@ -86,7 +88,7 @@ public class UpdatePermissionsTest {
         assertThrows(NullPointerException.class, () ->
             roleServiceClient.updatePermissions(null, Collections.emptyList(), RoleServiceClient.noAuth()));
         assertThrows(NullPointerException.class, () ->
-            roleServiceClient.updatePermissions("id", null, RoleServiceClient.noAuth()));
+            roleServiceClient.updatePermissions("id", null, authHeaders));
     }
 
 }

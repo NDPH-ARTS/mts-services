@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.roleserviceclient;
+package uk.ac.ox.ndph.mts.siteserviceclient;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -8,12 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
-import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-
-import java.util.function.Consumer;
+import uk.ac.ox.ndph.mts.siteserviceclient.common.MockWebServerWrapper;
+import uk.ac.ox.ndph.mts.siteserviceclient.common.TestClientBuilder;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -22,12 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class AuthTest {
+class AuthTest {
 
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
-    private RoleServiceClient roleServiceClient;
-    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
+    private SiteServiceClient siteServiceClient;
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -40,7 +36,7 @@ public class AuthTest {
 
     @BeforeEach
     void beforeEach() {
-        roleServiceClient = builder.build(webServer.getUrl());
+        siteServiceClient = builder.build(webServer.getUrl());
     }
 
     @AfterAll
@@ -51,24 +47,24 @@ public class AuthTest {
     @Test
     void whenNoAuth_thenNoHeadersReceived() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        assertTrue(roleServiceClient.entityIdExists("some-id", authHeaders));
+        assertTrue(siteServiceClient.entityIdExists("some-id", SiteServiceClient.noAuth()));
         final RecordedRequest request = webServer.takeRequest();
         assertNull(request.getHeaders().get("Authorization"));
     }
 
     @Test
-    void whenaBasicAuth_thenBasicAuthHeaderReceived() {
+    void whenABasicAuth_thenBasicAuthHeaderReceived() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        assertTrue(roleServiceClient.entityIdExists("some-id", RoleServiceClient.basicAuth("user", "pass")));
+        assertTrue(siteServiceClient.entityIdExists("some-id", SiteServiceClient.basicAuth("user", "pass")));
         final RecordedRequest request = webServer.takeRequest();
         assertThat(request.getHeaders().get("Authorization"), startsWith("Basic"));
     }
 
     @Test
-    void whenaBearerAuth_thenTokenHeaderReceived() {
+    void whenABearerAuth_thenTokenHeaderReceived() {
         final String token = "this-is-the-random-token";
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        assertTrue(roleServiceClient.entityIdExists("some-id", RoleServiceClient.bearerAuth(token)));
+        assertTrue(siteServiceClient.entityIdExists("some-id", SiteServiceClient.bearerAuth(token)));
         final RecordedRequest request = webServer.takeRequest();
         final String authHeader = request.getHeaders().get("Authorization");
         assertThat(authHeader, startsWith("Bearer"));
