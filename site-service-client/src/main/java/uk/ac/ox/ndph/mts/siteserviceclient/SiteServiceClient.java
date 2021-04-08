@@ -33,16 +33,16 @@ public class SiteServiceClient {
     }
 
     public static Consumer<HttpHeaders> noAuth() {
-        return (headers) -> {
+        return headers -> {
         };
     }
 
     public static Consumer<HttpHeaders> basicAuth(final String username, final String password) {
-        return (headers) -> headers.setBasicAuth(username, password);
+        return headers -> headers.setBasicAuth(username, password);
     }
 
     public static Consumer<HttpHeaders> bearerAuth(final String token) {
-        return (headers) -> headers.setBearerAuth(token);
+        return headers -> headers.setBearerAuth(token);
     }
 
 

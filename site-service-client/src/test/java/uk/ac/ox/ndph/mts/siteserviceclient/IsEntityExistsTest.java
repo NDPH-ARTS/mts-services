@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.doThrow;
-public class IsEntityExistsTest {
+class IsEntityExistsTest {
 
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
@@ -49,14 +49,14 @@ public class IsEntityExistsTest {
     void TestEntitySiteExists_WhenExists_ReturnsTrue() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
         boolean idExists = siteServiceClient.entityIdExists("12", authHeaders);
-        assertSame(idExists, true);
+        assertSame(true, idExists);
     }
 
     @Test
     void TestEntitySiteExists_WhenNotExists_ReturnsFalse() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value()));
         boolean idExists = siteServiceClient.entityIdExists("12", authHeaders);
-        assertSame(idExists, false);
+        assertSame(false, idExists);
     }
 
     @Test
