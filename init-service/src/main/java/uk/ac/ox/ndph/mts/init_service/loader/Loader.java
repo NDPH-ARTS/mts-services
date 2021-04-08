@@ -3,15 +3,15 @@ package uk.ac.ox.ndph.mts.init_service.loader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
+import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
 public class Loader implements CommandLineRunner {
 
     private final PractitionerServiceInvoker practitionerServiceInvoker;
-    private final RoleServiceClient roleServiceClient;
+    private final RoleServiceInvoker roleServiceInvoker;
     private final SiteServiceInvoker siteServiceInvoker;
     private final Trial trialConfig;
     private final InitProgressReporter initProgressReporter;
@@ -31,13 +31,13 @@ public class Loader implements CommandLineRunner {
     @Autowired
     public Loader(Trial trialConfig,
                   PractitionerServiceInvoker practitionerServiceInvoker,
-                  RoleServiceClient roleServiceClient,
+                  RoleServiceInvoker roleServiceInvoker,
                   SiteServiceInvoker siteServiceInvoker,
                   InitProgressReporter initProgressReporter,
                   DiscoveryClient discoveryClient) {
         this.trialConfig = trialConfig;
         this.practitionerServiceInvoker = practitionerServiceInvoker;
-        this.roleServiceClient = roleServiceClient;
+        this.roleServiceInvoker = roleServiceInvoker;
         this.siteServiceInvoker = siteServiceInvoker;
         this.initProgressReporter = initProgressReporter;
         this.discoveryClient = discoveryClient;
@@ -45,7 +45,7 @@ public class Loader implements CommandLineRunner {
 
 
     @Override
-    public void run(String... args) throws InterruptedException, IOException {
+    public void run(String... args) throws Exception {
         // Give the other services some time to come online.
         // We wait and query the discovery to see that our services are up and ready
         initProgressReporter.submitProgress(String.format(LoaderProgress.ENTRY_POINT.message(), delayStartInSeconds));
@@ -77,7 +77,7 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleServiceClient.createMany(roles, RoleServiceClient.noAuth());
+            roleServiceInvoker.createManyRoles(roles, RoleServiceClient.noAuth());
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();

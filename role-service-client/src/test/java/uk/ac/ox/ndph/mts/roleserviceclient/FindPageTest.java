@@ -8,13 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
-import uk.ac.ox.ndph.mts.roleserviceclient.exception.RestException;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,6 +26,7 @@ public class FindPageTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
+    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -56,7 +58,7 @@ public class FindPageTest {
             "\"totalElements\":2,\"last\":true,\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
             "\"first\":true,\"size\":5,\"number\":0,\"numberOfElements\":2,\"empty\":false}";
         webServer.queueResponse(responseBody);
-        final Page<RoleDTO> actualResponse = roleServiceClient.getPage(0, 5, RoleServiceClient.noAuth());
+        final Page<RoleDTO> actualResponse = roleServiceClient.getPage(0, 5, authHeaders);
         final List<RoleDTO> actualRoles = actualResponse.getContent();
         //Assert
         assertEquals(1, actualRoles.size());
@@ -70,7 +72,7 @@ public class FindPageTest {
         // Arrange
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         // Act + Assert
-        assertThrows(Exception.class, () -> roleServiceClient.getPage(0, 5, RoleServiceClient.noAuth()));
+        assertThrows(Exception.class, () -> roleServiceClient.getPage(0, 5, authHeaders));
     }
 
 }
