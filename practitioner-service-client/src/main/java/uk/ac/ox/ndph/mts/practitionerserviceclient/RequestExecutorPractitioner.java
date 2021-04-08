@@ -44,7 +44,7 @@ public class RequestExecutorPractitioner {
         return webClient.get()
                 .uri(uri)
                 .headers(authHeaders)
-                .header("Content-Type","application/json")
+                .header("Content-Type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(responseExpected)
