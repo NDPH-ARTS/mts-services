@@ -144,6 +144,11 @@ public class AuthorisationService {
         }
     }
 
+    public boolean authoriseUserRoles(String userIdentityParam) {
+        String requestUserId = securityContextUtil.getUserId();
+        return requestUserId.equals(userIdentityParam);
+    }
+
     /**
      * Filter unauthorised sites
      * @param sitesReturnObject all sites returned object

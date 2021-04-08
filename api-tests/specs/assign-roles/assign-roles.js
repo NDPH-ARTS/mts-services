@@ -9,7 +9,9 @@ const sitesEndpointUri = '/api/sites';
 const rolesEndpointUri = '/api/roles';
 const profileEndpointUri = '/api/practitioner/profile'
 const practitionerEndpointUri = '/api/practitioner'
-let assignRoleEndpointUri = '/api/practitioner/{profileId}/roles'
+const assignRoleEndpointUri = '/api/practitioner/{profileId}/roles'
+const roleAssigEndpointUri = '/api/practitioner/roles?userIdentity=5d995fd0-a1ff-4b2c-ba93-238ba9e349b1'
+const invalidRoleAssigEndpointUri = '/api/practitioner/roles?userIdentity=f4c3120a-1ca4-4b59-ab6d-e362016f68fb'
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");
 let ccoParentSiteId;
@@ -252,5 +254,26 @@ describe('As a user with Assign Roles permission and authorisation I want to ass
         expect(fetchResponse16.status).to.equal(HttpStatus.FORBIDDEN)
     });
 
+});
 
+describe('As a user I should be able to validate Get the roles assigned to me is done by the same user asking for the Roles and validate Get my roles permissions is done by the same user asking for the permissions.', function () {
+
+    it('AC001 - When the user by identity request is identical to the user by token then request Get Assignment Roles is done, the request is completed successfully', async () => {
+
+        const headers = await utils.getBootStrapUserHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + roleAssigEndpointUri, {
+            headers: headers,
+            method: 'GET',
+        })
+        expect(fetchResponse.status).to.equal(HttpStatus.OK)
+    });
+
+    it('AC003 - When the user by identity request is not identical to the user by token then the request Get Assignment Roles is done, the request is failed due not identical user', async () => {
+        const headers1 = await utils.getBootStrapUserHeadersWithAuth()
+        let fetchResponse1 = await fetch(conf.baseUrl + invalidRoleAssigEndpointUri, {
+            headers: headers1,
+            method: 'GET',
+        })
+        expect(fetchResponse1.status).to.equal(HttpStatus.FORBIDDEN)
+    });
 });
