@@ -216,7 +216,8 @@ public class AuthorisationService {
 
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
-        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds, roleServiceClient.noAuth()).stream()
+        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds,
+                RoleServiceClient.bearerAuth(securityContextUtil.getToken())).stream()
                 .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
                 .map(RoleDTO::getId)
                 .collect(Collectors.toSet());
