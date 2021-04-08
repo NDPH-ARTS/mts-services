@@ -66,6 +66,8 @@ class AuthorisationServiceTests {
     void TestBypassAuthorise_WhenUser_ManagedIdentity(){
         //Arrange
         when(securityContextUtil.getUserId()).thenReturn(managedIdentity);
+        String userId = managedIdentity;
+        when(securityContextUtil.isInIdentityProviderRole()).thenReturn(true);
 
         //Act
         //Assert
