@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.MockWebServerWrapper;
 import uk.ac.ox.ndph.mts.roleserviceclient.common.TestClientBuilder;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
@@ -13,6 +14,7 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 
 import java.net.HttpURLConnection;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +26,8 @@ class FindByIdTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
+    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
+
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -66,7 +70,7 @@ class FindByIdTest {
 
         // Act
         final RoleDTO actualResponse =
-            roleServiceClient.getById(roleId, RoleServiceClient.noAuth());
+            roleServiceClient.getById(roleId, authHeaders);
 
         //Assert
         assertAll(
@@ -85,7 +89,7 @@ class FindByIdTest {
 
         // Act + Assert
         assertThrows(Exception.class,
-            () -> roleServiceClient.getById("any-role-id", RoleServiceClient.noAuth()));
+            () -> roleServiceClient.getById("any-role-id", authHeaders));
     }
 
 }
