@@ -62,7 +62,7 @@ class SiteServiceTest {
 
     @Test
     void whenDependentServiceFailsWhenNull_CorrectException() {
-        assertThrows(Exception.class, () -> siteServiceInvoker.createManySites(null));
+        assertThrows(Exception.class, () -> siteServiceInvoker.createSites(null));
     }
 
     @Test
@@ -73,7 +73,7 @@ class SiteServiceTest {
 
         List<SiteDTO> sites = Collections.singletonList(testSite);
         doThrow(RuntimeException.class).when(siteServiceClient).createEntity(eq(testSite), any(Consumer.class));
-        assertThrows(RuntimeException.class, () -> siteServiceInvoker.createManySites(sites));
+        assertThrows(RuntimeException.class, () -> siteServiceInvoker.createSites(sites));
     }
 
     @Test
@@ -85,7 +85,7 @@ class SiteServiceTest {
 
         try {
             when(siteServiceClient.createEntity(eq(testSite), any(Consumer.class))).thenReturn(siteResponseDTO);
-            List<String> returnedIds = siteServiceInvoker.createManySites(sites);
+            List<String> returnedIds = siteServiceInvoker.createSites(sites);
             assertEquals(returnedIds.get(0),siteResponseDTO.getId());
         } catch(Exception e) {
             fail("Should not have thrown any exception");

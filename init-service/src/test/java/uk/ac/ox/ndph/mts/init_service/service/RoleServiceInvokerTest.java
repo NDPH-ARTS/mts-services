@@ -73,7 +73,7 @@ class RoleServiceInvokerTest {
         when(roleServiceClient.createEntity(role, authHeaders)).thenReturn(role);
         when(roleServiceClient.createEntity(role2, authHeaders)).thenReturn(role2);
         final List<String> actual =
-                roleServiceInvoker.createManyRoles(Arrays.asList(role, role2), RoleServiceClient.noAuth());
+                roleServiceInvoker.createRoles(Arrays.asList(role, role2), RoleServiceClient.noAuth());
         //Assert
         assertThat(actual.size(), is(2));
         assertThat(actual.get(0), equalTo(role.getId()));
@@ -89,12 +89,12 @@ class RoleServiceInvokerTest {
         doThrow(RuntimeException.class).when(roleServiceClient).createEntity(role, authHeaders);
         // Act + Assert
         assertThrows(RuntimeException.class,
-                () -> roleServiceInvoker.createManyRoles(entities, authHeaders));
+                () -> roleServiceInvoker.createRoles(entities, authHeaders));
     }
 
     @Test
     void whenDependentServiceFailsWhenNull_CorrectException() {
-        assertThrows(Exception.class, () -> roleServiceInvoker.createManyRoles(null, RoleServiceClient.noAuth()));
+        assertThrows(Exception.class, () -> roleServiceInvoker.createRoles(null, RoleServiceClient.noAuth()));
     }
 
     @Test
@@ -111,7 +111,7 @@ class RoleServiceInvokerTest {
 
         try {
             when(roleServiceClient.createEntity(eq(testRole), any(Consumer.class))).thenReturn(testRole);
-            roleServiceInvoker.createManyRoles(roles, RoleServiceClient.bearerAuth(token));
+            roleServiceInvoker.createRoles(roles, RoleServiceClient.bearerAuth(token));
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }

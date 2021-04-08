@@ -77,13 +77,13 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleServiceInvoker.createManyRoles(roles, RoleServiceClient.noAuth());
+            roleServiceInvoker.createRoles(roles, RoleServiceClient.noAuth());
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_SITES.message());
-            List<String> siteIds = siteServiceInvoker.createManySites(sites);
+            List<String> siteIds = siteServiceInvoker.createSites(sites);
 
             initProgressReporter.submitProgress(LoaderProgress.GET_PERSONS_FROM_CONFIG.message());
             var persons = trialConfig.getPersons();

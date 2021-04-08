@@ -58,16 +58,16 @@ class LoaderTest {
             initProgressReporter,
             discoveryClient);
 
-        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
-        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createManySites(anyList());
+        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createRoles(anyList(), any(Consumer.class));
+        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createSites(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         loader.run();
 
-        verify(roleServiceInvoker, times(1)).createManyRoles(anyList(), any(Consumer.class));
-        verify(siteServiceInvoker, times(1)).createManySites(anyList());
+        verify(roleServiceInvoker, times(1)).createRoles(anyList(), any(Consumer.class));
+        verify(siteServiceInvoker, times(1)).createSites(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
 
@@ -76,7 +76,7 @@ class LoaderTest {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
-        when(roleServiceInvoker.createManyRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
+        when(roleServiceInvoker.createRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 
         Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter, discoveryClient);
         Assertions.assertThrows(NullEntityException.class, loader::run);
@@ -115,7 +115,7 @@ class LoaderTest {
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
 
-        when(roleServiceInvoker.createManyRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
+        when(roleServiceInvoker.createRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 
         Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter, discoveryClient);
         Assertions.assertThrows(NullEntityException.class, loader::run);
