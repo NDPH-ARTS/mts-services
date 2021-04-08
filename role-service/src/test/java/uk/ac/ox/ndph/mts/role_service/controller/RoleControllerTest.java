@@ -40,7 +40,7 @@ import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
 @SpringBootTest(properties = {"spring.liquibase.enabled=false", "spring.cloud.config.discovery.enabled = false", 
                                 "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true",
-                                "jdbc.url=jdbc:h2:mem:testdb", "jdbc.driver=org.h2.Driver", "role.service.uri=d", "site.service.uri=f", "practitioner.service.uri=g"})
+                                "jdbc.url=jdbc:h2:mem:testdb", "jdbc.driver=org.h2.Driver", "role.service.uri=http://role-service", "site.service.uri=http://site-service", "practitioner.service.uri=http://practitioner-service"})
 @AutoConfigureMockMvc
 @ActiveProfiles({"no-authZ"})
 @AutoConfigureTestDatabase
@@ -206,25 +206,4 @@ class RoleControllerTest {
 
 
     }
-    
-    // @TestConfiguration
-    // static class TestAuthorisationConfigurationProvider {
-
-    //     @Bean
-    //     @Primary
-    //     public AuthorisationService authorisationService() {
-    //         var mockService = Mockito.mock(AuthorisationService.class);
-    //         Mockito.when(mockService.authorise(anyString())).thenReturn(true);
-    //         Mockito.when(mockService.authorise(anyString(), anyString())).thenReturn(true);
-    //         Mockito.when(mockService.authorise(anyString(), anyList())).thenReturn(true);
-    //         //Add more mocks if needed
-    //         return mockService;
-    //     }
-    
-    //     @Bean
-    //     @Primary
-    //     public AADAppRoleStatelessAuthenticationFilter filter() {
-    //         return new AADAppRoleStatelessAuthenticationFilter(Mockito.mock(UserPrincipalManager.class));
-    //     }
-    // }
 }

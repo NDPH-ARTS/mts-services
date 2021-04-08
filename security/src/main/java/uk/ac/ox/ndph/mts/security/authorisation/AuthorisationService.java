@@ -145,6 +145,23 @@ public class AuthorisationService {
     }
 
     /**
+     * Authorise to retrieve only roles the user is assigned to
+     * @param ids requested role ids
+     * @return true if all role ids are roles that user is assigned to
+     */
+    public boolean authoriseUserPermissionRoles(List<String> ids) {
+        String userId = securityContextUtil.getUserId();
+        String token = securityContextUtil.getToken();
+
+        List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+
+        List<String> roleAssignmentIds = roleAssignments.stream()
+                .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
+
+        return roleAssignmentIds.containsAll(ids);
+    }
+
+    /**
      * Filter unauthorised sites
      * @param sitesReturnObject all sites returned object
      * @return true if filtering finished successfully

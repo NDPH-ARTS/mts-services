@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(properties = {"spring.liquibase.enabled=false", "spring.cloud.config.discovery.enabled = false",
         "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true",
-        "jdbc.url=jdbc:h2:mem:testdb", "jdbc.driver=org.h2.Driver", "role.service.uri=d", "site.service.uri=f", "practitioner.service.uri=g"})
+        "jdbc.url=jdbc:h2:mem:testdb", "jdbc.driver=org.h2.Driver", "role.service.uri=http://role-service", "site.service.uri=http://site-service", "practitioner.service.uri=http://practitioner-service"})
 @AutoConfigureMockMvc
 @ActiveProfiles({"no-authZ"})
 @AutoConfigureTestDatabase
