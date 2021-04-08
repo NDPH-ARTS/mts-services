@@ -12,13 +12,9 @@ import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
-import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,7 +27,7 @@ public class AuthorisationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
     private final SecurityContextUtil securityContextUtil;
-    private final SiteTreeUtil siteTreeUtil;
+    private final SiteUtil siteUtil;
 
     private final PractitionerServiceClient practitionerServiceClient;
     private final RoleServiceClient roleServiceClient;
@@ -42,12 +38,12 @@ public class AuthorisationService {
 
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityContextUtil,
-                                final SiteTreeUtil siteTreeUtil,
+                                final SiteUtil siteUtil,
                                 final PractitionerServiceClient practitionerServiceClient,
                                 final RoleServiceClient roleServiceClient,
                                 final SiteServiceClient siteServiceClient) {
         this.securityContextUtil = securityContextUtil;
-        this.siteTreeUtil = siteTreeUtil;
+        this.siteUtil = siteUtil;
         this.practitionerServiceClient = practitionerServiceClient;
         this.roleServiceClient = roleServiceClient;
         this.siteServiceClient = siteServiceClient;
@@ -65,7 +61,7 @@ public class AuthorisationService {
         // The reason we are using reflection is because we should be able to authorise any object in the system
         // it should have a site id property and should have a method to retrieve it
         List<String> siteIds = requestEntities.stream()
-                .map(site -> getSiteIdFromObj(site, methodName))
+                .map(site -> siteUtil.getSiteIdFromObj(site, methodName))
                 .collect(Collectors.toList());
         return authorise(requiredPermission, siteIds);
     }
@@ -98,19 +94,29 @@ public class AuthorisationService {
      */
     public boolean authorise(String requiredPermission, List<String> entitiesSiteIds)  {
 
+
         try {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
 
-            LOGGER.debug("userId is - " + userId);
-            LOGGER.debug("managed identity is - " + managedIdentity);
+            LOGGER.debug("userId Is - {}", userId);
+            LOGGER.debug("managed identity is - {}", managedIdentity);
 
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
-            if (isUserAManagedServiceIdentity(userId)) {
+            if (securityContextUtil.isInIdentityProviderRole()) {
                 return true;
             }
+
+            // Site IDis should not be null - unless this is init service setting up the root node,
+            // but that user is AManagedServiceIdentity
+            if (entitiesSiteIds == null || entitiesSiteIds.stream().anyMatch(Objects::isNull)) {
+                LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})",
+                        requiredPermission, userId);
+                return false;
+            }
+
 
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
@@ -128,12 +134,50 @@ public class AuthorisationService {
 
             List<SiteDTO> sites = siteServiceClient.getAllSites();
 
-            return isAuthorisedToAllSites(sites, rolesAssignmentsWithPermission, entitiesSiteIds);
+            Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
+
+            return userSites.containsAll(entitiesSiteIds);
 
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
             return false;
         }
+    }
+
+    /**
+     * Filter unauthorised sites
+     * @param sitesReturnObject all sites returned object
+     * @return true if filtering finished successfully
+     */
+    public boolean filterUserSites(List<?> sitesReturnObject) {
+
+        try {
+            Objects.requireNonNull(sitesReturnObject, "sites can not be bull");
+
+            List<SiteDTO> sites = sitesReturnObject.stream()
+                    .map(siteObject -> {
+                        var siteId =  siteUtil.getSiteIdFromObj(siteObject, "getSiteId");
+                        var parentSiteId =  siteUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
+                        return new SiteDTO(siteId, parentSiteId);
+                    }).collect(Collectors.toList());
+
+            String userId = securityContextUtil.getUserId();
+            String token = securityContextUtil.getToken();
+            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+            Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
+
+            sitesReturnObject.removeIf(siteObject ->
+                    !userSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
+
+            if (sitesReturnObject.isEmpty()) {
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
     /**
@@ -147,7 +191,7 @@ public class AuthorisationService {
 
         List<String> roleIds = roleAssignments.stream()
                 .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
-      
+
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
         Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds, roleServiceClient.noAuth()).stream()
@@ -169,29 +213,6 @@ public class AuthorisationService {
     private boolean hasRequiredPermissionInRole(RoleDTO role, String requiredPermission) {
         return role.getPermissions().stream()
                 .anyMatch(permission -> permission.getId().equals(requiredPermission));
-    }
-
-    private boolean isAuthorisedToAllSites(List<SiteDTO> sites,
-                                           List<RoleAssignmentDTO> roleAssignments,
-                                           List<String> entitiesSiteIds) {
-
-        Map<String, ArrayList<String>> tree = siteTreeUtil.getSiteSubTrees(sites);
-
-        Set<String> allSitesInRoles = roleAssignments.stream()
-                .flatMap(roleAssignmentDTO ->
-                        tree.getOrDefault(roleAssignmentDTO.getSiteId(), new ArrayList<>()).stream())
-                .collect(Collectors.toSet());
-
-        return allSitesInRoles.containsAll(entitiesSiteIds);
-    }
-
-    private String getSiteIdFromObj(Object obj, String methodName) {
-        try {
-            Method getSiteMethod = obj.getClass().getMethod(methodName);
-            return getSiteMethod.invoke(obj).toString();
-        } catch (Exception e) {
-            throw new AuthorisationException("Error parsing sites from request body.", e);
-        }
     }
 
     /**

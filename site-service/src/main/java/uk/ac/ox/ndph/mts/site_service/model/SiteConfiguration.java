@@ -3,7 +3,11 @@ package uk.ac.ox.ndph.mts.site_service.model;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -11,7 +15,8 @@ import java.util.List;
  */
 @Component
 @Configuration
-@ConfigurationProperties("site")
+@Validated
+@ConfigurationProperties("mts.site")
 public class SiteConfiguration {
 
     /**
@@ -43,12 +48,16 @@ public class SiteConfiguration {
         this.child = child;
     }
 
+    @NotBlank
     private String name;
+    @NotBlank
     private String displayName;
+    @NotBlank
     private String type;
-    private List<SiteAttributeConfiguration> attributes;
-    private List<SiteAttributeConfiguration> custom;
-    private List<SiteConfiguration> child;
+    @NotEmpty
+    private List<@Valid SiteAttributeConfiguration> attributes;
+    private List<@Valid SiteAttributeConfiguration> custom;
+    private List<@Valid SiteConfiguration> child;
 
     /**
      * Returns the name associated with the SiteConfiguration.

@@ -4,18 +4,23 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.ac.ox.ndph.mts.client.TestServiceBackend;
 import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
+import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
+
 import java.net.HttpURLConnection;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ContextConfiguration
+@SpringBootTest(classes = {SecurityContextUtil.class})
 class SiteServiceClientImplTests {
 
     public static TestServiceBackend mockBackEnd;
@@ -24,13 +29,17 @@ class SiteServiceClientImplTests {
 
     private static WebClient.Builder builder;
 
+    @MockBean
+    private SecurityContextUtil securityContextUtil;
+
     @BeforeAll
     static void init() { builder = WebClient.builder(); }
 
     @BeforeEach
     void setUp()  {
         mockBackEnd = TestServiceBackend.autoStart();
-        this.client = new SiteServiceClientImpl(builder, mockBackEnd.getUrl());
+        this.client = new SiteServiceClientImpl(builder, mockBackEnd.getUrl(),securityContextUtil);
+        Mockito.when(securityContextUtil.getToken()).thenReturn("mocktoken");
     }
 
     @AfterEach

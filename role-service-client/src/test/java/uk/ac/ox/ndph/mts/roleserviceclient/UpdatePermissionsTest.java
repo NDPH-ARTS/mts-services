@@ -77,7 +77,7 @@ public class UpdatePermissionsTest {
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());
         // Act + Assert
-        assertThrows(RestException.class, () ->
+        assertThrows(Exception.class, () ->
             roleServiceClient.updatePermissions("id", Collections.emptyList(), RoleServiceClient.noAuth()));
     }
 

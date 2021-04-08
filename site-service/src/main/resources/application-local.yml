@@ -41,97 +41,99 @@ address:
       type: string
       displayName: Postcode
       validationRegex: '^[a-zA-Z\s]{1,8}$'
-site:
-  name: Organization
-  displayName: site
-  type: CCO
-  attributes:
-    - name: name
-      type: string
-      displayName: Name
-      validationRegex: '^[a-zA-Z\s]{1,35}$'
-    - name: alias
-      type: string
-      displayName: Alias
-      validationRegex: '^[a-zA-Z\s]{1,35}$'
-    - name: parentSiteId
-      type: string
-      displayName: Parent Site Id
-      validationRegex: ''
-    - name: siteType
-      type: string
-      displayName: Site Type
-      validationRegex: ''
-  custom:
-    - name: address
-      type: address
-      displayName: The Address
-      validationRegex: ''
-  child:
-    - name: Organization
-      displayName: site
-      type: REGION
-      attributes:
-        - name: name
-          type: string
-          displayName: Name
-          validationRegex: '^[a-zA-Z\s]{1,35}$'
-        - name: alias
-          type: string
-          displayName: Alias
-          validationRegex: '^[a-zA-Z\s]{1,35}$'
-        - name: parentSiteId
-          type: string
-          displayName: Parent Site Id
-          validationRegex: ''
-        - name: siteType
-          type: string
-          displayName: Site Type
-          validationRegex: ''
-      child:
-        - name: Organization
-          displayName: site
-          type: COUNTRY
-          attributes:
-            - name: name
-              type: string
-              displayName: Name
-              validationRegex: '^[a-zA-Z\s]{1,35}$'
-            - name: alias
-              type: string
-              displayName: Alias
-              validationRegex: '^[a-zA-Z\s]{1,35}$'
-            - name: parentSiteId
-              type: string
-              displayName: Parent Site Id
-              validationRegex: ''
-            - name: siteType
-              type: string
-              displayName: Site Type
-              validationRegex: ''
-          child:
-            - name: Organization
-              displayName: site
-              type: LCC
-              attributes:
-                - name: name
-                  type: string
-                  displayName: Name
-                  validationRegex: '^[a-zA-Z\s]{1,35}$'
-                - name: alias
-                  type: string
-                  displayName: Alias
-                  validationRegex: '^[a-zA-Z\s]{1,35}$'
-                - name: parentSiteId
-                  type: string
-                  displayName: Parent Site Id
-                  validationRegex: ''
-                - name: siteType
-                  type: string
-                  displayName: Site Type
-                  validationRegex: ''
-              custom:
-                - name: address
-                  type: address
-                  displayName: The Address
-                  validationRegex: ''
+
+mts:
+  site:
+    name: Organization
+    displayName: site
+    type: CCO
+    attributes:
+      - name: name
+        type: string
+        displayName: Name
+        validationRegex: '^[a-zA-Z\s]{1,35}$'
+      - name: alias
+        type: string
+        displayName: Alias
+        validationRegex: '^[a-zA-Z\s]{1,35}$'
+      - name: parentSiteId
+        type: string
+        displayName: Parent Site Id
+        validationRegex: ''
+      - name: siteType
+        type: string
+        displayName: Site Type
+        validationRegex: ''
+    custom:
+      - name: address
+        type: address
+        displayName: The Address
+        validationRegex: ''
+    child:
+      - name: Organization
+        displayName: site
+        type: REGION
+        attributes:
+          - name: name
+            type: string
+            displayName: Name
+            validationRegex: '^[a-zA-Z\s]{1,35}$'
+          - name: alias
+            type: string
+            displayName: Alias
+            validationRegex: '^[a-zA-Z\s]{1,35}$'
+          - name: parentSiteId
+            type: string
+            displayName: Parent Site Id
+            validationRegex: ''
+          - name: siteType
+            type: string
+            displayName: Site Type
+            validationRegex: ''
+        child:
+          - name: Organization
+            displayName: site
+            type: COUNTRY
+            attributes:
+              - name: name
+                type: string
+                displayName: Name
+                validationRegex: '^[a-zA-Z\s]{1,35}$'
+              - name: alias
+                type: string
+                displayName: Alias
+                validationRegex: '^[a-zA-Z\s]{1,35}$'
+              - name: parentSiteId
+                type: string
+                displayName: Parent Site Id
+                validationRegex: ''
+              - name: siteType
+                type: string
+                displayName: Site Type
+                validationRegex: ''
+            child:
+              - name: Organization
+                displayName: site
+                type: LCC
+                attributes:
+                  - name: name
+                    type: string
+                    displayName: Name
+                    validationRegex: '^[a-zA-Z\s]{1,35}$'
+                  - name: alias
+                    type: string
+                    displayName: Alias
+                    validationRegex: '^[a-zA-Z\s]{1,35}$'
+                  - name: parentSiteId
+                    type: string
+                    displayName: Parent Site Id
+                    validationRegex: ''
+                  - name: siteType
+                    type: string
+                    displayName: Site Type
+                    validationRegex: ''
+                custom:
+                  - name: address
+                    type: address
+                    displayName: The Address
+                    validationRegex: ''

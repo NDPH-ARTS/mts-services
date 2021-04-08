@@ -39,6 +39,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     /**
      * Http security configuration
+     *
      * @param http - http security
      * @throws Exception - general exception
      */
@@ -54,6 +55,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // This requires all requests to have a valid token
         http.authorizeRequests() //NOSONAR
+                .antMatchers("/actuator/health").permitAll() // allow health check without AuthN
                 .anyRequest().authenticated();
 
         // This enables us to return appropriate http codes

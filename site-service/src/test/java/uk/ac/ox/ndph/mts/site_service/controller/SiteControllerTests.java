@@ -5,12 +5,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.TestSiteConfiguration;
@@ -18,7 +18,6 @@ import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
-import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.Collections;
@@ -35,8 +34,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8099"})
+@SpringBootTest(properties = {"spring.cloud.config.discovery.enabled = false", "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true", "fhir.uri=http://localhost:8099", "role.service.uri=http://role-service:8082"})
+@ActiveProfiles("no-authZ")
 @AutoConfigureMockMvc
+// Tests don't need actual config, but have to use it because we prepare an application context
+@Import(TestSiteConfiguration.class)
 class SiteControllerTests {
 
     private static final String SITES_ROUTE = "/sites";
@@ -47,17 +49,7 @@ class SiteControllerTests {
     @MockBean
     private SiteService siteService;
 
-    @TestConfiguration
-    static class Config {
-        private final TestSiteConfiguration configuration = new TestSiteConfiguration();
-
-        @Primary
-        @Bean
-        public SiteConfiguration getSiteConfiguration() {
-            return configuration.getSiteConfiguration();
-        }
-    }
-
+    @WithMockUser
     @Test
     void TestPostSite_WhenNoInput_Returns400() throws Exception {
 
@@ -66,33 +58,36 @@ class SiteControllerTests {
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenReturn("123");
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andDo(print()).andExpect(status().isCreated()).andExpect(content().string(containsString("123")));
     }
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenThrow(RestException.class);
-        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
 
         // Act + Assert
         this.mockMvc
@@ -100,11 +95,12 @@ class SiteControllerTests {
                 .andDo(print()).andExpect(status().isBadGateway());
     }
 
+    @WithMockUser
     @Test
     void TestPostSite_WhenArgumentException_Returns400() throws Exception {
         // Arrange
         when(siteService.save(Mockito.any(Site.class))).thenThrow(new ValidationException("name"));
-        final String jsonString = "{\"name\": \"name\", \"alias\": \"alias\"}";
+        final String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\"}";
         // Act + Assert
         final var error = this.mockMvc
                 .perform(post(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -113,7 +109,7 @@ class SiteControllerTests {
         assertThat(error.getMessage(), containsString("name"));
     }
 
-
+    @WithMockUser
     @Test
     void TestGetSite_WhenNoSites_Returns501() throws Exception {
         // Arrange
@@ -126,6 +122,7 @@ class SiteControllerTests {
         assertThat(error.getMessage(), containsString("root"));
     }
 
+    @WithMockUser
     @Test
     void TestGetSite_WhenSites_Returns200AndList() throws Exception {
         // arrange
@@ -140,6 +137,7 @@ class SiteControllerTests {
         assertThat(result, stringContainsInOrder("\"parentSiteId\":", "null"));
     }
 
+    @WithMockUser
     @Test
     void TestGetSite_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
@@ -151,7 +149,7 @@ class SiteControllerTests {
                 .andDo(print()).andExpect(status().isBadGateway());
     }
 
-
+    @WithMockUser
     @Test
     void TestGetSite_WhenIdFound_Returns200AndSite() throws Exception {
         // Arrange
@@ -169,6 +167,7 @@ class SiteControllerTests {
         assertThat(result, stringContainsInOrder("\"parentSiteId\":", "\"parentId\""));
     }
 
+    @WithMockUser
     @Test
     void TestGetSite_WhenIdNotFound_Returns404() throws Exception {
         // Arrange

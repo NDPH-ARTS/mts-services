@@ -26,9 +26,9 @@ services:
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       # This is the id of the client application
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
-      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     healthcheck:
-      test: curl http://localhost:8081
+      test: curl --fail http://localhost:8081/actuator/health
       interval: 10s
       timeout: 10s
       retries: 12
@@ -41,6 +41,7 @@ services:
       args:
         SVC: role-service
     image: ghcr.io/ndph-arts/role-service:${GITHUB_SHA}
+    restart: on-failure
     environment:
       SERVER_PORT: "8082"
       JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -49,11 +50,12 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     depends_on:
+      - config-server
       - sql
     healthcheck:
-      test: curl http://localhost:8082
+      test: curl --fail http://localhost:8082/actuator/health
       interval: 10s
       timeout: 10s
       retries: 12
@@ -66,6 +68,7 @@ services:
       args:
         SVC: site-service
     image: ghcr.io/ndph-arts/site-service:${GITHUB_SHA}
+    restart: on-failure
     depends_on:
       - fhir-api
     environment:
@@ -75,9 +78,9 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      INIT-SERVICE_IDENTITY: ${INIT_SERVICE_ACCOUNT_OBJECTID}
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     healthcheck:
-      test: curl http://localhost:8083
+      test: curl --fail http://localhost:8083/actuator/health
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
@@ -95,7 +98,7 @@ services:
       args:
         SVC: init-service
     image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
-    restart: on-failure
+    restart: "no"
     environment:
       PRACTITIONER_SERVICE_URI: "http://practitioner-service:8081"
       ROLE_SERVICE_URI: "http://role-service:8082"
@@ -104,14 +107,11 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
-      # the following 3 entries allow getting a token to send to other services
-      AZURE_USERNAME: ${INIT_SERVICE_ACCOUNT_USERNAME}
-      AZURE_PASSWORD: ${INIT_SERVICE_ACCOUNT_PASSWORD}
-      AZURE_CLIENT_ID: ${MTS_AZURE_APP_CLIENT_ID}
-      LOGGING_LEVEL_UK_AC_OX_NDPH_MTS: DEBUG
-    deploy:
-      restart_policy:
-          condition: none
+      # the following 2 entries allow getting a token to send to other services
+      AZURE_CLIENT_ID: ${INIT_AZURE_CLIENT_ID}
+      AZURE_CLIENT_SECRET: ${INIT_AZURE_CLIENT_SECRET}
+      AZURE_TENANT_ID: ${INIT_AZURE_TENANT_ID}
+      LOGGING_LEVEL_ROOT: DEBUG # always debug
     depends_on:
       - practitioner-service
       - role-service
@@ -132,6 +132,11 @@ services:
       - "8099:8099"
     depends_on:
       - sql
+    healthcheck:
+      test: busybox wget -O- http://localhost:8099
+      interval: 10s
+      timeout: 10s
+      retries: 12
 
   #########################
   # SPRING CLOUD SERVICES #
@@ -154,7 +159,7 @@ services:
     ports:
       - "8888:8888"
     healthcheck:
-      test: curl http://localhost:8888/
+      test: curl --fail http://localhost:8888/actuator/health/liveness
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
@@ -177,7 +182,7 @@ services:
     ports:
       - "8761:8761"
     healthcheck:
-      test: curl http://localhost:8761/
+      test: curl --fail http://localhost:8761/actuator/health/liveness
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
@@ -195,7 +200,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: curl http://localhost:8080/
+      test: curl --fail http://localhost:8080/actuator/health
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
@@ -206,6 +211,7 @@ services:
 
   sql:
     image: "mcr.microsoft.com/mssql/server"
+    restart: on-failure
     environment:
       SA_PASSWORD: ${SAPASSWORD}
       ACCEPT_EULA: "Y"

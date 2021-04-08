@@ -87,7 +87,7 @@ class FindByIdsTest {
         webServer.queueErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR);
 
         // Act + Assert
-        assertThrows(RestException.class,
+        assertThrows(Exception.class,
             () -> roleServiceClient.getRolesByIds(Collections.singletonList("any-role-id"), RoleServiceClient.noAuth()));
     }
 
