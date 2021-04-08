@@ -24,7 +24,6 @@ describe('As a user with Create Trial Sites permission I want to create a trial 
         let response = await fetchResponse.json();
         ccoParentSiteId = response[0].siteId
         CCOData = response[0].address
-        console.log('the response message is ' + response)
         expect(CCOData).to.contain({ "address1": "address1", "address2": "address2", "address3": "address3", "address4": "address4", "address5": "address5", "city": "city", "country": "country", "postcode": "postcode" })
     });
 
@@ -52,7 +51,6 @@ describe('As a user with Create Trial Sites permission I want to create a trial 
             body: JSON.stringify(validRegionSiteId),
         })
         const validRegionSiteResponse = await fetchResponse2.json();
-        console.log('status of the response' + JSON.stringify(validRegionSiteResponse.status))
         validRegionSite = validRegionSiteResponse.id
         expect(fetchResponse2.status).to.equal(HttpStatus.CREATED)
     });
