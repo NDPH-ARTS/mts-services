@@ -8,7 +8,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.site_service.converter.OrganizationConverter;
 import uk.ac.ox.ndph.mts.site_service.converter.SiteConverter;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -35,11 +38,14 @@ class SiteStoreTests {
         // arrange
         final var org = new Organization();
         org.setName("Root");
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         when(fhirRepo.findOrganizationsByPartOf(isNull())).thenReturn(Collections.singletonList(org));
         final var store = new SiteStore(fhirRepo, new OrganizationConverter(), new SiteConverter());
         // act + assert
         assertThat(store.findRoot().isPresent(), equalTo(true));
         assertThat(store.findRoot().get().getName(), equalTo(org.getName()));
+        assertThat(store.findRoot().get().getLastUpdated(),
+            equalTo(LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault())));
     }
 
 }
