@@ -8,20 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.ac.ox.ndph.mts.practitioner_service.client.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitioner_service.exception.RestException;
 import uk.ac.ox.ndph.mts.practitioner_service.repository.FhirRepository;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
-
+import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import java.util.Optional;
 import java.util.function.Consumer;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.containsString;
@@ -104,11 +101,11 @@ class PractitionerServiceComponentTests {
         Practitioner practitioner = new Practitioner();
         practitioner.addName().addGiven("some name").setId("1234");
 
-        when(securityContextUtil.getToken()).thenReturn("token");
         when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
         when(repository.getPractitioner(anyString())).thenReturn(Optional.of(practitioner));
         when(roleServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
-        when(siteServiceClient.entityIdExists(anyString())).thenReturn(true);
+        when(siteServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
+        when(securityContextUtil.getToken()).thenReturn("token");
 
         String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
         // Act + Assert
@@ -163,7 +160,7 @@ class PractitionerServiceComponentTests {
         when(repository.getPractitioner(anyString())).thenReturn(Optional.of(practitioner));
         when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
         when(roleServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(false);
-        when(siteServiceClient.entityIdExists(anyString())).thenReturn(true);
+        when(siteServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
 
         String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
         // Act + Assert
@@ -184,7 +181,8 @@ class PractitionerServiceComponentTests {
         when(repository.getPractitioner(anyString())).thenReturn(Optional.of(practitioner));
         when(repository.savePractitionerRole(any(PractitionerRole.class))).thenReturn("123");
         when(roleServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
-        when(siteServiceClient.entityIdExists(anyString())).thenReturn(false);
+        when(siteServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(false);
+        when(securityContextUtil.getToken()).thenReturn("token");
 
         String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
         // Act + Assert
@@ -201,16 +199,19 @@ class PractitionerServiceComponentTests {
         // Arrange
         Practitioner practitioner = new Practitioner();
         practitioner.addName().addGiven("some name").setId("1234");
-        when(securityContextUtil.getToken()).thenReturn("token");
         when(repository.getPractitioner(anyString())).thenReturn(Optional.of(practitioner));
         when(repository.savePractitionerRole(any(PractitionerRole.class))).thenThrow(new RestException("test error"));
         when(roleServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
-        when(siteServiceClient.entityIdExists(anyString())).thenReturn(true);
+        when(siteServiceClient.entityIdExists(anyString(), any(Consumer.class))).thenReturn(true);
 
         String jsonString = "{\"siteId\": \"siteId\", \"roleId\": \"roleId\"}";
         // Act + Assert
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsd2lsbGlhbXMxNiIsInJvbGVzIjoidXNlciIsImlhdCI6MTUxNDQ0OTgzM30.WKMQ_oPPiDcc6sGtMJ1Y9hlrAAc6U3xQLuEHyAnM1FU";
         String errorMsg = this.mockMvc
-                .perform(post(roleAssignmentUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .perform(post(roleAssignmentUri)
+                        .header("authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonString))
                 .andExpect(status().isBadGateway()).andReturn().getResolvedException().getMessage();
         assertThat(errorMsg, containsString("test error"));
     }

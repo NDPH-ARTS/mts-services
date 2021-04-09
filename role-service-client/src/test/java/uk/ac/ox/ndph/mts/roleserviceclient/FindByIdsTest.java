@@ -27,7 +27,7 @@ class FindByIdsTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
-    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
+    private String token = "some-token";
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -70,7 +70,7 @@ class FindByIdsTest {
 
         // Act
         List<RoleDTO> actualResponse =
-            roleServiceClient.getRolesByIds(Collections.singletonList(roleId), authHeaders);
+            roleServiceClient.getRolesByIds(Collections.singletonList(roleId), RoleServiceClient.bearerAuth(token));
 
         //Assert
         assertAll(
@@ -90,7 +90,7 @@ class FindByIdsTest {
 
         // Act + Assert
         assertThrows(Exception.class,
-            () -> roleServiceClient.getRolesByIds(Collections.singletonList("any-role-id"), authHeaders));
+            () -> roleServiceClient.getRolesByIds(Collections.singletonList("any-role-id"), RoleServiceClient.bearerAuth(token)));
     }
 
 }

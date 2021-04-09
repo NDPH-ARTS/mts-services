@@ -28,9 +28,9 @@ public class RoleServiceInvoker {
         this.azureTokenService = azureTokenservice;
     }
 
-    public List<RoleDTO> createManyRoles(final List<? extends RoleDTO> entities) {
+    public List<String> createRoles(final List<? extends RoleDTO> entities) {
         Objects.requireNonNull(entities, ResponseMessages.LIST_NOT_NULL);
         Consumer<HttpHeaders> authHeaders = RoleServiceClient.bearerAuth(azureTokenService.getToken());
-        return entities.stream().map(r -> roleServiceClient.createEntity(r, authHeaders)).collect(toList());
+        return entities.stream().map(r -> (roleServiceClient.createEntity(r, authHeaders)).getId()).collect(toList());
     }
 }

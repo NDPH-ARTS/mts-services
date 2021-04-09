@@ -29,7 +29,7 @@ public class UpdatePermissionsTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
-    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
+    private final String token = "some-token";
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -63,7 +63,7 @@ public class UpdatePermissionsTest {
         final ObjectMapper mapper = new ObjectMapper();
         webServer.queueResponse(mapper.writeValueAsString(result));
         final RoleDTO actual =
-            roleServiceClient.updatePermissions(role.getId(), result.getPermissions(), authHeaders);
+            roleServiceClient.updatePermissions(role.getId(), result.getPermissions(), RoleServiceClient.bearerAuth(token));
         //Assert
         assertThat(actual.getId(), equalTo(result.getId()));
         assertThat(actual.getPermissions().size(), equalTo(result.getPermissions().size()));
@@ -80,15 +80,15 @@ public class UpdatePermissionsTest {
         role.setPermissions(Collections.emptyList());
         // Act + Assert
         assertThrows(Exception.class, () ->
-            roleServiceClient.updatePermissions("id", Collections.emptyList(), authHeaders));
+            roleServiceClient.updatePermissions("id", Collections.emptyList(), RoleServiceClient.bearerAuth(token)));
     }
 
     @Test
     void whenParamError_thenThrowsNPE() {
         assertThrows(NullPointerException.class, () ->
-            roleServiceClient.updatePermissions(null, Collections.emptyList(), RoleServiceClient.noAuth()));
+            roleServiceClient.updatePermissions(null, Collections.emptyList(), RoleServiceClient.bearerAuth(token)));
         assertThrows(NullPointerException.class, () ->
-            roleServiceClient.updatePermissions("id", null, authHeaders));
+            roleServiceClient.updatePermissions("id", null, RoleServiceClient.bearerAuth(token)));
     }
 
 }

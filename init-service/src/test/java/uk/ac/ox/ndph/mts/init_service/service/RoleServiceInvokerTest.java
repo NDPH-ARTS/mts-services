@@ -1,7 +1,5 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,49 +64,45 @@ class RoleServiceInvokerTest {
 
 
     @Test
-    void whenCreateSucceeds_responseIdsMatch() throws Exception {
+    void whenCreateSucceeds_responseIdsMatch() {
         final RoleDTO role = new RoleDTO();
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());
         final RoleDTO role2 = new RoleDTO();
         role2.setId("the-id-2");
         role2.setPermissions(Collections.emptyList());
-        final ObjectMapper mapper = new ObjectMapper();
-        mockBackEnd.enqueue(new MockResponse().setBody(mapper.writeValueAsString(role)));
-        mockBackEnd.enqueue(new MockResponse().setBody(mapper.writeValueAsString(role2)));
+
         when(azureTokenService.getToken()).thenReturn("token");
         when(roleServiceClient.createEntity(eq(role), any(Consumer.class))).thenReturn(role);
         when(roleServiceClient.createEntity(eq(role2), any(Consumer.class))).thenReturn(role2);
-
-        final List<RoleDTO> actual =
-                roleServiceInvoker.createManyRoles(Arrays.asList(role, role2));
+        final List<String> actual =
+                roleServiceInvoker.createRoles(Arrays.asList(role, role2));
         //Assert
         assertThat(actual.size(), is(2));
-        assertThat(actual.get(0).getId(), equalTo(role.getId()));
-        assertThat(actual.get(1).getId(), equalTo(role2.getId()));
+        assertThat(actual.get(0), equalTo(role.getId()));
+        assertThat(actual.get(1), equalTo(role2.getId()));
     }
 
 
     @Test
     void whenOneServiceError_thenThrowRestException() {
         // Arrange
-        Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
         RoleDTO role = new RoleDTO();
         List<RoleDTO> entities = Arrays.asList(role, role);
-        doThrow(RuntimeException.class).when(roleServiceClient).createEntity(role, authHeaders);
         when(azureTokenService.getToken()).thenReturn("token");
+        doThrow(RuntimeException.class).when(roleServiceClient).createEntity(eq(role), any(Consumer.class));
         // Act + Assert
         assertThrows(RuntimeException.class,
-                () -> roleServiceInvoker.createManyRoles(entities));
+                () -> roleServiceInvoker.createRoles(entities));
     }
 
     @Test
     void whenDependentServiceFailsWhenNull_CorrectException() {
-        assertThrows(Exception.class, () -> roleServiceInvoker.createManyRoles(null));
+        assertThrows(Exception.class, () -> roleServiceInvoker.createRoles(null));
     }
 
     @Test
-    void testRoleService_WithList_WhenValidInput() throws IOException {
+    void testRoleService_WithList_WhenValidInput() {
         RoleDTO testRole = new RoleDTO();
         testRole.setId("testId");
 
@@ -119,10 +113,10 @@ class RoleServiceInvokerTest {
         when(azureTokenService.getToken()).thenReturn("token");
 
         List<RoleDTO> roles = Collections.singletonList(testRole);
-        final ObjectMapper mapper = new ObjectMapper();
-        mockBackEnd.enqueue(new MockResponse().setBody(mapper.writeValueAsString(testRole)));
+
         try {
-            roleServiceInvoker.createManyRoles(roles);
+            when(roleServiceClient.createEntity(eq(testRole), any(Consumer.class))).thenReturn(testRole);
+            roleServiceInvoker.createRoles(roles);
         } catch(Exception e) {
             fail("Should not have thrown any exception");
         }

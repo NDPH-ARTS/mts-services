@@ -31,7 +31,7 @@ public class CreateEntityTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
-    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
+    private String token = "some-token";
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -60,7 +60,7 @@ public class CreateEntityTest {
         role.setPermissions(Collections.emptyList());
         final ObjectMapper mapper = new ObjectMapper();
         webServer.queueResponse(mapper.writeValueAsString(role));
-        final RoleDTO actual = roleServiceClient.createEntity(role, RoleServiceClient.noAuth());
+        final RoleDTO actual = roleServiceClient.createEntity(role, RoleServiceClient.bearerAuth(token));
         //Assert
         assertThat(actual.getId(), equalTo(role.getId()));
         assertThat(actual.getPermissions(), containsInAnyOrder(role.getPermissions().toArray()));
@@ -74,7 +74,7 @@ public class CreateEntityTest {
         role.setId("the-id");
         role.setPermissions(Collections.emptyList());
         // Act + Assert
-        assertThrows(Exception.class, () -> roleServiceClient.createEntity(role, authHeaders));
+        assertThrows(Exception.class, () -> roleServiceClient.createEntity(role, RoleServiceClient.bearerAuth(token)));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CreateEntityTest {
         testRole.setId("testId");
         final ObjectMapper mapper = new ObjectMapper();
         webServer.queueResponse(mapper.writeValueAsString(testRole));
-        var returnedRoleId = roleServiceClient.createEntity(testRole, authHeaders);
+        var returnedRoleId = roleServiceClient.createEntity(testRole, RoleServiceClient.bearerAuth(token));
         assertNotNull(returnedRoleId);
      }
 
