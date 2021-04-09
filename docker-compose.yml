@@ -79,7 +79,6 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
-      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     healthcheck:
       test: curl --fail http://localhost:8083/actuator/health
       interval: 10s
@@ -87,7 +86,6 @@ services:
       retries: 6 # a quick service
     ports:
       - "8083:8083"
-      - "5005:5005"
 
   #######################
   # SUPPORTING SERVICES #
