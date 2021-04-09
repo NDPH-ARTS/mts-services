@@ -59,14 +59,22 @@ describe('As a user I want to set permissions for a role so that I can decide wh
         expect(response3.message).to.eql('Permission not-present not found')
     });
 
-    it('User is able to view the created roles', async () => {
+    it('When the user identity request is identical to the user by token, a Get Roles permissions request is performed, then request is completed successfully', async () => {
         const headers4 = await utils.getHeadersWithAuth()
         let fetchResponse4 = await fetch(conf.baseUrl + `${endpointUri}?ids=superuser`, {
             headers: headers4,
             method: 'GET',
         })
-        let response4 = await fetchResponse4.json();
         expect(fetchResponse4.status).to.equal(HttpStatus.OK)
+    });
+
+    it('When the user identity request is not identical to the user by token, a Get Roles permissions request is performed, the request is failed due to not identical user.', async () => {
+        const headers5 = await utils.getHeadersWithAuth()
+        let fetchResponse5 = await fetch(conf.baseUrl + `${endpointUri}?ids=admin`, {
+            headers: headers5,
+            method: 'GET',
+        })
+        expect(fetchResponse5.status).to.equal(HttpStatus.FORBIDDEN)
     });
 
 });
