@@ -76,13 +76,32 @@ public class Site {
      * @param alias the Site alias
      * @param parentSiteId the Site parentSiteId
      * @param siteType the Site siteType
+     * @param description the site description
+     *
+     */
+    public Site(final String siteId, String name, String alias, String parentSiteId,
+                String siteType, String description) {
+        this(name, alias, parentSiteId, siteType);
+        this.siteId = siteId;
+        this.description = description;
+    }
+
+    /**
+     * Site Constructor with siteId name alias parent siteType
+     * @param siteId site ID
+     * @param name the Site name
+     * @param alias the Site alias
+     * @param parentSiteId the Site parentSiteId
+     * @param siteType the Site siteType
+     * @param description
      * @param lastUpdated lastUpdated timestamp
      *
      */
     public Site(final String siteId, String name, String alias, String parentSiteId,
-                String siteType, LocalDateTime lastUpdated) {
+                String siteType, String description, LocalDateTime lastUpdated) {
         this(name, alias, parentSiteId, siteType);
         this.siteId = siteId;
+        this.description = description;
         this.lastUpdated = lastUpdated;
     }
     private String name;
@@ -92,6 +111,7 @@ public class Site {
     private String siteType;
     private SiteAddress address;
     private LocalDateTime lastUpdated;
+    private String description;
 
     /**
      * Returns the name associated with the Site.
@@ -196,5 +216,13 @@ public class Site {
 
     public void setLastUpdated(LocalDateTime lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
