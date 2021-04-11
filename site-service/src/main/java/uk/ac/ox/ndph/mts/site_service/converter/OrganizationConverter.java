@@ -36,6 +36,7 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
      * @return org.hl7.fhir.r4.model.Organization
      */
     public org.hl7.fhir.r4.model.Organization convert(Site input) {
+        LOGGER.info("About to convert site to org ");
         org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
         fhirOrganization.setName(input.getName());
         if (input.getAlias() != null) {
@@ -56,7 +57,6 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
             }
         }
 
-        LOGGER.info("About to set div value with description " + input.getDescription());
         if (input.getDescription() != null) {
             fhirOrganization.getText().getDiv().setName("description");
             fhirOrganization.getText().getDiv().setValue(input.getDescription());
