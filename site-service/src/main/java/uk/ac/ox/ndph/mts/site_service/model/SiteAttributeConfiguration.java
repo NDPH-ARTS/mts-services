@@ -27,9 +27,9 @@ public class SiteAttributeConfiguration {
      * Constructor with all members initialized, no validation checks here
      *
      * @param name attribute name can be null
-     * @param type atttribute type can be null
-     * @param displayName atttribute display name can be null
-     * @param validationRegex for regexc-based validation, can be null
+     * @param type attribute type can be null
+     * @param displayName attribute display name can be null
+     * @param validationRegex for regex-based validation, can be null
      */
     public SiteAttributeConfiguration(final String name, final String type,
                                       final String displayName, final String validationRegex) {
