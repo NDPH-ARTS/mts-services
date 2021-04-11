@@ -29,7 +29,9 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
     @Override
     public Site convert(final Organization org) {
         LOGGER.info("About to convert org to site");
-        LOGGER.info(" org-text-div is " + org.getText().getDiv().allText());
+        LOGGER.info(" org-text-div text is " + org.getText().getDiv().allText());
+        LOGGER.info(" org-text-div value is " + org.getText().getDiv().getValue());
+        LOGGER.info(" org-text-div content is " + org.getText().getDiv().getContent());
         Site site = new Site(
                 org.getIdElement().getIdPart(),
                 org.getName(),
