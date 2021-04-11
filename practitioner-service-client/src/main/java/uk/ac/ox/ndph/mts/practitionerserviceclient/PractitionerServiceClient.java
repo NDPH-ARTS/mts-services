@@ -34,7 +34,7 @@ public class PractitionerServiceClient {
     }
 
     public static Consumer<HttpHeaders> bearerAuth(final String token) {
-        return (headers) -> headers.setBearerAuth(token);
+        return headers -> headers.setBearerAuth(token);
     }
 
     public List<RoleAssignmentDTO> getUserRoleAssignments(final String userId,

@@ -16,8 +16,10 @@ import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 
 import java.util.function.Consumer;
 
+import static org.junit.Assert.assertEquals;
+
 @SpringBootTest
-public class AssignRoleToPractitionerTest {
+class AssignRoleToPractitionerTest {
 
     private static final TestClientBuilder builder = new TestClientBuilder();
     public static MockWebServerWrapper webServer;
@@ -47,7 +49,9 @@ public class AssignRoleToPractitionerTest {
         ResponseDTO mockResponseBody = new ResponseDTO();
         mockResponseBody.setId("id-dummy-role-assignment");
         webServer.queueResponse(new ObjectMapper().writeValueAsString(mockResponseBody));
-        practitionerServiceClient.assignRoleToPractitioner(ra, authHeaders);
+
+        assertEquals(practitionerServiceClient.assignRoleToPractitioner(ra, authHeaders).getId(),
+                mockResponseBody.getId());
 
     }
 

@@ -16,8 +16,10 @@ import uk.ac.ox.ndph.mts.practitionerserviceclient.model.ResponseDTO;
 
 import java.util.function.Consumer;
 
+import static org.junit.Assert.assertEquals;
+
 @SpringBootTest
-public class LinkUserAccountTest {
+class LinkUserAccountTest {
 
     private static final TestClientBuilder builder = new TestClientBuilder();
     public static MockWebServerWrapper webServer;
@@ -47,7 +49,8 @@ public class LinkUserAccountTest {
         ResponseDTO mockResponseBody = new ResponseDTO();
         mockResponseBody.setId("id-dummy-link-user-account");
         webServer.queueResponse(new ObjectMapper().writeValueAsString(mockResponseBody));
-        practitionerServiceClient.linkUserAccount(userAccount, authHeaders);
+        assertEquals(practitionerServiceClient.linkUserAccount(userAccount, authHeaders).getId(),
+                   mockResponseBody.getId());
 
     }
 
