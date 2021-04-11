@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -20,7 +21,7 @@ public class Trial {
     @NotEmpty
     private List<@Valid PractitionerDTO> persons;
     @NotEmpty
-    private List<@Valid Site> sites;
+    private List<@Valid SiteDTO> sites;
     @NotEmpty
     private List<@Valid RoleDTO> roles;
     @NotBlank
@@ -34,11 +35,11 @@ public class Trial {
         this.persons = persons;
     }
 
-    public List<Site> getSites() {
+    public List<SiteDTO> getSites() {
         return sites;
     }
 
-    public void setSites(List<Site> sites) {
+    public void setSites(List<SiteDTO> sites) {
         this.sites = sites;
     }
 

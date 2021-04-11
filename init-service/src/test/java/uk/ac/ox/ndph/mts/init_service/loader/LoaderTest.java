@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
-import uk.ac.ox.ndph.mts.init_service.model.Site;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
@@ -16,20 +15,16 @@ import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LoaderTest {
@@ -58,16 +53,16 @@ class LoaderTest {
             initProgressReporter,
             discoveryClient);
 
-        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createManyRoles(anyList(), any(Consumer.class));
-        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).execute(anyList());
+        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createRoles(anyList(), any(Consumer.class));
+        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createSites(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
         doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
 
         loader.run();
 
-        verify(roleServiceInvoker, times(1)).createManyRoles(anyList(), any(Consumer.class));
-        verify(siteServiceInvoker, times(1)).execute(anyList());
+        verify(roleServiceInvoker, times(1)).createRoles(anyList(), any(Consumer.class));
+        verify(siteServiceInvoker, times(1)).createSites(anyList());
         verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
     }
 
@@ -76,7 +71,7 @@ class LoaderTest {
         //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
-        when(roleServiceInvoker.createManyRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
+        when(roleServiceInvoker.createRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 
         Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter, discoveryClient);
         Assertions.assertThrows(NullEntityException.class, loader::run);
@@ -115,7 +110,7 @@ class LoaderTest {
         doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
             .when(discoveryClient).getServices();
 
-        when(roleServiceInvoker.createManyRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
+        when(roleServiceInvoker.createRoles(anyList(), any(Consumer.class))).thenThrow(new NullEntityException(anyString()));
 
         Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter, discoveryClient);
         Assertions.assertThrows(NullEntityException.class, loader::run);
@@ -128,7 +123,7 @@ class LoaderTest {
         Trial trial = new Trial();
         trial.setTrialName("");
 
-        Site site = new Site();
+        SiteDTO site = new SiteDTO();
         site.setName("testSiteName");
         site.setAlias("testSiteAlias");
 

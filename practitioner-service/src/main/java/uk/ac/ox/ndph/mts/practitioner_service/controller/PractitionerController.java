@@ -81,6 +81,7 @@ public class PractitionerController {
         return ResponseEntity.status(CREATED).body(new Response(roleAssignmentId));
     }
 
+    @PreAuthorize("@authorisationService.authoriseUserRoles(#userIdentity)")
     @GetMapping(path = "/roles")
     public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
             @NotBlank @NotNull @RequestParam String userIdentity) {

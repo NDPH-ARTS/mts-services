@@ -1,18 +1,17 @@
 package uk.ac.ox.ndph.mts.security.authorisation;
 
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
-import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
-import uk.ac.ox.ndph.mts.security.exception.RestException;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.util.Collections;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

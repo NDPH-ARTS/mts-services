@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAddress;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 /**
  * Implement an EntityConverter for Site. Reverse of {@link OrganizationConverter}.
  */
@@ -27,8 +30,8 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
                 org.getName(),
                 (org.getAlias().isEmpty()) ? null : org.getAlias().get(0).getValueAsString(),
                 findParentSiteId(org),
-                org.getImplicitRules()
-        );
+                org.getImplicitRules(),
+                LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault()));
         site.setAddress(findAddress(org));
         return site;
     }

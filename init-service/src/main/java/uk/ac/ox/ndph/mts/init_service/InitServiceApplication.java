@@ -9,8 +9,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan({"uk.ac.ox.ndph.mts.roleserviceclient",
+                "uk.ac.ox.ndph.mts.siteserviceclient",
                 "uk.ac.ox.ndph.mts.practitionerserviceclient",
                 "uk.ac.ox.ndph.mts.init_service"})
+
 public class InitServiceApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InitServiceApplication.class);
