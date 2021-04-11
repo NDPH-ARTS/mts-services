@@ -4,14 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 
-@SpringBootApplication
-@ComponentScan({"uk.ac.ox.ndph.mts.roleserviceclient",
-                "uk.ac.ox.ndph.mts.siteserviceclient",
-                "uk.ac.ox.ndph.mts.practitionerserviceclient",
-                "uk.ac.ox.ndph.mts.init_service"})
+@SpringBootApplication(scanBasePackages = {"uk.ac.ox.ndph.mts"})
 
 public class InitServiceApplication {
 
