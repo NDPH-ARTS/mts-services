@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +21,6 @@ public class AssignRoleToPractitionerTest {
 
     private static final TestClientBuilder builder = new TestClientBuilder();
     public static MockWebServerWrapper webServer;
-    @Mock
     private PractitionerServiceClient practitionerServiceClient;
     private final String token = "some-token";
     private final Consumer<HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(token);
