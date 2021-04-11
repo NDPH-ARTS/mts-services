@@ -35,9 +35,7 @@ describe('As a user I want to create roles so that they can be assigned to perso
             method: 'POST',
             body: JSON.stringify(roleName)
         })
-        let response2 = await fetchResponse2.json();
         expect(fetchResponse2.status).to.equal(HttpStatus.CONFLICT)
-
     });
 
     it('User is shown a bad request error when the role name field is left empty', async () => {
@@ -64,12 +62,21 @@ describe('As a user I want to create roles so that they can be assigned to perso
         expect(response4.errors[0].defaultMessage).to.contain('Role ID is too long')
     });
 
-    it('User cannot view the roles not with no permissions', async () => {
+    it('User is able to view the created roles', async () => {
         const headers5 = await utils.getHeadersWithAuth()
-        let fetchResponse5 = await fetch(conf.baseUrl + `${endpointUri}?ids=admin`, {
+        let fetchResponse5 = await fetch(conf.baseUrl + `${endpointUri}?page=0&size=2`, {
             headers: headers5,
             method: 'GET',
         })
-        expect(fetchResponse5.status).to.equal(HttpStatus.FORBIDDEN)
+        expect(fetchResponse5.status).to.equal(HttpStatus.OK)
+    });
+
+    it('User cannot view the roles not with no permissions', async () => {
+        const headers6 = await utils.getHeadersWithAuth()
+        let fetchResponse6 = await fetch(conf.baseUrl + `${endpointUri}?ids=admin`, {
+            headers: headers6,
+            method: 'GET',
+        })
+        expect(fetchResponse6.status).to.equal(HttpStatus.FORBIDDEN)
     });
 });
