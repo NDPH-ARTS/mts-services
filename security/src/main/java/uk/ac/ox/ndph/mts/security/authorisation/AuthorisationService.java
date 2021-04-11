@@ -173,11 +173,11 @@ public class AuthorisationService {
                     }).collect(Collectors.toList());
 
             String userId = securityContextUtil.getUserId();
-            String tokenString = securityContextUtil.getToken();
-            Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
+            String token = securityContextUtil.getToken();
+            Consumer<org.springframework.http.HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(token);
 
             List<RoleAssignmentDTO> roleAssignments =
-                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, token));
+                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, authHeaders));
 
             if (role != null) {
                 roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));
