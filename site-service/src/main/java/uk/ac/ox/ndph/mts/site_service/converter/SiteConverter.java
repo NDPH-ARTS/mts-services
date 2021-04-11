@@ -28,15 +28,15 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
 
     @Override
     public Site convert(final Organization org) {
-        LOGGER.debug("About to convert org to site");
-        LOGGER.debug(" org-text-div is " + org.getText().getDiv().getValue());
+        LOGGER.info("About to convert org to site");
+        LOGGER.info(" org-text-div is " + org.getText().getDiv().getContent());
         Site site = new Site(
                 org.getIdElement().getIdPart(),
                 org.getName(),
                 (org.getAlias().isEmpty()) ? null : org.getAlias().get(0).getValueAsString(),
                 findParentSiteId(org),
                 org.getImplicitRules(),
-                org.getText().getDiv().getValue(),
+                org.getText().getDiv().getContent(),
                 LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault()));
         site.setAddress(findAddress(org));
         return site;
