@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
-import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClientImpl;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
@@ -18,7 +16,10 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.security.exception.RestException;
+import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +45,7 @@ class AuthorisationServiceTests {
     private PractitionerServiceClient practitionerServiceClient;
 
     @Mock
-    private SiteServiceClientImpl siteServiceClient;
+    private SiteServiceClient siteServiceClient;
 
     @Mock
     private SecurityContextUtil securityContextUtil;
@@ -214,7 +216,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAllSites(any(Consumer.class))).thenReturn(Collections.singletonList(siteDto));
 
         //Act
         //Assert
@@ -241,7 +243,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAllSites(any(Consumer.class))).thenReturn(Collections.singletonList(siteDto));
 
         List<Object> entitiesList = Collections.singletonList(new TestEntityObject("siteId"));
         String getSiteIdMethodName = "getSiteId";
@@ -271,7 +273,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites()).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAllSites(SiteServiceClient.bearerAuth(securityContextUtil.getToken()))).thenReturn(Collections.singletonList(siteDto));
 
         List<Object> entitiesList = List.of(new TestEntityObject("siteId"),
                 new TestEntityObject("unauthorisedSiteId"));
@@ -340,7 +342,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertAll(
@@ -374,7 +376,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertAll(
@@ -382,6 +384,46 @@ class AuthorisationServiceTests {
                 () -> assertEquals(2, sitesToFilter.size()),
                 () -> assertTrue(sitesToFilter.contains(childSite1)),
                 () -> assertTrue(sitesToFilter.contains(grandChildSite))
+        );
+
+    }
+
+    @Test
+    void TestFilterMySites_ForAdminUserWithRoleAssignment_ReturnsFilteredSitesOnly(){
+        //Arrange
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+
+        List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Arrays.asList(roleAssignments));
+
+        //Act
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, "admin");
+
+        //Assert
+        assertAll(
+            () -> assertTrue(authResponse),
+            () -> assertEquals(3, sitesToFilter.size()),
+            () -> assertTrue(sitesToFilter.contains(childSite1)),
+            () -> assertTrue(sitesToFilter.contains(grandChildSite1)),
+            () -> assertTrue(sitesToFilter.contains(greatGrandChildSite1)),
+            () -> assertFalse(sitesToFilter.contains(parentSite))
         );
 
     }
@@ -405,11 +447,35 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Lists.emptyList());
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertFalse(authResponse);
 
+    }
+
+    @Test
+    void TestAuthoriseUserRoles_WithUserRequestingItsRoles_ReturnsTrue(){
+        //Arrange
+        String requestingUserId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(requestingUserId);
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authoriseUserRoles(requestingUserId));
+    }
+
+    @Test
+    void TestAuthoriseUserRoles_WithUserRequestingRolesForAnotherUSer_ReturnsFalse(){
+        //Arrange
+        String requestingUserId = "123";
+        when(securityContextUtil.getUserId()).thenReturn(requestingUserId);
+
+        String otherUserId = "456";
+
+        //Act
+        //Assert
+        assertFalse(authorisationService.authoriseUserRoles(otherUserId));
     }
 
 
@@ -425,12 +491,19 @@ class AuthorisationServiceTests {
     }
 
     private List<RoleAssignmentDTO> getRoleAssignments(String roleId, String siteId){
+        List<RoleAssignmentDTO> roleAssignmentDTOS = new ArrayList<RoleAssignmentDTO>();
+        roleAssignmentDTOS.add(getRoleAssignment(roleId, siteId));
+
+        return roleAssignmentDTOS;
+
+    }
+
+    private RoleAssignmentDTO getRoleAssignment(String roleId, String siteId){
         RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
         roleAssignmentDTO.setRoleId(roleId);
         roleAssignmentDTO.setSiteId(siteId);
 
-        return Collections.singletonList(roleAssignmentDTO);
-
+        return roleAssignmentDTO;
     }
 
     private static class TestEntityObject{

@@ -6,13 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import uk.ac.ox.ndph.mts.client.dtos.SiteDTO;
-import uk.ac.ox.ndph.mts.client.site_service.SiteServiceClient;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
+import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
+import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+
+import java.util.ArrayList;
 
 import java.util.Collections;
 import java.util.List;
@@ -136,7 +138,8 @@ public class AuthorisationService {
                 return false;
             }
 
-            List<SiteDTO> sites = siteServiceClient.getAllSites();
+            List<SiteDTO> sites = siteServiceClient.getAllSites(
+                                                    SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
 
             Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
 
@@ -148,12 +151,18 @@ public class AuthorisationService {
         }
     }
 
+    public boolean authoriseUserRoles(String userIdentityParam) {
+        String requestUserId = securityContextUtil.getUserId();
+        return requestUserId.equals(userIdentityParam);
+    }
+
     /**
      * Filter unauthorised sites
      * @param sitesReturnObject all sites returned object
+     * @param role filter sites by role
      * @return true if filtering finished successfully
      */
-    public boolean filterUserSites(List<?> sitesReturnObject) {
+    public boolean filterUserSites(List<?> sitesReturnObject, String role) {
 
         try {
             Objects.requireNonNull(sitesReturnObject, "sites can not be bull");
@@ -169,6 +178,14 @@ public class AuthorisationService {
             String tokenString = securityContextUtil.getToken();
             Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+            String token = securityContextUtil.getToken();
+            List<RoleAssignmentDTO> roleAssignments =
+                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, token));
+
+            if (role != null) {
+                roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));
+            }
+
             Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
 
             sitesReturnObject.removeIf(siteObject ->

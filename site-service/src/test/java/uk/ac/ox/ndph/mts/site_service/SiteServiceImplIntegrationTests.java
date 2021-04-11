@@ -16,6 +16,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,9 +52,11 @@ class SiteServiceImplIntegrationTests {
         final String rootSiteId = "root-site-id";
         final String parentSiteType = "CCO";
         final String siteType = "REGION";
+        final Date lastUpdated = new Date(System.currentTimeMillis());
         final Organization root = new Organization();
         root.setId(rootSiteId);
         root.setImplicitRules(parentSiteType);
+        root.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         when(repository.findOrganizationById(rootSiteId)).thenReturn(Optional.of(root));
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
@@ -86,6 +89,7 @@ class SiteServiceImplIntegrationTests {
         final Organization root = new Organization();
         root.setId(rootSiteId);
         root.setImplicitRules(parentSiteType);
+        root.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         when(repository.findOrganizationById(anyString())).thenReturn(Optional.of(root));
         when(repository.saveOrganization(any(Organization.class))).thenThrow(new RestException("test error"));
         String jsonString = "{\"name\": \"name\", \"alias\": \"alias\", \"parentSiteId\": \"parentSiteId\", \"siteType\": \"REGION\"}";
@@ -103,6 +107,7 @@ class SiteServiceImplIntegrationTests {
         final Organization root = new Organization();
         root.setId("parentSiteId");
         root.setImplicitRules("CCO");
+        root.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         when(repository.findOrganizationById(("parentSiteId"))).thenReturn(Optional.of(root));
         when(repository.saveOrganization(any(Organization.class))).thenReturn("123");
         when(repository.saveResearchStudy(any(ResearchStudy.class))).thenReturn("789");
@@ -121,6 +126,7 @@ class SiteServiceImplIntegrationTests {
                 .setName("CCO")
                 .addAlias("Root");
         org.setId("this-is-my-id");
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         when(repository.findOrganizations()).thenReturn(List.of(org));
         // Act + Assert
         this.mockMvc
@@ -149,6 +155,7 @@ class SiteServiceImplIntegrationTests {
                 .setName("CCO")
                 .addAlias("Root");
         org.setId(id);
+        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
         when(repository.findOrganizationById(org.getId())).thenReturn(Optional.of(org));
         // Act + Assert
         final var content = this.mockMvc
