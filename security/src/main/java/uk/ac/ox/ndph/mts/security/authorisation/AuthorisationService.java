@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
@@ -15,7 +14,6 @@ import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import java.util.ArrayList;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -176,9 +174,8 @@ public class AuthorisationService {
 
             String userId = securityContextUtil.getUserId();
             String tokenString = securityContextUtil.getToken();
-            Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
-            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
-            String token = securityContextUtil.getToken();
+            Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
+
             List<RoleAssignmentDTO> roleAssignments =
                 new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, token));
 

@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -369,7 +368,6 @@ class AuthorisationServiceTests {
 
         String userId = "123";
         String tokenString = "token";
-        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
         when(securityContextUtil.getUserId()).thenReturn(userId);
         when(securityContextUtil.getToken()).thenReturn(tokenString);
 
@@ -407,11 +405,12 @@ class AuthorisationServiceTests {
         RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
 
         String userId = "123";
-        String token = "token";
+        String tokenString = "token";
+        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
         when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(token);
+        when(securityContextUtil.getToken()).thenReturn(tokenString);
 
-        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Arrays.asList(roleAssignments));
+        when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(Arrays.asList(roleAssignments));
 
         //Act
         var authResponse = authorisationService.filterUserSites(sitesToFilter, "admin");
