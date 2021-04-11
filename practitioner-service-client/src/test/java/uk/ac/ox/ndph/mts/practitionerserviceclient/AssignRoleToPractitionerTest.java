@@ -17,8 +17,6 @@ import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 
 import java.util.function.Consumer;
 
-import static org.assertj.core.api.Fail.fail;
-
 @SpringBootTest
 public class AssignRoleToPractitionerTest {
 
@@ -51,12 +49,8 @@ public class AssignRoleToPractitionerTest {
         ResponseDTO mockResponseBody = new ResponseDTO();
         mockResponseBody.setId("id-dummy-role-assignment");
         webServer.queueResponse(new ObjectMapper().writeValueAsString(mockResponseBody));
+        practitionerServiceClient.assignRoleToPractitioner(ra, authHeaders);
 
-        try {
-            practitionerServiceClient.assignRoleToPractitioner(ra, authHeaders);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
     }
 
     @SpringBootApplication

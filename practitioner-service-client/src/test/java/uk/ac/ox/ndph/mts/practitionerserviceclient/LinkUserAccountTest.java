@@ -17,8 +17,6 @@ import uk.ac.ox.ndph.mts.practitionerserviceclient.model.ResponseDTO;
 
 import java.util.function.Consumer;
 
-import static org.assertj.core.api.Fail.fail;
-
 @SpringBootTest
 public class LinkUserAccountTest {
 
@@ -51,12 +49,8 @@ public class LinkUserAccountTest {
         ResponseDTO mockResponseBody = new ResponseDTO();
         mockResponseBody.setId("id-dummy-link-user-account");
         webServer.queueResponse(new ObjectMapper().writeValueAsString(mockResponseBody));
+        practitionerServiceClient.linkUserAccount(userAccount, authHeaders);
 
-        try {
-            practitionerServiceClient.linkUserAccount(userAccount, authHeaders);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
     }
 
     @SpringBootApplication
