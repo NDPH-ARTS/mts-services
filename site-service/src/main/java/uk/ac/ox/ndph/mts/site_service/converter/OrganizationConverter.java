@@ -59,7 +59,7 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
 
         if (input.getDescription() != null) {
             fhirOrganization.getText().getDiv().setName("description");
-            fhirOrganization.getText().getDiv().setValue(input.getDescription());
+            fhirOrganization.getText().getDiv().setContent(input.getDescription());
         }
 
         return fhirOrganization;
