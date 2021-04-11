@@ -12,6 +12,7 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -145,6 +146,11 @@ public class AuthorisationService {
         }
     }
 
+    /**
+     * Authorise user to retrieve data only for itself
+     * @param userIdentityParam the user identity parameter
+     * @return true if userIdentityParam equals to the requesting user
+     */
     public boolean authoriseUserRoles(String userIdentityParam) {
         String requestUserId = securityContextUtil.getUserId();
         return requestUserId.equals(userIdentityParam);
@@ -170,9 +176,10 @@ public class AuthorisationService {
     /**
      * Filter unauthorised sites
      * @param sitesReturnObject all sites returned object
+     * @param role filter sites by role
      * @return true if filtering finished successfully
      */
-    public boolean filterUserSites(List<?> sitesReturnObject) {
+    public boolean filterUserSites(List<?> sitesReturnObject, String role) {
 
         try {
             Objects.requireNonNull(sitesReturnObject, "sites can not be bull");
@@ -186,7 +193,13 @@ public class AuthorisationService {
 
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
-            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+            List<RoleAssignmentDTO> roleAssignments =
+                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, token));
+
+            if (role != null) {
+                roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));
+            }
+
             Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
 
             sitesReturnObject.removeIf(siteObject ->

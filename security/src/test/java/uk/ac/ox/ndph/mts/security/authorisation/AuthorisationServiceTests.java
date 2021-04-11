@@ -18,6 +18,7 @@ import uk.ac.ox.ndph.mts.security.exception.RestException;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -333,7 +334,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertAll(
@@ -366,7 +367,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertAll(
@@ -374,6 +375,46 @@ class AuthorisationServiceTests {
                 () -> assertEquals(2, sitesToFilter.size()),
                 () -> assertTrue(sitesToFilter.contains(childSite1)),
                 () -> assertTrue(sitesToFilter.contains(grandChildSite))
+        );
+
+    }
+
+    @Test
+    void TestFilterMySites_ForAdminUserWithRoleAssignment_ReturnsFilteredSitesOnly(){
+        //Arrange
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+
+        List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Arrays.asList(roleAssignments));
+
+        //Act
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, "admin");
+
+        //Assert
+        assertAll(
+            () -> assertTrue(authResponse),
+            () -> assertEquals(3, sitesToFilter.size()),
+            () -> assertTrue(sitesToFilter.contains(childSite1)),
+            () -> assertTrue(sitesToFilter.contains(grandChildSite1)),
+            () -> assertTrue(sitesToFilter.contains(greatGrandChildSite1)),
+            () -> assertFalse(sitesToFilter.contains(parentSite))
         );
 
     }
@@ -396,7 +437,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Lists.emptyList());
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
 
         //Assert
         assertFalse(authResponse);
@@ -440,12 +481,19 @@ class AuthorisationServiceTests {
     }
 
     private List<RoleAssignmentDTO> getRoleAssignments(String roleId, String siteId){
+        List<RoleAssignmentDTO> roleAssignmentDTOS = new ArrayList<RoleAssignmentDTO>();
+        roleAssignmentDTOS.add(getRoleAssignment(roleId, siteId));
+
+        return roleAssignmentDTOS;
+
+    }
+
+    private RoleAssignmentDTO getRoleAssignment(String roleId, String siteId){
         RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
         roleAssignmentDTO.setRoleId(roleId);
         roleAssignmentDTO.setSiteId(siteId);
 
-        return Collections.singletonList(roleAssignmentDTO);
-
+        return roleAssignmentDTO;
     }
 
     private static class TestEntityObject{
