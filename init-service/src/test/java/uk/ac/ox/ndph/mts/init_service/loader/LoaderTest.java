@@ -7,29 +7,24 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
-import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LoaderTest {
@@ -132,7 +127,7 @@ class LoaderTest {
         site.setName("testSiteName");
         site.setAlias("testSiteAlias");
 
-        Practitioner practitioner = new Practitioner();
+        PractitionerDTO practitioner = new PractitionerDTO();
         practitioner.setFamilyName("testFamilyName");
         practitioner.setGivenName("testGivenName");
         practitioner.setPrefix("Mr");
