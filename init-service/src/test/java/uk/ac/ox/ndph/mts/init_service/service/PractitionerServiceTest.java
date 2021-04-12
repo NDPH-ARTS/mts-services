@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.init_service.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -9,87 +8,62 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.http.HttpHeaders;
 import uk.ac.ox.ndph.mts.init_service.config.AzureTokenService;
-import uk.ac.ox.ndph.mts.init_service.exception.DependentServiceException;
-import uk.ac.ox.ndph.mts.init_service.model.IDResponse;
-import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
-import uk.ac.ox.ndph.mts.init_service.model.PractitionerUserAccount;
-import uk.ac.ox.ndph.mts.init_service.model.RoleAssignment;
-import uk.ac.ox.ndph.mts.roleserviceclient.configuration.WebClientConfig;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerDTO;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerUserAccountDTO;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.ResponseDTO;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Fail.fail;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerServiceTest {
 
     private static MockWebServer mockBackEnd;
+    @Mock
+    PractitionerServiceClient practitionerServiceClient;
 
-    private static WebClient.Builder builder;
+    @Mock
+    AzureTokenService azureTokenService;
 
-    private static String baseUrl;
-
+    @InjectMocks
     PractitionerServiceInvoker practitionerServiceInvoker;
 
     @BeforeAll
     static void setUp() throws IOException {
         // this section uses a custom webclient props
-        final WebClientConfig config = new WebClientConfig();
-        config.setConnectTimeOutMs(500);
-        config.setReadTimeOutMs(1000);
-        builder = config.webClientBuilder();
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
     }
 
-    @Mock
-    AzureTokenService mockTokenService;
 
     @BeforeEach
     void setUpEach() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
-        lenient().when(mockTokenService.getToken()).thenReturn("123ert");
-        practitionerServiceInvoker = new PractitionerServiceInvoker(builder, baseUrl, mockTokenService);
     }
 
     @AfterAll
     static void tearDown() throws IOException {
         mockBackEnd.shutdown();
-    }
-
-    @Test
-    void testPractitionerService_WhenValidInput() throws IOException {
-        Practitioner testPractitioner = new Practitioner();
-        testPractitioner.setFamilyName("testFamilyName");
-        testPractitioner.setGivenName("testGivenName");
-        testPractitioner.setPrefix("Mr");
-        IDResponse mockResponseFromPractitionerService = new IDResponse();
-        mockResponseFromPractitionerService.setId("test-id");
-
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(mockResponseFromPractitionerService))
-                .addHeader("Content-Type", "application/json"));
-        String returnedPractitionerId = practitionerServiceInvoker.create(testPractitioner);
-        assertNotNull(returnedPractitionerId);
     }
 
     @Test
@@ -99,7 +73,7 @@ class PractitionerServiceTest {
 
     @Test
     void whenDependentServiceFails_CorrectException() {
-        Practitioner testPractitioner = new Practitioner();
+        PractitionerDTO testPractitioner = new PractitionerDTO();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
         testPractitioner.setPrefix("Mr");
@@ -107,22 +81,20 @@ class PractitionerServiceTest {
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(500));
 
-        List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
-        assertThrows(DependentServiceException.class, () -> practitionerServiceInvoker.execute(practitioners, "dummy-site-id"));
+        List<PractitionerDTO> practitioners = Collections.singletonList(testPractitioner);
+        assertThrows(RuntimeException.class, () -> practitionerServiceInvoker.execute(practitioners, "dummy-site-id"));
     }
 
     @Test
-    void testExecute_WithList_WhenValidInput() throws IOException {
-        Practitioner testPractitioner = new Practitioner();
+    void testExecute_WithList_WhenValidInput() {
+        PractitionerDTO testPractitioner = new PractitionerDTO();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
         testPractitioner.setPrefix("Mr");
-        List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
-        IDResponse mockResponseFromPractitionerService = new IDResponse();
+        List<PractitionerDTO> practitioners = Collections.singletonList(testPractitioner);
+        ResponseDTO mockResponseFromPractitionerService = new ResponseDTO();
         mockResponseFromPractitionerService.setId("test-practitioner-id");
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(mockResponseFromPractitionerService))
-                .addHeader("Content-Type", "application/json"));
+        when(practitionerServiceClient.createEntity(eq(testPractitioner), any(Consumer.class))).thenReturn(mockResponseFromPractitionerService);
         try {
             practitionerServiceInvoker.execute(practitioners, "dummy-site-id");
         } catch (Exception e) {
@@ -131,84 +103,47 @@ class PractitionerServiceTest {
     }
 
     @Test
-    void testAssignRoleToPractitioner() throws IOException {
-
-        RoleAssignment ra = new RoleAssignment("id-dummy-practitioner", "id-dummy-site", "id-dummy-role");
-        IDResponse mockResponseBody = new IDResponse();
-        mockResponseBody.setId("id-dummy-role-assignment");
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(mockResponseBody))
-                .addHeader("Content-Type", "application/json"));
-
-        ReflectionTestUtils.setField(practitionerServiceInvoker, "assignRoleEndpoint", "dummy/%s/dummy");
-        try {
-            practitionerServiceInvoker.assignRoleToPractitioner(ra);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
-    }
-
-    @Test
-    void testLinkUserAccountToPractitioner() throws IOException {
-        PractitionerUserAccount userAccount = new PractitionerUserAccount("practitioner-id", "user-account-id");
-        IDResponse mockResponseBody = new IDResponse();
-        mockResponseBody.setId("id-dummy-link-user-account");
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(new ObjectMapper().writeValueAsString(mockResponseBody))
-                .addHeader("Content-Type", "application/json"));
-
-        ReflectionTestUtils.setField(practitionerServiceInvoker, "linkUserAccountEndpoint", "dummy/%s/dummy");
-        try {
-            practitionerServiceInvoker.linkUserAccount(userAccount);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
-    }
-
-    @Test
     void testExecute_UsesReturnedPractitionerId_inRoleAssignment() {
-        Practitioner testPractitioner = new Practitioner();
+        PractitionerDTO testPractitioner = new PractitionerDTO();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
         testPractitioner.setPrefix("Mrs");
         testPractitioner.setRoles(Collections.singletonList("superuser"));
-        List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
+        List<PractitionerDTO> practitioners = Collections.singletonList(testPractitioner);
+        ResponseDTO responseDTO = new ResponseDTO("dummy-practitioner-id");
 
-        String practitionerId = "dummy-practitioner-id";
+        try {
+            when(practitionerServiceClient.createEntity(eq(testPractitioner), any(Consumer.class))).thenReturn(responseDTO);
+            practitionerServiceInvoker.execute(practitioners, "dummy-site-id");
+            ArgumentCaptor<RoleAssignmentDTO> argumentCaptor = ArgumentCaptor.forClass(RoleAssignmentDTO.class);
+            Consumer<HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(azureTokenService.getToken());
+            verify(practitionerServiceClient).assignRoleToPractitioner(argumentCaptor.capture(), any(Consumer.class));
+            assertEquals(responseDTO.getId(), argumentCaptor.getValue().getPractitionerId());
 
-        PractitionerServiceInvoker mockServiceInvoker = mock(PractitionerServiceInvoker.class, org.mockito.Mockito.CALLS_REAL_METHODS);
-
-        doReturn(practitionerId).when(mockServiceInvoker).create(testPractitioner);
-        doNothing().when(mockServiceInvoker).assignRoleToPractitioner(any(RoleAssignment.class));
-
-        mockServiceInvoker.execute(practitioners, "dummy-site-id");
-
-        ArgumentCaptor<RoleAssignment> argumentCaptor = ArgumentCaptor.forClass(RoleAssignment.class);
-        verify(mockServiceInvoker).assignRoleToPractitioner(argumentCaptor.capture());
-        assertEquals(practitionerId, argumentCaptor.getValue().getPractitionerId());
+        } catch(Exception e) {
+            org.assertj.core.api.Assertions.fail("Should not have thrown any exception");
+        }
     }
 
     @Test
     void testExecute_UsesReturnedPractitionerId_inUserAccount() {
-        PractitionerServiceInvoker practServInvkr = new PractitionerServiceInvoker(builder, baseUrl, mockTokenService);
-        Practitioner testPractitioner = new Practitioner();
+        PractitionerServiceInvoker practServInvkr = new PractitionerServiceInvoker(practitionerServiceClient, azureTokenService);
+        PractitionerDTO testPractitioner = new PractitionerDTO();
         testPractitioner.setFamilyName("testFamilyName");
         testPractitioner.setGivenName("testGivenName");
         testPractitioner.setPrefix("Mrs");
         testPractitioner.setUserAccount("testUserAccountIdentity");
-        List<Practitioner> practitioners = Collections.singletonList(testPractitioner);
+        List<PractitionerDTO> practitioners = Collections.singletonList(testPractitioner);
 
-        String practitionerId = "dummy-practitioner-id";
-
+        ResponseDTO responseDTO = new ResponseDTO("dummy-practitioner-id");
         PractitionerServiceInvoker spyServiceInvoker = Mockito.spy(practServInvkr);
 
-        doReturn(practitionerId).when(spyServiceInvoker).create(testPractitioner);
-        doNothing().when(spyServiceInvoker).linkUserAccount(any(PractitionerUserAccount.class));
 
+        doReturn(responseDTO).when(practitionerServiceClient).createEntity(eq(testPractitioner), any(Consumer.class));
         spyServiceInvoker.execute(practitioners, "dummy-site-id");
 
-        ArgumentCaptor<PractitionerUserAccount> argumentCaptor = ArgumentCaptor.forClass(PractitionerUserAccount.class);
-        verify(spyServiceInvoker).linkUserAccount(argumentCaptor.capture());
-        assertEquals(practitionerId, argumentCaptor.getValue().getPractitionerId());
+        ArgumentCaptor<PractitionerUserAccountDTO> argumentCaptor = ArgumentCaptor.forClass(PractitionerUserAccountDTO.class);
+        verify(practitionerServiceClient).linkUserAccount(argumentCaptor.capture(), any(Consumer.class));
+        assertEquals(responseDTO.getId(), argumentCaptor.getValue().getPractitionerId());
     }
 }

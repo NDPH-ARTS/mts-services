@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.init_service.model;
+package uk.ac.ox.ndph.mts.practitionerserviceclient.model;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Practitioner Model
  */
-public class Practitioner implements Entity {
+public class PractitionerDTO implements Entity {
 
     private String prefix;
     @NotBlank

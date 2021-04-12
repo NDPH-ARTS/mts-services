@@ -132,7 +132,7 @@ class SiteValidationTests {
     }
 
     @Test
-    void TestValidate_WhenValidSite_ReturnsValidReponse() {
+    void TestValidate_WhenValidSite_ReturnsValidResponse() {
         // Arrange
         String name = "name";
         String alias = "alias";
@@ -151,7 +151,7 @@ class SiteValidationTests {
     }
 
     @Test
-    void TestValidate_WhenSiteWithAllNullRegex_ReturnsValidReponse() {
+    void TestValidate_WhenSiteWithAllNullRegex_ReturnsValidResponse() {
         // Arrange
         String name = "name";
         String alias = "alias";
@@ -169,7 +169,7 @@ class SiteValidationTests {
     }
 
     @Test
-    void TestValidate_WhenSiteWithFieldMaxLength_ReturnsValidReponse() {
+    void TestValidate_WhenSiteWithFieldMaxLength_ReturnsValidResponse() {
         // Arrange
         String name = "name";
         String alias = "Long LongLongLongLongLong Long Long";
