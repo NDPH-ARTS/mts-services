@@ -5,6 +5,8 @@ import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -19,6 +21,7 @@ import java.util.Collections;
 @Component
 public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir.r4.model.Organization> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationConverter.class);
     EntityConverter<SiteAddress, Address> fromAddressConverter;
 
     @Autowired
@@ -33,6 +36,7 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
      * @return org.hl7.fhir.r4.model.Organization
      */
     public org.hl7.fhir.r4.model.Organization convert(Site input) {
+        LOGGER.info("About to convert site to org ");
         org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
         fhirOrganization.setName(input.getName());
         if (input.getAlias() != null) {
@@ -51,6 +55,11 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
             if (address != null) {
                 fhirOrganization.setAddress(Collections.singletonList(address));
             }
+        }
+
+        if (input.getDescription() != null) {
+            fhirOrganization.getText().getDiv().setName("description");
+            fhirOrganization.getText().getDiv().setValue(input.getDescription());
         }
 
         return fhirOrganization;
