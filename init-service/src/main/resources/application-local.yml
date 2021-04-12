@@ -88,6 +88,7 @@ mts:
         permissions:
           - id: create-person
           - id: view-person
+          - id: view-site
       - id: country-admin
         permissions:
           - id: create-person
