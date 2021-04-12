@@ -25,7 +25,7 @@ public class IdExistsTest {
 
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
-    final Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
+    final Consumer<HttpHeaders> authHeaders = RoleServiceClient.bearerAuth("token");
     private RoleServiceClient roleServiceClient;
 
     @SpringBootApplication

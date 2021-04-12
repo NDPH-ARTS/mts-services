@@ -10,7 +10,6 @@ import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
 import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
-import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,7 +76,7 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleServiceInvoker.createRoles(roles, RoleServiceClient.noAuth());
+            roleServiceInvoker.createRoles(roles);
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();

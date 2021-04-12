@@ -1,18 +1,35 @@
 package uk.ac.ox.ndph.mts.role_service.controller;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.PermissionDTO;
 import uk.ac.ox.ndph.mts.role_service.controller.dtos.RoleDTO;
 import uk.ac.ox.ndph.mts.role_service.model.Permission;
@@ -21,23 +38,12 @@ import uk.ac.ox.ndph.mts.role_service.model.Role;
 import uk.ac.ox.ndph.mts.role_service.model.RoleRepository;
 import uk.ac.ox.ndph.mts.role_service.service.RoleService;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
-@TestPropertySource(properties = { "spring.cloud.config.discovery.enabled = false" , "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true" })
-@RunWith(SpringRunner.class)
-@WebMvcTest(RoleController.class)
+@SpringBootTest(properties = {"spring.liquibase.enabled=false", "spring.cloud.config.discovery.enabled = false", 
+                                "spring.cloud.config.enabled=false", "server.error.include-message=always", "spring.main.allow-bean-definition-overriding=true",
+                                "jdbc.url=jdbc:h2:mem:testdb", "jdbc.driver=org.h2.Driver", "role.service.uri=http://role-service", "site.service.uri=http://site-service", "practitioner.service.uri=http://practitioner-service"})
+@AutoConfigureMockMvc
+@ActiveProfiles({"no-authZ"})
+@AutoConfigureTestDatabase
 class RoleControllerTest {
 
     @Autowired
@@ -61,6 +67,7 @@ class RoleControllerTest {
     private String URI_ROLE = "/roles/%s";
     private String URI_PERMISSIONS_FOR_ROLE = "/roles/%s/permissions";
 
+    @WithMockUser
     @Test
     void whenPostValidRole_thenReturnSuccess() throws Exception {
 
@@ -75,6 +82,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenPostInvalidRole_thenReturn400() throws Exception {
 
@@ -87,6 +95,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenConvertRoleDtoToEntity_thenSameData() {
 
@@ -104,6 +113,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenGetRolesPaged_thenReceiveSuccess() throws Exception {
 
@@ -111,7 +121,7 @@ class RoleControllerTest {
     }
 
 
-
+    @WithMockUser
     @Test
     void whenGetOneRole_thenReceiveSuccess() throws Exception {
 
@@ -124,6 +134,7 @@ class RoleControllerTest {
                 .andExpect(status().isOk()).andExpect(content().string(containsString(dummyId)));
     }
 
+    @WithMockUser
     @Test
     void whenGetNonExistentRole_thenReceive404() throws Exception {
 
@@ -132,6 +143,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenGetRole_thenAlsoReceivePermissionsForRole() throws Exception {
 
@@ -149,6 +161,7 @@ class RoleControllerTest {
                 .andExpect(content().string(containsString(dummyPermissionId)));
     }
 
+    @WithMockUser
     @Test
     void whenPostValidPermissionForRole_thenReceiveSuccess() throws Exception {
 
@@ -165,6 +178,7 @@ class RoleControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     void whenGetMultipleRolesById_thenReceiveMultipleRolesAndPermissionsJson() throws Exception {
 
@@ -192,5 +206,4 @@ class RoleControllerTest {
 
 
     }
-
 }

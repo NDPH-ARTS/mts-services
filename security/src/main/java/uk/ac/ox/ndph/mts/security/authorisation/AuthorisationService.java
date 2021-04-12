@@ -12,7 +12,6 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -149,9 +148,32 @@ public class AuthorisationService {
         }
     }
 
+    /**
+     * Authorise user to retrieve data only for itself
+     * @param userIdentityParam the user identity parameter
+     * @return true if userIdentityParam equals to the requesting user
+     */
     public boolean authoriseUserRoles(String userIdentityParam) {
         String requestUserId = securityContextUtil.getUserId();
         return requestUserId.equals(userIdentityParam);
+    }
+
+    /**
+     * Authorise to retrieve only roles the user is assigned to
+     * @param ids requested role ids
+     * @return true if all role ids are roles that user is assigned to
+     */
+    public boolean authoriseUserPermissionRoles(List<String> ids) {
+        String userId = securityContextUtil.getUserId();
+        String token = securityContextUtil.getToken();
+
+        List<RoleAssignmentDTO> roleAssignments =
+                practitionerServiceClient.getUserRoleAssignments(userId, PractitionerServiceClient.bearerAuth(token));
+
+        List<String> roleAssignmentIds = roleAssignments.stream()
+                .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
+
+        return roleAssignmentIds.containsAll(ids);
     }
 
     /**
@@ -213,7 +235,8 @@ public class AuthorisationService {
 
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
-        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds, RoleServiceClient.noAuth()).stream()
+        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds,
+                RoleServiceClient.bearerAuth(securityContextUtil.getToken())).stream()
                 .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
                 .map(RoleDTO::getId)
                 .collect(Collectors.toSet());

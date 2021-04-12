@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Role Service Application
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"uk.ac.ox.ndph.mts"})
 public class RoleServiceApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoleServiceApplication.class);

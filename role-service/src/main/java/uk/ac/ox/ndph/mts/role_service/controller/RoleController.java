@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,10 +59,10 @@ public class RoleController {
     }
 
     @GetMapping(params = "ids")
+    @PreAuthorize("@authorisationService.authoriseUserPermissionRoles(#ids)")
     public Iterable<Role> getByIds(@RequestParam List<String> ids) {
         return roleRepository.findAllById(ids);
     }
-
 
     @PostMapping("")
     public Role createRole(@Valid @RequestBody RoleDTO roleDto) {

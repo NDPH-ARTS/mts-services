@@ -27,7 +27,6 @@ public class AuthTest {
     public static MockWebServerWrapper webServer;
     private static final TestClientBuilder builder = new TestClientBuilder();
     private RoleServiceClient roleServiceClient;
-    private Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
 
     @SpringBootApplication
     static class TestConfiguration {
@@ -51,7 +50,7 @@ public class AuthTest {
     @Test
     void whenNoAuth_thenNoHeadersReceived() {
         webServer.queueResponse(new MockResponse().setResponseCode(HttpStatus.OK.value()));
-        assertTrue(roleServiceClient.entityIdExists("some-id", authHeaders));
+        assertTrue(roleServiceClient.entityIdExists("some-id", RoleServiceClient.noAuth()));
         final RecordedRequest request = webServer.takeRequest();
         assertNull(request.getHeaders().get("Authorization"));
     }

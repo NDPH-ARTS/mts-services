@@ -18,9 +18,7 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
-
 import java.util.function.Consumer;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +43,6 @@ class RoleAssignmentValidationTests {
     private RoleAssignmentValidation validator;
     @Mock
     private SecurityContextUtil securityContextUtil;
-    private static Consumer<HttpHeaders> authHeaders = RoleServiceClient.noAuth();
 
     @BeforeEach
     void setup() {
@@ -91,7 +89,7 @@ class RoleAssignmentValidationTests {
     void TestRoleAssignmentValidation_WhenInvalidRole_ReturnsInvalidResponse() {
         // Arrange
         var roleId = "missingRoleId";
-        when(roleServiceClient.entityIdExists(roleId, authHeaders)).thenReturn(false);
+        when(roleServiceClient.entityIdExists(eq(roleId), any(Consumer.class))).thenReturn(false);
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         var result = validator.validate(roleAssignment);
@@ -107,7 +105,7 @@ class RoleAssignmentValidationTests {
     void TestRoleAssignmentValidation_WhenServiceFails_ThrowsException() {
         // Arrange
         var roleId = "testRoleId";
-        when(roleServiceClient.entityIdExists(roleId, authHeaders)).thenThrow(new RestException("mock"));
+        when(roleServiceClient.entityIdExists(eq(roleId), any(Consumer.class))).thenThrow(new RestException("mock"));
         final RoleAssignment roleAssignment = new RoleAssignment("practitionerId", "siteId", roleId);
         // Act
         // Assert
