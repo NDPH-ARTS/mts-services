@@ -29,6 +29,7 @@ public class HapiFhirRepository implements FhirRepository {
     private final FhirContextWrapper fhirContextWrapper;
     private final Logger logger = LoggerFactory.getLogger(HapiFhirRepository.class);
 
+    @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
     @Value("${fhir.uri}")
     private String fhirUri = "";
 
@@ -85,7 +86,7 @@ public class HapiFhirRepository implements FhirRepository {
 
     /**
      * Private method to return a query (returning Organization, hopefully) as a stream of Organization
-     * @param query query to execcute
+     * @param query query to execute
      * @return stream of organization
      * throws whatever query.execute throws (unchecked exceptions)
      */

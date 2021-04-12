@@ -42,7 +42,7 @@ public enum Attribute {
      * Maps a string to an Attribute
      * @param input - The string to convert
      * @return converter - a model-entity to fhir-entity converter
-     * @throws InitialisationError when string does not map to a known attribtue.
+     * @throws InitialisationError when string does not map to a known attribute.
      */
     public static Attribute fromString(String input) throws InitialisationError {
         if (AttributeNames.NAME.nameof().equals(input)) {
