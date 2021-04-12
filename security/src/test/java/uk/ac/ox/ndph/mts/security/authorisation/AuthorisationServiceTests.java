@@ -468,6 +468,40 @@ class AuthorisationServiceTests {
         assertFalse(authorisationService.authoriseUserRoles(otherUserId));
     }
 
+    @Test
+    void TestAuthoriseUserPermissionRoles_WithRequestedRoleIdsSameAsRoleAssignments_ReturnsTrue() {
+        //Arrange
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        String roleId = "roleId";
+        String authorisedSiteId = "siteId";
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments(roleId, authorisedSiteId);
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authoriseUserPermissionRoles(Collections.singletonList(roleId)));
+    }
+
+    @Test
+    void TestAuthoriseUserPermissionRoles_WithRequestedRolesDifferentThenTheRoleAssignments_ReturnsFalse() {
+        //Arrange
+        String userId = "123";
+        String token = "token";
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+        when(securityContextUtil.getToken()).thenReturn(token);
+
+        List<RoleAssignmentDTO> roleAssignmentDtos = getRoleAssignments("roleId", "siteId");
+        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(roleAssignmentDtos);
+
+        //Act
+        //Assert
+        assertFalse(authorisationService.authoriseUserPermissionRoles(Collections.singletonList("different-roleId")));
+    }
+
 
 
     private RoleDTO getRoleWithPermissions(String roleId, String permission){
