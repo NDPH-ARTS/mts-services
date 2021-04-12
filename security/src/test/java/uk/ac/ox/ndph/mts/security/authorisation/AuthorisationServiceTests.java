@@ -404,9 +404,6 @@ class AuthorisationServiceTests {
 
         RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
 
-        RoleDTO[] roleDTOs = {getRoleWithPermissions("superuser","any-perm"), getRoleWithPermissions("admin", "view-site")};
-        String[] roles = {"superuser", "admin", "admin", "admin"};
-
         String userId = "123";
         String tokenString = "token";
         Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
@@ -414,7 +411,7 @@ class AuthorisationServiceTests {
         when(securityContextUtil.getToken()).thenReturn(tokenString);
 
         when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(Arrays.asList(roleAssignments));
-        when(roleServiceClient.getRolesByIds(eq(Arrays.asList(roles)), any(Consumer.class))).thenReturn(Arrays.asList(roleDTOs));
+
         //Act
         var authResponse = authorisationService.filterUserSites(sitesToFilter, "admin");
 

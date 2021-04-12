@@ -186,7 +186,7 @@ class OrganizationConverterTest {
     }
 
     @Test
-    void TestConvert_EmptySiteType_returnsOrgWithNoDescriptionType() {
+    void TestConvert_EmptySiteDescription_returnsOrgWithNoDescriptionType() {
         // arrange
         final var site = new Site(ORG_ID, NAME, ALIAS, PARENT_ID, SITE_TYPE, "");
         // act

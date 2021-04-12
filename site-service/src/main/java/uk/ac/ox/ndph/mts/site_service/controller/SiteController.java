@@ -37,6 +37,7 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
+    @PreAuthorize("@authorisationService.authorise('view-site')")
     @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), #role)")
     @GetMapping
     public ResponseEntity<List<Site>> sites(@RequestParam(value = "role", required = false) String role) {
