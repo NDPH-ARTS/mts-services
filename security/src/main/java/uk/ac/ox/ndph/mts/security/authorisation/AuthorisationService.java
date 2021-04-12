@@ -201,11 +201,21 @@ public class AuthorisationService {
             List<RoleAssignmentDTO> roleAssignments =
                 new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, authHeaders));
 
-            if (role != null) {
-                roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));
-            }
+            Set<String> userSites;
 
-            Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
+            if (role != null) {
+                if (role.equalsIgnoreCase("admin")) {
+                    List<RoleAssignmentDTO> roleAssignmentsWithPerms =
+                        getRolesAssignmentsWithPermission("view-site", roleAssignments);
+                    roleAssignmentsWithPerms.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));
+                    userSites = siteUtil.getUserSites(sites, roleAssignmentsWithPerms);
+                } else {
+                    roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));
+                    userSites = siteUtil.getUserSites(sites, roleAssignments);
+                }
+            } else {
+                userSites = siteUtil.getUserSites(sites, roleAssignments);
+            }
 
             sitesReturnObject.removeIf(siteObject ->
                     !userSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
