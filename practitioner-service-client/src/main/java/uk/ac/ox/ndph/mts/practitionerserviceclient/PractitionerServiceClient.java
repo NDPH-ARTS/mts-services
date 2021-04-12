@@ -45,6 +45,7 @@ public class PractitionerServiceClient {
                 .build().toString();
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient,
                                                                     uri, RoleAssignmentDTO[].class, authHeaders));
+
     }
 
     public ResponseDTO createEntity(final PractitionerDTO practitioner,
