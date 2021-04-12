@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
-import uk.ac.ox.ndph.mts.client.practitioner_service.PractitionerServiceClient;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -99,7 +100,8 @@ public class AuthorisationService {
         try {
             //Get the user's object id
             String userId = securityContextUtil.getUserId();
-            String token = securityContextUtil.getToken();
+            String tokenString = securityContextUtil.getToken();
+            Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
 
             LOGGER.debug("userId Is - {}", userId);
             LOGGER.debug("managed identity is - {}", managedIdentity);
@@ -165,7 +167,8 @@ public class AuthorisationService {
         String userId = securityContextUtil.getUserId();
         String token = securityContextUtil.getToken();
 
-        List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+        List<RoleAssignmentDTO> roleAssignments =
+                practitionerServiceClient.getUserRoleAssignments(userId, PractitionerServiceClient.bearerAuth(token));
 
         List<String> roleAssignmentIds = roleAssignments.stream()
                 .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
@@ -193,8 +196,10 @@ public class AuthorisationService {
 
             String userId = securityContextUtil.getUserId();
             String token = securityContextUtil.getToken();
+            Consumer<org.springframework.http.HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(token);
+
             List<RoleAssignmentDTO> roleAssignments =
-                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, token));
+                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, authHeaders));
 
             if (role != null) {
                 roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));

@@ -1,6 +1,6 @@
-package uk.ac.ox.ndph.mts.init_service.model;
+package uk.ac.ox.ndph.mts.practitionerserviceclient.model;
 
-public class PractitionerUserAccount implements Entity {
+public class PractitionerUserAccountDTO implements Entity {
     private String practitionerId;
     private String userAccountId;
 
@@ -20,7 +20,7 @@ public class PractitionerUserAccount implements Entity {
         this.userAccountId = directoryId;
     }
 
-    public PractitionerUserAccount(String practitionerId, String userAccountId) {
+    public PractitionerUserAccountDTO(String practitionerId, String userAccountId) {
         this.practitionerId = practitionerId;
         this.userAccountId = userAccountId;
     }

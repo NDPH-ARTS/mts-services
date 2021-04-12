@@ -10,7 +10,7 @@ public interface ModelEntityValidation<T> {
     /**
      * Check if an the entity is valid
      * @param entity - the entity to validate
-     * @return ValidationReponse
+     * @return ValidationResponse
      */
     ValidationResponse validateCoreAttributes(T entity);
     ValidationResponse validateCustomAttributes(T entity);

@@ -3,7 +3,8 @@ package uk.ac.ox.ndph.mts.security.authorisation;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.ac.ox.ndph.mts.client.dtos.RoleAssignmentDTO;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
+import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 

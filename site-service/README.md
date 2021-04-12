@@ -165,7 +165,7 @@ ___
 
 ### FHIR Store and HL7 Model
 Site service is backed up by a FHIR store which is accessible as an HTTP/S endpoint and configurable by the "fhir.uri" application property.
-Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir/docs/client/examples.html) to handle the model and trasactions with FHIR store.
+Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir/docs/client/examples.html) to handle the model and transactions with FHIR store.
 
 
 ## Validation Configuration
@@ -176,4 +176,4 @@ Internally, the service uses [hapi client library](https://hapifhir.io/hapi-fhir
 Sets the validation rules for site's name attributes using regex.
 Note: In this iteration, the field names are hard-coded and the service will validate the existence of all two attributes (name and alias) in the configuration file. Adding more attributes to the json configurationfile will not dynamically add them to the validation process.
 Empty or null validation regex is converted to a "validate-any" expression.
-The current json file allows up to 35 characters for any field, and specifies only "name" and "alias" as mandatory (minimum charachters = 1).
+The current json file allows up to 35 characters for any field, and specifies only "name" and "alias" as mandatory (minimum characters = 1).

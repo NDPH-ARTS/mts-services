@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({"no-authZ"})
 @AutoConfigureMockMvc
 @Import(TestSiteConfiguration.class)
-class SiteServiceImplIntegrationTests {
+class SiteServiceComponentTests {
 
     private static final String SITES_ROUTE = "/sites";
     @MockBean
