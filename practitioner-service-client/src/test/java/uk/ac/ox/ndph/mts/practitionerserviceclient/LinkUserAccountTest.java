@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -17,14 +16,13 @@ import uk.ac.ox.ndph.mts.practitionerserviceclient.model.ResponseDTO;
 
 import java.util.function.Consumer;
 
-import static org.assertj.core.api.Fail.fail;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
-public class LinkUserAccountTest {
+class LinkUserAccountTest {
 
     private static final TestClientBuilder builder = new TestClientBuilder();
     public static MockWebServerWrapper webServer;
-    @Mock
     private PractitionerServiceClient practitionerServiceClient;
     private final String token = "some-token";
     private final Consumer<HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(token);
@@ -51,12 +49,9 @@ public class LinkUserAccountTest {
         ResponseDTO mockResponseBody = new ResponseDTO();
         mockResponseBody.setId("id-dummy-link-user-account");
         webServer.queueResponse(new ObjectMapper().writeValueAsString(mockResponseBody));
+        assertEquals(practitionerServiceClient.linkUserAccount(userAccount, authHeaders).getId(),
+                   mockResponseBody.getId());
 
-        try {
-            practitionerServiceClient.linkUserAccount(userAccount, authHeaders);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
     }
 
     @SpringBootApplication

@@ -34,7 +34,7 @@ public class PractitionerServiceClient {
     }
 
     public static Consumer<HttpHeaders> bearerAuth(final String token) {
-        return (headers) -> headers.setBearerAuth(token);
+        return headers -> headers.setBearerAuth(token);
     }
 
     public List<RoleAssignmentDTO> getUserRoleAssignments(final String userId,
@@ -57,7 +57,7 @@ public class PractitionerServiceClient {
     }
 
     public ResponseDTO assignRoleToPractitioner(final RoleAssignmentDTO roleAssignment,
-                                                final Consumer<HttpHeaders> authHeaders) {
+                                                   final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
                 .fromUriString(ClientRoutesConfigPractitioner.getServiceAssignRole())
                 .build(roleAssignment.getPractitionerId())
@@ -66,7 +66,7 @@ public class PractitionerServiceClient {
     }
 
     public ResponseDTO linkUserAccount(final PractitionerUserAccountDTO userAccount,
-                                       final Consumer<HttpHeaders> authHeaders) {
+                                          final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
                 .fromUriString(ClientRoutesConfigPractitioner.getServiceLinkUserAccount())
                 .build(userAccount.getPractitionerId())
