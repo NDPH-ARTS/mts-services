@@ -120,7 +120,6 @@ public class AuthorisationService {
                 return false;
             }
 
-
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
 
@@ -135,7 +134,7 @@ public class AuthorisationService {
                 return false;
             }
 
-            List<SiteDTO> sites = siteServiceClient.getAllSites(
+            List<SiteDTO> sites = siteServiceClient.getAuthorizeSites(
                                                     SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
 
             Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
