@@ -44,8 +44,9 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 
-    @GetMapping("/authorize")
-    public ResponseEntity<List<Site>> authorizeSites(@RequestParam(value = "role", required = false) String role) {
+    @GetMapping("/unauthorized")
+    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), null)")
+    public ResponseEntity<List<Site>> unauthorizedSites(@RequestParam(value = "role", required = false) String role) {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 
