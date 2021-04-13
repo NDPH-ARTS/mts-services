@@ -134,7 +134,7 @@ public class AuthorisationService {
                 return false;
             }
 
-            List<SiteDTO> sites = siteServiceClient.getUnauthorizedSites(
+            List<SiteDTO> sites = siteServiceClient.getAssignedSites(
                                                     SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
 
             Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
