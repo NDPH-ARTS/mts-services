@@ -41,11 +41,5 @@
             <column name="modified_by" value="darrsmi"/>
         </insert>
 
-        <insert tableName="permission">
-            <column name="id" value="view-site"/>
-            <column name="created_by" value="darrsmi"/>
-            <column name="modified_by" value="darrsmi"/>
-        </insert>
-
     </changeSet>
 </databaseChangeLog>
