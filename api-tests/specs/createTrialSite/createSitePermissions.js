@@ -53,9 +53,9 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
     });
 });
 
-describe('As a user with View Trial Sites permission I want to select a trial site So that I can view its details', function () {
+describe('As a user with View Trial Sites permission I want to view trial site details', function () {
 
-    it('Superuser user with view trial site can view admin sites', async () => {
+    it('a user with view-site permission can see sites', async () => {
         const headers4 = await utils.getHeadersWithAuth() // user bootstrap user
         let fetchResponse4 = await fetch(conf.baseUrl + `${endpointUri}?role=superuser`, {
             headers: headers4,
@@ -64,7 +64,7 @@ describe('As a user with View Trial Sites permission I want to select a trial si
         expect(fetchResponse4.status).to.equal(HttpStatus.OK)
     });
 
-    it('Admin without view trial site cannot view admin sites', async () => {
+    it('a user without view-site permission cannot see (admin) sites', async () => {
         const headers5 = await utils.qaHeadersWithAuth() // user qa-with create user
         let fetchResponse5 = await fetch(conf.baseUrl + `${endpointUri}?role=superuser`, {
             headers: headers5,
@@ -73,7 +73,7 @@ describe('As a user with View Trial Sites permission I want to select a trial si
         expect(fetchResponse5.status).to.equal(HttpStatus.FORBIDDEN)
     });
 
-    it('Admin user with view trial site can view admin sites', async () => {
+    it('An admin role with view-site permission can see (admin) sites', async () => {
         const headers6 = await utils.qaHeadersWithAuth() // user qa-with create user
         let fetchResponse6 = await fetch(conf.baseUrl + `${endpointUri}?role=admin`, {
             headers: headers6,
