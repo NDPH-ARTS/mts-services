@@ -52,3 +52,34 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
         expect(fetchResponse3.status).to.equal(HttpStatus.FORBIDDEN)
     });
 });
+
+describe('As a user with View Trial Sites permission I want to view trial site details', function () {
+
+    it('a user with view-site permission can see sites', async () => {
+        const headers4 = await utils.getHeadersWithAuth() // user bootstrap user
+        let fetchResponse4 = await fetch(conf.baseUrl + `${endpointUri}?role=superuser`, {
+            headers: headers4,
+            method: 'GET',
+        })
+        expect(fetchResponse4.status).to.equal(HttpStatus.OK)
+    });
+
+    it('a user without view-site permission cannot see (admin) sites', async () => {
+        const headers5 = await utils.qaHeadersWithAuth() // user qa-with create user
+        let fetchResponse5 = await fetch(conf.baseUrl + `${endpointUri}?role=superuser`, {
+            headers: headers5,
+            method: 'GET',
+        })
+        expect(fetchResponse5.status).to.equal(HttpStatus.FORBIDDEN)
+    });
+
+    it('An admin role with view-site permission can see (admin) sites', async () => {
+        const headers6 = await utils.qaHeadersWithAuth() // user qa-with create user
+        let fetchResponse6 = await fetch(conf.baseUrl + `${endpointUri}?role=admin`, {
+            headers: headers6,
+            method: 'GET',
+        })
+        expect(fetchResponse6.status).to.equal(HttpStatus.OK)
+    });
+});
+
