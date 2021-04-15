@@ -44,7 +44,6 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
         let ccoAsParent = requests.createSite;
         ccoAsParent.parentSiteId = ccoParentSiteId
         const headers3 = await utils.qaHeadersWithAuth()
-        //  console.log('this is the token id' + JSON.stringify(headers3))
         let fetchResponse3 = await fetch(conf.baseUrl + endpointUri, {
             headers: headers3,
             method: 'POST',
