@@ -80,10 +80,11 @@ public class Site {
      *
      */
     public Site(final String siteId, String name, String alias, String parentSiteId,
-                String siteType, String description) {
+                String siteType, String description, String status) {
         this(name, alias, parentSiteId, siteType);
         this.siteId = siteId;
         this.description = description;
+        this.status = status;
     }
 
     /**
@@ -98,11 +99,12 @@ public class Site {
      *
      */
     public Site(final String siteId, String name, String alias, String parentSiteId,
-                String siteType, String description, LocalDateTime lastUpdated) {
+                String siteType, String description, LocalDateTime lastUpdated, String status) {
         this(name, alias, parentSiteId, siteType);
         this.siteId = siteId;
         this.description = description;
         this.lastUpdated = lastUpdated;
+        this.status = status;
     }
     private String name;
     private String alias;
@@ -112,6 +114,7 @@ public class Site {
     private SiteAddress address;
     private LocalDateTime lastUpdated;
     private String description;
+    private String status;
 
     /**
      * Returns the name associated with the Site.
@@ -224,5 +227,13 @@ public class Site {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -36,7 +36,8 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
                 findParentSiteId(org),
                 org.getImplicitRules(),
                 org.getText().getDiv().allText(),
-                LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault()));
+                LocalDateTime.ofInstant(org.getMeta().getLastUpdated().toInstant(), ZoneId.systemDefault()),
+                org.getActive()?Status.ACTIVE.getValue():Status.INACTIVE.getValue());
         site.setAddress(findAddress(org));
         return site;
     }
