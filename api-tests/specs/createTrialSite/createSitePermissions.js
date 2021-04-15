@@ -50,7 +50,6 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
             method: 'POST',
             body: JSON.stringify(ccoAsParent),
         })
-        console.log('some text' + JSON.stringify(conf.baseUrl + endpointUri))
         expect(fetchResponse3.status).to.equal(HttpStatus.FORBIDDEN)
     });
 });
