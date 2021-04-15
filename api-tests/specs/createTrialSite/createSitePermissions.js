@@ -44,11 +44,44 @@ describe('As a Chief Investigator I want all requests to create Trial Sites auth
         let ccoAsParent = requests.createSite;
         ccoAsParent.parentSiteId = ccoParentSiteId
         const headers3 = await utils.qaHeadersWithAuth()
+        //  console.log('this is the token id' + JSON.stringify(headers3))
         let fetchResponse3 = await fetch(conf.baseUrl + endpointUri, {
             headers: headers3,
             method: 'POST',
             body: JSON.stringify(ccoAsParent),
         })
+        console.log('some text' + JSON.stringify(conf.baseUrl + endpointUri))
         expect(fetchResponse3.status).to.equal(HttpStatus.FORBIDDEN)
     });
 });
+
+describe('As a user with View Trial Sites permission I want to select a trial site So that I can view its details', function () {
+
+    it('Superuser user with view trial site can view admin sites', async () => {
+        const headers4 = await utils.getHeadersWithAuth() // user bootstrap user
+        let fetchResponse4 = await fetch(conf.baseUrl + `${endpointUri}?role=superuser`, {
+            headers: headers4,
+            method: 'GET',
+        })
+        expect(fetchResponse4.status).to.equal(HttpStatus.OK)
+    });
+
+    it('Admin without view trial site cannot view admin sites', async () => {
+        const headers5 = await utils.qaHeadersWithAuth() // user qa-with create user
+        let fetchResponse5 = await fetch(conf.baseUrl + `${endpointUri}?role=superuser`, {
+            headers: headers5,
+            method: 'GET',
+        })
+        expect(fetchResponse5.status).to.equal(HttpStatus.FORBIDDEN)
+    });
+
+    it('Admin user with view trial site can view admin sites', async () => {
+        const headers6 = await utils.qaHeadersWithAuth() // user qa-with create user
+        let fetchResponse6 = await fetch(conf.baseUrl + `${endpointUri}?role=admin`, {
+            headers: headers6,
+            method: 'GET',
+        })
+        expect(fetchResponse6.status).to.equal(HttpStatus.OK)
+    });
+});
+
