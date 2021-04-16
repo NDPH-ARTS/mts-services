@@ -8,12 +8,17 @@ public final class ClientRoutesConfigSite {
     static final String SERVICE_GET_SITE = "/sites/{id}";
     static final String SERVICE_CREATE_SITE =  "/sites";
     static final String SERVICE_GET_ALL_SITES =  "/sites";
+    static final String SERVICE_GET_ASSIGNED_SITES =  "/sites/assigned";
 
     private ClientRoutesConfigSite() {
     }
 
     public static String getServiceGetAllSites() {
         return SERVICE_GET_ALL_SITES;
+    }
+
+    public static String getServiceGetAssignedSites() {
+        return SERVICE_GET_ASSIGNED_SITES;
     }
 
     public static String getServiceName() {

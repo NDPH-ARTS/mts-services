@@ -7,7 +7,9 @@ public enum AttributeNames {
     NAME("name"),
     ALIAS("alias"),
     PARENT_SITE_ID("parentSiteId"),
-    SITE_TYPE("siteType");
+    SITE_TYPE("siteType"),
+    DESCRIPTION("description"),
+    STATUS("Status");
 
     private final String attributeName;
 
