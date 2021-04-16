@@ -1,0 +1,8 @@
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/changelog-role-service-master.xml
+    drop-first: false
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
