@@ -83,11 +83,13 @@ mts:
           - id: view-person
           - id: assign-role
           - id: create-site
+          - id: view-site
           - id: link-user
       - id: admin
         permissions:
           - id: create-person
           - id: view-person
+          - id: view-site
       - id: country-admin
         permissions:
           - id: create-person

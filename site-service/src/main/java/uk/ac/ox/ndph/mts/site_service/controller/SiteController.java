@@ -32,14 +32,21 @@ public class SiteController {
 
     @PreAuthorize("@authorisationService.authorise('create-site', #site.parentSiteId)")
     @PostMapping()
-    public ResponseEntity<Response> site(@RequestBody Site site) {
+    public ResponseEntity<Response> createSite(@RequestBody Site site) {
         String siteId = siteService.save(site);
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
+    @PreAuthorize("@authorisationService.authorise('view-site')")
     @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), #role)")
     @GetMapping
-    public ResponseEntity<List<Site>> sites(@RequestParam(value = "role", required = false) String role) {
+    public ResponseEntity<List<Site>> getSites(@RequestParam(value = "role", required = false) String role) {
+        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
+    }
+
+    @GetMapping("/assigned")
+    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), null)")
+    public ResponseEntity<List<Site>> unauthorizedSites(@RequestParam(value = "role", required = false) String role) {
         return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 

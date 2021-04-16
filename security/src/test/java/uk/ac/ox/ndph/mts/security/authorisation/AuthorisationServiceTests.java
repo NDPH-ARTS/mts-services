@@ -215,7 +215,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites(any(Consumer.class))).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAssignedSites(any(Consumer.class))).thenReturn(Collections.singletonList(siteDto));
 
         //Act
         //Assert
@@ -242,7 +242,7 @@ class AuthorisationServiceTests {
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
-        when(siteServiceClient.getAllSites(any(Consumer.class))).thenReturn(Collections.singletonList(siteDto));
+        when(siteServiceClient.getAssignedSites(any(Consumer.class))).thenReturn(Collections.singletonList(siteDto));
 
         List<Object> entitiesList = Collections.singletonList(new TestEntityObject("siteId"));
         String getSiteIdMethodName = "getSiteId";

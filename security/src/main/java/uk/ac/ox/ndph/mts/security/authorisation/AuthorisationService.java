@@ -120,7 +120,6 @@ public class AuthorisationService {
                 return false;
             }
 
-
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
 
@@ -135,7 +134,7 @@ public class AuthorisationService {
                 return false;
             }
 
-            List<SiteDTO> sites = siteServiceClient.getAllSites(
+            List<SiteDTO> sites = siteServiceClient.getAssignedSites(
                                                     SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
 
             Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
@@ -185,7 +184,7 @@ public class AuthorisationService {
     public boolean filterUserSites(List<?> sitesReturnObject, String role) {
 
         try {
-            Objects.requireNonNull(sitesReturnObject, "sites can not be bull");
+            Objects.requireNonNull(sitesReturnObject, "sites can not be null");
 
             List<SiteDTO> sites = sitesReturnObject.stream()
                     .map(siteObject -> {
