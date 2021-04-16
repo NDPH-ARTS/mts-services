@@ -51,9 +51,12 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      ROLE_SERVICE_URI: "http://role-service:8082"
     depends_on:
-      - config-server
-      - sql
+        config-server:
+          condition: service_healthy
+        sql:
+          condition: service_healthy
     healthcheck:
       test: curl --fail http://localhost:8082/actuator/health
       interval: 10s
@@ -79,6 +82,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      ROLE_SERVICE_URI: "http://role-service:8082"
     healthcheck:
       test: curl --fail http://localhost:8083/actuator/health
       interval: 10s
@@ -219,6 +223,6 @@ services:
       test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'" ]
       interval: 10s
       timeout: 10s
-      retries: 6
+      retries: 10
     ports:
       - "1433:1433"
