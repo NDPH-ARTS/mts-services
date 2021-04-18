@@ -49,8 +49,7 @@ public class SiteConverter implements EntityConverter<org.hl7.fhir.r4.model.Orga
     private Map<String, String> findExtentions(Organization org) {
         if (org.hasExtension()) {
             return org.getExtension().stream().
-                    collect(Collectors.toMap(Extension::getUrl,
-                            extension -> extension.getValue().toString()));
+                    collect(Collectors.toMap(Extension::getUrl, extension -> extension.getValue().toString()));
         } else {
             return null;
         }
