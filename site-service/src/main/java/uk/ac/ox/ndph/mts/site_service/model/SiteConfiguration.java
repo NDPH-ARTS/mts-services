@@ -39,11 +39,13 @@ public class SiteConfiguration {
      *
      */
     public SiteConfiguration(String name, String displayName, String type, List<SiteAttributeConfiguration> attributes,
-                             List<SiteAttributeConfiguration> custom, List<SiteConfiguration> child) {
+                             List<SiteAttributeConfiguration> custom, List<SiteAttributeConfiguration> ext,
+                             List<SiteConfiguration> child) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
         this.attributes = attributes;
+        this.ext = ext;
         this.custom = custom;
         this.child = child;
     }
@@ -57,6 +59,7 @@ public class SiteConfiguration {
     @NotEmpty
     private List<@Valid SiteAttributeConfiguration> attributes;
     private List<@Valid SiteAttributeConfiguration> custom;
+    private List<@Valid SiteAttributeConfiguration> ext;
     private List<@Valid SiteConfiguration> child;
 
     /**
@@ -135,6 +138,14 @@ public class SiteConfiguration {
         this.custom = custom;
     }
 
+    public List<SiteAttributeConfiguration> getExt() {
+        return ext;
+    }
+
+    public void setExt(List<SiteAttributeConfiguration> ext) {
+        this.ext = ext;
+    }
+
     /**
      * Returns the child / children associated with the SiteConfiguration.
      * @return child the SiteConfiguration List of child.
@@ -164,6 +175,7 @@ public class SiteConfiguration {
                 + ", type='" + type + '\''
                 + ", attributes=" + attributes
                 + ", custom=" + custom
+                + ", ext=" + ext
                 + ", child=" + child
                 + '}';
     }

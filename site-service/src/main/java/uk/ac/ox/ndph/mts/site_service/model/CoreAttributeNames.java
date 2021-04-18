@@ -3,7 +3,7 @@ package uk.ac.ox.ndph.mts.site_service.model;
 /**
  * site Attribute Names
  */
-public enum AttributeNames {
+public enum CoreAttributeNames {
     NAME("name"),
     ALIAS("alias"),
     PARENT_SITE_ID("parentSiteId"),
@@ -13,7 +13,7 @@ public enum AttributeNames {
 
     private final String attributeName;
 
-    AttributeNames(String attributeName) {
+    CoreAttributeNames(String attributeName) {
         this.attributeName = attributeName;
     }
 

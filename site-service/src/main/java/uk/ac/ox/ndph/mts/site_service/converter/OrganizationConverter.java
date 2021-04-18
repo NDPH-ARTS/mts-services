@@ -5,6 +5,7 @@ import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,11 @@ public class OrganizationConverter implements EntityConverter<Site, org.hl7.fhir
 
         if (input.getStatus() != null) {
             fhirOrganization.setActive(input.getStatus().equals(Status.ACTIVE.getValue()));
+        }
+
+        if (input.getExtensions() != null) {
+            input.getExtensions().entrySet().stream().forEach(e ->
+                    fhirOrganization.addExtension(e.getKey(), new StringType(e.getValue())));
         }
 
         return fhirOrganization;
