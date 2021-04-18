@@ -31,6 +31,9 @@ class SiteValidationTests {
     private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP_CUSTOM = List.of(
             new SiteAttributeConfiguration("address", "address", "Address", ""));
 
+    private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP_EXT = List.of(
+            new SiteAttributeConfiguration("ext", "ext", "Extension", ""));
+
     private static final List<SiteAttributeConfiguration> ALL_EMPTY_REGEX_MAP = List.of(
             new SiteAttributeConfiguration("name", "string","Name", ""),
             new SiteAttributeConfiguration("alias", "string","Alias", ""),
@@ -54,9 +57,9 @@ class SiteValidationTests {
             new SiteAttributeConfiguration("alias", "string","Alias", ""));
 
     private static final List<SiteConfiguration> SITE_CONFIGURATION_LIST = List.of(
-            new SiteConfiguration("Organization", "site", "REGION", ALL_REQUIRED_UNDER_35_MAP, null,
-                    Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP, null,
-                            Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null)
+            new SiteConfiguration("Organization", "site", "REGION", ALL_REQUIRED_UNDER_35_MAP, null, null,
+                    Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP, null, null,
+                            Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, null)
                             )))));
 
     @ParameterizedTest
@@ -69,7 +72,7 @@ class SiteValidationTests {
             @ConvertWith(NullableConverter.class) String expectedField) {
         // Arrange
         final SiteConfiguration config = new SiteConfiguration("site",
-                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
+                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, SITE_CONFIGURATION_LIST);
         Site site = new Site(name, alias, parentSiteId, siteType);
         var siteValidation = new SiteValidation(config);
 
@@ -90,7 +93,7 @@ class SiteValidationTests {
             @ConvertWith(NullableConverter.class) String expectedField) {
         // Arrange
         final SiteConfiguration config = new SiteConfiguration("site",
-                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
+                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, SITE_CONFIGURATION_LIST);
         Site site = new Site(name, alias, parentSiteId, siteType);
         var siteValidation = new SiteValidation(config);
 
@@ -107,16 +110,16 @@ class SiteValidationTests {
             "Expecting null configuration to throw");
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(new SiteConfiguration("site",
-                        "Site", "CCO", INCOMPLETE_MAP, INCOMPLETE_MAP, SITE_CONFIGURATION_LIST)),
+                        "Site", "CCO", INCOMPLETE_MAP, INCOMPLETE_MAP, INCOMPLETE_MAP, SITE_CONFIGURATION_LIST)),
                 "Expecting incomplete configuration to throw");
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(new SiteConfiguration("site",
-                        "Site", "CCO", INCOMPLETE_MAP_A, INCOMPLETE_MAP_A, SITE_CONFIGURATION_LIST)),
+                        "Site", "CCO", INCOMPLETE_MAP_A, INCOMPLETE_MAP_A, INCOMPLETE_MAP_A, SITE_CONFIGURATION_LIST)),
                 "Expecting incomplete configuration to throw");
 
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(new SiteConfiguration("site",
-                        "Site", "CCO", INCOMPLETE_MAP_B, INCOMPLETE_MAP_B, SITE_CONFIGURATION_LIST)),
+                        "Site", "CCO", INCOMPLETE_MAP_B, INCOMPLETE_MAP_B, INCOMPLETE_MAP_B, SITE_CONFIGURATION_LIST)),
                 "Expecting incomplete configuration to throw");
     }
 
@@ -124,7 +127,7 @@ class SiteValidationTests {
     void TestSiteValidation_WhenInitWithInvalidConfig_ThrowsRuntimeException() {
         // Arrange
         final var config = new SiteConfiguration("site",
-                "Site", "CCO", ERROR_MAP, ERROR_MAP, SITE_CONFIGURATION_LIST);
+                "Site", "CCO", ERROR_MAP, ERROR_MAP, ERROR_MAP, SITE_CONFIGURATION_LIST);
 
         // Act + Assert
         Assertions.assertThrows(RuntimeException.class, () -> new SiteValidation(config),
@@ -140,7 +143,7 @@ class SiteValidationTests {
         String siteType = "CCO";
 
         final var config = new SiteConfiguration("site",
-                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
+                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, SITE_CONFIGURATION_LIST);
         var siteValidation = new SiteValidation(config);
         Site site = new Site(name, alias, parentSiteId, siteType);
 
@@ -158,7 +161,7 @@ class SiteValidationTests {
         String parentSiteId = "parentSiteId";
         String siteType = "CCO";
         final var config = new SiteConfiguration("Organization",
-                "site", "CCO", ALL_EMPTY_REGEX_MAP, ALL_EMPTY_REGEX_MAP, SITE_CONFIGURATION_LIST);
+                "site", "CCO", ALL_EMPTY_REGEX_MAP, ALL_EMPTY_REGEX_MAP, ALL_EMPTY_REGEX_MAP, SITE_CONFIGURATION_LIST);
         var siteValidation = new SiteValidation(config);
         Site site = new Site(name, alias, parentSiteId, siteType);
 
@@ -176,7 +179,7 @@ class SiteValidationTests {
         String parentSiteId = "parentSiteId";
         String siteType = "CCO";
         final var config = new SiteConfiguration("Organization",
-                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
+                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, SITE_CONFIGURATION_LIST);
         var siteValidation = new SiteValidation(config);
         Site site = new Site(name, alias, parentSiteId, siteType);
 
@@ -200,7 +203,7 @@ class SiteValidationTests {
 
         // Arrange
         final var config = new SiteConfiguration("Organization",
-                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
+                "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, SITE_CONFIGURATION_LIST);
         var siteValidation = new SiteValidation(config);
 
         Site site = new Site(name, alias, parentSiteId, siteType);
