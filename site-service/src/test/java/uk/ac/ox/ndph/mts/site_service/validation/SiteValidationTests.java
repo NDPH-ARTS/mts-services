@@ -9,11 +9,14 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ox.ndph.mts.site_service.NullableConverter;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteAddress;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -61,6 +64,17 @@ class SiteValidationTests {
                     Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP, null, null,
                             Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, null)
                             )))));
+
+    private static final String ADDRESS1 = "address1";
+    private static final String ADDRESS2 = "address2";
+    private static final String ADDRESS3 = "address3";
+    private static final String ADDRESS4 = "address4";
+    private static final String ADDRESS5 = "address5";
+    private static final String CITY = "city";
+    private static final String COUNTRY = "country";
+    private static final String POSTCODE = "postcode";
+    private static final SiteAddress SITE_ADDRESS = new SiteAddress(ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, ADDRESS5, CITY, COUNTRY, POSTCODE);
+
 
     @ParameterizedTest
     @CsvSource({",,,testType,Invalid Site", ",,,,Invalid Site", ",,,null,Invalid Site"})
@@ -146,9 +160,26 @@ class SiteValidationTests {
                 "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, SITE_CONFIGURATION_LIST);
         var siteValidation = new SiteValidation(config);
         Site site = new Site(name, alias, parentSiteId, siteType);
+        site.setAddress(SITE_ADDRESS);
+
+        Map<String, String> ext  = new HashMap<>() {{
+            put("ext", "ext");
+        }};
+
+        site.setExtensions(ext);
 
         // Act
         var result = siteValidation.validateCoreAttributes(site);
+        // Assert
+        assertThat(result.isValid(), is(true));
+
+        // Act
+        result = siteValidation.validateCustomAttributes(site);
+        // Assert
+        assertThat(result.isValid(), is(true));
+
+        // Act
+        result = siteValidation.validateExtAttributes(site);
         // Assert
         assertThat(result.isValid(), is(true));
     }

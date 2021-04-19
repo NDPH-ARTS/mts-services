@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import uk.ac.ox.ndph.mts.site_service.model.CoreAttribute;
-import uk.ac.ox.ndph.mts.site_service.model.CustomAttribute;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
@@ -71,7 +70,6 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         Objects.requireNonNull(configuration, "site configuration cannot be null");
 
         Map<CoreAttribute, AttributeData> validationCoreMap;
-        Map<CustomAttribute, AttributeData> validationCustomMap;
 
         // validates core attributes
         validationCoreMap = getCoreValidationMap(configuration);
