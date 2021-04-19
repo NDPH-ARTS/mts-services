@@ -38,6 +38,7 @@
         <module>discovery-server</module>
         <module>gateway-server</module>
         <module>sample-service</module>
+        <module>handoff-service</module>
         <module>practitioner-service</module>
         <module>role-service</module>
         <module>init-service</module>
