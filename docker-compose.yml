@@ -76,7 +76,7 @@ services:
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
       FHIR_URI: "http://fhir-api:8099"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
-      SPRING_CLOUD_CONFIG_LABEL: "arts172qa"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
     healthcheck:
