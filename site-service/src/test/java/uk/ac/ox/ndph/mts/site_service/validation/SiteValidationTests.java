@@ -75,6 +75,8 @@ class SiteValidationTests {
     private static final String POSTCODE = "postcode";
     private static final SiteAddress SITE_ADDRESS = new SiteAddress(ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, ADDRESS5, CITY, COUNTRY, POSTCODE);
 
+    private static final String EXT = "ext";
+
 
     @ParameterizedTest
     @CsvSource({",,,testType,Invalid Site", ",,,,Invalid Site", ",,,null,Invalid Site"})
@@ -163,7 +165,7 @@ class SiteValidationTests {
         site.setAddress(SITE_ADDRESS);
 
         Map<String, String> ext  = new HashMap<>() {{
-            put("ext", "ext");
+            put(EXT, EXT);
         }};
 
         site.setExtensions(ext);

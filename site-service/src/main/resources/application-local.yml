@@ -93,15 +93,6 @@ mts:
             type: string
             displayName: Site Type
             validationRegex: ''
-        ext:
-          - name: geolocation
-            type: string
-            displayName: The Geolocation
-            validationRegex: ''
-          - name: planet
-            type: string
-            displayName: Universe
-            validationRegex: ''
         child:
           - name: Organization
             displayName: site
@@ -122,6 +113,11 @@ mts:
               - name: siteType
                 type: string
                 displayName: Site Type
+                validationRegex: ''
+            ext:
+              - name: countryCode
+                type: string
+                displayName: Country Code
                 validationRegex: ''
             child:
               - name: Organization
@@ -148,4 +144,13 @@ mts:
                   - name: address
                     type: address
                     displayName: The Address
+                    validationRegex: ''
+                ext:
+                  - name: hasParticipants
+                    type: string
+                    displayName: Has Participants
+                    validationRegex: ''
+                  - name: recruitentMethod
+                    type: string
+                    displayName: Recruitment Method
                     validationRegex: ''

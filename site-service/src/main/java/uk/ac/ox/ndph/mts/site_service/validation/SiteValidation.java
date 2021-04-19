@@ -178,6 +178,10 @@ public class SiteValidation implements ModelEntityValidation<Site> {
             }
         }
 
+        if (extAttributes == null && site.getExtensions() != null) {
+            return invalid(String.format(Validations.ERROR.message(), "misconfigured extensions"));
+        }
+
         return ok();
     }
 
