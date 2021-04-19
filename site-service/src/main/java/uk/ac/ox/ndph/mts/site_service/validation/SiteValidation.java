@@ -112,7 +112,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
 
     @Override
     public ValidationResponse validateCustomAttributes(Site entity) {
-        SiteConfiguration siteConfiguration = configurationsOfSiteTypes.get(entity.getSiteType());
+        var siteConfiguration = configurationsOfSiteTypes.get(entity.getSiteType());
 
         final List<SiteAttributeConfiguration> customAttributes = siteConfiguration.getCustom();
 
@@ -121,7 +121,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
 
     @Override
     public ValidationResponse validateExtAttributes(Site entity) {
-        SiteConfiguration siteConfiguration = configurationsOfSiteTypes.get(entity.getSiteType());
+        var siteConfiguration = configurationsOfSiteTypes.get(entity.getSiteType());
 
         final List<SiteAttributeConfiguration> extAttributes = siteConfiguration.getExt();
 
