@@ -1,0 +1,17 @@
+# bootstrap should include application name and spring cloud config settings
+# other settings should be in application config
+spring:
+  application:
+    name: sample-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: CONFIG-SERVER
+      fail-fast: true
+
+# this is required here (and not in application config) since config depends on discovery
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://placeholder:8761/eureka/

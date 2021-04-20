@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+      discovery:
+        enabled: false
+    discovery:
+      enabled: false
+# Ribbon is a client-side load balancer, this property disables the use of Eureka in Ribbon
+ribbon:
+  eureka:
+    enabled: false

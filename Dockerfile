@@ -28,6 +28,7 @@ COPY ./config-server/pom.xml ./config-server/
 COPY ./discovery-server/pom.xml ./discovery-server/
 COPY ./gateway-server/pom.xml ./gateway-server/
 COPY ./sample-service/pom.xml ./sample-service/
+COPY ./hello-world-service/pom.xml ./hello-world-service/
 COPY ./init-service/pom.xml ./init-service/
 COPY ./practitioner-service/pom.xml ./practitioner-service/
 COPY ./practitioner-service-client/pom.xml ./practitioner-service-client/

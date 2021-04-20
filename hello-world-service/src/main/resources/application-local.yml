@@ -1,0 +1,13 @@
+application:
+  message: '"YESSSSSSSSS"'
+azure:
+  keyvault:
+    enabled: false
+    uri: https://some.vault.azure.net/
+
+spring:
+    main:
+      allow-bean-definition-overriding: true
+
+init-service:
+  identity: <init-service-identity>

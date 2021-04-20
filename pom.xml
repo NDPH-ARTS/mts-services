@@ -42,6 +42,7 @@
         <module>role-service</module>
         <module>init-service</module>
         <module>site-service</module>
+        <module>hello-world-service</module>
     </modules>
 
     <dependencies>
