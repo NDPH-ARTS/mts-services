@@ -36,6 +36,8 @@ COPY ./role-service-client/pom.xml ./role-service-client/
 COPY ./site-service/pom.xml ./site-service/
 COPY ./site-service-client/pom.xml ./site-service-client/
 
+COPY ./hack-service/pom.xml ./hack-service/
+
 FROM builder as deps-cache-project
 ARG SVC
 # cache project level dependencies as a layer to be used in other builds while POMs don't change
