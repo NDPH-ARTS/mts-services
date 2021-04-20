@@ -1,0 +1,33 @@
+# security
+role:
+  service:
+    endpoint:
+      exists: /roles/{id}
+      paged: /roles/
+      role: /roles/{id}
+      roles:
+        create: /roles
+        by:
+          ids: roles
+      update:
+        permissions: /roles/{id}/permissions
+    name: role-service
+    uri: http://role-service
+site:
+  service:
+    uri: http://localhost:8083
+    name: site-service
+    endpoint:
+      sites: /sites
+practitioner:
+  service:
+    uri: http://localhost:8081
+    name: practitioner-service
+    endpoint:
+      roles: /practitioner/roles
+azure:
+  activedirectory:
+    client-id: <client-id>
+    session-stateless: true
+init-service:
+  identity: <init-service-identity>
