@@ -1,8 +1,8 @@
-package uk.ac.ox.ndph.mts.sample_service.controllers;
+package uk.ac.ox.ndph.mts.saj_service.controllers;
 
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
+import uk.ac.ox.ndph.mts.saj_service.config.ConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
