@@ -87,6 +87,25 @@ services:
     ports:
       - "8083:8083"
 
+  handoff-service:
+    build:
+      context: .
+      args:
+        SVC: handoff-service
+    image: ghcr.io/ndph-arts/handoff-service:${GITHUB_SHA}
+    restart: on-failure
+    environment:
+      SERVER_PORT: "8085"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+    healthcheck:
+      test: curl --fail http://localhost:8085/actuator/health
+      interval: 10s
+      timeout: 10s
+      retries: 6 # a quick service
+    ports:
+      - "8085:8085"
+
   #######################
   # SUPPORTING SERVICES #
   #######################
