@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service;
+package uk.ac.ox.ndph.mts.saj_service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * The main class of this service.
  */
 @SpringBootApplication(scanBasePackages = {"uk.ac.ox.ndph.mts"})
-public class SampleServiceApplication {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SampleServiceApplication.class);
+public class SajServiceApplication {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SajServiceApplication.class);
 
     /**
      * The entry point for this class.
@@ -19,7 +19,7 @@ public class SampleServiceApplication {
     public static void main(String[] args) {
 
         LOGGER.info("Starting sample service app...");
-        SpringApplication.run(SampleServiceApplication.class, args);
+        SpringApplication.run(SajServiceApplication.class, args);
 
     }
 

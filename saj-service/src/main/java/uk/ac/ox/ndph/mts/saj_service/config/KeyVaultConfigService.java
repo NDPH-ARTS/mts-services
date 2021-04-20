@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service.config;
+package uk.ac.ox.ndph.mts.saj_service.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,7 @@
 # other settings should be in application config
 spring:
   application:
-    name: sample-service
+    name: saj-service
   cloud:
     config:
       discovery:

@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service.exception;
+package uk.ac.ox.ndph.mts.saj_service.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

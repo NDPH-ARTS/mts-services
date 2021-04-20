@@ -1,4 +1,4 @@
 /**
  * The controllers package of this application
  */
-package uk.ac.ox.ndph.mts.sample_service.controller;
+package uk.ac.ox.ndph.mts.saj_service.controller;

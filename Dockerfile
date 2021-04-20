@@ -28,6 +28,7 @@ COPY ./config-server/pom.xml ./config-server/
 COPY ./discovery-server/pom.xml ./discovery-server/
 COPY ./gateway-server/pom.xml ./gateway-server/
 COPY ./sample-service/pom.xml ./sample-service/
+COPY ./saj-service/pom.xml ./saj-service/
 COPY ./init-service/pom.xml ./init-service/
 COPY ./practitioner-service/pom.xml ./practitioner-service/
 COPY ./practitioner-service-client/pom.xml ./practitioner-service-client/
@@ -35,7 +36,7 @@ COPY ./role-service/pom.xml ./role-service/
 COPY ./role-service-client/pom.xml ./role-service-client/
 COPY ./site-service/pom.xml ./site-service/
 COPY ./site-service-client/pom.xml ./site-service-client/
-COPY ./saj-service/pom.xml ./saj-service/
+
 
 FROM builder as deps-cache-project
 ARG SVC

@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service.config;
+package uk.ac.ox.ndph.mts.saj_service.config;
 
 /**
  * An interface to allow access to secrets.

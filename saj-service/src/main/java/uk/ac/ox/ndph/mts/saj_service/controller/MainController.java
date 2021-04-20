@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.sample_service.controller;
+package uk.ac.ox.ndph.mts.saj_service.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
