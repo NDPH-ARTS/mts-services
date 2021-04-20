@@ -14,7 +14,7 @@ let countrySiteId;
 
 describe('As a user I want to configure a trial site ‘type’ to have a custom string field So that when my trial users create trial sites using this ‘type’ they are able to enter the information they require to support their trial', function () {
 
-    it.only('As a user I can add a region to the root of CCO without extensions configured', async () => {
+    it('As a user I can add a region to the root of CCO without extensions configured', async () => {
         const headers = await utils.getHeadersWithAuth()
         let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
             headers: headers,
@@ -34,7 +34,7 @@ describe('As a user I want to configure a trial site ‘type’ to have a custom
         regionParentSiteId = regionResponse.id
     });
 
-    it.only('As a user I can configure a custom string field calling it Extensions to a country by giving the field a name, display name', async () => {
+    it('As a user I can configure a custom string field calling it Extensions to a country by giving the field a name, display name', async () => {
         let regionParentId = requests.countryWithExt;
         regionParentId.parentSiteId = regionParentSiteId
         const headers2 = await utils.getHeadersWithAuth()
@@ -48,7 +48,7 @@ describe('As a user I want to configure a trial site ‘type’ to have a custom
         countrySiteId = countryResponse.id
     });
 
-    it.only('As a user I can configure a custom string field calling it Extensions to a LCC by giving the field a name, display name', async () => {
+    it('As a user I can configure a custom string field calling it Extensions to a LCC by giving the field a name, display name', async () => {
         let countryParentId = requests.lccWithExt;
         countryParentId.parentSiteId = countrySiteId
         const headers3 = await utils.getHeadersWithAuth()
