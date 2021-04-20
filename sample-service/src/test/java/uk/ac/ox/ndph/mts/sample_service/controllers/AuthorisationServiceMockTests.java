@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.saj_service.controllers;
+package uk.ac.ox.ndph.mts.sample_service.controllers;
 
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
