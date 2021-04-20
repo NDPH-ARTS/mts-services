@@ -1,6 +1,5 @@
 package uk.ac.ox.ndph.mts.saj_service.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import uk.ac.ox.ndph.mts.sample_service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,29 +27,7 @@ public class MainController {
         this.myConfig = configService;
     }
 
-    /**
-     * The endpoint to get the secret.
-     *
-     * @return the secret as a string.
-     */
-//    @PreAuthorize("@authorisationService.authorise('stubPermission')") //NOSONAR
-//    @GetMapping("/getsecret")
-//    public String getsecret() {
-//        return this.myConfig.getSecret();
-//    }
-
-    /**
-     * An additional endpoint.
-     *
-     * @return a message as a string.
-     */
-//    @PreAuthorize("@authorisationService.authorise('stubPermission')") //NOSONAR
-//    @GetMapping("/hello")
-//    public String hello() {
-//        return message;
-//    }
-
-    @GetMapping("/gethello")
+    @GetMapping("/hello")
     public String getHello() {
         return "Hello";
     }
