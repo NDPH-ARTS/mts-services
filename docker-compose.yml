@@ -102,6 +102,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      ROLE_SERVICE_URI: "http://role-service:8082"
     healthcheck:
       test: curl --fail http://localhost:8084/actuator/health
       interval: 10s

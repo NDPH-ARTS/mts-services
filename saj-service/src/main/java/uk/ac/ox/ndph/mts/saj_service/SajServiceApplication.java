@@ -18,7 +18,7 @@ public class SajServiceApplication {
      */
     public static void main(String[] args) {
 
-        LOGGER.info("Starting sample service app...");
+        LOGGER.info("Starting saj service app...");
         SpringApplication.run(SajServiceApplication.class, args);
 
     }
