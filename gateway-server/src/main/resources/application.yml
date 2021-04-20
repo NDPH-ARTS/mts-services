@@ -13,6 +13,12 @@ spring:
           # Option to lower case serviceId in predicates and filters, defaults to false. Useful with eureka when it automatically uppercases serviceId. so MYSERIVCE, would match /myservice/**
           lower-case-service-id: true
       routes:
+        - id: handoff-service
+          uri: 'lb://handoff-service'
+          predicates:
+            - Path=/api/handoff/**
+          filters:
+            - StripPrefix=2
         - id: practitioner-service
           uri: 'lb://practitioner-service'
           predicates:

@@ -2,6 +2,12 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: handoff-service
+          uri: 'http://handoff-service:8085'
+          predicates:
+            - Path=/api/handoff/**
+          filters:
+            - StripPrefix=2
         - id: practitioner-service
           uri: 'http://practitioner-service:8081'
           predicates:
