@@ -5,9 +5,9 @@ const { expect } = require('chai');
 const helloEndpointUri = '/api/hello'
 
 
-describe('Test new endpoint', function () {
+describe('Test hello endpoint', function () {
 
-    it('Is authenticated ', async () => {
+    it('Get Hello ', async () => {
 
         //post a request to practitioner end point to create first Practitioner
         const headers = await utils.getBootStrapUserHeadersWithAuth()

@@ -87,6 +87,29 @@ services:
     ports:
       - "8083:8083"
 
+  saj-service:
+    build:
+      context: .
+      args:
+        SVC: saj-service
+    image: ghcr.io/ndph-arts/saj-service:${GITHUB_SHA}
+    restart: on-failure
+    environment:
+      SERVER_PORT: "8085"
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
+      FHIR_URI: "http://fhir-api:8099"
+      SPRING_CLOUD_CONFIG_LABEL: "main"
+      SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+    healthcheck:
+      test: curl --fail http://localhost:8084/actuator/health
+      interval: 10s
+      timeout: 10s
+      retries: 6 # a quick service
+    ports:
+      - "8084:8084"
+
   #######################
   # SUPPORTING SERVICES #
   #######################
