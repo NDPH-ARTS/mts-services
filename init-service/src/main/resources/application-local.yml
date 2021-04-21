@@ -85,11 +85,13 @@ mts:
           - id: create-site
           - id: view-site
           - id: link-user
+          - id: saj-hello
       - id: admin
         permissions:
           - id: create-person
           - id: view-person
           - id: view-site
+          - id: saj-hello
       - id: country-admin
         permissions:
           - id: create-person

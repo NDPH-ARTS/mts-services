@@ -20,6 +20,12 @@ spring:
             - Path=/api/roles/**
           filters:
             - StripPrefix=1
+        - id: saj-service
+            uri: 'http://saj-service:8085'
+            predicates:
+              - Path=/api/saj/**
+            filters:
+              - StripPrefix=2
       globalcors:
         corsConfigurations:
           '[/**]':
