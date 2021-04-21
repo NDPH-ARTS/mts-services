@@ -32,6 +32,6 @@ class MainControllerTests {
         // Act + Assert
         this.mockMvc.perform(get("/hello"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isForbidden());
     }
 }
