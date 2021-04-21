@@ -38,12 +38,27 @@ const lccWithExt = {
         "city": "Oxford",
         "country": "",
         "postcode": "OX3 7LF",
+    },
+    "extensions": {
+        "hasParticipants": "Yes",
+        "recruitentMethod": "Post"
     }
+}
 
+const invalidExt = {
+    "name": utils.getRandomString(4),
+    "alias": utils.getRandomString(4),
+    "parentSiteId": "",
+    "siteType": "COUNTRY",
+    "address": null,
+    "extensions": {
+        "invalidString": "UK"
+    }
 }
 
 module.exports = {
     regionWithExt,
     countryWithExt,
-    lccWithExt
+    lccWithExt,
+    invalidExt
 }

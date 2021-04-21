@@ -59,4 +59,18 @@ describe('As a user I want to configure a trial site ‘type’ to have a custom
         })
         expect(fetchResponse3.status).to.equal(HttpStatus.CREATED)
     });
+
+    it('User cannot create a COUNTRY with non configured custom strings, either header or the child name attributes', async () => {
+        let regionParentId = requests.invalidExt;
+        regionParentId.parentSiteId = regionParentSiteId
+        const headers4 = await utils.getHeadersWithAuth()
+        let fetchResponse4 = await fetch(conf.baseUrl + endpointUri, {
+            headers: headers4,
+            method: 'POST',
+            body: JSON.stringify(regionParentId),
+        })
+        let invalidresponse = await fetchResponse4.json();
+        expect(fetchResponse4.status).to.equal(HttpStatus.UNPROCESSABLE_ENTITY)
+        expect(invalidresponse.message).to.eql('argument misconfigured extensions failed validation')
+    });
 });
