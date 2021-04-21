@@ -34,7 +34,7 @@ while ! is_healthy discovery-server; do sleep 10; done
 while ! is_healthy config-server; do sleep 10; done
 while ! is_healthy gateway-server; do sleep 10; done
 
-docker-compose up --no-build -d practitioner-service site-service role-service
+docker-compose up --no-build -d practitioner-service site-service role-service saj-service
 
 sleep 10
 
