@@ -31,6 +31,12 @@ spring:
             - Path=/api/roles/**
           filters:
             - StripPrefix=1
+        - id: hack-service
+          uri: 'lb://hack-service'
+          predicates:
+            - Path=/api/hack/**
+          filters:
+            - StripPrefix=2
       globalcors:
         corsConfigurations:
           '[/**]':
