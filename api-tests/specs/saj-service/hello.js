@@ -2,7 +2,7 @@ const conf = require('../../config/conf')
 const utils = require('../../common/utils')
 const fetch = require("node-fetch");
 const { expect } = require('chai');
-const helloEndpointUri = '/api/hello'
+const endpointUri = '/api/saj/hello';
 
 
 describe('Test hello endpoint', function () {
