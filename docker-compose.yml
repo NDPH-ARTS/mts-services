@@ -104,12 +104,12 @@ services:
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
       ROLE_SERVICE_URI: "http://role-service:8082"
     healthcheck:
-      test: curl --fail http://localhost:8084/actuator/health
+      test: curl --fail http://localhost:8085/actuator/health
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
     ports:
-      - "8084:8084"
+      - "8085:8085"
 
   #######################
   # SUPPORTING SERVICES #
