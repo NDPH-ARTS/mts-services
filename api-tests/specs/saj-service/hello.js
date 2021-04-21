@@ -9,14 +9,12 @@ describe('Test hello endpoint', function () {
 
     it('Get Hello ', async () => {
 
-        //post a request to practitioner end point to create first Practitioner
-        const headers = await utils.getBootStrapUserHeadersWithAuth()
-        let fetchResponse = await fetch(conf.baseUrl + helloEndpointUri, {
+        const headers = await utils.getHeadersWithAuth()
+        let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
             headers: headers,
             method: 'GET'
         })
-        let response = await fetchResponse.json()
-        expect(response.status).to.equal(HttpStatus.OK)
+        expect(fetchResponse.status).to.equal(HttpStatus.OK);
 
     });
 });
