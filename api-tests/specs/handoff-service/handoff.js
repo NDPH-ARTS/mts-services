@@ -13,8 +13,10 @@ const endpointUri = '/api/handoff/hello';
 describe('Hello test', function () {
 
     it('Hello test', async () => {
+        const headers = await utils.getHeadersWithAuth()
         let fetchResponse = await fetch(conf.baseUrl + endpointUri, {
-            method: 'GET',
+            headers: headers,
+            method: 'GET'
         })
         expect(fetchResponse.status).to.equal(HttpStatus.OK);
     });
