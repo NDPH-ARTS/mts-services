@@ -53,10 +53,8 @@ services:
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
       ROLE_SERVICE_URI: "http://role-service:8082"
     depends_on:
-        config-server:
-          condition: service_healthy
-        sql:
-          condition: service_healthy
+      - config-server
+      - sql
     healthcheck:
       test: curl --fail http://localhost:8082/actuator/health
       interval: 10s
@@ -115,7 +113,7 @@ services:
       AZURE_CLIENT_ID: ${INIT_AZURE_CLIENT_ID}
       AZURE_CLIENT_SECRET: ${INIT_AZURE_CLIENT_SECRET}
       AZURE_TENANT_ID: ${INIT_AZURE_TENANT_ID}
-      LOGGING_LEVEL_ROOT: DEBUG # always debug
+      LOGGING_LEVEL_ROOT: : # always debug
     depends_on:
       - practitioner-service
       - role-service
@@ -223,6 +221,6 @@ services:
       test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd","-U sa -P ${SAPASSWORD} -Q 'SELECT * FROM INFORMATION_SCHEMA.TABLES'" ]
       interval: 10s
       timeout: 10s
-      retries: 10
+      retries: 6
     ports:
       - "1433:1433"
