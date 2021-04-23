@@ -51,6 +51,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
     depends_on:
       - config-server
       - sql
@@ -79,6 +80,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
     healthcheck:
       test: curl --fail http://localhost:8083/actuator/health
       interval: 10s
