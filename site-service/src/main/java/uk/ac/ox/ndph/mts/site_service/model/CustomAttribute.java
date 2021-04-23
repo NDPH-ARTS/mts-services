@@ -5,7 +5,8 @@ import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
 import java.util.function.Function;
 
 /**
- * The known Custom Site attributes. These are the static attributes, so configuration for them is required to be present.
+ * The known Custom Site attributes. These are the static attributes,
+ * so configuration for them is required to be present.
  */
 public enum CustomAttribute {
 
