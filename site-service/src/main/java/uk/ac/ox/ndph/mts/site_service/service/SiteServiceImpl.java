@@ -68,6 +68,8 @@ public class SiteServiceImpl implements SiteService {
     public String save(final Site site) {
         var validationCoreAttributesResponse = entityValidation.validateCoreAttributes(site);
         var validationCustomAttributesResponse = entityValidation.validateCustomAttributes(site);
+        var validationExtAttributesResponse = entityValidation.validateExtAttributes(site);
+
 
         String siteTypeForSite = StringUtils.defaultString(site.getSiteType());
         if (!validationCoreAttributesResponse.isValid()) {
@@ -76,6 +78,10 @@ public class SiteServiceImpl implements SiteService {
 
         if (!validationCustomAttributesResponse.isValid()) {
             throw new ValidationException(validationCustomAttributesResponse.getErrorMessage());
+        }
+
+        if (!validationExtAttributesResponse.isValid()) {
+            throw new ValidationException(validationExtAttributesResponse.getErrorMessage());
         }
 
         if (siteStore.existsByName(site.getName())) {
