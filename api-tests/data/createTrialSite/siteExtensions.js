@@ -41,7 +41,7 @@ const lccWithExt = {
     },
     "extensions": {
         "hasParticipants": "Yes",
-        "recruitentMethod": "Post"
+        "recruitmentMethod": "Post"
     }
 }
 
