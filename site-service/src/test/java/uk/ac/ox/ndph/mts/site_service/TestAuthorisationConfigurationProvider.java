@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @Profile("no-authZ")
 @Configuration
@@ -20,6 +22,7 @@ public class TestAuthorisationConfigurationProvider {
         Mockito.when(mockService.authorise(anyString())).thenReturn(true);
         Mockito.when(mockService.authorise(anyString(), anyString())).thenReturn(true);
         Mockito.when(mockService.authorise(anyString(), anyList())).thenReturn(true);
+        Mockito.when(mockService.authoriseSites(anyString())).thenReturn(true);
         Mockito.when(mockService.filterUserSites(anyList(), any())).thenReturn(true);
         return mockService;
     }

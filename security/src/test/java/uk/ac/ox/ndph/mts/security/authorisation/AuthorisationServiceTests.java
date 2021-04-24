@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
@@ -189,7 +191,8 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(eq(Collections.singletonList(roleId)), any(Consumer.class))).thenReturn(roleDtos);
+        Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
+        when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
 
         //Act
         //Assert
@@ -211,7 +214,8 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(eq(Collections.singletonList(roleId)), any(Consumer.class))).thenReturn(roleDtos);
+        Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
+        when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);
@@ -238,7 +242,8 @@ class AuthorisationServiceTests {
 
         List<RoleDTO> roleDtos = Collections.singletonList(getRoleWithPermissions(roleId,
                 "some_permission"));
-        when(roleServiceClient.getRolesByIds(eq(Collections.singletonList(roleId)), any(Consumer.class))).thenReturn(roleDtos);
+        Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
+        when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
 
         var siteDto = new SiteDTO();
         siteDto.setSiteId(authorisedSiteId);

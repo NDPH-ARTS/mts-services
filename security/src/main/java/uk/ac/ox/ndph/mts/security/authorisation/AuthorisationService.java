@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
@@ -12,6 +13,7 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -148,6 +150,51 @@ public class AuthorisationService {
     }
 
     /**
+     * Authorise request with list of sites
+     * @param requiredPermission the required permission
+     * @return true if authorised - has the required permission and is authorised on all sites in entitiesSiteIds
+     */
+    public boolean authoriseSites(String requiredPermission)  {
+
+
+        try {
+            //Get the user's object id
+            String userId = securityContextUtil.getUserId();
+            String tokenString = securityContextUtil.getToken();
+            Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
+
+            LOGGER.debug("userId Is - {}", userId);
+            LOGGER.debug("managed identity is - {}", managedIdentity);
+
+            //Managed Service Identities represent a call from a service and is
+            //therefore authorized.
+            if (securityContextUtil.isInIdentityProviderRole()) {
+                return true;
+            }
+
+            //get practitioner role assignment
+            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+
+            if (roleAssignments == null || roleAssignments.isEmpty()) {
+                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
+                return false;
+            }
+
+            var rolesAssignmentsWithPermission = getRolesAssignmentsWithPermission(requiredPermission, roleAssignments);
+
+            if (rolesAssignmentsWithPermission.isEmpty()) {
+                return false;
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
+            return false;
+        }
+    }
+
+    /**
      * Authorise user to retrieve data only for itself
      * @param userIdentityParam the user identity parameter
      * @return true if userIdentityParam equals to the requesting user
@@ -234,8 +281,11 @@ public class AuthorisationService {
 
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
-        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds,
-                RoleServiceClient.bearerAuth(securityContextUtil.getToken())).stream()
+
+        Page<RoleDTO> roleDTOs = roleServiceClient.getPage(0, 500,
+            RoleServiceClient.bearerAuth(securityContextUtil.getToken()));
+
+        Set<String> rolesWithPermission = roleDTOs.stream()
                 .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
                 .map(RoleDTO::getId)
                 .collect(Collectors.toSet());
