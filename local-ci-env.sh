@@ -4,20 +4,25 @@
 # It is for running the CI environment locally i.e. without github
 
 
-GHCR="ghcr.io/ndph-arts"
-
-## BUILD
+declare GHCR="ghcr.io/ndph-arts"
 declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow
 
-for service in "${services[@]}"
-do
-   tag=$GHCR/$service:$GITHUB_SHA
-   echo "docker building $service $tag"
-   docker build --build-arg SVC="$service" -t "$tag" .
+build(){
+  for service in "${services[@]}"
+  do
+    tag=$GHCR/$service:$GITHUB_SHA
+    echo "building $service $tag"
+    docker build --build-arg SVC="$service" -t "$tag" .
+  done
+}
 
-done
+test(){
+  echo "Start services using Docker Compose"
+  .ci/docker/check-docker-compose-services.sh
+}
 
-
+build
+test
 
 
 
