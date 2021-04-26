@@ -24,6 +24,7 @@ public class TestAuthorisationConfigurationProvider {
         Mockito.when(mockService.authorise(anyString(), anyList())).thenReturn(true);
         Mockito.when(mockService.authoriseSites(anyString())).thenReturn(true);
         Mockito.when(mockService.filterUserSites(anyList(), any())).thenReturn(true);
+        Mockito.when(mockService.filterUserSites(anyList(), any(), any())).thenReturn(true);
         return mockService;
     }
 }

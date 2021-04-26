@@ -37,11 +37,10 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
-    @PreAuthorize("@authorisationService.authoriseSites('view-site')")
-    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), #role)")
+    @PostAuthorize("@authorisationService.filterUserSites(returnObject, #role, 'view-site')")
     @GetMapping
-    public ResponseEntity<List<Site>> getSites(@RequestParam(value = "role", required = false) String role) {
-        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
+    public List<Site> getSites(@RequestParam(value = "role", required = false) String role) {
+        return siteService.findSites();
     }
 
     @GetMapping("/assigned")

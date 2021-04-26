@@ -225,6 +225,91 @@ public class AuthorisationService {
     /**
      * Filter unauthorised sites
      * @param sitesReturnObject all sites returned object
+     * @param userRole filter sites by role
+     * @param accessPermission filter sites by permission
+     * @return true if filtering finished successfully
+     */
+    public boolean filterUserSites(List<?> sitesReturnObject, String userRole, String accessPermission) {
+
+        try {
+            Objects.requireNonNull(sitesReturnObject, "sites can not be null");
+
+            //convert returned sites to siteDTOs
+            List<SiteDTO> sites = sitesReturnObject.stream()
+                .map(siteObject -> {
+                    var siteId =  siteUtil.getSiteIdFromObj(siteObject, "getSiteId");
+                    var parentSiteId =  siteUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
+                    return new SiteDTO(siteId, parentSiteId);
+                }).collect(Collectors.toList());
+
+            //get user info
+            String userId = securityContextUtil.getUserId();
+            String token = securityContextUtil.getToken();
+            Consumer<org.springframework.http.HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(token);
+
+
+            List<RoleAssignmentDTO> roleAssignments =
+                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, authHeaders));
+
+            //return 403 if RAs is empty
+            if (roleAssignments == null || roleAssignments.isEmpty()) {
+                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
+                return false;
+            }
+
+
+            //check if user has site (or child site) assigned
+            Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
+            sitesReturnObject.removeIf(siteObject ->
+                !userSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
+
+            //If we dont have receive a role to filter on return the assigned sites
+            if (userRole == null) {
+                return true;
+            }
+
+            //Remove RAs if they dont match the role
+            roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(userRole));
+
+            //If RAs are empty return 403
+            if (roleAssignments == null || roleAssignments.isEmpty()) {
+                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
+                return false;
+            }
+
+            //Filter sites with filtered RAs that only include the role
+            //check if user has site (or child site) assigned
+            Set<String> roleSites = siteUtil.getUserSites(sites, roleAssignments);
+            sitesReturnObject.removeIf(siteObject ->
+                !roleSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
+
+            //Filter the RAs on the permission - if they are then empty return 403
+            var rolesAssignmentsWithPermission = getRolesAssignmentsWithPermission(accessPermission, roleAssignments);
+            if (rolesAssignmentsWithPermission.isEmpty()) {
+                return false;
+            }
+
+            //Filter sites with filtered RAs that only include the permission
+            //check if user has site (or child site) assigned
+            Set<String> permSites = siteUtil.getUserSites(sites, roleAssignments);
+            sitesReturnObject.removeIf(siteObject ->
+                !permSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
+
+            //If sites are empty return 403
+            if (sitesReturnObject.isEmpty()) {
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
+    /**
+     * Filter unauthorised sites
+     * @param sitesReturnObject all sites returned object
      * @param role filter sites by role
      * @return true if filtering finished successfully
      */
