@@ -38,6 +38,7 @@ public class PractitionerServiceInvoker {
         Consumer<HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(azureTokenService.getToken());
         for (PractitionerDTO practitioner : practitioners) {
             LOGGER.info("Starting to create practitioner(s): {}", practitioner);
+            practitioner.setUserSiteId(siteId);
             String practitionerId = practitionerServiceClient.createEntity(practitioner, authHeaders).getId();
 
             if (practitioner.getRoles() != null) {

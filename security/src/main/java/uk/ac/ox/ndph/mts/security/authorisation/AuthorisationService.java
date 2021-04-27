@@ -119,57 +119,18 @@ public class AuthorisationService {
                 return false;
             }
 
+            //If siteId passed we should check against that
+            if (entitiesSiteIds.size() == 1) {
+                return rolesAssignmentsWithPermission.stream()
+                    .anyMatch(ra -> ra.getSiteId().equals(entitiesSiteIds.get(0)));
+            }
+
             List<SiteDTO> sites = siteServiceClient.getAssignedSites(
                                                     SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
 
             Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
 
             return userSites.containsAll(entitiesSiteIds);
-
-        } catch (Exception e) {
-            LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
-            return false;
-        }
-    }
-
-    /**
-     * Authorise request with list of sites
-     * @param requiredPermission the required permission
-     * @return true if authorised - has the required permission and is authorised on all sites in entitiesSiteIds
-     */
-    public boolean authoriseSites(String requiredPermission)  {
-
-
-        try {
-            //Get the user's object id
-            String userId = securityContextUtil.getUserId();
-            String tokenString = securityContextUtil.getToken();
-            Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
-
-            LOGGER.debug("userId Is - {}", userId);
-            LOGGER.debug("managed identity is - {}", managedIdentity);
-
-            //Managed Service Identities represent a call from a service and is
-            //therefore authorized.
-            if (securityContextUtil.isInIdentityProviderRole()) {
-                return true;
-            }
-
-            //get practitioner role assignment
-            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
-
-            if (roleAssignments == null || roleAssignments.isEmpty()) {
-                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
-                return false;
-            }
-
-            var rolesAssignmentsWithPermission = getRolesAssignmentsWithPermission(requiredPermission, roleAssignments);
-
-            if (rolesAssignmentsWithPermission.isEmpty()) {
-                return false;
-            }
-
-            return true;
 
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
