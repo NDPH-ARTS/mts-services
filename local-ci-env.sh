@@ -1,35 +1,62 @@
 #!/usr/bin/env bash
 
 # This is a scripted version of the github pipeline docker-build-push.yml build, init and test actions.
-# It is for running the CI environment locally i.e. without github
-
-
-declare GHCR="ghcr.io/ndph-arts"
-declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow
-
+# You need to set these env variables: GITHUB_SHA, SAPASSWORD, INIT_SERVICE_SECRET, AUTOMATION_USER_PASSWORD, BOOTSTRAP_USER_PASSWORD, QA_WITH_CREATE_USER_PASSWORD
 
 build(){
+  declare GHCR="ghcr.io/ndph-arts"
+  declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow
   for service in "${services[@]}"
   do
     tag=$GHCR/$service:$GITHUB_SHA
     echo "Build $service $tag"
-    #docker build --build-arg SVC="$service" -t "$tag" .
+    docker build --build-arg SVC="$service" -t "$tag" .
   done
 }
 
-test(){
+start_services(){
+    export PROFILE="dev"
+    export SAPASSWORD="$SAPASSWORD"
+    export GITHUB_SHA="$GITHUB_SHA"
+    export MTS_AZURE_APP_CLIENT_ID="fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290"
+    #export AZURE_CLIENT_ID="a2171b8b-4e97-4523-933a-dc18ef7ef1fe"
+    # export AZURE_CLIENT_SECRET="$CI_CLIENT_SECRET"
+    echo "Start services"
+    .ci/docker/check-docker-compose-services.sh
+}
 
-  export PROFILE="dev"
+run_init(){
 
-  echo "Start services"
-  .ci/docker/check-docker-compose-services.sh
+    export INIT_AZURE_CLIENT_ID="14fa4ff6-9396-40aa-afdf-09eb1f4e6292"
+    export INIT_AZURE_CLIENT_SECRET="$INIT_SERVICE_SECRET"
+    export INIT_AZURE_TENANT_ID= "99804659-431f-48fa-84c1-65c9609de05b"
+    echo "Run init"
+    docker-compose run --no-deps init-service
+}
 
-  echo "Run init"
-  docker-compose run --no-deps init-service
+run_api_tests(){
 
-
+  export BASE_URL="http://localhost:8080"
+  export MTS_AZURE_UI_APP_CLIENT_ID="59a2b30f-844b-4a69-b034-19e3d2d4d805"
+  export MTS_AUTHORISATION_BACKEND_SCOPE="api://fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290/default"
+  export AUTOMATION_USER_NAME="test-automation@mtsdevndph.onmicrosoft.com"
+  export AUTOMATION_USER_PASSWORD="$AUTOMATION_USER_PASSWORD"
+  export BOOTSTRAP_USER_NAME="bootstrap@mtsdevndph.onmicrosoft.com"
+  export BOOTSTRAP_USER_PASSWORD="$BOOTSTRAP_USER_PASSWORD"
+  export QAWITHCREATE_USER_NAME="qa.with-create@mtsdevndph.onmicrosoft.com"
+  export QAWITHCREATE_USER_PASSWORD="$QA_WITH_CREATE_USER_PASSWORD"
+  echo "Run API Tests"
+  npm run --prefix api-tests api-test-ci
 
 }
+
+
+test(){
+  start_services
+  run_init
+  run_api_tests
+}
+
 
 build
 test
