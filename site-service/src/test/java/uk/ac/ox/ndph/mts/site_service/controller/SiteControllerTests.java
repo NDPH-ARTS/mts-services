@@ -128,7 +128,7 @@ class SiteControllerTests {
         // arrange
         when(siteService.findSites()).thenReturn(Collections.singletonList(new Site("CCO", "Root")));
         // act
-        /*
+
         final String result = this.mockMvc
                 .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -137,16 +137,6 @@ class SiteControllerTests {
         assertThat(result, stringContainsInOrder("\"alias\":", "\"Root\""));
         assertThat(result, stringContainsInOrder("\"parentSiteId\":", "null"));
 
-        MvcResult result = this.mockMvc
-            .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk()).andReturn();
-
-        String actual = result.getResponse().getContentAsString();
-
-        assertThat(actual, stringContainsInOrder("\"name\":", "\"CCO\""));
-        assertThat(actual, stringContainsInOrder("\"alias\":", "\"Root\""));
-        assertThat(actual, stringContainsInOrder("\"parentSiteId\":", "null"));
-    */
     }
 
     @WithMockUser

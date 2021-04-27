@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -346,7 +347,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null, null);
 
         //Assert
         assertAll(
@@ -379,7 +380,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(roleAssignments);
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null, null);
 
         //Assert
         assertAll(
@@ -399,6 +400,7 @@ class AuthorisationServiceTests {
         var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
         var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
         var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+        final String permission = "view-site";
 
         List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
 
@@ -409,6 +411,16 @@ class AuthorisationServiceTests {
 
         RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
 
+        PermissionDTO permissionDTO = new PermissionDTO();
+        permissionDTO.setId(permission);
+        PermissionDTO[] permissions = {permissionDTO};
+
+        RoleDTO roleDTO1 = new RoleDTO();
+        roleDTO1.setPermissions(Arrays.asList(permissions));
+        roleDTO1.setId("admin");
+
+        RoleDTO[] roleDTOs = {roleDTO1};
+
         String userId = "123";
         String tokenString = "token";
         Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
@@ -416,9 +428,9 @@ class AuthorisationServiceTests {
         when(securityContextUtil.getToken()).thenReturn(tokenString);
 
         when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(Arrays.asList(roleAssignments));
-
+        when(roleServiceClient.getPage(anyInt(), anyInt(), any(Consumer.class))).thenReturn(new PageImpl(Arrays.asList(roleDTOs)));
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, "admin");
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, "admin", permission);
 
         //Assert
         assertAll(
@@ -451,7 +463,7 @@ class AuthorisationServiceTests {
         when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Lists.emptyList());
 
         //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, null);
+        var authResponse = authorisationService.filterUserSites(sitesToFilter, null, null);
 
         //Assert
         assertFalse(authResponse);
