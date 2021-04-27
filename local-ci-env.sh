@@ -16,9 +16,14 @@ build(){
 
 start_services(){
     export PROFILE="dev"
+    #declare dbpassword="$(openssl rand -base64 12)" #No we want to fix this so we can plug in services
     export SAPASSWORD="$SAPASSWORD"
     export GITHUB_SHA="$GITHUB_SHA"
     export MTS_AZURE_APP_CLIENT_ID="fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290"
+    export INIT_AZURE_CLIENT_ID="14fa4ff6-9396-40aa-afdf-09eb1f4e6292"
+    export INIT_AZURE_CLIENT_SECRET="$INIT_SERVICE_SECRET"
+    export INIT_AZURE_TENANT_ID="99804659-431f-48fa-84c1-65c9609de05b"
+    export LOGGING_LEVEL_ROOT="INFO"
     #export AZURE_CLIENT_ID="a2171b8b-4e97-4523-933a-dc18ef7ef1fe"
     # export AZURE_CLIENT_SECRET="$CI_CLIENT_SECRET"
     echo "Start services"
@@ -26,10 +31,6 @@ start_services(){
 }
 
 run_init(){
-
-    export INIT_AZURE_CLIENT_ID="14fa4ff6-9396-40aa-afdf-09eb1f4e6292"
-    export INIT_AZURE_CLIENT_SECRET="$INIT_SERVICE_SECRET"
-    export INIT_AZURE_TENANT_ID= "99804659-431f-48fa-84c1-65c9609de05b"
     echo "Run init"
     docker-compose run --no-deps init-service
 }
@@ -46,7 +47,7 @@ run_api_tests(){
   export QAWITHCREATE_USER_NAME="qa.with-create@mtsdevndph.onmicrosoft.com"
   export QAWITHCREATE_USER_PASSWORD="$QA_WITH_CREATE_USER_PASSWORD"
   echo "Run API Tests"
-  npm run --prefix api-tests api-test-ci
+  npm run --prefix api-tests api-test-ci --force
 
 }
 
@@ -60,6 +61,8 @@ test(){
 
 build
 test
+
+
 
 
 

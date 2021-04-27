@@ -113,7 +113,7 @@ services:
       AZURE_CLIENT_ID: ${INIT_AZURE_CLIENT_ID}
       AZURE_CLIENT_SECRET: ${INIT_AZURE_CLIENT_SECRET}
       AZURE_TENANT_ID: ${INIT_AZURE_TENANT_ID}
-      LOGGING_LEVEL_ROOT: DEBUG # always debug
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT} # always debug
     depends_on:
       - practitioner-service
       - role-service
