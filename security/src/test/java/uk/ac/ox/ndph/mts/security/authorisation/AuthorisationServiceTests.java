@@ -30,7 +30,6 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -250,12 +249,10 @@ class AuthorisationServiceTests {
         siteDto.setSiteId(authorisedSiteId);
         when(siteServiceClient.getAssignedSites(any(Consumer.class))).thenReturn(Collections.singletonList(siteDto));
 
-        List<Object> entitiesList = Collections.singletonList(new TestEntityObject("siteId"));
-        String getSiteIdMethodName = "getSiteId";
 
         //Act
         //Assert
-        assertTrue(authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
+        assertTrue(authorisationService.authorise("some_permission", Arrays.asList("siteId")));
     }
 
     @Test
@@ -280,24 +277,9 @@ class AuthorisationServiceTests {
         siteDto.setSiteId(authorisedSiteId);
         when(siteServiceClient.getAllSites(SiteServiceClient.bearerAuth(securityContextUtil.getToken()))).thenReturn(Collections.singletonList(siteDto));
 
-        List<Object> entitiesList = List.of(new TestEntityObject("siteId"),
-                new TestEntityObject("unauthorisedSiteId"));
-        String getSiteIdMethodName = "getSiteId";
-
         //Act
         //Assert
-        assertFalse(authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
-    }
-
-    @Test
-    void TestAuthorise_WithListOfEntitiesObjectsAndInvalidMethod_ThrowsException() {
-        //Arrange
-        List<Object> entitiesList = Collections.singletonList(new TestEntityObject("siteId"));
-        String getSiteIdMethodName = "nonExistingMethod";
-
-        //Act
-        //Assert
-        assertThrows(AuthorisationException.class, () -> authorisationService.authorise("some_permission", entitiesList, getSiteIdMethodName));
+        assertFalse(authorisationService.authorise("some_permission", Arrays.asList("siteId")));
     }
 
     @Test

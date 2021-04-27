@@ -54,23 +54,6 @@ public class AuthorisationService {
     }
 
     /**
-     * Authorise request with list of entities
-     * @param requiredPermission the required permission
-     * @param requestEntities list of entities in request body
-     * @param methodName String representing the method name to retrieve site on each entity in the request
-     * @return true if authorised - has the required permission and is authorised on all sites in requestEntities
-     */
-    public boolean authorise(String requiredPermission, List<?> requestEntities, String methodName) {
-        // Iterate over list of objects and get the site id property using the methodName
-        // The reason we are using reflection is because we should be able to authorise any object in the system
-        // it should have a site id property and should have a method to retrieve it
-        List<String> siteIds = requestEntities.stream()
-                .map(site -> siteUtil.getSiteIdFromObj(site, methodName))
-                .collect(Collectors.toList());
-        return authorise(requiredPermission, siteIds);
-    }
-
-    /**
      * Authorise request with site
      * @param requiredPermission the required permission
      * @param siteId site id the request is performed on
