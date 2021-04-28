@@ -107,7 +107,7 @@ public class AuthorisationService {
                 return false;
             }
 
-            //Check if the permission exists at any ancestors
+            //Check for the permission in role assignments
             var roleAssnmntsWtPerm = getRoleAssmntsWtPerm(requiredPerm, roleAssnmnts);
             if (roleAssnmntsWtPerm.isEmpty()) {
                 return false;
@@ -118,6 +118,12 @@ public class AuthorisationService {
                 return true;
             }
 
+            //Check if the permission exists in roleassignments for siteId
+            if (roleAssnmntsWtPerm.stream().anyMatch(ra -> siteIds.get(0).equalsIgnoreCase(ra.getSiteId()))) {
+                return true;
+            }
+
+            //Check if the permission exists at any ancestors
             List<String> parents = siteServClnt.getParentSiteIds(siteIds.get(0), getAuthHeaders());
             return roleAssnmntsWtPerm.stream().anyMatch(ra -> parents.contains(ra.getSiteId()));
 

@@ -217,7 +217,6 @@ class AuthorisationServiceTests {
                 "some_permission"));
         Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
         when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
-        when(siteServiceClient.getParentSiteIds(any(), any(Consumer.class))).thenReturn(Collections.singletonList(authorisedSiteId));
 
         //Act
         //Assert
@@ -242,7 +241,6 @@ class AuthorisationServiceTests {
                 "some_permission"));
         Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
         when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
-        when(siteServiceClient.getParentSiteIds(any(), any(Consumer.class))).thenReturn(Collections.singletonList(authorisedSiteId));
         //Act
         //Assert
         assertTrue(authorisationService.authorise("some_permission", Arrays.asList("siteId")));
