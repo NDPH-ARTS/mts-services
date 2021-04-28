@@ -279,7 +279,6 @@ class AuthorisationServiceTests {
         String userId = "123";
         String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(token);
 
         List<String> siteIdsOneNull = Collections.singletonList(null);
         assertFalse(authorisationService.authorise("some_permission", siteIdsOneNull));
@@ -294,7 +293,6 @@ class AuthorisationServiceTests {
         String userId = "123";
         String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(token);
 
         List<String> siteIds = null;
         assertFalse(authorisationService.authorise("some_permission", siteIds));
@@ -451,7 +449,7 @@ class AuthorisationServiceTests {
 
         //Act
         //Assert
-        assertTrue(authorisationService.authoriseUserRoles(requestingUserId));
+        assertTrue(authorisationService.authUserRoles(requestingUserId));
     }
 
     @Test
@@ -464,7 +462,7 @@ class AuthorisationServiceTests {
 
         //Act
         //Assert
-        assertFalse(authorisationService.authoriseUserRoles(otherUserId));
+        assertFalse(authorisationService.authUserRoles(otherUserId));
     }
 
     @Test
@@ -482,7 +480,7 @@ class AuthorisationServiceTests {
 
         //Act
         //Assert
-        assertTrue(authorisationService.authoriseUserPermissionRoles(Collections.singletonList(roleId)));
+        assertTrue(authorisationService.authUserPermRoles(Collections.singletonList(roleId)));
     }
 
     @Test
@@ -498,7 +496,7 @@ class AuthorisationServiceTests {
 
         //Act
         //Assert
-        assertFalse(authorisationService.authoriseUserPermissionRoles(Collections.singletonList("different-roleId")));
+        assertFalse(authorisationService.authUserPermRoles(Collections.singletonList("different-roleId")));
     }
 
 

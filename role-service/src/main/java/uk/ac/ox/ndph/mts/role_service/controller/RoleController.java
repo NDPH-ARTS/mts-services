@@ -59,7 +59,7 @@ public class RoleController {
     }
 
     @GetMapping(params = "ids")
-    @PreAuthorize("@authorisationService.authoriseUserPermissionRoles(#ids)")
+    @PreAuthorize("@authorisationService.authUserPermRoles(#ids)")
     public Iterable<Role> getByIds(@RequestParam List<String> ids) {
         return roleRepository.findAllById(ids);
     }
