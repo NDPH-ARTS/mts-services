@@ -4,8 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
-import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
