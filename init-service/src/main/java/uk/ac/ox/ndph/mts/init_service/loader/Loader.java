@@ -14,18 +14,12 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
-import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.init_service.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.repository.PractitionerStore;
 import uk.ac.ox.ndph.mts.init_service.repository.RoleRepository;
 import uk.ac.ox.ndph.mts.init_service.repository.SiteStore;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
-import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class Loader implements CommandLineRunner {
@@ -89,7 +83,7 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleServiceInvoker.createRoles(roles);
+            roleRepository.saveAll(roles);
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();
@@ -118,12 +112,12 @@ public class Loader implements CommandLineRunner {
     }
 
 
-    private void createPractitioners(List<Practitioner> practitioners, String siteId) {
+    private void createPractitioners(List<PractitionerDTO> practitioners, String siteId) {
         if (practitioners == null) {
             throw new NullEntityException("No Practitioners in payload");
         }
 
-        for (Practitioner practitioner : practitioners) {
+        for (PractitionerDTO practitioner : practitioners) {
             LOGGER.info("Starting to create practitioner(s): {}", practitioner);
 
             String practitionerId = practitionerStore.save(practitioner);

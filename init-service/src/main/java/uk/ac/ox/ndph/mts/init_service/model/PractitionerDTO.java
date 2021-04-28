@@ -1,4 +1,4 @@
-package uk.ac.ox.ndph.mts.practitionerserviceclient.model;
+package uk.ac.ox.ndph.mts.init_service.model;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.List;
  * Practitioner Model
  */
 public class PractitionerDTO implements Entity {
-
+    private String id;
     private String prefix;
     @NotBlank
     private String givenName;
@@ -15,6 +15,25 @@ public class PractitionerDTO implements Entity {
     private String familyName;
     private List<@NotBlank String> roles;
     private String userAccount;
+
+    public PractitionerDTO(String id, String prefix, String givenName, String familyName, String userAccountId) {
+        this.id = id;
+        this.prefix = prefix;
+        this.givenName = givenName;
+        this.familyName = familyName;
+        userAccount = userAccountId;
+    }
+
+    public PractitionerDTO() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getPrefix() {
         return prefix;

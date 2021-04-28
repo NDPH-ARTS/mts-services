@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.ac.ox.ndph.mts.init_service.converter.EntityConverter;
-import uk.ac.ox.ndph.mts.init_service.model.Practitioner;
+import uk.ac.ox.ndph.mts.init_service.model.PractitionerDTO;
 
 @ExtendWith(MockitoExtension.class)
 class PractitionerStoreTest {
@@ -22,9 +22,9 @@ class PractitionerStoreTest {
     private FhirRepository repository;
 
     @Mock
-    private EntityConverter<Practitioner, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter;
+    private EntityConverter<PractitionerDTO, org.hl7.fhir.r4.model.Practitioner> modelToFhirConverter;
     @Mock
-    private EntityConverter<org.hl7.fhir.r4.model.Practitioner, Practitioner> fhirToModelConverter;
+    private EntityConverter<org.hl7.fhir.r4.model.Practitioner, PractitionerDTO> fhirToModelConverter;
 
     private PractitionerStore practitionerStore;
 
@@ -35,9 +35,9 @@ class PractitionerStoreTest {
 
     @Test
     void testSave_WhenValid_SaveToRepositoryAndReturnGeneratedId() {
-        Practitioner inputPractitioner = new Practitioner(null, "prefix", "givenName", "familyName", "userAccountId");
+        PractitionerDTO inputPractitioner = new PractitionerDTO(null, "prefix", "givenName", "familyName", "userAccountId");
         var outputPractitioner = new org.hl7.fhir.r4.model.Practitioner();
-        when(modelToFhirConverter.convert(any(Practitioner.class))).thenReturn(outputPractitioner);
+        when(modelToFhirConverter.convert(any(PractitionerDTO.class))).thenReturn(outputPractitioner);
         when(repository.savePractitioner(any(org.hl7.fhir.r4.model.Practitioner.class))).thenReturn("123");
 
         var result = practitionerStore.save(inputPractitioner);
