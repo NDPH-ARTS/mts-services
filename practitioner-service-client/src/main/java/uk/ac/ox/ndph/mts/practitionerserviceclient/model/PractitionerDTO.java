@@ -16,6 +16,25 @@ public class PractitionerDTO implements Entity {
     private List<@NotBlank String> roles;
     private String userAccount;
 
+    public Practitioner(String id, String prefix, String givenName, String familyName, String userAccountId) {
+        this.id = id;
+        this.prefix = prefix;
+        this.givenName = givenName;
+        this.familyName = familyName;
+        userAccount = userAccountId;
+    }
+
+    public Practitioner() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getPrefix() {
         return prefix;
     }

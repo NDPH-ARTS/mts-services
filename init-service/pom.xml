@@ -16,8 +16,9 @@
     </description>
     <properties>
         <okhttp.version>4.9.1</okhttp.version>
+        <hapifhir.version>5.3.0</hapifhir.version>
     </properties>
-
+    
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -51,7 +52,31 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+        </dependency> 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-envers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>9.2.0.jre11</version>
+        </dependency>               
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -65,10 +90,11 @@
             <artifactId>azure-identity</artifactId>
             <version>1.2.2</version>
         </dependency>
+
         <dependency>
-            <groupId>uk.ac.ox.ndph.mts</groupId>
-            <artifactId>role-service-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-base</artifactId>
+            <version>${hapifhir.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ox.ndph.mts</groupId>
@@ -80,6 +106,12 @@
             <artifactId>site-service-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
+            <version>${hapifhir.version}</version>
+        </dependency>        
+        
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
