@@ -13,7 +13,7 @@
 
 # Others
 .devcontainer
-.ci
+#.ci
 **/*.md
 api-tests
 gitRepo

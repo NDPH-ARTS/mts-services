@@ -60,7 +60,7 @@ test(){
 
 
 build
-test
+#test
 
 
 

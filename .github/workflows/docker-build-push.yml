@@ -157,6 +157,7 @@ jobs:
           INIT_AZURE_CLIENT_ID: 14fa4ff6-9396-40aa-afdf-09eb1f4e6292
           INIT_AZURE_CLIENT_SECRET: ${{ secrets.INIT_SERVICE_SECRET }}
           INIT_AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
+          LOGGING_LEVEL_ROOT: DEBUG
         run: |
           set -o nounset
           set -o errexit
