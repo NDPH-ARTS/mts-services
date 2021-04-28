@@ -4,7 +4,6 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
-import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
@@ -16,13 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SiteUtilTests {
+class AuthUtilTests {
 
-    private SiteUtil siteUtil;
+    private AuthUtil authUtil;
 
     @BeforeEach
     void setUp()  {
-        this.siteUtil = new SiteUtil();
+        this.authUtil = new AuthUtil();
     }
 
     @Test
@@ -33,7 +32,7 @@ class SiteUtilTests {
 
         //Act
         //Assert
-        assertTrue(siteUtil.getSiteSubTrees(sites).isEmpty());
+        assertTrue(authUtil.getSiteSubTrees(sites).isEmpty());
     }
 
     @Test
@@ -44,7 +43,7 @@ class SiteUtilTests {
         List<SiteDTO> sites = Collections.singletonList(expectedSiteDto);
 
         //Act
-        var actualTree = siteUtil.getSiteSubTrees(sites);
+        var actualTree = authUtil.getSiteSubTrees(sites);
 
         //Assert
         assertAll(
@@ -62,7 +61,7 @@ class SiteUtilTests {
         List<SiteDTO> sites = List.of(parentSiteDto, childSiteDto);
 
         //Act
-        var actualTrees = siteUtil.getSiteSubTrees(sites);
+        var actualTrees = authUtil.getSiteSubTrees(sites);
 
         //Assert
         assertAll(
@@ -88,7 +87,7 @@ class SiteUtilTests {
         List<SiteDTO> sites = List.of(childSiteDto, parentSiteDto, childSiteDto2);
 
         //Act
-        var actualTrees = siteUtil.getSiteSubTrees(sites);
+        var actualTrees = authUtil.getSiteSubTrees(sites);
 
         //Assert
         assertAll(
@@ -114,7 +113,7 @@ class SiteUtilTests {
 
         //Act
         //Assert
-        assertEquals(siteUtil.getSiteIdFromObj(objectWithSite, "getSiteId"), "siteId");
+        assertEquals(authUtil.getSiteIdFromObj(objectWithSite, "getSiteId"), "siteId");
 
     }
 
@@ -125,7 +124,7 @@ class SiteUtilTests {
 
         //Act
         //Assert
-        assertThrows(AuthorisationException.class, () -> siteUtil.getSiteIdFromObj(objectWithSite, "invalidMethodName"));
+        assertThrows(AuthorisationException.class, () -> authUtil.getSiteIdFromObj(objectWithSite, "invalidMethodName"));
 
     }
 
@@ -141,7 +140,7 @@ class SiteUtilTests {
         var roleAssignment= getRoleAssignment("roleId", parentSite.getSiteId());
 
         //Act
-        var actualResult = siteUtil.getUserSites(sites, Collections.singletonList(roleAssignment));
+        var actualResult = authUtil.getUserSites(sites, Collections.singletonList(roleAssignment));
 
         //Assert
         assertAll(
@@ -166,7 +165,7 @@ class SiteUtilTests {
         var roleAssignment= getRoleAssignment("roleId", childSite1.getSiteId());
 
         //Act
-        var actualResult = siteUtil.getUserSites(sites, Collections.singletonList(roleAssignment));
+        var actualResult = authUtil.getUserSites(sites, Collections.singletonList(roleAssignment));
 
         //Assert
         assertAll(

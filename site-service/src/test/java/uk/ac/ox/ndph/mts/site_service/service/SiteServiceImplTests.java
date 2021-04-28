@@ -22,7 +22,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -70,7 +74,7 @@ class SiteServiceImplTests {
                 ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
 
         Site siteWithParent = new Site(name, alias, parent, type);
-        var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
         when(siteStore.findById("parent")).thenReturn(Optional.of(new Site(name, alias, parent, parentType)));
@@ -100,7 +104,7 @@ class SiteServiceImplTests {
                         SITE_CONFIGURATION_LIST);
 
         Site site = new Site(name, alias, parent, siteType);
-        var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
 
@@ -125,7 +129,7 @@ class SiteServiceImplTests {
                 "Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
         Site site = new Site(name, alias);
-        var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(invalid("name"));
         //Act + Assert
         assertThrows(ValidationException.class, () -> siteService.save(site),
@@ -142,7 +146,7 @@ class SiteServiceImplTests {
                 "Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
         Site site = new Site(name, alias);
-        var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(invalid("No Address in payload"));
 
@@ -161,7 +165,7 @@ class SiteServiceImplTests {
 
         final var root = new Site("root-id", "Root", "root", null, "CCO");
         final var site = new Site(null, "name", "alias", root.getSiteId(), "REGION");
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
         when(siteStore.findById(root.getSiteId())).thenReturn(Optional.of(root));
@@ -179,7 +183,7 @@ class SiteServiceImplTests {
                         SITE_CONFIGURATION_LIST);
 
         final var site = new Site(null, "name", "alias", null, "CCO");
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
         when(siteStore.findRoot()).thenReturn(Optional.empty());
@@ -197,7 +201,7 @@ class SiteServiceImplTests {
                 "Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
         final var site = new Site(null, "name", "alias", null, "root");
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
 
@@ -211,11 +215,13 @@ class SiteServiceImplTests {
     @Test
     void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
-        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(null, siteStore, siteValidation),
+        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(null, siteStore, siteValidation, null),
                 "null configuration should throw");
-        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(new SiteConfiguration(), null, siteValidation),
+        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(new SiteConfiguration(), null, siteValidation,
+                null),
                 "null store should throw");
-        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(new SiteConfiguration(), siteStore, null),
+        assertThrows(NullPointerException.class, () -> new SiteServiceImpl(new SiteConfiguration(), siteStore, null,
+                null),
                 "null validation should throw");
     }
 
@@ -225,7 +231,7 @@ class SiteServiceImplTests {
         final var config =
                 new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteStore.findAll()).thenReturn(Collections.emptyList());
         // act + assert
         assertThrows(InvariantException.class, siteService::findSites,
@@ -238,7 +244,7 @@ class SiteServiceImplTests {
         final var config =
                 new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         final var site = new Site("CCO", "Root", null);
         when(siteStore.findAll()).thenReturn(Collections.singletonList(site));
         // act
@@ -260,7 +266,7 @@ class SiteServiceImplTests {
         final var config =
                 new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         final var site = new Site("my-site-id", "CCO", "Root", null, "CCO");
         when(siteStore.findById(site.getSiteId())).thenReturn(Optional.of(site));
         // act
@@ -276,7 +282,7 @@ class SiteServiceImplTests {
         final var config =
                 new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteStore.findById(anyString())).thenReturn(Optional.empty());
         // act and assert
         assertThrows(ResponseStatusException.class, () -> siteService.findSiteById("the-id"));
@@ -288,7 +294,7 @@ class SiteServiceImplTests {
         final var config =
                 new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         final var root = new Site("my-root-id", "CCO", "Root", null, "CCO");
         when(siteStore.findRoot()).thenReturn(Optional.of(root));
         // act
@@ -304,7 +310,7 @@ class SiteServiceImplTests {
         final var config =
                 new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null);
 
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteStore.findRoot()).thenReturn(Optional.empty());
         // act and assert
         assertThrows(ResponseStatusException.class, siteService::findRootSite);
@@ -323,7 +329,7 @@ class SiteServiceImplTests {
                         SITE_CONFIGURATION_LIST);
 
         Site site = new Site(name, alias, parent, type);
-        var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
 
@@ -347,7 +353,7 @@ class SiteServiceImplTests {
                         SITE_CONFIGURATION_LIST);
 
         Site site = new Site(name, alias, parent, type);
-        var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
         when(siteStore.findById("parent")).thenReturn(Optional.of(new Site(name, alias, parent, parentType)));
@@ -364,7 +370,7 @@ class SiteServiceImplTests {
                         SITE_CONFIGURATION_LIST);
 
         final var site = new Site(null, "name", "alias", null, "root");
-        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null);
         when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
         when(siteStore.findRoot()).thenReturn(Optional.empty());
@@ -387,7 +393,7 @@ class SiteServiceImplTests {
         when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
         final var testSiteStore = new TestSiteStore();
         //Act + Assert
-        final var siteService = new SiteServiceImpl(config, testSiteStore, siteValidation);
+        final var siteService = new SiteServiceImpl(config, testSiteStore, siteValidation, null);
         final String rootId = siteService.save(new Site("root", "root", null, "CCO"));
         final var site = new Site(name, alias, rootId, "RCC");
         final var site2 = new Site(name.toUpperCase(), alias + 'x', rootId, "RCC");

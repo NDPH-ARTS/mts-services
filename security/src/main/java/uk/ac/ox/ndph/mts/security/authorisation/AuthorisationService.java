@@ -31,7 +31,7 @@ public class AuthorisationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
     private final SecurityContextUtil securityUtil;
-    private final SiteUtil siteUtil;
+    private final AuthUtil authUtil;
 
     private final PractitionerServiceClient practServClnt;
     private final RoleServiceClient roleServClnt;
@@ -42,12 +42,12 @@ public class AuthorisationService {
 
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityUtil,
-                                final SiteUtil siteUtil,
+                                final AuthUtil authUtil,
                                 final PractitionerServiceClient practServClnt,
                                 final RoleServiceClient roleServClnt,
                                 final SiteServiceClient siteServiceClient) {
         this.securityUtil = securityUtil;
-        this.siteUtil = siteUtil;
+        this.authUtil = authUtil;
         this.practServClnt = practServClnt;
         this.roleServClnt = roleServClnt;
         this.siteServClnt = siteServiceClient;
@@ -107,20 +107,19 @@ public class AuthorisationService {
                 return false;
             }
 
+            //Check if the permission exists at any ancestors
             var roleAssnmntsWtPerm = getRoleAssmntsWtPerm(requiredPerm, roleAssnmnts);
             if (roleAssnmntsWtPerm.isEmpty()) {
                 return false;
             }
 
-            //If siteId passed we should check against that
-            if (siteIds.size() == 1) {
-                return roleAssnmntsWtPerm.stream().anyMatch(ra -> ra.getSiteId().equals(siteIds.get(0)));
+            //If we have required permission at a role and no site given to check against we can return true
+            if (siteIds.isEmpty()) {
+                return true;
             }
 
-            List<SiteDTO> sites = siteServClnt.getAssignedSites(SiteServiceClient.bearerAuth(securityUtil.getToken()));
-            Set<String> userSites = siteUtil.getUserSites(sites, roleAssnmntsWtPerm);
-
-            return userSites.containsAll(siteIds);
+            List<String> parents = siteServClnt.getParentSiteIds(siteIds.get(0), getAuthHeaders());
+            return roleAssnmntsWtPerm.stream().anyMatch(ra -> parents.contains(ra.getSiteId()));
 
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
@@ -217,8 +216,8 @@ public class AuthorisationService {
     private List<SiteDTO> convertSiteToDTO(List<?> sitesReturnObject) {
         return sitesReturnObject.stream()
             .map(siteObject -> {
-                var siteId =  siteUtil.getSiteIdFromObj(siteObject, "getSiteId");
-                var parentSiteId =  siteUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
+                var siteId =  authUtil.getSiteIdFromObj(siteObject, "getSiteId");
+                var parentSiteId =  authUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
                 return new SiteDTO(siteId, parentSiteId);
             }).collect(Collectors.toList());
     }
@@ -226,8 +225,8 @@ public class AuthorisationService {
 
     private void removeUnassignedSites(List<RoleAssignmentDTO> roleAssignments, List<?> sitesReturnObject) {
         sitesReturnObject.removeIf(siteObject ->
-                !siteUtil.getUserSites(convertSiteToDTO(sitesReturnObject), roleAssignments)
-                .contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
+                !authUtil.getUserSites(convertSiteToDTO(sitesReturnObject), roleAssignments)
+                .contains(authUtil.getSiteIdFromObj(siteObject, "getSiteId")));
     }
 
     /**

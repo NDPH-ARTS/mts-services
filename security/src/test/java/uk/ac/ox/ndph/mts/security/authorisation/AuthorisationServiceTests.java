@@ -58,7 +58,7 @@ class AuthorisationServiceTests {
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
-                new SiteUtil(),
+                new AuthUtil(),
                 practitionerServiceClient,
                 roleServiceClient,
                 siteServiceClient);
@@ -194,6 +194,7 @@ class AuthorisationServiceTests {
         Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
         when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
 
+
         //Act
         //Assert
         assertTrue(authorisationService.authorise("some_permission"));
@@ -216,6 +217,7 @@ class AuthorisationServiceTests {
                 "some_permission"));
         Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
         when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
+        when(siteServiceClient.getParentSiteIds(any(), any(Consumer.class))).thenReturn(Collections.singletonList(authorisedSiteId));
 
         //Act
         //Assert
@@ -240,7 +242,7 @@ class AuthorisationServiceTests {
                 "some_permission"));
         Page<RoleDTO> roleDTOPages = new PageImpl<RoleDTO>(roleDtos);
         when(roleServiceClient.getPage(any(Integer.class), any(Integer.class), any(Consumer.class))).thenReturn(roleDTOPages);
-
+        when(siteServiceClient.getParentSiteIds(any(), any(Consumer.class))).thenReturn(Collections.singletonList(authorisedSiteId));
         //Act
         //Assert
         assertTrue(authorisationService.authorise("some_permission", Arrays.asList("siteId")));
@@ -277,7 +279,6 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithNullSiteIdInList_ReturnsFalse() {
 
         String userId = "123";
-        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
 
         List<String> siteIdsOneNull = Collections.singletonList(null);
@@ -291,7 +292,6 @@ class AuthorisationServiceTests {
     void TestAuthorise_WithNullSiteIdList_ReturnsFalse() {
 
         String userId = "123";
-        String token = "token";
         when(securityContextUtil.getUserId()).thenReturn(userId);
 
         List<String> siteIds = null;

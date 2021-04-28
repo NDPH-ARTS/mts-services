@@ -53,4 +53,9 @@ public class SiteController {
         return ResponseEntity.ok(siteService.findSiteById(id));
     }
 
+    @GetMapping("/parents/{id}")
+    public List<String> getParentSiteIds(@PathVariable String id) {
+        return siteService.findParentSiteIds(id);
+    }
+
 }

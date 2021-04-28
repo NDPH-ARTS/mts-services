@@ -33,16 +33,20 @@ public class SiteServiceImpl implements SiteService {
     private final EntityStore<Site, String> siteStore;
     private final ModelEntityValidation<Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
+    private final SiteUtil siteUtil;
 
     /**
      * @param configuration    injected site configuration
      * @param siteStore        Site store interface
      * @param entityValidation Site validation interface
+     * @param siteUtil
      */
     @Autowired
     public SiteServiceImpl(final SiteConfiguration configuration,
                            final EntityStore<Site, String> siteStore,
-                           final ModelEntityValidation<Site> entityValidation) {
+                           final ModelEntityValidation<Site> entityValidation,
+                           SiteUtil siteUtil) {
+        this.siteUtil = siteUtil;
         Objects.requireNonNull(configuration, "site configuration cannot be null");
         Objects.requireNonNull(siteStore, "site store cannot be null");
         Objects.requireNonNull(entityValidation, "entity validation cannot be null");
@@ -133,6 +137,11 @@ public class SiteServiceImpl implements SiteService {
 
     }
 
+    @Override
+    public List<String> findParentSiteIds(String siteId) {
+        return siteUtil.getParentSiteIds(siteId, findSites());
+    }
+
     /**
      * Test if the root node is present. If not, then the site service cannot be safely used,
      * since the trial has not yet been initialized.
@@ -156,6 +165,5 @@ public class SiteServiceImpl implements SiteService {
                 .findRoot()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Services.NO_ROOT_SITE.message()));
     }
-
 
 }

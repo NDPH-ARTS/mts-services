@@ -34,4 +34,11 @@ public interface SiteService {
      */
     Site findSiteById(String id) throws ResponseStatusException;
 
+    /**
+     * Get all parent siteIds
+     *
+     * @return list of siteIds, should never be empty (always have a root node)
+     */
+    List<String> findParentSiteIds(String siteId);
+
 }
