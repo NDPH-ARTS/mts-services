@@ -1,3 +1,7 @@
+## HOW TO
+# docker build -t docker-bag-alpine . -f localenv/Dockerfile
+# docker run -it -v "/var/run/docker.sock:/var/run/docker.sock" -e "GITHUB_SHA=foo" docker-bag-alpine
+
 FROM alpine
 RUN apk update
 RUN apk add bash
