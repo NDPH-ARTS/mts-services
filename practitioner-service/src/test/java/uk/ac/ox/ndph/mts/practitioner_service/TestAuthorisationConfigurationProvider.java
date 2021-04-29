@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -23,7 +22,6 @@ public class TestAuthorisationConfigurationProvider {
         Mockito.when(mockService.authorise(anyString(), anyString())).thenReturn(true);
         Mockito.when(mockService.authorise(anyString(), anyList())).thenReturn(true);
         Mockito.when(mockService.authUserRoles(anyString())).thenReturn(true);
-        Mockito.when(mockService.filterUserSites(anyList(), any(), any())).thenReturn(true);
 
         return mockService;
     }

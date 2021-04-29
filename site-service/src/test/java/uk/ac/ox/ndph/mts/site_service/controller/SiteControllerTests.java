@@ -18,6 +18,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.Collections;
@@ -26,6 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -126,9 +128,11 @@ class SiteControllerTests {
     @Test
     void TestGetSite_WhenSites_Returns200AndList() throws Exception {
         // arrange
-        when(siteService.findSites()).thenReturn(Collections.singletonList(new Site("CCO", "Root")));
+        SiteDTO siteDTO = new SiteDTO("CCO", null);
+        siteDTO.setAlias("Root");
+        when(siteService.findSites()).thenReturn(Collections.singletonList(siteDTO));
+        when(siteService.filterUserSites(any(), any(), any())).thenReturn(true);
         // act
-
         final String result = this.mockMvc
                 .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();

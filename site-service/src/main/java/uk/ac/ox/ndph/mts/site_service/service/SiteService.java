@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.site_service.service;
 
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface SiteService {
      *
      * @return list of sites, should never be empty (always have a root node)
      */
-    List<Site> findSites();
+    List<SiteDTO> findSites();
 
     /**
      * Find site by ID
@@ -40,5 +41,7 @@ public interface SiteService {
      * @return list of siteIds, should never be empty (always have a root node)
      */
     List<String> findParentSiteIds(String siteId);
+
+    boolean filterUserSites(List<SiteDTO> sitesReturnObject, String userRole, String accessPerm);
 
 }

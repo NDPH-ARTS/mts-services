@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ox.ndph.mts.site_service.model.Response;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.List;
@@ -37,15 +38,10 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
-    @PostAuthorize("@authorisationService.filterUserSites(returnObject, #role, 'view-site')")
+    @PostAuthorize("@siteServiceImpl.filterUserSites(returnObject, #role, 'view-site')")
     @GetMapping
-    public List<Site> getSites(@RequestParam(value = "role", required = false) String role) {
+    public List<SiteDTO> getSites(@RequestParam(value = "role", required = false) String role) {
         return siteService.findSites();
-    }
-
-    @GetMapping("/assigned")
-    public ResponseEntity<List<Site>> unauthorizedSites() {
-        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
     }
 
     @GetMapping("/{id}")

@@ -12,9 +12,7 @@ import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
-import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,8 +29,6 @@ public class AuthorisationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
     private final SecurityContextUtil securityUtil;
-    private final AuthUtil authUtil;
-
     private final PractitionerServiceClient practServClnt;
     private final RoleServiceClient roleServClnt;
     private final SiteServiceClient siteServClnt;
@@ -42,12 +38,10 @@ public class AuthorisationService {
 
     @Autowired
     public AuthorisationService(final SecurityContextUtil securityUtil,
-                                final AuthUtil authUtil,
                                 final PractitionerServiceClient practServClnt,
                                 final RoleServiceClient roleServClnt,
                                 final SiteServiceClient siteServiceClient) {
         this.securityUtil = securityUtil;
-        this.authUtil = authUtil;
         this.practServClnt = practServClnt;
         this.roleServClnt = roleServClnt;
         this.siteServClnt = siteServiceClient;
@@ -81,7 +75,7 @@ public class AuthorisationService {
      */
     public boolean authorise(String requiredPerm, List<String> siteIds)  {
         try {
-            LOGGER.debug("userId Is - {}", securityUtil.getUserId());
+            LOGGER.debug("userId Is - {}", getUserId());
             LOGGER.debug("managed identity is - {}", managedIdentity);
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
@@ -93,17 +87,16 @@ public class AuthorisationService {
             // but that user is AManagedServiceIdentity
             if (siteIds == null || siteIds.stream().anyMatch(Objects::isNull)) {
                 LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})",
-                        requiredPerm, securityUtil.getUserId());
+                        requiredPerm, getUserId());
                 return false;
             }
 
             //get practitioner role assignment
             List<RoleAssignmentDTO> roleAssnmnts =
-                practServClnt.getUserRoleAssignments(securityUtil.getUserId(), getAuthHeaders());
+                practServClnt.getUserRoleAssignments(getUserId(), getAuthHeaders());
 
             if (roleAssnmnts == null || roleAssnmnts.isEmpty()) {
-                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.",
-                    securityUtil.getUserId());
+                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", getUserId());
                 return false;
             }
 
@@ -149,90 +142,12 @@ public class AuthorisationService {
      * @return true if all role ids are roles that user is assigned to
      */
     public boolean authUserPermRoles(List<String> ids) {
-        List<RoleAssignmentDTO> roleAssignments = practServClnt.getUserRoleAssignments(
-            securityUtil.getUserId(), getAuthHeaders());
+        List<RoleAssignmentDTO> roleAssignments = practServClnt.getUserRoleAssignments(getUserId(), getAuthHeaders());
 
         List<String> roleAssignmentIds = roleAssignments.stream()
-                .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
+            .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
 
         return roleAssignmentIds.containsAll(ids);
-    }
-
-    /**
-     * Filter unauthorised sites
-     * @param sitesReturnObject all sites returned object
-     * @param userRole filter sites by role
-     * @param accessPerm filter sites by permission
-     * @return true if filtering finished successfully
-     */
-    public boolean filterUserSites(List<?> sitesReturnObject, String userRole, String accessPerm) {
-        try {
-            Objects.requireNonNull(sitesReturnObject, "sites can not be null");
-
-            //get unfiltered roleAssignments
-            List<RoleAssignmentDTO> roleAssnmts = new ArrayList<>(
-                practServClnt.getUserRoleAssignments(securityUtil.getUserId(), getAuthHeaders()));
-
-            //return 403 if RAs is empty
-            if (roleAssnmts == null || roleAssnmts.isEmpty()) {
-                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.",
-                    securityUtil.getUserId());
-                return false;
-            }
-
-            //only keep the assigned sites (or child assigned sites)
-            removeUnassignedSites(roleAssnmts, sitesReturnObject);
-
-            //If we dont have receive a role then return the assigned sites
-            if (userRole == null) {
-                return true;
-            }
-
-            //Remove RAs if they dont match the role
-            roleAssnmts.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(userRole));
-
-            //If RAs are empty return 403
-            if (roleAssnmts == null || roleAssnmts.isEmpty()) {
-                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.",
-                    securityUtil.getUserId());
-                return false;
-            }
-
-            //Filter sites by role
-            removeUnassignedSites(roleAssnmts, sitesReturnObject);
-
-            //Get the RAs with the given permission - if they are then empty return 403
-            List<RoleAssignmentDTO> roleAsstsWtPerm = getRoleAssmntsWtPerm(accessPerm, roleAssnmts);
-            if (roleAsstsWtPerm.isEmpty()) {
-                return false;
-            }
-
-            //Filter sites with perm based RAs
-            //check if user has site (or child site) assigned
-            removeUnassignedSites(roleAsstsWtPerm, sitesReturnObject);
-
-            //If sites are empty return 403 (false)
-            return !sitesReturnObject.isEmpty();
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
-
-    private List<SiteDTO> convertSiteToDTO(List<?> sitesReturnObject) {
-        return sitesReturnObject.stream()
-            .map(siteObject -> {
-                var siteId =  authUtil.getSiteIdFromObj(siteObject, "getSiteId");
-                var parentSiteId =  authUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
-                return new SiteDTO(siteId, parentSiteId);
-            }).collect(Collectors.toList());
-    }
-
-
-    private void removeUnassignedSites(List<RoleAssignmentDTO> roleAssignments, List<?> sitesReturnObject) {
-        sitesReturnObject.removeIf(siteObject ->
-                !authUtil.getUserSites(convertSiteToDTO(sitesReturnObject), roleAssignments)
-                .contains(authUtil.getSiteIdFromObj(siteObject, "getSiteId")));
     }
 
     /**
@@ -245,8 +160,7 @@ public class AuthorisationService {
                                                          List<RoleAssignmentDTO> roleAssmnts) {
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
-        Page<RoleDTO> roleDTOs = roleServClnt.getPage(0, 500,
-            RoleServiceClient.bearerAuth(securityUtil.getToken()));
+        Page<RoleDTO> roleDTOs = roleServClnt.getPage(0, 500, RoleServiceClient.bearerAuth(getToken()));
 
         Set<String> rolesWithPermission = roleDTOs.stream()
                 .filter(roleDto -> hasReqPermInRole(roleDto, reqPerm))
@@ -269,12 +183,17 @@ public class AuthorisationService {
                 .anyMatch(permission -> permission.getId().equals(requiredPermission));
     }
 
-    private Consumer<org.springframework.http.HttpHeaders> getAuthHeaders() {
+    public Consumer<org.springframework.http.HttpHeaders> getAuthHeaders() {
         //Get the user's object id
-        String tokenString = securityUtil.getToken();
-        Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
-
+        Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(getToken());
         return token;
     }
 
+    public String getUserId() {
+        return securityUtil.getUserId();
+    }
+
+    public String getToken() {
+        return securityUtil.getToken();
+    }
 }

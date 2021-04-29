@@ -79,13 +79,6 @@ public class SiteServiceClient {
         return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO[].class, authHeaders));
     }
 
-    public List<SiteDTO> getAssignedSites(final Consumer<HttpHeaders> authHeaders) {
-        String uri = UriComponentsBuilder
-            .fromUriString(ClientRoutesConfigSite.getServiceGetAssignedSites())
-            .build().toString();
-        return Arrays.asList(requestExecutor.sendBlockingGetRequest(webClient, uri, SiteDTO[].class, authHeaders));
-    }
-
     public List<String> getParentSiteIds(final String siteId, final Consumer<HttpHeaders> authHeaders) {
         String uri = UriComponentsBuilder
             .fromUriString(ClientRoutesConfigSite.getServiceParentSiteIds())

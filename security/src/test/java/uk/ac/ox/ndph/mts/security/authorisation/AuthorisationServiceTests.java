@@ -27,12 +27,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +55,6 @@ class AuthorisationServiceTests {
     @BeforeEach
     void setup() {
         this.authorisationService = new AuthorisationService(securityContextUtil,
-                new AuthUtil(),
                 practitionerServiceClient,
                 roleServiceClient,
                 siteServiceClient);
@@ -294,149 +290,6 @@ class AuthorisationServiceTests {
 
         List<String> siteIds = null;
         assertFalse(authorisationService.authorise("some_permission", siteIds));
-    }
-
-    @Test
-    void TestFilterMySites_ForUserWithRootRoleAssignment_ReturnsAllSites(){
-        //Arrange
-        var parentSite = new SiteDTO("cco", null);
-        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
-        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
-
-        var sitesToFilter = Lists.list(parentSite, childSite1, childSite2);
-
-        var roleAssignments = getRoleAssignments("roleId", parentSite.getSiteId());
-
-        String userId = "123";
-        String tokenString = "token";
-        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(tokenString);
-
-        when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(roleAssignments);
-
-        //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, null, null);
-
-        //Assert
-        assertAll(
-                () -> assertTrue(authResponse),
-                () -> assertEquals(3, sitesToFilter.size()),
-                () -> assertTrue(sitesToFilter.contains(parentSite)),
-                () -> assertTrue(sitesToFilter.contains(childSite1)),
-                () -> assertTrue(sitesToFilter.contains(childSite2))
-        );
-
-    }
-
-    @Test
-    void TestFilterMySites_ForUserWithRoleAssignment_ReturnsAuthorisedSitesOnly(){
-        //Arrange
-        var parentSite = new SiteDTO("cco", null);
-        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
-        var grandChildSite = new SiteDTO("hospital", childSite1.getSiteId());
-        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
-
-        List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite, childSite2);
-
-        var roleAssignments = getRoleAssignments("roleId", childSite1.getSiteId());
-
-        String userId = "123";
-        String tokenString = "token";
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(tokenString);
-
-        when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(roleAssignments);
-
-        //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, null, null);
-
-        //Assert
-        assertAll(
-                () -> assertTrue(authResponse),
-                () -> assertEquals(2, sitesToFilter.size()),
-                () -> assertTrue(sitesToFilter.contains(childSite1)),
-                () -> assertTrue(sitesToFilter.contains(grandChildSite))
-        );
-
-    }
-
-    @Test
-    void TestFilterMySites_ForAdminUserWithRoleAssignment_ReturnsFilteredSitesOnly(){
-        //Arrange
-        var parentSite = new SiteDTO("cco", null);
-        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
-        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
-        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
-        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
-        final String permission = "view-site";
-
-        List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
-
-        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
-        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
-        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
-        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
-
-        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
-
-        PermissionDTO permissionDTO = new PermissionDTO();
-        permissionDTO.setId(permission);
-        PermissionDTO[] permissions = {permissionDTO};
-
-        RoleDTO roleDTO1 = new RoleDTO();
-        roleDTO1.setPermissions(Arrays.asList(permissions));
-        roleDTO1.setId("admin");
-
-        RoleDTO[] roleDTOs = {roleDTO1};
-
-        String userId = "123";
-        String tokenString = "token";
-        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(tokenString);
-
-        when(practitionerServiceClient.getUserRoleAssignments(eq(userId), any(Consumer.class))).thenReturn(Arrays.asList(roleAssignments));
-        when(roleServiceClient.getPage(anyInt(), anyInt(), any(Consumer.class))).thenReturn(new PageImpl(Arrays.asList(roleDTOs)));
-        //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, "admin", permission);
-
-        //Assert
-        assertAll(
-            () -> assertTrue(authResponse),
-            () -> assertEquals(3, sitesToFilter.size()),
-            () -> assertTrue(sitesToFilter.contains(childSite1)),
-            () -> assertTrue(sitesToFilter.contains(grandChildSite1)),
-            () -> assertTrue(sitesToFilter.contains(greatGrandChildSite1)),
-            () -> assertFalse(sitesToFilter.contains(parentSite))
-        );
-
-    }
-
-    @Test
-    void TestFilterMySites_ForUserWithNoRoleAssignment_ReturnsFalse(){
-        //Arrange
-        var parentSite = new SiteDTO("cco", null);
-        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
-        var grandChildSite = new SiteDTO("hospital", childSite1.getSiteId());
-        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
-
-        List<SiteDTO> sitesToFilter = Lists.list(parentSite, childSite1, grandChildSite, childSite2);
-
-        String userId = "123";
-        String tokenString = "token";
-        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
-        when(securityContextUtil.getUserId()).thenReturn(userId);
-        when(securityContextUtil.getToken()).thenReturn(tokenString);
-
-        when(practitionerServiceClient.getUserRoleAssignments(userId, token)).thenReturn(Lists.emptyList());
-
-        //Act
-        var authResponse = authorisationService.filterUserSites(sitesToFilter, null, null);
-
-        //Assert
-        assertFalse(authResponse);
-
     }
 
     @Test
