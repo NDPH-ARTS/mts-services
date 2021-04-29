@@ -5,12 +5,12 @@
 
 build(){
   declare GHCR="ghcr.io/ndph-arts"
-  declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow
+  declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server" "sql" "fhir-api")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow.   Although it seems that on CI the sql and fhir-api images are not built - do they come from the cache?
   for service in "${services[@]}"
   do
     tag=$GHCR/$service:$GITHUB_SHA
     echo "Build $service $tag"
-    docker build --build-arg SVC="$service" -t "$tag" --build-arg BUILDKIT_INLINE_CACHE=1 .
+    docker build --build-arg SVC="$service" -t "$tag"  .
   done
 }
 

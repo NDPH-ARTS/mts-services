@@ -1,6 +1,6 @@
 ## HOW TO
-# docker build -t docker-bag-alpine . -f localenv/Dockerfile
-# docker run -it -v "/var/run/docker.sock:/var/run/docker.sock" -e "GITHUB_SHA=foo" docker-bag-alpine
+# docker build -t docker-sibling-creator . -f localenv/Dockerfile
+# docker run -it -v "/var/run/docker.sock:/var/run/docker.sock" -e "GITHUB_SHA=thursday" docker-sibling-creator
 
 FROM alpine
 RUN apk update
