@@ -10,7 +10,7 @@ build(){
   do
     tag=$GHCR/$service:$GITHUB_SHA
     echo "Build $service $tag"
-    docker build --build-arg SVC="$service" -t "$tag" .
+    docker build --build-arg SVC="$service" -t "$tag" --build-arg BUILDKIT_INLINE_CACHE=1 .
   done
 }
 
@@ -60,7 +60,7 @@ test(){
 
 
 build
-#test
+test
 
 
 
