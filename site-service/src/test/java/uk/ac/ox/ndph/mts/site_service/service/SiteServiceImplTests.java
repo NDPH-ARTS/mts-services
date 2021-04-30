@@ -553,6 +553,183 @@ class SiteServiceImplTests {
 
     }
 
+    @Test
+    void TestFilterMySites_ForAdminUserWithRoleAssignmentButNoPerm_ReturnsFalse(){
+        //Arrange
+        final var config = new SiteConfiguration("Organization", "site", "CCO",
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
+            roleServClnt, practServClnt);
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+        final String permission = "view-site";
+
+        List<SiteDTO> sitesToFilter = Lists
+            .list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        RoleDTO roleDTO1 = new RoleDTO();
+        roleDTO1.setPermissions(Arrays.asList());
+        roleDTO1.setId("admin");
+
+        RoleDTO[] roleDTOs = {roleDTO1};
+
+        String userId = "123";
+        String tokenString = "token";
+        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
+        when(authService.getUserId()).thenReturn(userId);
+        when(authService.getToken()).thenReturn(tokenString);
+
+        when(practServClnt.getUserRoleAssignments(any(), any())).thenReturn(Arrays.asList(roleAssignments));
+        when(roleServClnt.getPage(anyInt(), anyInt(), any(Consumer.class))).thenReturn(new PageImpl(Arrays.asList(roleDTOs)));
+        //Act
+        var authResponse = siteService.filterUserSites(sitesToFilter, "admin", permission);
+
+        //Assert
+        assertFalse(authResponse);
+
+    }
+
+    @Test
+    void TestFilterMySites_ForNoRoleAssignments_ReturnsFalse(){
+        //Arrange
+        final var config = new SiteConfiguration("Organization", "site", "CCO",
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
+            roleServClnt, practServClnt);
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+        final String permission = "view-site";
+
+        List<SiteDTO> sitesToFilter = Lists
+            .list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
+
+        when(practServClnt.getUserRoleAssignments(any(), any())).thenReturn(null);
+
+        //Act
+        var authResponse = siteService.filterUserSites(sitesToFilter, "admin", permission);
+
+        //Assert
+        assertFalse(authResponse);
+
+    }
+
+    @Test
+    void TestFilterMySites_ForNoRoleWithRoleAssignments_ReturnsTrue(){
+        //Arrange
+        final var config = new SiteConfiguration("Organization", "site", "CCO",
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
+            roleServClnt, practServClnt);
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+        final String permission = "view-site";
+
+        List<SiteDTO> sitesToFilter = Lists
+            .list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        when(practServClnt.getUserRoleAssignments(any(), any())).thenReturn(Arrays.asList(roleAssignments));
+        //Act
+        var authResponse = siteService.filterUserSites(sitesToFilter, null, permission);
+
+        //Assert
+        assertTrue(authResponse);
+
+    }
+
+    @Test
+    void TestFilterMySites_ForRoleNotInRoleAssignments_ReturnsFalse(){
+        //Arrange
+        final var config = new SiteConfiguration("Organization", "site", "CCO",
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
+            roleServClnt, practServClnt);
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+        final String permission = "view-site";
+
+        List<SiteDTO> sitesToFilter = Lists
+            .list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        when(practServClnt.getUserRoleAssignments(any(), any())).thenReturn(Arrays.asList(roleAssignments));
+        //Act
+        var authResponse = siteService.filterUserSites(sitesToFilter, "badRole", permission);
+
+        //Assert
+        assertFalse(authResponse);
+
+    }
+
+    @Test
+    void TestFilterMySites_ThrowsException_ItReturnsFalse(){
+        //Arrange
+        final var config = new SiteConfiguration("Organization", "site", "CCO",
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
+            roleServClnt, practServClnt);
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        var childSite2 = new SiteDTO("regionb", parentSite.getSiteId());
+        final String permission = "view-site";
+
+        List<SiteDTO> sitesToFilter = Lists
+            .list(parentSite, childSite1, grandChildSite1, greatGrandChildSite1, childSite2);
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        when(practServClnt.getUserRoleAssignments(any(), any())).thenThrow(new RuntimeException());
+        //Act
+        boolean result = siteService.filterUserSites(sitesToFilter, "badRole", permission);
+        //Assert
+        assertFalse(result);
+
+    }
+
+
     private RoleAssignmentDTO getRoleAssignment(String roleId, String siteId){
         RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
         roleAssignmentDTO.setRoleId(roleId);
