@@ -155,7 +155,7 @@ describe('As a user with Create Trial Sites permission I want to have the system
             method: 'POST',
             body: JSON.stringify(requests.missingParent),
         })
-        expect(fetchResponse11.status).to.equal(HttpStatus.FORBIDDEN)
+        expect(fetchResponse11.status).to.equal(HttpStatus.INTERNAL_SERVER_ERROR)
     });
 
     //attempting to create an RCC with missing invalidSiteType using POST
