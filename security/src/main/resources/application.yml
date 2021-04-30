@@ -38,11 +38,3 @@ site-service:
 
 init-service:
   identity: <init-service-identity>
-
-
-role:
-  service:
-    name: role-service
-    uri: http://role-service
-    endpoint:
-      sites: /roles
