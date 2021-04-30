@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-
 # This is a scripted version of the github pipeline docker-build-push.yml build, init and test actions.
-# You need to set these env variables: GITHUB_SHA, SAPASSWORD, INIT_SERVICE_SECRET, AUTOMATION_USER_PASSWORD, BOOTSTRAP_USER_PASSWORD, QA_WITH_CREATE_USER_PASSWORD
+
 
 build(){
   declare GHCR="ghcr.io/ndph-arts"
@@ -51,14 +50,28 @@ run_api_tests(){
 
 }
 
-
 test(){
   start_services
   run_init
   run_api_tests
 }
+checkEnvVarIsSet() {
+  if [ -z `printenv $1` ];
+  then
+    echo "$1 is not set"
+    exit
+  fi
+}
+checkAllEnv(){
+  checkEnvVarIsSet GITHUB_SHA
+  checkEnvVarIsSet SAPASSWORD
+  checkEnvVarIsSet INIT_SERVICE_SECRET
+  checkEnvVarIsSet AUTOMATION_USER_PASSWORD
+  checkEnvVarIsSet BOOTSTRAP_USER_PASSWORD
+  checkEnvVarIsSet QA_WITH_CREATE_USER_PASSWORD
+}
 
-
+checkAllEnv # Fail early
 build
 test
 
