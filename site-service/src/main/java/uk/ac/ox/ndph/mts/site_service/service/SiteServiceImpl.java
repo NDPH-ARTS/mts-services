@@ -199,6 +199,9 @@ public class SiteServiceImpl implements SiteService {
         siteDTO.setSiteType(site.getSiteType());
         siteDTO.setAlias(site.getAlias());
         siteDTO.setName(site.getName());
+        siteDTO.setDescription(site.getDescription());
+        siteDTO.setStatus(site.getStatus());
+        siteDTO.setLastUpdated(site.getLastUpdated());
 
         return siteDTO;
     }

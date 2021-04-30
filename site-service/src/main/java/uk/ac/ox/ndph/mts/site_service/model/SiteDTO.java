@@ -5,6 +5,7 @@ import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddressDTO;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 public class SiteDTO implements Entity {
     @NotBlank
@@ -16,6 +17,9 @@ public class SiteDTO implements Entity {
     private SiteAddressDTO address;
     private String siteId;
     private String parentSiteId;
+    private LocalDateTime lastUpdated;
+    private String description;
+    private String status;
 
     public SiteDTO() {
         //constructor used for deserialization
@@ -72,6 +76,30 @@ public class SiteDTO implements Entity {
 
     public void setParentSiteId(String parentSiteId) {
         this.parentSiteId = parentSiteId;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
