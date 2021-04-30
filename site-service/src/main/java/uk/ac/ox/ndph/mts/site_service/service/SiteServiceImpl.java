@@ -198,7 +198,7 @@ public class SiteServiceImpl implements SiteService {
     }
 
     private SiteDTO convertSite(Site site) {
-        SiteDTO siteDTO = new SiteDTO(site.getSiteId(), site.getParentSiteId());
+        var siteDTO = new SiteDTO(site.getSiteId(), site.getParentSiteId());
         if (Objects.nonNull(site.getAddress())) {
             siteDTO.setAddress(convertAddress(site.getAddress()));
         }
@@ -229,7 +229,7 @@ public class SiteServiceImpl implements SiteService {
                 practServClnt.getUserRoleAssignments(authService.getUserId(), authService.getAuthHeaders()));
 
             //return 403 if RAs is empty
-            if (roleAssnmts == null || roleAssnmts.isEmpty()) {
+            if (roleAssnmts.isEmpty()) {
                 logger.info("User with id {} has no role assignments and therefore is unauthorised.",
                     authService.getUserId());
                 return false;
@@ -247,7 +247,7 @@ public class SiteServiceImpl implements SiteService {
             roleAssnmts.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(userRole));
 
             //If RAs are empty return 403
-            if (roleAssnmts == null || roleAssnmts.isEmpty()) {
+            if (roleAssnmts.isEmpty()) {
                 logger.info("User with id {} has no role assignments and therefore is unauthorised.",
                     authService.getUserId());
                 return false;
