@@ -18,7 +18,6 @@ import uk.ac.ox.ndph.mts.practitioner_service.model.PractitionerUserAccount;
 import uk.ac.ox.ndph.mts.practitioner_service.model.Response;
 import uk.ac.ox.ndph.mts.practitioner_service.model.RoleAssignment;
 import uk.ac.ox.ndph.mts.practitioner_service.service.EntityService;
-import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 
 import javax.validation.constraints.NotBlank;
@@ -52,13 +51,11 @@ public class PractitionerController {
      * @param practitioner The practitioner to create
      * @return ResponseEntity
      */
-    @PreAuthorize("@authorisationService.authorise('create-person', #practitioner.userSiteId)") //NOSONAR
+    @PreAuthorize("@authorisationService.authorise('create-person')") //NOSONAR
     @PostMapping()
-    public ResponseEntity<Response> savePractitioner(@RequestBody PractitionerDTO practitioner) {
+    public ResponseEntity<Response> savePractitioner(@RequestBody Practitioner practitioner) {
 
-        String practitionerId = entityService.savePractitioner(
-            new Practitioner(null, practitioner.getPrefix(), practitioner.getGivenName(),
-                practitioner.getFamilyName(), practitioner.getUserAccount()));
+        String practitionerId = entityService.savePractitioner(practitioner);
         return ResponseEntity.status(CREATED).body(new Response(practitionerId));
     }
 
