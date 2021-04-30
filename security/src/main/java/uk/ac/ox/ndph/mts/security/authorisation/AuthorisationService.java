@@ -106,8 +106,8 @@ public class AuthorisationService {
                 return false;
             }
 
-            //If we have required permission at a role and no site given to check against we can return true
-            if (siteIds.isEmpty()) {
+            //If we have required permission at a role and no site given authentication is correct
+            if (siteIds.isEmpty() || siteIds.get(0).isEmpty()) {
                 return true;
             }
 
