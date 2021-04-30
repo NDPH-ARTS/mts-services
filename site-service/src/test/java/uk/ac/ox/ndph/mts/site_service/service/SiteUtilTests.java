@@ -4,7 +4,6 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
-import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
 
 import java.util.Collections;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SiteUtilTests {
@@ -104,28 +102,6 @@ class SiteUtilTests {
             ()-> assertEquals(1, actualTrees.get("childSiteId2").size()),
             ()-> assertTrue(actualTrees.get("childSiteId2").contains(childSiteDto2.getSiteId()))
         );
-    }
-
-    @Test
-    void TestGetSiteIdFromObj_ForObjectWithSite_ReturnsSiteId(){
-        //Arrange
-        var objectWithSite = getSiteDto("siteId", "parentSiteId");
-
-        //Act
-        //Assert
-        assertEquals(siteUtil.getSiteIdFromObj(objectWithSite, "getSiteId"), "siteId");
-
-    }
-
-    @Test
-    void TestGetSiteIdFromObj_WithInvalidMethodName_ReturnsSiteId(){
-        //Arrange
-        var objectWithSite = getSiteDto("siteId", "parentSiteId");
-
-        //Act
-        //Assert
-        assertThrows(AuthorisationException.class, () -> siteUtil.getSiteIdFromObj(objectWithSite, "invalidMethodName"));
-
     }
 
     @Test

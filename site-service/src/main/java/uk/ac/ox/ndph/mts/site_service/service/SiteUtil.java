@@ -2,10 +2,8 @@ package uk.ac.ox.ndph.mts.site_service.service;
 
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
-import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,20 +26,6 @@ public class SiteUtil {
         return getSiteAndParents(siteId, sites);
     }
 
-    /**
-     * Get site id from an object
-     * @param obj object
-     * @param methodName object's method name to retrieve sited id
-     * @return String site id
-     */
-    public String getSiteIdFromObj(Object obj, String methodName) {
-        try {
-            Method getSiteMethod = obj.getClass().getMethod(methodName);
-            return Objects.toString(getSiteMethod.invoke(obj), null);
-        } catch (Exception e) {
-            throw new AuthorisationException("Error parsing sites from request body.", e);
-        }
-    }
 
     /**
      * Get all subtrees
