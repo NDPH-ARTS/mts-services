@@ -21,7 +21,9 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -171,6 +173,21 @@ class SiteControllerTests {
         assertThat(result, stringContainsInOrder("\"name\":", "\"TheSite\""));
         assertThat(result, stringContainsInOrder("\"alias\":", "\"the-alias\""));
         assertThat(result, stringContainsInOrder("\"parentSiteId\":", "\"parentId\""));
+    }
+
+    @WithMockUser
+    @Test
+    void TestGetSite_WhenParentIds_Returns200AndList() throws Exception {
+        // arrange
+        String id = "123";
+        List<String> siteList = Arrays.asList("123", "234", "345");
+        when(siteService.findParentSiteIds(id)).thenReturn(siteList);
+        // act
+        final String result = this.mockMvc
+            .perform(get(SITES_ROUTE + "/parents/" + id).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // assert
+        assertThat(result, stringContainsInOrder("\"123\",\"234\",\"345\""));
     }
 
     @WithMockUser
