@@ -257,6 +257,28 @@ class SiteServiceImplTests {
     }
 
     @Test
+    void TestSaveSite_WhenValidSiteWithEmptyParentAndHasRoot_ThrowsValidationException_DoesntSavesToStore() {
+        // Arrange
+
+        final var config = new SiteConfiguration(
+            "Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM,
+            ALL_REQUIRED_UNDER_35_MAP_EXT, null);
+
+        final var site = new Site(null, "name", "alias", "", "root");
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null, authService, roleServClnt,
+            practServClnt);
+        when(siteValidation.validateCoreAttributes(any(Site.class))).thenReturn(ok());
+        when(siteValidation.validateCustomAttributes(any(Site.class))).thenReturn(ok());
+        when(siteValidation.validateExtAttributes(any(Site.class))).thenReturn(ok());
+
+        when(siteStore.findRoot()).thenReturn(Optional.of(new Site()));
+        //Act + Assert
+        assertThrows(ValidationException.class, () -> siteService.save(site),
+            "Root site already exists");
+        Mockito.verify(siteStore, Mockito.times(0)).saveEntity(any(Site.class));
+    }
+
+    @Test
     void TestSiteServiceImpl_WhenNullValues_ThrowsInitialisationError() {
         // Arrange + Act + Assert
         assertThrows(NullPointerException.class, () -> new SiteServiceImpl(null, siteStore, siteValidation, null,
@@ -537,6 +559,37 @@ class SiteServiceImplTests {
         roleAssignmentDTO.setSiteId(siteId);
 
         return roleAssignmentDTO;
+    }
+
+    @Test
+    void TestFindParentSiteWithChildId_ReturnsParentIDs(){
+        //Arrange
+        final var config = new SiteConfiguration("Organization", "site", "CCO",
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
+            roleServClnt, practServClnt);
+
+        var parentSite = new Site("cco", null);
+        parentSite.setSiteId("1");
+        parentSite.setParentSiteId(null);
+        var childSite1 = new Site("regiona", parentSite.getSiteId());
+        childSite1.setSiteId("2");
+        childSite1.setParentSiteId(parentSite.getSiteId());
+        var grandChildSite1 = new Site("hospital", childSite1.getSiteId());
+        grandChildSite1.setSiteId("3");
+        grandChildSite1.setParentSiteId(childSite1.getSiteId());
+
+        List<Site> sites = Arrays.asList(parentSite, childSite1, grandChildSite1);
+
+        //Act
+        when(siteStore.findAll()).thenReturn(sites);
+        List<String> result = siteService.findParentSiteIds(grandChildSite1.getSiteId());
+
+        //Assert
+        assertThat(result.size(), is(3));
+        assertTrue(result.contains(childSite1.getSiteId()));
+        assertTrue(result.contains(parentSite.getSiteId()));
     }
 
 }
