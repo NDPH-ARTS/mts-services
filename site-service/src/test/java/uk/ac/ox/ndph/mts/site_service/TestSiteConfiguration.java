@@ -20,17 +20,20 @@ public class TestSiteConfiguration {
     private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP_CUSTOM = List.of(
             new SiteAttributeConfiguration("address", "address", "Address", ""));
 
+    private static final List<SiteAttributeConfiguration> ALL_REQUIRED_UNDER_35_MAP_EXT = List.of(
+            new SiteAttributeConfiguration("ext", "ext", "Extension", ""));
+
 
     private static final List<SiteConfiguration> SITE_CONFIGURATION_LIST = List.of(
-            new SiteConfiguration("Organization", "site", "REGION", ALL_REQUIRED_UNDER_35_MAP, null,
-                    Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP, null,
-                            Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, null)
+            new SiteConfiguration("Organization", "site", "REGION", ALL_REQUIRED_UNDER_35_MAP, null, null,
+                    Collections.singletonList(new SiteConfiguration("Organization", "site", "COUNTRY", ALL_REQUIRED_UNDER_35_MAP, null, null,
+                            Collections.singletonList(new SiteConfiguration("Organization", "site", "LCC", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, null)
                             )))));
 
     @Bean
     public SiteConfiguration siteConfiguration() {
         return new SiteConfiguration("site",
-                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
+                "Site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT, SITE_CONFIGURATION_LIST);
     }
 
 }

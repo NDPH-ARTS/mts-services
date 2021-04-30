@@ -51,7 +51,6 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
-      ROLE_SERVICE_URI: "http://role-service:8082"
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
     depends_on:
       - config-server
@@ -82,7 +81,6 @@ services:
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
-      ROLE_SERVICE_URI: "http://role-service:8082"
     healthcheck:
       test: curl --fail http://localhost:8083/actuator/health
       interval: 10s
@@ -120,7 +118,6 @@ services:
       - practitioner-service
       - role-service
       - site-service
-
 
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
@@ -215,7 +212,7 @@ services:
   #############
 
   sql:
-    image: "mcr.microsoft.com/mssql/server:2017-latest"
+    image: "mcr.microsoft.com/mssql/server"
     restart: on-failure
     environment:
       SA_PASSWORD: ${SAPASSWORD}

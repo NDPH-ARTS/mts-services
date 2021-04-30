@@ -14,4 +14,5 @@ public interface ModelEntityValidation<T> {
      */
     ValidationResponse validateCoreAttributes(T entity);
     ValidationResponse validateCustomAttributes(T entity);
+    ValidationResponse validateExtAttributes(T entity);
 }

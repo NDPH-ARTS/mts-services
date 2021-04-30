@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.site_service.model;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * Site Model
@@ -115,6 +116,8 @@ public class Site {
     private LocalDateTime lastUpdated;
     private String description;
     private String status;
+    private Map<String, String> extensions;
+
 
     /**
      * Returns the name associated with the Site.
@@ -235,5 +238,13 @@ public class Site {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Map<String, String> getExtensions() {
+        return extensions;
+    }
+
+    public void setExtensions(Map<String, String> extensions) {
+        this.extensions = extensions;
     }
 }
