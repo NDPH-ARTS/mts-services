@@ -477,7 +477,8 @@ class SiteServiceImplTests {
     void TestFilterMySites_ForAdminUserWithRoleAssignment_ReturnsFilteredSitesOnly(){
         //Arrange
         final var config = new SiteConfiguration("Organization", "site", "CCO",
-            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, SITE_CONFIGURATION_LIST);
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
         var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
             roleServClnt, practServClnt);
         var parentSite = new SiteDTO("cco", null);

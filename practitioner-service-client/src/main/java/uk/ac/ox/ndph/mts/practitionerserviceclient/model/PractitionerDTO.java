@@ -15,7 +15,6 @@ public class PractitionerDTO implements Entity {
     private String familyName;
     private List<@NotBlank String> roles;
     private String userAccount;
-    private String userSiteId;
 
     public String getPrefix() {
         return prefix;
@@ -68,13 +67,5 @@ public class PractitionerDTO implements Entity {
                 givenName,
                 familyName,
                 userAccount);
-    }
-
-    public String getUserSiteId() {
-        return userSiteId;
-    }
-
-    public void setUserSiteId(String userSiteId) {
-        this.userSiteId = userSiteId;
     }
 }

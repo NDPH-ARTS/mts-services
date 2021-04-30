@@ -99,7 +99,7 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenValidInput_Returns201AndId() throws Exception {
         // Arrange
         when(entityService.savePractitioner(any(Practitioner.class))).thenReturn("123");
-        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\", \"userSiteId\": \"userSiteId\"}";
+        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -111,7 +111,7 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenPartialInput_Returns201AndId() throws Exception {
         // Arrange
         when(entityService.savePractitioner(any(Practitioner.class))).thenReturn("123");
-        String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\", \"userSiteId\": \"userSiteId\"}";
+        String jsonString = "{\"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -123,7 +123,7 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenFhirDependencyFails_Returns502() throws Exception {
         // Arrange
         when(entityService.savePractitioner(any(Practitioner.class))).thenThrow(RestException.class);
-        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\", \"userSiteId\": \"userSiteId\"}";
+        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
         this.mockMvc
@@ -136,7 +136,7 @@ class PractitionerControllerTests {
     void TestPostPractitioner_WhenArgumentException_Returns422() throws Exception {
         // Arrange
         when(entityService.savePractitioner(any(Practitioner.class))).thenThrow(new ValidationException("prefix"));
-        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\", \"userSiteId\": \"userSiteId\"}";
+        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
 
         // Act + Assert
         String error = this.mockMvc

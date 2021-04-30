@@ -60,7 +60,7 @@ class PractitionerServiceComponentTests {
         // Arrange
         when(repository.savePractitioner(any(Practitioner.class))).thenReturn("123");
 
-        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\", \"userSiteId\": \"userSiteId\"}";
+        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -73,7 +73,7 @@ class PractitionerServiceComponentTests {
         // Arrange
         when(repository.savePractitioner(any(Practitioner.class))).thenReturn("123");
 
-        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"\", \"familyName\": \"familyName\", \"userSiteId\": \"userSiteId\"}";
+        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"\", \"familyName\": \"familyName\"}";
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -87,7 +87,7 @@ class PractitionerServiceComponentTests {
         // Arrange
         when(repository.savePractitioner(any(Practitioner.class))).thenThrow(new RestException("test error"));
 
-        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\", \"userSiteId\": \"userSiteId\"}";
+        String jsonString = "{\"prefix\": \"prefix\", \"givenName\": \"givenName\", \"familyName\": \"familyName\"}";
         // Act + Assert
         var error = this.mockMvc
                 .perform(post(practitionerUri).contentType(MediaType.APPLICATION_JSON).content(jsonString))
