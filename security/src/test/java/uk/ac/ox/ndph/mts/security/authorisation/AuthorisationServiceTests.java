@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -350,7 +351,88 @@ class AuthorisationServiceTests {
         assertFalse(authorisationService.authUserPermRoles(Collections.singletonList("different-roleId")));
     }
 
+    @Test
+    void TestAuthorise_WhenRoleAssmntsWithPermIsInParentsPerms_ReturnsTrue(){
+        //Arrange
+        String userId = "123";
+        String tokenString = "token";
+        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
+        when(securityContextUtil.getUserId()).thenReturn(userId);
 
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        final String permission = "view-site";
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        PermissionDTO permissionDTO = new PermissionDTO();
+        permissionDTO.setId(permission);
+        PermissionDTO[] permissions = {permissionDTO};
+
+        RoleDTO roleDTO1 = new RoleDTO();
+        roleDTO1.setPermissions(Arrays.asList(permissions));
+        roleDTO1.setId("admin");
+
+        RoleDTO[] roleDTOs = {roleDTO1};
+
+
+        when(practitionerServiceClient.getUserRoleAssignments(any(), any())).thenReturn(Arrays.asList(roleAssignments));
+        when(roleServiceClient.getPage(anyInt(), anyInt(), any(Consumer.class))).
+            thenReturn(new PageImpl(Arrays.asList(roleDTOs)));
+        when(siteServiceClient.getParentSiteIds(any(), any(Consumer.class))).
+            thenReturn(Arrays.asList("cco", "regiona", "hospital"));
+        //Act
+        //Assert
+        assertTrue(authorisationService.authorise(permission, Collections.singletonList("bed")));
+    }
+
+    @Test
+    void TestAuthorise_WhenRoleAssmntsWithPermMatchesSiteId_ReturnsTrue(){
+        //Arrange
+        String userId = "123";
+        String tokenString = "token";
+        Consumer<HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
+        when(securityContextUtil.getUserId()).thenReturn(userId);
+
+        var parentSite = new SiteDTO("cco", null);
+        var childSite1 = new SiteDTO("regiona", parentSite.getSiteId());
+        var grandChildSite1 = new SiteDTO("hospital", childSite1.getSiteId());
+        var greatGrandChildSite1 = new SiteDTO("ward", grandChildSite1.getSiteId());
+        final String permission = "view-site";
+
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", parentSite.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", childSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment2 = getRoleAssignment("admin", grandChildSite1.getSiteId());
+        RoleAssignmentDTO adminRoleAssignment3 = getRoleAssignment("admin", greatGrandChildSite1.getSiteId());
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1, adminRoleAssignment2, adminRoleAssignment3};
+
+        PermissionDTO permissionDTO = new PermissionDTO();
+        permissionDTO.setId(permission);
+        PermissionDTO[] permissions = {permissionDTO};
+
+        RoleDTO roleDTO1 = new RoleDTO();
+        roleDTO1.setPermissions(Arrays.asList(permissions));
+        roleDTO1.setId("admin");
+
+        RoleDTO[] roleDTOs = {roleDTO1};
+
+
+        when(practitionerServiceClient.getUserRoleAssignments(any(), any())).thenReturn(Arrays.asList(roleAssignments));
+        when(roleServiceClient.getPage(anyInt(), anyInt(), any(Consumer.class))).
+            thenReturn(new PageImpl(Arrays.asList(roleDTOs)));
+
+        //Act
+        //Assert
+        assertTrue(authorisationService.authorise(permission, Collections.singletonList("ward")));
+    }
 
     private RoleDTO getRoleWithPermissions(String roleId, String permission){
         PermissionDTO permissionDTO = new PermissionDTO();
