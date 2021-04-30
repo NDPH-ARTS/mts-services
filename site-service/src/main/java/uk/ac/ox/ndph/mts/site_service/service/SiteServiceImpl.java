@@ -109,7 +109,7 @@ public class SiteServiceImpl implements SiteService {
             throw new ValidationException(Services.SITE_NAME_EXISTS.message());
         }
 
-        if (site.getParentSiteId() == null) {
+        if (Objects.isNull(site.getParentSiteId()) || site.getParentSiteId().isEmpty()) {
             if (isRootSitePresent()) {
                 throw new ValidationException(Services.ROOT_SITE_EXISTS.message());
             } else {
