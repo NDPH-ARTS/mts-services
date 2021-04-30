@@ -12,4 +12,8 @@ RUN apk add docker-compose
 RUN apk add npm
 #copy everything into the container
 COPY . /
-CMD localenv/local-ci-env.sh
+#CMD localenv/local-ci-env.sh
+ENV DOCKER_BUILDKIT=1
+CMD docker version \
+    && echo "build a service in a sibling container - everything before COPY cmd" && docker build --build-arg SVC="role-service" -t "up-to-copy-cmd"  . -f Dockerfile-up-to-copy-cmd \
+    && echo "build a service in a sibling container - with COPY cmd" && docker build --build-arg SVC="role-service" -t "with-copy-cmd"  . -f Dockerfile-with-copy-cmd
