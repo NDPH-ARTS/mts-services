@@ -20,6 +20,7 @@ public class SiteDTO implements Entity {
     private LocalDateTime lastUpdated;
     private String description;
     private String status;
+    private String parentSiteName;
 
     public SiteDTO() {
         //constructor used for deserialization
@@ -107,4 +108,11 @@ public class SiteDTO implements Entity {
         return String.format("Site{name='%s', alias='%s', type='%s', address='%s'}", name, alias, siteType, address);
     }
 
+    public String getParentSiteName() {
+        return parentSiteName;
+    }
+
+    public void setParentSiteName(String parentSiteName) {
+        this.parentSiteName = parentSiteName;
+    }
 }

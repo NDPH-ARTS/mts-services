@@ -30,6 +30,7 @@ import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -768,5 +769,41 @@ class SiteServiceImplTests {
         assertTrue(result.contains(childSite1.getSiteId()));
         assertTrue(result.contains(parentSite.getSiteId()));
     }
+
+    @Test
+    void TestFindSitesWithId_PopulatesParentNames(){
+        //Arrange
+        final var config = new SiteConfiguration("Organization", "site", "CCO",
+            ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM, ALL_REQUIRED_UNDER_35_MAP_EXT,
+            SITE_CONFIGURATION_LIST);
+        var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService,
+            roleServClnt, practServClnt);
+
+        var parentSite = new Site("cco", null);
+        parentSite.setSiteId("1");
+        parentSite.setParentSiteId(null);
+        parentSite.setName("parent");
+        var childSite1 = new Site("regiona", parentSite.getSiteId());
+        childSite1.setSiteId("2");
+        childSite1.setParentSiteId(parentSite.getSiteId());
+        childSite1.setName("child");
+        var grandChildSite1 = new Site("hospital", childSite1.getSiteId());
+        grandChildSite1.setSiteId("3");
+        grandChildSite1.setParentSiteId(childSite1.getSiteId());
+        grandChildSite1.setName("grandchild");
+
+        List<Site> sites = Arrays.asList(parentSite, childSite1, grandChildSite1);
+
+        //Act
+        when(siteStore.findAll()).thenReturn(sites);
+        List<SiteDTO> result = siteService.findSites();
+
+        //Assert
+        assertThat(result.size(), is(3));
+        assertTrue(Objects.isNull(result.get(0).getParentSiteName()));
+        assertTrue(result.get(1).getParentSiteName().equalsIgnoreCase("parent"));
+        assertTrue(result.get(2).getParentSiteName().equalsIgnoreCase("child"));
+    }
+
 
 }

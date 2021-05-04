@@ -150,6 +150,9 @@ public class SiteServiceImpl implements SiteService {
         if (sites.isEmpty()) {
             throw new InvariantException(Services.NO_ROOT_SITE.message());
         }
+
+        populateParentName(sites);
+
         return sites;
     }
 
@@ -305,6 +308,16 @@ public class SiteServiceImpl implements SiteService {
     private boolean hasReqPermInRole(RoleDTO role, String requiredPermission) {
         return role.getPermissions().stream()
             .anyMatch(permission -> permission.getId().equals(requiredPermission));
+    }
+
+    private void populateParentName(List<SiteDTO> sites) {
+        Map<String, String> siteNames = new HashMap<>();
+        sites.forEach(siteDTO -> siteNames.put(siteDTO.getSiteId(), siteDTO.getName()));
+
+        sites.stream()
+            .filter(siteDTO -> Objects.nonNull(siteDTO.getParentSiteId()))
+            .forEach(siteDTO -> siteDTO.setParentSiteName(siteNames.get(siteDTO.getParentSiteId())));
+
     }
 
 }
