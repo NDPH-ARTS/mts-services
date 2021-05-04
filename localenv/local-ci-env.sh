@@ -5,17 +5,22 @@
 build(){
 
   declare GHCR="ghcr.io/ndph-arts"
-  declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow.
+  declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server" )  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow.
 
-  docker-compose pull sql fhir-api
   for service in "${services[@]}"
   do
     tag=$GHCR/$service:$GITHUB_SHA
     echo "Build $service $tag"
     docker build --build-arg SVC="$service" -t "$tag"  .
   done
-
 }
+
+pull_dependencies(){
+  echo "Pull dependencies"
+  docker-compose pull sql fhir-api
+}
+
+
 
 start_services(){
     export PROFILE="dev"
@@ -74,9 +79,9 @@ checkAllEnv(){
 }
 
 checkAllEnv # Fail early
+pull_dependencies
 build
 test
-
 
 
 

@@ -21,7 +21,6 @@ is_healthy() {
         return 1
     fi
 }
-
 # on CI we want to test ALL services (discovery, config and gateway) using dev profile (instead of the local default)
 # docker-compose pull -q  # Needed in CI, unwanted in "local CI", so moved  to docker-build-push.yml
 docker-compose up --no-build -d discovery-server config-server gateway-server
