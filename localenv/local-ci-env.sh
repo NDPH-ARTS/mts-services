@@ -72,8 +72,8 @@ checkAllEnv(){
 }
 
 checkAllEnv # Fail early
-#build
-#test
+build
+test
 run_api_tests
 
 
