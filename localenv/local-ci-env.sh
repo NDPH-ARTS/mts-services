@@ -15,14 +15,8 @@ build(){
   done
 }
 
-pull_dependencies(){
-  echo "Pull dependencies"
-  docker-compose pull sql fhir-api
-}
 
-
-
-start_services(){
+export_docker_compose_vars(){
     export PROFILE="dev"
     #declare dbpassword="$(openssl rand -base64 12)" #No we want to fix this so we can plug in services
     export SAPASSWORD="$SAPASSWORD"
@@ -32,7 +26,17 @@ start_services(){
     export INIT_AZURE_CLIENT_SECRET="$INIT_SERVICE_SECRET"
     export INIT_AZURE_TENANT_ID="99804659-431f-48fa-84c1-65c9609de05b"
     export LOGGING_LEVEL_ROOT="INFO"
+}
+
+pull_dependencies(){
+  echo "Pull dependencies"
+  export_docker_compose_vars
+  docker-compose pull sql fhir-api
+}
+
+start_services(){
     echo "Start services"
+    export_docker_compose_vars
     .ci/docker/check-docker-compose-services.sh
 }
 
