@@ -1,6 +1,7 @@
 FROM alpine
 RUN apk update
 RUN apk add bash
+RUN apk add curl
 # NB this is just for Docker CLI, also need to bind mount the docker socket docker run -v /var/run/docker.sock:/var/run/docker.sock see https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/ and https://tomgregory.com/running-docker-in-docker-on-windows/
 RUN apk add docker
 RUN apk add docker-compose

@@ -36,7 +36,7 @@ run_init(){
 
 run_api_tests(){
 
-  export BASE_URL="http://gateway-server:8080"
+  export BASE_URL="http://host.docker.internal:8080"
   export MTS_AZURE_UI_APP_CLIENT_ID="59a2b30f-844b-4a69-b034-19e3d2d4d805"
   export MTS_AUTHORISATION_BACKEND_SCOPE="api://fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290/default"
   export AUTOMATION_USER_NAME="test-automation@mtsdevndph.onmicrosoft.com"
@@ -45,8 +45,8 @@ run_api_tests(){
   export BOOTSTRAP_USER_PASSWORD="$BOOTSTRAP_USER_PASSWORD"
   export QAWITHCREATE_USER_NAME="qa.with-create@mtsdevndph.onmicrosoft.com"
   export QAWITHCREATE_USER_PASSWORD="$QA_WITH_CREATE_USER_PASSWORD"
-  echo "Run API Tests"
-  npm run --prefix api-tests test
+  echo "Run API Tests against $BASE_URL"
+  npm run --prefix api-tests api-test-ci-local
 
 }
 
