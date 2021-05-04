@@ -10,5 +10,5 @@ RUN npm install -g mocha
 # copy all source into a folder in the container (the sibling build will copy it from here)
 COPY . /mts-services
 RUN npm update --prefix mts-services/api-tests
-CMD cd /mts-services && localenv/local-ci-env.sh
+CMD cd /mts-services && chmod +x localenv/local-ci-env.sh && localenv/local-ci-env.sh
 
