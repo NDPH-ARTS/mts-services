@@ -148,11 +148,7 @@ jobs:
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
           AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
           LOGGING_LEVEL_ROOT: DEBUG
-        run: |
-          set -o nounset
-          set -o errexit
-          docker-compose pull -q
-          ./.ci/docker/check-docker-compose-services.sh
+        run: ./.ci/docker/check-docker-compose-services.sh
 
       - name: Run init
         env:
