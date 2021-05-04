@@ -23,8 +23,6 @@ start_services(){
     export INIT_AZURE_CLIENT_SECRET="$INIT_SERVICE_SECRET"
     export INIT_AZURE_TENANT_ID="99804659-431f-48fa-84c1-65c9609de05b"
     export LOGGING_LEVEL_ROOT="INFO"
-    #export AZURE_CLIENT_ID="a2171b8b-4e97-4523-933a-dc18ef7ef1fe"
-    # export AZURE_CLIENT_SECRET="$CI_CLIENT_SECRET"
     echo "Start services"
     .ci/docker/check-docker-compose-services.sh
 }
