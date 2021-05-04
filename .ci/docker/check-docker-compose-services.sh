@@ -23,7 +23,7 @@ is_healthy() {
 }
 
 # on CI we want to test ALL services (discovery, config and gateway) using dev profile (instead of the local default)
-docker-compose pull # pulls sql and fhir-api images
+docker-compose pull sql fhir-api
 docker-compose up --no-build -d discovery-server config-server gateway-server
 
 # start it here to save some time

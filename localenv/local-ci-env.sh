@@ -4,7 +4,7 @@
 
 build(){
   declare GHCR="ghcr.io/ndph-arts"
-  declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow.
+  declare -a services=( "practitioner-service" "site-service"  "role-service" "init-service" "config-server" "discovery-server" "gateway-server")  #Equivalent of strategy.matrix.service_name in docker-build-push.yml workflow.   
   for service in "${services[@]}"
   do
     tag=$GHCR/$service:$GITHUB_SHA
