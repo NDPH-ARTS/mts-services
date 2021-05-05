@@ -20,9 +20,8 @@ public class TestAuthorisationConfigurationProvider {
         var mockService = Mockito.mock(AuthorisationService.class);
         Mockito.when(mockService.authorise(anyString())).thenReturn(true);
         Mockito.when(mockService.authorise(anyString(), anyString())).thenReturn(true);
-        Mockito.when(mockService.authorise(anyString(), anyList(), anyString())).thenReturn(true);
         Mockito.when(mockService.authorise(anyString(), anyList())).thenReturn(true);
-        Mockito.when(mockService.authoriseUserRoles(anyString())).thenReturn(true);
+        Mockito.when(mockService.authUserRoles(anyString())).thenReturn(true);
 
         return mockService;
     }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.PractitionerServiceClient;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
@@ -11,8 +12,7 @@ import uk.ac.ox.ndph.mts.roleserviceclient.RoleServiceClient;
 import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authentication.SecurityContextUtil;
 import uk.ac.ox.ndph.mts.siteserviceclient.SiteServiceClient;
-import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -28,44 +28,23 @@ public class AuthorisationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorisationService.class);
 
-    private final SecurityContextUtil securityContextUtil;
-    private final SiteUtil siteUtil;
-
-    private final PractitionerServiceClient practitionerServiceClient;
-    private final RoleServiceClient roleServiceClient;
-    private final SiteServiceClient siteServiceClient;
+    private final SecurityContextUtil securityUtil;
+    private final PractitionerServiceClient practServClnt;
+    private final RoleServiceClient roleServClnt;
+    private final SiteServiceClient siteServClnt;
 
     @Value("${init-service.identity}")
     private String managedIdentity;
 
     @Autowired
-    public AuthorisationService(final SecurityContextUtil securityContextUtil,
-                                final SiteUtil siteUtil,
-                                final PractitionerServiceClient practitionerServiceClient,
-                                final RoleServiceClient roleServiceClient,
+    public AuthorisationService(final SecurityContextUtil securityUtil,
+                                final PractitionerServiceClient practServClnt,
+                                final RoleServiceClient roleServClnt,
                                 final SiteServiceClient siteServiceClient) {
-        this.securityContextUtil = securityContextUtil;
-        this.siteUtil = siteUtil;
-        this.practitionerServiceClient = practitionerServiceClient;
-        this.roleServiceClient = roleServiceClient;
-        this.siteServiceClient = siteServiceClient;
-    }
-
-    /**
-     * Authorise request with list of entities
-     * @param requiredPermission the required permission
-     * @param requestEntities list of entities in request body
-     * @param methodName String representing the method name to retrieve site on each entity in the request
-     * @return true if authorised - has the required permission and is authorised on all sites in requestEntities
-     */
-    public boolean authorise(String requiredPermission, List<?> requestEntities, String methodName) {
-        // Iterate over list of objects and get the site id property using the methodName
-        // The reason we are using reflection is because we should be able to authorise any object in the system
-        // it should have a site id property and should have a method to retrieve it
-        List<String> siteIds = requestEntities.stream()
-                .map(site -> siteUtil.getSiteIdFromObj(site, methodName))
-                .collect(Collectors.toList());
-        return authorise(requiredPermission, siteIds);
+        this.securityUtil = securityUtil;
+        this.practServClnt = practServClnt;
+        this.roleServClnt = roleServClnt;
+        this.siteServClnt = siteServiceClient;
     }
 
     /**
@@ -90,56 +69,56 @@ public class AuthorisationService {
 
     /**
      * Authorise request with list of sites
-     * @param requiredPermission the required permission
-     * @param entitiesSiteIds list of site ids to check if the user is authorised on them
+     * @param requiredPerm the required permission
+     * @param siteIds list of site ids to check if the user is authorised on them
      * @return true if authorised - has the required permission and is authorised on all sites in entitiesSiteIds
      */
-    public boolean authorise(String requiredPermission, List<String> entitiesSiteIds)  {
-
-
+    public boolean authorise(String requiredPerm, List<String> siteIds)  {
         try {
-            //Get the user's object id
-            String userId = securityContextUtil.getUserId();
-            String tokenString = securityContextUtil.getToken();
-            Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(tokenString);
-
-            LOGGER.debug("userId Is - {}", userId);
+            LOGGER.debug("userId Is - {}", getUserId());
             LOGGER.debug("managed identity is - {}", managedIdentity);
-
             //Managed Service Identities represent a call from a service and is
             //therefore authorized.
-            if (securityContextUtil.isInIdentityProviderRole()) {
+            if (securityUtil.isInIdentityProviderRole()) {
                 return true;
             }
 
             // Site IDis should not be null - unless this is init service setting up the root node,
             // but that user is AManagedServiceIdentity
-            if (entitiesSiteIds == null || entitiesSiteIds.stream().anyMatch(Objects::isNull)) {
+            if (siteIds == null || siteIds.stream().anyMatch(Objects::isNull)) {
                 LOGGER.info("SiteID is null therefore request is not unauthorized (permission: {} user: {})",
-                        requiredPermission, userId);
+                        requiredPerm, getUserId());
                 return false;
             }
 
             //get practitioner role assignment
-            List<RoleAssignmentDTO> roleAssignments = practitionerServiceClient.getUserRoleAssignments(userId, token);
+            List<RoleAssignmentDTO> roleAssnmnts =
+                practServClnt.getUserRoleAssignments(getUserId(), getAuthHeaders());
 
-            if (roleAssignments == null || roleAssignments.isEmpty()) {
-                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", userId);
+            if (roleAssnmnts == null || roleAssnmnts.isEmpty()) {
+                LOGGER.info("User with id {} has no role assignments and therefore is unauthorised.", getUserId());
                 return false;
             }
 
-            var rolesAssignmentsWithPermission = getRolesAssignmentsWithPermission(requiredPermission, roleAssignments);
-
-            if (rolesAssignmentsWithPermission.isEmpty()) {
+            //Check for the permission in role assignments
+            var roleAssnmntsWtPerm = getRoleAssmntsWtPerm(requiredPerm, roleAssnmnts);
+            if (roleAssnmntsWtPerm.isEmpty()) {
                 return false;
             }
 
-            List<SiteDTO> sites = siteServiceClient.getAssignedSites(
-                                                    SiteServiceClient.bearerAuth(securityContextUtil.getToken()));
+            //If we have required permission at a role and no site given authentication is correct
+            if (siteIds.isEmpty() || siteIds.get(0).isEmpty()) {
+                return true;
+            }
 
-            Set<String> userSites = siteUtil.getUserSites(sites, rolesAssignmentsWithPermission);
+            //Check if the permission exists in roleassignments for siteId
+            if (roleAssnmntsWtPerm.stream().anyMatch(ra -> siteIds.get(0).equalsIgnoreCase(ra.getSiteId()))) {
+                return true;
+            }
 
-            return userSites.containsAll(entitiesSiteIds);
+            //Check if the permission exists at any ancestors
+            List<String> parents = siteServClnt.getParentSiteIds(siteIds.get(0), getAuthHeaders());
+            return roleAssnmntsWtPerm.stream().anyMatch(ra -> parents.contains(ra.getSiteId()));
 
         } catch (Exception e) {
             LOGGER.info(String.format("Authorisation process failed. Error message: %s", e.getMessage()));
@@ -152,8 +131,8 @@ public class AuthorisationService {
      * @param userIdentityParam the user identity parameter
      * @return true if userIdentityParam equals to the requesting user
      */
-    public boolean authoriseUserRoles(String userIdentityParam) {
-        String requestUserId = securityContextUtil.getUserId();
+    public boolean authUserRoles(String userIdentityParam) {
+        String requestUserId = securityUtil.getUserId();
         return requestUserId.equals(userIdentityParam);
     }
 
@@ -162,85 +141,33 @@ public class AuthorisationService {
      * @param ids requested role ids
      * @return true if all role ids are roles that user is assigned to
      */
-    public boolean authoriseUserPermissionRoles(List<String> ids) {
-        String userId = securityContextUtil.getUserId();
-        String token = securityContextUtil.getToken();
-
-        List<RoleAssignmentDTO> roleAssignments =
-                practitionerServiceClient.getUserRoleAssignments(userId, PractitionerServiceClient.bearerAuth(token));
+    public boolean authUserPermRoles(List<String> ids) {
+        List<RoleAssignmentDTO> roleAssignments = practServClnt.getUserRoleAssignments(getUserId(), getAuthHeaders());
 
         List<String> roleAssignmentIds = roleAssignments.stream()
-                .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
+            .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
 
         return roleAssignmentIds.containsAll(ids);
     }
 
     /**
-     * Filter unauthorised sites
-     * @param sitesReturnObject all sites returned object
-     * @param role filter sites by role
-     * @return true if filtering finished successfully
-     */
-    public boolean filterUserSites(List<?> sitesReturnObject, String role) {
-
-        try {
-            Objects.requireNonNull(sitesReturnObject, "sites can not be null");
-
-            List<SiteDTO> sites = sitesReturnObject.stream()
-                    .map(siteObject -> {
-                        var siteId =  siteUtil.getSiteIdFromObj(siteObject, "getSiteId");
-                        var parentSiteId =  siteUtil.getSiteIdFromObj(siteObject, "getParentSiteId");
-                        return new SiteDTO(siteId, parentSiteId);
-                    }).collect(Collectors.toList());
-
-            String userId = securityContextUtil.getUserId();
-            String token = securityContextUtil.getToken();
-            Consumer<org.springframework.http.HttpHeaders> authHeaders = PractitionerServiceClient.bearerAuth(token);
-
-            List<RoleAssignmentDTO> roleAssignments =
-                new ArrayList<>(practitionerServiceClient.getUserRoleAssignments(userId, authHeaders));
-
-            if (role != null) {
-                roleAssignments.removeIf(ra -> !ra.getRoleId().equalsIgnoreCase(role));
-            }
-
-            Set<String> userSites = siteUtil.getUserSites(sites, roleAssignments);
-
-            sitesReturnObject.removeIf(siteObject ->
-                    !userSites.contains(siteUtil.getSiteIdFromObj(siteObject, "getSiteId")));
-
-            if (sitesReturnObject.isEmpty()) {
-                return false;
-            }
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
-
-    /**
      * Validate if the role assignments have the required permission linked to them.
-     * @param requiredPermission action required permission
-     * @param roleAssignments user role assignments
+     * @param reqPerm action required permission
+     * @param roleAssmnts user role assignments
      * @return true if required permission is present in one of the roles
      */
-    private List<RoleAssignmentDTO> getRolesAssignmentsWithPermission(String requiredPermission,
-                                                                      List<RoleAssignmentDTO> roleAssignments) {
-
-        List<String> roleIds = roleAssignments.stream()
-                .map(RoleAssignmentDTO::getRoleId).collect(Collectors.toList());
-
+    private List<RoleAssignmentDTO> getRoleAssmntsWtPerm(String reqPerm,
+                                                         List<RoleAssignmentDTO> roleAssmnts) {
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
-        Set<String> rolesWithPermission = roleServiceClient.getRolesByIds(roleIds,
-                RoleServiceClient.bearerAuth(securityContextUtil.getToken())).stream()
-                .filter(roleDto -> hasRequiredPermissionInRole(roleDto, requiredPermission))
+        Page<RoleDTO> roleDTOs = roleServClnt.getPage(0, 500, RoleServiceClient.bearerAuth(getToken()));
+
+        Set<String> rolesWithPermission = roleDTOs.stream()
+                .filter(roleDto -> hasReqPermInRole(roleDto, reqPerm))
                 .map(RoleDTO::getId)
                 .collect(Collectors.toSet());
 
-        return roleAssignments.stream()
+        return roleAssmnts.stream()
                 .filter(roleAssignment -> rolesWithPermission.contains(roleAssignment.getRoleId()))
                 .collect(Collectors.toList());
     }
@@ -251,17 +178,22 @@ public class AuthorisationService {
      * @param requiredPermission required permission
      * @return true if permission exists in role
      */
-    private boolean hasRequiredPermissionInRole(RoleDTO role, String requiredPermission) {
+    private boolean hasReqPermInRole(RoleDTO role, String requiredPermission) {
         return role.getPermissions().stream()
                 .anyMatch(permission -> permission.getId().equals(requiredPermission));
     }
 
-    /**
-     * Validate if the user matches a system managed service identity
-     * @param userId - the requested userId
-     * @return true if user and identity match;
-     */
-    private boolean isUserAManagedServiceIdentity(String userId) {
-        return userId.equals(managedIdentity);
+    public Consumer<org.springframework.http.HttpHeaders> getAuthHeaders() {
+        //Get the user's object id
+        Consumer<org.springframework.http.HttpHeaders> token = PractitionerServiceClient.bearerAuth(getToken());
+        return token;
+    }
+
+    public String getUserId() {
+        return securityUtil.getUserId();
+    }
+
+    public String getToken() {
+        return securityUtil.getToken();
     }
 }

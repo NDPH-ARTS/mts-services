@@ -1,19 +1,16 @@
-package uk.ac.ox.ndph.mts.security.authorisation;
+package uk.ac.ox.ndph.mts.site_service.service;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
-import org.junit.jupiter.api.Test;
-import uk.ac.ox.ndph.mts.security.exception.AuthorisationException;
-import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SiteUtilTests {
@@ -48,9 +45,9 @@ class SiteUtilTests {
 
         //Assert
         assertAll(
-                ()-> assertEquals(1, actualTree.size()),
-                ()-> assertEquals(1, actualTree.get("siteId").size()),
-                ()-> assertEquals(expectedSiteDto.getSiteId(), actualTree.get("siteId").get(0))
+            ()-> assertEquals(1, actualTree.size()),
+            ()-> assertEquals(1, actualTree.get("siteId").size()),
+            ()-> assertEquals(expectedSiteDto.getSiteId(), actualTree.get("siteId").get(0))
         );
     }
 
@@ -66,15 +63,15 @@ class SiteUtilTests {
 
         //Assert
         assertAll(
-                //The tree contains all subtrees
-                ()-> assertEquals(2, actualTrees.size()),
-                // Parent tree contains itself and it's children
-                ()-> assertEquals(2, actualTrees.get("parentSiteId").size()),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto.getSiteId())),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto.getSiteId())),
-                // The child subtree contains only itself
-                ()-> assertEquals(1, actualTrees.get("childSiteId").size()),
-                ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto.getSiteId()))
+            //The tree contains all subtrees
+            ()-> assertEquals(2, actualTrees.size()),
+            // Parent tree contains itself and it's children
+            ()-> assertEquals(2, actualTrees.get("parentSiteId").size()),
+            ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto.getSiteId())),
+            ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto.getSiteId())),
+            // The child subtree contains only itself
+            ()-> assertEquals(1, actualTrees.get("childSiteId").size()),
+            ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto.getSiteId()))
         );
     }
 
@@ -92,41 +89,19 @@ class SiteUtilTests {
 
         //Assert
         assertAll(
-                //The tree contains all subtrees
-                ()-> assertEquals(3, actualTrees.size()),
-                // Parent tree contains itself and it's children
-                ()-> assertEquals(3, actualTrees.get("parentSiteId").size()),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto.getSiteId())),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto.getSiteId())),
-                ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto2.getSiteId())),
-                // The child subtree contains only itself
-                ()-> assertEquals(1, actualTrees.get("childSiteId").size()),
-                ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto.getSiteId())),
-                ()-> assertEquals(1, actualTrees.get("childSiteId2").size()),
-                ()-> assertTrue(actualTrees.get("childSiteId2").contains(childSiteDto2.getSiteId()))
+            //The tree contains all subtrees
+            ()-> assertEquals(3, actualTrees.size()),
+            // Parent tree contains itself and it's children
+            ()-> assertEquals(3, actualTrees.get("parentSiteId").size()),
+            ()-> assertTrue(actualTrees.get("parentSiteId").contains(parentSiteDto.getSiteId())),
+            ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto.getSiteId())),
+            ()-> assertTrue(actualTrees.get("parentSiteId").contains(childSiteDto2.getSiteId())),
+            // The child subtree contains only itself
+            ()-> assertEquals(1, actualTrees.get("childSiteId").size()),
+            ()-> assertTrue(actualTrees.get("childSiteId").contains(childSiteDto.getSiteId())),
+            ()-> assertEquals(1, actualTrees.get("childSiteId2").size()),
+            ()-> assertTrue(actualTrees.get("childSiteId2").contains(childSiteDto2.getSiteId()))
         );
-    }
-
-    @Test
-    void TestGetSiteIdFromObj_ForObjectWithSite_ReturnsSiteId(){
-        //Arrange
-        var objectWithSite = getSiteDto("siteId", "parentSiteId");
-
-        //Act
-        //Assert
-        assertEquals(siteUtil.getSiteIdFromObj(objectWithSite, "getSiteId"), "siteId");
-
-    }
-
-    @Test
-    void TestGetSiteIdFromObj_WithInvalidMethodName_ReturnsSiteId(){
-        //Arrange
-        var objectWithSite = getSiteDto("siteId", "parentSiteId");
-
-        //Act
-        //Assert
-        assertThrows(AuthorisationException.class, () -> siteUtil.getSiteIdFromObj(objectWithSite, "invalidMethodName"));
-
     }
 
     @Test
@@ -145,11 +120,11 @@ class SiteUtilTests {
 
         //Assert
         assertAll(
-                //The tree contains all subtrees
-                ()-> assertEquals(3, actualResult.size()),
-                ()-> assertTrue(actualResult.contains(parentSite.getSiteId())),
-                ()-> assertTrue(actualResult.contains(childSite1.getSiteId())),
-                ()-> assertTrue(actualResult.contains(childSite2.getSiteId()))
+            //The tree contains all subtrees
+            ()-> assertEquals(3, actualResult.size()),
+            ()-> assertTrue(actualResult.contains(parentSite.getSiteId())),
+            ()-> assertTrue(actualResult.contains(childSite1.getSiteId())),
+            ()-> assertTrue(actualResult.contains(childSite2.getSiteId()))
         );
 
     }
@@ -170,11 +145,37 @@ class SiteUtilTests {
 
         //Assert
         assertAll(
-                //The tree contains all subtrees
-                ()-> assertEquals(1, actualResult.size()),
-                ()-> assertTrue(actualResult.contains(childSite1.getSiteId()))
+            //The tree contains all subtrees
+            ()-> assertEquals(1, actualResult.size()),
+            ()-> assertTrue(actualResult.contains(childSite1.getSiteId()))
         );
 
+    }
+
+
+    @Test
+    void TestGetParentSiteIdsReturnParentsFromChild(){
+        //Arrange
+        SiteDTO parentSite = getSiteDto("parentSiteId", null);
+        SiteDTO childSite = getSiteDto("childSiteId", "parentSiteId");
+        SiteDTO childSite2 = getSiteDto("childSiteId2", "childSiteId");
+
+        List<SiteDTO> sites = List.of(childSite, parentSite, childSite2);
+
+        //Act
+        List<String> allSites = siteUtil.getParentSiteIds("childSiteId2", sites);
+        List<String> twoSites = siteUtil.getParentSiteIds("childSiteId", sites);
+        List<String> oneSite = siteUtil.getParentSiteIds("parentSiteId", sites);
+        List<String> zeroSites = siteUtil.getParentSiteIds("xxxxxx", sites);
+
+        //Assert
+        assertAll(
+            //The tree contains all subtrees
+            ()-> assertEquals(3, allSites.size()),
+            // Parent tree contains itself and it's children
+            ()-> assertEquals(2, twoSites.size()),
+            ()-> assertEquals(1, oneSite.size()),
+            ()-> assertEquals(0, zeroSites.size()));
     }
 
     private SiteDTO getSiteDto(String siteId, String parentSiteId){
