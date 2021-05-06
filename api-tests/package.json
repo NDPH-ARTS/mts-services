@@ -7,7 +7,8 @@
     "test:awesome": "mocha --timeout 8000 specs/*/*.js --reporter mochawesome || true",
     "open:report": "open mochawesome-report/mochawesome.html",
     "test": "mocha --timeout 8000 specs/*/*.js",
-    "api-test-ci": "npm i && mocha --timeout 8000 --reporter mocha-junit-reporter --reporter-options mochaFile=./api-test-results.xml specs/*/*.js || true"
+    "api-test-ci": "npm i && mocha --timeout 8000 --reporter mocha-junit-reporter --reporter-options mochaFile=./api-test-results.xml specs/*/*.js || true",
+    "api-test-ci-local": "npm i && mocha --timeout 20000 specs/*/*.js"
   },
   "devDependencies": {
     "chai": "^3.5.0",
