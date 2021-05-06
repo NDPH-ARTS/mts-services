@@ -36,13 +36,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AADWebSecurityConfig(AADAppRoleStatelessAuthenticationFilter aadAuthFilter) {
         this.aadAuthFilter = aadAuthFilter;
     }
-    
-    /**
-     * Http security configuration
-     *
-     * @param http - http security
-     * @throws Exception - general exception
-     */
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // disable csrf because we are using another token mechanism
@@ -56,6 +50,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
         // This requires all requests to have a valid token
         http.authorizeRequests() //NOSONAR
                 .antMatchers("/actuator/health").permitAll() // allow health check without AuthN
+                .antMatchers(SWAGGER_SPRINGFOX_ALLOWLIST).permitAll() // allow swagger documentation without AuthN
                 .anyRequest().authenticated();
 
         // This enables us to return appropriate http codes
@@ -64,4 +59,16 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(aadAuthFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
+    private static final String[] SWAGGER_SPRINGFOX_ALLOWLIST = {
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+
+    };
 }

@@ -19,9 +19,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(
-                RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.mts.role_service.controller"))
-                .paths(PathSelectors.any()).build();
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("uk.ac.ox.ndph.mts.role_service.controller"))
+                .paths(PathSelectors.any())
+                .build();
     }
 
     @Bean
