@@ -50,7 +50,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
         // This requires all requests to have a valid token
         http.authorizeRequests() //NOSONAR
                 .antMatchers("/actuator/health").permitAll() // allow health check without AuthN
-                .antMatchers(SWAGGER_SPRINGFOX_ALLOWLIST).permitAll() // allow swagger documentation without AuthN
+                .antMatchers(SWAGGER_ALLOWLIST).permitAll() // allow swagger documentation without AuthN
                 .anyRequest().authenticated();
 
         // This enables us to return appropriate http codes
@@ -60,14 +60,14 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(aadAuthFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    private static final String[] SWAGGER_SPRINGFOX_ALLOWLIST = {
+    private static final String[] SWAGGER_ALLOWLIST = {
             "/swagger-resources",
             "/swagger-resources/**",
             "/configuration/ui",
             "/configuration/security",
             "/swagger-ui.html",
             "/webjars/**",
-            "/v3/api-docs/**",
+            "/v2/api-docs/**",
             "/swagger-ui/**"
 
     };

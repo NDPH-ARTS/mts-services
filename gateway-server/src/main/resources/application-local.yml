@@ -3,23 +3,35 @@ spring:
     gateway:
       routes:
         - id: practitioner-service
-          uri: 'http://practitioner-service:8081'
+          uri: 'http://localhost:8081'
           predicates:
             - Path=/api/practitioner/**
           filters:
             - StripPrefix=1
         - id: site-service
-          uri: 'http://site-service:8082'
+          uri: 'http://localhost:8083'
           predicates:
             - Path=/api/sites/**
           filters:
             - StripPrefix=1
+
+
         - id: role-service
-          uri: 'http://role-service:8083'
+          uri: 'http://localhost:8082'
           predicates:
             - Path=/api/roles/**
           filters:
             - StripPrefix=1
+
+
+        - id: role-service-docs
+          uri: 'http://localhost:8082'
+          predicates:
+            - Path=/docs/roles/**
+          filters:
+            - StripPrefix=2
+
+
       globalcors:
         corsConfigurations:
           '[/**]':
