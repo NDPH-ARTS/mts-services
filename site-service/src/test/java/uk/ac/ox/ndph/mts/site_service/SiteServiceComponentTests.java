@@ -12,12 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.ac.ox.ndph.mts.practitionerserviceclient.model.RoleAssignmentDTO;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.repository.FhirRepository;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,6 +42,8 @@ class SiteServiceComponentTests {
     private static final String SITES_ROUTE = "/sites";
     @MockBean
     public FhirRepository repository;
+
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -120,22 +122,6 @@ class SiteServiceComponentTests {
 
     @WithMockUser
     @Test
-    void TestGetSites_ReturnsList() throws Exception {
-        // Arrange
-        final var org = new Organization()
-                .setName("CCO")
-                .addAlias("Root");
-        org.setId("this-is-my-id");
-        org.getMeta().setLastUpdated(new Date(System.currentTimeMillis()));
-        when(repository.findOrganizations()).thenReturn(List.of(org));
-        // Act + Assert
-        this.mockMvc
-                .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().string(containsString("\"this-is-my-id\"")));
-    }
-
-    @WithMockUser
-    @Test
     void TestGetSites_WhenNoSites_ReturnsInternalServerError() throws Exception {
         // Arrange
         when(repository.findOrganizations()).thenReturn(Collections.emptyList());
@@ -191,6 +177,14 @@ class SiteServiceComponentTests {
                 .perform(get(SITES_ROUTE + "/" + id).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn().getResolvedException().getMessage();
         assertThat(error, containsString("not found"));
+    }
+
+    private RoleAssignmentDTO getRoleAssignment(String roleId, String siteId){
+        RoleAssignmentDTO roleAssignmentDTO = new RoleAssignmentDTO();
+        roleAssignmentDTO.setRoleId(roleId);
+        roleAssignmentDTO.setSiteId(siteId);
+
+        return roleAssignmentDTO;
     }
 
 }
