@@ -27,6 +27,7 @@ services:
       # This is the id of the client application
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
     healthcheck:
       test: curl --fail http://localhost:8081/actuator/health
       interval: 10s
@@ -34,6 +35,7 @@ services:
       retries: 12
     ports:
       - "8081:8081"
+      - "5007:5007"
 
   role-service:
     build:
@@ -51,7 +53,9 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      ROLE_SERVICE_URI: "http://role-service:8082"
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     depends_on:
       - config-server
       - sql
@@ -62,6 +66,7 @@ services:
       retries: 12
     ports:
       - "8082:8082"
+      - "5006:5006"
 
   site-service:
     build:
@@ -81,12 +86,15 @@ services:
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
       AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
+      ROLE_SERVICE_URI: "http://role-service:8082"
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     healthcheck:
       test: curl --fail http://localhost:8083/actuator/health
       interval: 10s
       timeout: 10s
       retries: 6 # a quick service
     ports:
+      - "5005:5005"
       - "8083:8083"
 
   #######################
@@ -114,10 +122,13 @@ services:
       AZURE_CLIENT_SECRET: ${INIT_AZURE_CLIENT_SECRET}
       AZURE_TENANT_ID: ${INIT_AZURE_TENANT_ID}
       LOGGING_LEVEL_ROOT: DEBUG # always debug
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
     depends_on:
       - practitioner-service
       - role-service
       - site-service
+    ports:
+      - "5008:5008"
 
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
@@ -212,7 +223,7 @@ services:
   #############
 
   sql:
-    image: "mcr.microsoft.com/mssql/server"
+    image: "mcr.microsoft.com/mssql/server:2017-latest"
     restart: on-failure
     environment:
       SA_PASSWORD: ${SAPASSWORD}
