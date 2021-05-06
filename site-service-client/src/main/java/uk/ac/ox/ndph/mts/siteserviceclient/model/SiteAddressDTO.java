@@ -13,6 +13,22 @@ public class SiteAddressDTO {
     private String country;
     private String postcode;
 
+    public SiteAddressDTO() {
+
+    }
+
+    public SiteAddressDTO(String address1, String address2, String address3, String address4, String address5,
+                   String city, String country, String postcode) {
+        this.address1 = address1;
+        this.address2 = address2;
+        this.address3 = address3;
+        this.address4 = address4;
+        this.address5 = address5;
+        this.city = city;
+        this.country = country;
+        this.postcode = postcode;
+    }
+
     public String getAddress1() {
         return address1;
     }
