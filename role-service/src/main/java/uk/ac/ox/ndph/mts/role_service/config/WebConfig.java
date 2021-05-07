@@ -33,24 +33,6 @@ import static springfox.documentation.swagger.web.UiConfiguration.Constants.NO_S
 
 public class WebConfig implements WebMvcConfigurer {
 
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("OPTIONS");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE");
-        source.registerCorsConfiguration("/role-service/**", config);
-
-        return new CorsFilter(source);
-    }
-
     @Bean
     public WebClient webClient() {
         return WebClient.create();

@@ -31,7 +31,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     // TODO: move to Spring Security libs: https://ndph-arts.atlassian.net/browse/ARTS-591
     private AADAppRoleStatelessAuthenticationFilter aadAuthFilter;
-    
+
     @Autowired
     public AADWebSecurityConfig(AADAppRoleStatelessAuthenticationFilter aadAuthFilter) {
         this.aadAuthFilter = aadAuthFilter;
@@ -61,15 +61,14 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private static final String[] SWAGGER_ALLOWLIST = {
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/v2/api-docs/**",
-            "/v3/api-docs/**",
-            "/swagger-ui/**"
-
+        "/swagger-resources",
+        "/swagger-resources/**",
+        "/configuration/ui",
+        "/configuration/security",
+        "/swagger-ui.html",
+        "/webjars/**",
+        "/v2/api-docs/**",
+        "/v3/api-docs/**",
+        "/swagger-ui/**"
     };
 }

@@ -39,7 +39,7 @@ spring:
           predicates:
             - Path=/docs/practitioner-service/**
           filters:
-            - RewritePath=/docs/practitioner-service/(?<segment>), /$\{segment}  
+            - RewritePath=/docs/practitioner-service/(?<segment>), /$\{segment}
 
         - id: site-service-docs
           uri: 'lb://site-service'
