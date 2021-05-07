@@ -19,18 +19,44 @@ spring:
             - Path=/api/practitioner/**
           filters:
             - StripPrefix=1
+
         - id: site-service
           uri: 'lb://site-service'
           predicates:
             - Path=/api/sites/**
           filters:
             - StripPrefix=1
+
         - id: role-service
           uri: 'lb://role-service'
           predicates:
             - Path=/api/roles/**
           filters:
             - StripPrefix=1
+
+        - id: practitioner-service-docs
+          uri: 'lb://practitioner-service'
+          predicates:
+            - Path=/docs/practitioner-service/**
+          filters:
+            - RewritePath=/docs/practitioner-service/(?<segment>), /$\{segment}  
+
+        - id: site-service-docs
+          uri: 'lb://site-service'
+          predicates:
+            - Path=/docs/site-service/**
+          filters:
+            - RewritePath=/docs/site-service/(?<segment>), /$\{segment}
+
+        - id: role-service-docs
+          uri: 'lb://role-service'
+          predicates:
+            - Path=/docs/role-service/**
+          filters:
+            - RewritePath=/docs/role-service/(?<segment>), /$\{segment}
+
+
+
       globalcors:
         corsConfigurations:
           '[/**]':

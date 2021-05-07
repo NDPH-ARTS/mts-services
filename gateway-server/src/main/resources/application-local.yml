@@ -22,12 +22,26 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: practitioner-service-docs
+          uri: 'http://localhost:8081'
+          predicates:
+            - Path=/docs/practitioner-service/**
+          filters:
+            - RewritePath=/docs/practitioner-service/(?<segment>), /$\{segment}  #NB swagger deploys at app root
+
+        - id: site-service-docs
+          uri: 'http://localhost:8083'
+          predicates:
+            - Path=/docs/site-service/**
+          filters:
+            - RewritePath=/docs/site-service/(?<segment>), /$\{segment}
+
         - id: role-service-docs
           uri: 'http://localhost:8082'
           predicates:
-            - Path=/docs/roles/**
+            - Path=/docs/role-service/**
           filters:
-            - RewritePath=/docs/roles/(?<segment>), /$\{segment}  # Workaround for the limitation of swagger ui springfox that it can only be deployed at app root
+            - RewritePath=/docs/role-service/(?<segment>), /$\{segment}
 
 
       globalcors:
