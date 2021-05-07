@@ -279,9 +279,12 @@ public class SiteServiceImpl implements SiteService {
 
     @Override
     public List<SiteNameDTO> findAssignedSites() {
-        //get unfiltered roleAssignments
         List<RoleAssignmentDTO> roleAssnmts = new ArrayList<>(
             practServClnt.getUserRoleAssignments(authService.getUserId(), authService.getAuthHeaders()));
+
+        if (roleAssnmts.isEmpty()) {
+            throw new InvariantException(Site.NO_ROLE_ASSIGNMENTS.message());
+        }
 
         final List<SiteDTO> sites = this.siteStore.findAll().stream()
             .map(site -> convertSite(site))
@@ -289,10 +292,6 @@ public class SiteServiceImpl implements SiteService {
 
         if (sites.isEmpty()) {
             throw new InvariantException(Site.NO_ROOT_SITE.message());
-        }
-
-        if (roleAssnmts.isEmpty()) {
-            throw new InvariantException(Site.NO_ROLE_ASSIGNMENTS.message());
         }
 
         removeUnassignedSites(roleAssnmts, sites);

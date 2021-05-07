@@ -41,7 +41,7 @@ public class SiteController {
 
     @PostAuthorize("@siteServiceImpl.filterUserSites(returnObject, #role, 'view-site')")
     @GetMapping
-    public List<SiteDTO> getSites(@RequestParam(value = "role", required = false) String role) {
+    public List<SiteDTO> getAssignedSites(@RequestParam(value = "role", required = false) String role) {
         return siteService.findSites();
     }
 
@@ -56,7 +56,7 @@ public class SiteController {
     }
 
     @GetMapping("/assigned")
-    public List<SiteNameDTO> getSites() {
+    public List<SiteNameDTO> getAssignedSites() {
         return siteService.findAssignedSites();
     }
 
