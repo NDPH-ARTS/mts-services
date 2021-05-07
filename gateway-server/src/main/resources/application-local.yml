@@ -15,7 +15,6 @@ spring:
           filters:
             - StripPrefix=1
 
-
         - id: role-service
           uri: 'http://localhost:8082'
           predicates:
@@ -23,13 +22,12 @@ spring:
           filters:
             - StripPrefix=1
 
-
         - id: role-service-docs
           uri: 'http://localhost:8082'
           predicates:
             - Path=/docs/roles/**
           filters:
-            - StripPrefix=2
+            - RewritePath=/docs/roles/(?<segment>), /$\{segment}  # Workaround for the limitation of swagger ui springfox that it can only be deployed at app root
 
 
       globalcors:

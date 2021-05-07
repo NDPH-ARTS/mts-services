@@ -68,6 +68,7 @@ public class AADWebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html",
             "/webjars/**",
             "/v2/api-docs/**",
+            "/v3/api-docs/**",
             "/swagger-ui/**"
 
     };
