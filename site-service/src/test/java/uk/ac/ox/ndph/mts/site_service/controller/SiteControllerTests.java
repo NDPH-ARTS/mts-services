@@ -19,6 +19,7 @@ import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteNameDTO;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.Arrays;
@@ -201,6 +202,31 @@ class SiteControllerTests {
                 .perform(get(SITES_ROUTE + "/" + siteId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isNotFound());
+    }
+
+    @WithMockUser
+    @Test
+    void TestGetAssignedSites_Returns200AndAssignedSiteNames() throws Exception {
+        // Arrange
+        String site1Id = "1234";
+        String site1Name = "site1";
+        SiteNameDTO site1 = new SiteNameDTO(site1Id, site1Name);
+        String site2Id = "6789";
+        String site2Name = "site2";
+        SiteNameDTO site2 = new SiteNameDTO(site2Id, site2Name);
+        SiteNameDTO[] sites = {site1, site2};
+        when(siteService.findAssignedSites()).thenReturn(Arrays.asList(sites));
+        // Act + Assert
+        final String result = this.mockMvc
+            .perform(get(SITES_ROUTE + "/" + "assigned")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        assertThat(result, stringContainsInOrder("\"siteId\":", "\"" + site1Id + "\""));
+        assertThat(result, stringContainsInOrder("\"siteName\":", "\"" + site1Name + "\""));
+        assertThat(result, stringContainsInOrder("\"siteId\":", "\"" + site2Id + "\""));
+        assertThat(result, stringContainsInOrder("\"siteName\":", "\"" + site2Name + "\""));
+
     }
 
 }
