@@ -198,7 +198,8 @@ public class SiteServiceImpl implements SiteService {
     Site findRootSite() throws ResponseStatusException {
         return this.siteStore
                 .findRoot()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SiteMessages.NO_ROOT_SITE.message()));
+                .orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, SiteMessages.NO_ROOT_SITE.message()));
     }
 
     private SiteDTO convertSite(Site site) {
