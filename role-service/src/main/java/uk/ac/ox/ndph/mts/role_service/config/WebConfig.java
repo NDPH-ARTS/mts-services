@@ -35,31 +35,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public Docket enableSwagger() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(swaggerDisplayOptions())
-                .select()
-                .apis(basePackage("uk.ac.ox.ndph.mts.role_service.controller"))
-                .paths(any())
-                .build();
-    }
-
-    @Bean
-    public UiConfiguration removeSwaggerTryItOutButton() {
-        return UiConfigurationBuilder.builder()
-                .supportedSubmitMethods(NO_SUBMIT_METHODS)
-                .build();
-    }
-
-    private ApiInfo swaggerDisplayOptions() {
-        return new ApiInfoBuilder()
-                .title("Role Service API Documentation")
-                .license("") // otherwise this defaults to Apache
-                .licenseUrl("")
-                .build();
-    }
-
-    @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
