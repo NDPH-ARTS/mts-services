@@ -3,7 +3,7 @@ package uk.ac.ox.ndph.mts.site_service.service;
 /**
  * String constants
  */
-public enum Site {
+public enum SiteMessages {
 
     STARTUP("Loaded site service required dependencies"),
     NO_ROOT_SITE("No root site found"),
@@ -16,7 +16,7 @@ public enum Site {
 
     private final String message;
  
-    Site(String message) {
+    SiteMessages(String message) {
         this.message = message;
     }
 

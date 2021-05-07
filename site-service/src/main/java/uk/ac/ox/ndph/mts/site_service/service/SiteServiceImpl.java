@@ -16,6 +16,7 @@ import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
 import uk.ac.ox.ndph.mts.security.authorisation.AuthorisationService;
 import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
+import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAddress;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
@@ -42,7 +43,7 @@ public class SiteServiceImpl implements SiteService {
 
     private final Map<String, SiteConfiguration> sitesByType = new HashMap<>();
     private final Map<String, String> parentTypeByChildType = new HashMap<>();
-    private final EntityStore<uk.ac.ox.ndph.mts.site_service.model.Site, String> siteStore;
+    private final EntityStore<Site, String> siteStore;
     private final ModelEntityValidation<uk.ac.ox.ndph.mts.site_service.model.Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
     private final SiteUtil siteUtil;
@@ -61,8 +62,8 @@ public class SiteServiceImpl implements SiteService {
      */
     @Autowired
     public SiteServiceImpl(final SiteConfiguration configuration,
-                           final EntityStore<uk.ac.ox.ndph.mts.site_service.model.Site, String> siteStore,
-                           final ModelEntityValidation<uk.ac.ox.ndph.mts.site_service.model.Site> entityValidation,
+                           final EntityStore<Site, String> siteStore,
+                           final ModelEntityValidation<Site> entityValidation,
                            SiteUtil siteUtil, AuthorisationService authService,
                            RoleServiceClient roleServClnt,
                            PractitionerServiceClient practServClnt) {
@@ -76,7 +77,7 @@ public class SiteServiceImpl implements SiteService {
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
         addTypesToMap(configuration);
-        logger.info(Site.STARTUP.message());
+        logger.info(SiteMessages.STARTUP.message());
     }
 
     private void addTypesToMap(final SiteConfiguration configuration) {
@@ -92,7 +93,7 @@ public class SiteServiceImpl implements SiteService {
      * @return The id of the new site
      */
     @Override
-    public String save(final uk.ac.ox.ndph.mts.site_service.model.Site site) {
+    public String save(final Site site) {
         var validationCoreAttributesResponse = entityValidation.validateCoreAttributes(site);
         var validationCustomAttributesResponse = entityValidation.validateCustomAttributes(site);
         var validationExtAttributesResponse = entityValidation.validateExtAttributes(site);
@@ -112,23 +113,23 @@ public class SiteServiceImpl implements SiteService {
         }
 
         if (siteStore.existsByName(site.getName())) {
-            throw new ValidationException(Site.SITE_NAME_EXISTS.message());
+            throw new ValidationException(SiteMessages.SITE_NAME_EXISTS.message());
         }
 
         if (Objects.isNull(site.getParentSiteId()) || site.getParentSiteId().isEmpty()) {
             if (isRootSitePresent()) {
-                throw new ValidationException(Site.ROOT_SITE_EXISTS.message());
+                throw new ValidationException(SiteMessages.ROOT_SITE_EXISTS.message());
             } else {
                 if (!sitesByType.containsKey(siteTypeForSite) || parentTypeByChildType.containsKey(siteTypeForSite)) {
-                    throw new ValidationException(Site.INVALID_ROOT_SITE.message());
+                    throw new ValidationException(SiteMessages.INVALID_ROOT_SITE.message());
                 }
             }
         } else {
-            uk.ac.ox.ndph.mts.site_service.model.Site siteParent = findSiteById(site.getParentSiteId());
+            Site siteParent = findSiteById(site.getParentSiteId());
             String siteParentType = siteParent.getSiteType();
             String allowedParentType = parentTypeByChildType.get(siteTypeForSite);
             if (!siteParentType.equalsIgnoreCase(allowedParentType)) {
-                throw new ValidationException(Site.INVALID_CHILD_SITE_TYPE.message());
+                throw new ValidationException(SiteMessages.INVALID_CHILD_SITE_TYPE.message());
             }
         }
         return siteStore.saveEntity(site);
@@ -148,7 +149,7 @@ public class SiteServiceImpl implements SiteService {
             .map(site -> convertSite(site))
             .collect(Collectors.toList());
         if (sites.isEmpty()) {
-            throw new InvariantException(Site.NO_ROOT_SITE.message());
+            throw new InvariantException(SiteMessages.NO_ROOT_SITE.message());
         }
 
         populateParentName(sites);
@@ -163,11 +164,11 @@ public class SiteServiceImpl implements SiteService {
      * @return site if found
      * @throws ResponseStatusException if not found
      */
-    public uk.ac.ox.ndph.mts.site_service.model.Site findSiteById(String id) throws ResponseStatusException {
+    public Site findSiteById(String id) throws ResponseStatusException {
         return this.siteStore
                 .findById(id)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, Site.SITE_NOT_FOUND.message()));
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, SiteMessages.SITE_NOT_FOUND.message()));
 
     }
 
@@ -194,13 +195,13 @@ public class SiteServiceImpl implements SiteService {
      * @return site if found
      * @throws ResponseStatusException if no root site (bad trial initialization)
      */
-    uk.ac.ox.ndph.mts.site_service.model.Site findRootSite() throws ResponseStatusException {
+    Site findRootSite() throws ResponseStatusException {
         return this.siteStore
                 .findRoot()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Site.NO_ROOT_SITE.message()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SiteMessages.NO_ROOT_SITE.message()));
     }
 
-    private SiteDTO convertSite(uk.ac.ox.ndph.mts.site_service.model.Site site) {
+    private SiteDTO convertSite(Site site) {
         var siteDTO = new SiteDTO(site.getSiteId(), site.getParentSiteId());
         if (Objects.nonNull(site.getAddress())) {
             siteDTO.setAddress(convertAddress(site.getAddress()));
@@ -283,7 +284,7 @@ public class SiteServiceImpl implements SiteService {
             practServClnt.getUserRoleAssignments(authService.getUserId(), authService.getAuthHeaders()));
 
         if (roleAssnmts.isEmpty()) {
-            throw new InvariantException(Site.NO_ROLE_ASSIGNMENTS.message());
+            throw new InvariantException(SiteMessages.NO_ROLE_ASSIGNMENTS.message());
         }
 
         final List<SiteDTO> sites = this.siteStore.findAll().stream()
@@ -291,7 +292,7 @@ public class SiteServiceImpl implements SiteService {
             .collect(Collectors.toList());
 
         if (sites.isEmpty()) {
-            throw new InvariantException(Site.NO_ROOT_SITE.message());
+            throw new InvariantException(SiteMessages.NO_ROOT_SITE.message());
         }
 
         removeUnassignedSites(roleAssnmts, sites);

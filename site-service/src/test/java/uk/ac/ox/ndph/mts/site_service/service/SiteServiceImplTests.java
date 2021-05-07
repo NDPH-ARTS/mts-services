@@ -867,7 +867,6 @@ class SiteServiceImplTests {
             practServClnt);
         final var site = new Site("CCO", "Root", null);
         site.setSiteId("12345");
-        when(siteStore.findAll()).thenReturn(Collections.singletonList(site));
         // act + assert
         assertThrows(InvariantException.class, siteService::findAssignedSites,
             "Expecting getAssigbnedSites to throw invariant exception");
