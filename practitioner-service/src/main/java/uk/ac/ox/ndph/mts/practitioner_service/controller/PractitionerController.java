@@ -84,14 +84,13 @@ public class PractitionerController {
 
     @PreAuthorize("@authorisationService.authUserRoles(#userIdentity)")
     @GetMapping(path = "/roles")
-    public ResponseEntity<List<RoleAssignment>> getRoleAssignments(
+    public List<RoleAssignment> getRoleAssignments(
             @NotBlank @NotNull @RequestParam String userIdentity) {
         if (!StringUtils.hasText(userIdentity)) {
             throw new RestException("Required String parameter 'userIdentity' is blank");
         }
 
-        List<RoleAssignment> roleAssignments = entityService.getRoleAssignmentsByUserIdentity(userIdentity);
-        return ResponseEntity.ok(roleAssignments);
+        return entityService.getRoleAssignmentsByUserIdentity(userIdentity);
     }
 
     @GetMapping(path = "/profile", consumes = MediaType.ALL_VALUE)
