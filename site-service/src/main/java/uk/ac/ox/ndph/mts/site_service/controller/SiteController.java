@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ox.ndph.mts.site_service.model.Response;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteNameDTO;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class SiteController {
 
     @PostAuthorize("@siteServiceImpl.filterUserSites(returnObject, #role, 'view-site')")
     @GetMapping
-    public List<SiteDTO> getSites(@RequestParam(value = "role", required = false) String role) {
+    public List<SiteDTO> getAssignedSites(@RequestParam(value = "role", required = false) String role) {
         return siteService.findSites();
     }
 
@@ -52,6 +53,11 @@ public class SiteController {
     @GetMapping("/parents/{id}")
     public List<String> getParentSiteIds(@PathVariable String id) {
         return siteService.findParentSiteIds(id);
+    }
+
+    @GetMapping("/assigned")
+    public List<SiteNameDTO> getAssignedSites() {
+        return siteService.findAssignedSites();
     }
 
 }

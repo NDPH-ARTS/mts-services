@@ -3,6 +3,7 @@ package uk.ac.ox.ndph.mts.site_service.service;
 import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteNameDTO;
 
 import java.util.List;
 
@@ -43,5 +44,7 @@ public interface SiteService {
     List<String> findParentSiteIds(String siteId);
 
     boolean filterUserSites(List<SiteDTO> sitesReturnObject, String userRole, String accessPerm);
+
+    List<SiteNameDTO> findAssignedSites();
 
 }

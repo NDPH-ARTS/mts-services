@@ -68,7 +68,9 @@ public class AuthorisationService {
 
 
     /**
-     * Authorise request with list of sites
+     * Authorise request with list of sites.
+     * This method calls a number of services via http requests, performance
+     * should be a consideration when modifying this method.
      * @param requiredPerm the required permission
      * @param siteIds list of site ids to check if the user is authorised on them
      * @return true if authorised - has the required permission and is authorised on all sites in entitiesSiteIds
@@ -160,6 +162,8 @@ public class AuthorisationService {
                                                          List<RoleAssignmentDTO> roleAssmnts) {
         //get permissions for the the practitioner role assignments
         //and filter role assignments to be only those which have the required permission in them
+        //TODO(Darren S) We shouldn't assume there is a limit on the size, look at refactoring to handle all the roles.
+
         Page<RoleDTO> roleDTOs = roleServClnt.getPage(0, 500, RoleServiceClient.bearerAuth(getToken()));
 
         Set<String> rolesWithPermission = roleDTOs.stream()
