@@ -23,6 +23,7 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteNameDTO;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.repository.TestSiteStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
@@ -803,6 +804,72 @@ class SiteServiceImplTests {
         assertTrue(Objects.isNull(result.get(0).getParentSiteName()));
         assertTrue(result.get(1).getParentSiteName().equalsIgnoreCase("parent"));
         assertTrue(result.get(2).getParentSiteName().equalsIgnoreCase("child"));
+    }
+
+    @Test
+    void TestGetAssignedSites_WhenStoreHasSites_ReturnsSiteNames() {
+        // arrange
+        final var config =
+            new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM,
+                ALL_REQUIRED_UNDER_35_MAP_EXT, null);
+
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, new SiteUtil(), authService, roleServClnt,
+            practServClnt);
+        final var site = new Site("CCO", "Root", null);
+        site.setSiteId("12345");
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", "12345");
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", "6789");
+
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1};
+
+        when(practServClnt.getUserRoleAssignments(any(), any())).thenReturn(Arrays.asList(roleAssignments));
+        when(siteStore.findAll()).thenReturn(Collections.singletonList(site));
+        // act
+        final List<SiteNameDTO> sites = siteService.findAssignedSites();
+        // assert
+        assertThat(sites, is(not(empty())));
+        assertThat(sites.size(), equalTo(1));
+        final SiteNameDTO siteName = sites.get(0);
+        assertThat(siteName.getSiteName(), equalTo(site.getName()));
+        assertThat(siteName.getSiteId(), equalTo(site.getSiteId()));
+
+    }
+
+    @Test
+    void TestGetAssignedSites_WhenSitesEmpty_ThrowsInvariantException() {
+        // arrange
+        final var config =
+            new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM,
+                ALL_REQUIRED_UNDER_35_MAP_EXT,null);
+
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null, authService, roleServClnt,
+            practServClnt);
+        RoleAssignmentDTO suRoleAssignment1 = getRoleAssignment("superuser", "12345");
+        RoleAssignmentDTO adminRoleAssignment1 = getRoleAssignment("admin", "6789");
+
+        RoleAssignmentDTO[] roleAssignments= {suRoleAssignment1, adminRoleAssignment1};
+        when(practServClnt.getUserRoleAssignments(any(), any())).thenReturn(Arrays.asList(roleAssignments));
+        when(siteStore.findAll()).thenReturn(Collections.emptyList());
+        // act + assert
+        assertThrows(InvariantException.class, siteService::findAssignedSites,
+            "Expecting getAssignedSites to throw invariant exception");
+    }
+
+    @Test
+    void TestGetAssignedSites_WhenRoleAssignmentsEmpty_ThrowsInvariantException() {
+        // arrange
+        final var config =
+            new SiteConfiguration("Organization", "site", "CCO", ALL_REQUIRED_UNDER_35_MAP, ALL_REQUIRED_UNDER_35_MAP_CUSTOM,
+                ALL_REQUIRED_UNDER_35_MAP_EXT,null);
+
+        final var siteService = new SiteServiceImpl(config, siteStore, siteValidation, null, authService, roleServClnt,
+            practServClnt);
+        final var site = new Site("CCO", "Root", null);
+        site.setSiteId("12345");
+        // act + assert
+        assertThrows(InvariantException.class, siteService::findAssignedSites,
+            "Expecting getAssigbnedSites to throw invariant exception");
     }
 
 

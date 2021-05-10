@@ -20,6 +20,7 @@ import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAddress;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteNameDTO;
 import uk.ac.ox.ndph.mts.site_service.repository.EntityStore;
 import uk.ac.ox.ndph.mts.site_service.validation.ModelEntityValidation;
 import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteAddressDTO;
@@ -43,7 +44,7 @@ public class SiteServiceImpl implements SiteService {
     private final Map<String, SiteConfiguration> sitesByType = new HashMap<>();
     private final Map<String, String> parentTypeByChildType = new HashMap<>();
     private final EntityStore<Site, String> siteStore;
-    private final ModelEntityValidation<Site> entityValidation;
+    private final ModelEntityValidation<uk.ac.ox.ndph.mts.site_service.model.Site> entityValidation;
     private final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
     private final SiteUtil siteUtil;
     private final AuthorisationService authService;
@@ -76,7 +77,7 @@ public class SiteServiceImpl implements SiteService {
         this.siteStore = siteStore;
         this.entityValidation = entityValidation;
         addTypesToMap(configuration);
-        logger.info(Services.STARTUP.message());
+        logger.info(SiteMessages.STARTUP.message());
     }
 
     private void addTypesToMap(final SiteConfiguration configuration) {
@@ -112,15 +113,15 @@ public class SiteServiceImpl implements SiteService {
         }
 
         if (siteStore.existsByName(site.getName())) {
-            throw new ValidationException(Services.SITE_NAME_EXISTS.message());
+            throw new ValidationException(SiteMessages.SITE_NAME_EXISTS.message());
         }
 
         if (Objects.isNull(site.getParentSiteId()) || site.getParentSiteId().isEmpty()) {
             if (isRootSitePresent()) {
-                throw new ValidationException(Services.ROOT_SITE_EXISTS.message());
+                throw new ValidationException(SiteMessages.ROOT_SITE_EXISTS.message());
             } else {
                 if (!sitesByType.containsKey(siteTypeForSite) || parentTypeByChildType.containsKey(siteTypeForSite)) {
-                    throw new ValidationException(Services.INVALID_ROOT_SITE.message());
+                    throw new ValidationException(SiteMessages.INVALID_ROOT_SITE.message());
                 }
             }
         } else {
@@ -128,7 +129,7 @@ public class SiteServiceImpl implements SiteService {
             String siteParentType = siteParent.getSiteType();
             String allowedParentType = parentTypeByChildType.get(siteTypeForSite);
             if (!siteParentType.equalsIgnoreCase(allowedParentType)) {
-                throw new ValidationException(Services.INVALID_CHILD_SITE_TYPE.message());
+                throw new ValidationException(SiteMessages.INVALID_CHILD_SITE_TYPE.message());
             }
         }
         return siteStore.saveEntity(site);
@@ -148,7 +149,7 @@ public class SiteServiceImpl implements SiteService {
             .map(site -> convertSite(site))
             .collect(Collectors.toList());
         if (sites.isEmpty()) {
-            throw new InvariantException(Services.NO_ROOT_SITE.message());
+            throw new InvariantException(SiteMessages.NO_ROOT_SITE.message());
         }
 
         populateParentName(sites);
@@ -167,7 +168,7 @@ public class SiteServiceImpl implements SiteService {
         return this.siteStore
                 .findById(id)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, Services.SITE_NOT_FOUND.message()));
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, SiteMessages.SITE_NOT_FOUND.message()));
 
     }
 
@@ -197,7 +198,8 @@ public class SiteServiceImpl implements SiteService {
     Site findRootSite() throws ResponseStatusException {
         return this.siteStore
                 .findRoot()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Services.NO_ROOT_SITE.message()));
+                .orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, SiteMessages.NO_ROOT_SITE.message()));
     }
 
     private SiteDTO convertSite(Site site) {
@@ -275,6 +277,33 @@ public class SiteServiceImpl implements SiteService {
             return false;
         }
 
+    }
+
+    @Override
+    public List<SiteNameDTO> findAssignedSites() {
+        List<RoleAssignmentDTO> roleAssnmts = new ArrayList<>(
+            practServClnt.getUserRoleAssignments(authService.getUserId(), authService.getAuthHeaders()));
+
+        if (roleAssnmts.isEmpty()) {
+            throw new InvariantException(SiteMessages.NO_ROLE_ASSIGNMENTS.message());
+        }
+
+        final List<SiteDTO> sites = this.siteStore.findAll().stream()
+            .map(site -> convertSite(site))
+            .collect(Collectors.toList());
+
+        if (sites.isEmpty()) {
+            throw new InvariantException(SiteMessages.NO_ROOT_SITE.message());
+        }
+
+        removeUnassignedSites(roleAssnmts, sites);
+
+        final List<SiteNameDTO> siteNames = sites.stream()
+            .map(site -> new SiteNameDTO(site.getSiteId(), site.getName()))
+            .collect(Collectors.toList());
+
+
+        return siteNames;
     }
 
     private void removeUnassignedSites(List<RoleAssignmentDTO> roleAssignments, List<SiteDTO> sites) {
