@@ -14,6 +14,7 @@ import uk.ac.ox.ndph.mts.init_service.repository.SiteStore;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 import uk.ac.ox.ndph.mts.init_service.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.init_service.model.PermissionDTO;
+import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.RoleDTO;
 import uk.ac.ox.ndph.mts.init_service.model.SiteDTO;
 
@@ -47,9 +48,9 @@ class LoaderTest {
         Loader loader = new Loader(mockedTrial(), practitionerStore, roleRepository, siteStore,
                             initProgressReporter, discoveryClient);
         
-        when(roleRepository.saveAll(anyList())).thenReturn(Collections.singletonList(new RoleDTO()));
+        when(roleRepository.saveAll(anyList())).thenReturn(Collections.singletonList(new Role("role", Collections.emptyList())));
         when(siteStore.saveEntities(anyList())).thenReturn(Collections.singletonList("dummy-site-id"));
-        when(discoveryClient.getServices()).thenReturn(asList("config-server"));
+        when(discoveryClient.getServices()).thenReturn(asList("config-server", "role-service"));
         
 
         loader.run();
@@ -61,7 +62,7 @@ class LoaderTest {
 
     @Test
     void testLoader_ThrowException() {
-        when(discoveryClient.getServices()).thenReturn(asList("config-server"));
+        when(discoveryClient.getServices()).thenReturn(asList("config-server", "role-service"));
         when(roleRepository.saveAll(anyList())).thenThrow(new NullEntityException(anyString()));
 
         Loader loader = new Loader(mockedTrial(), practitionerStore, roleRepository, siteStore,
@@ -98,7 +99,7 @@ class LoaderTest {
 
     @Test
     void testLoader_LoaderWaitForServices_ThenContinue() {
-        doReturn(asList("config-server", "site-service", "role-service", "practitioner-service"))
+        doReturn(asList("config-server", "role-service"))
             .when(discoveryClient).getServices();
 
         when(roleRepository.saveAll(anyList())).thenThrow(new NullEntityException(anyString()));

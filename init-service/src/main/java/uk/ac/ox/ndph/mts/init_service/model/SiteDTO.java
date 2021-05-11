@@ -23,6 +23,14 @@ public class SiteDTO implements Entity {
         this.parentSiteId = parentSiteId;
     }
 
+    public SiteDTO(String siteId, String name, String alias, String parentId, String siteType) {
+        this.siteId = siteId;
+        this.name = name;
+        this.alias = alias;
+        parentSiteId = parentId;
+        this.siteType = siteType;
+    }
+
     public String getName() {
         return name;
     }

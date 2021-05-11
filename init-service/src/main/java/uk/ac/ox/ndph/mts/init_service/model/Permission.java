@@ -16,6 +16,15 @@ public class Permission extends AuditedEntity {
     @Column
     private String id;
 
+    public Permission(String id) {
+        this.id = id;
+    }
+    
+    public Permission() {
+        
+    }
+    
+
     public String getId() {
         return id;
     }

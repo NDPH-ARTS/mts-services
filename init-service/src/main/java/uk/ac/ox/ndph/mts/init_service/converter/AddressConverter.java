@@ -3,13 +3,13 @@ package uk.ac.ox.ndph.mts.init_service.converter;
 
 import org.hl7.fhir.r4.model.Address;
 import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.init_service.model.SiteAddress;
+import uk.ac.ox.ndph.mts.init_service.model.SiteAddressDTO;
 
 /**
  * Implement an EntityConverter for {@link SiteAddress} to {@link Address}.
  */
 @Component
-public class AddressConverter implements EntityConverter<SiteAddress, Address> {
+public class AddressConverter implements EntityConverter<SiteAddressDTO, Address> {
 
     /**
      * Convert a uk.ac.ox.ndph.mts.site_service.model.SiteAddress to an hl7 model Address
@@ -17,7 +17,7 @@ public class AddressConverter implements EntityConverter<SiteAddress, Address> {
      * @param input the uk.ac.ox.ndph.mts.site_service.model.SiteAddress to convert.
      * @return org.hl7.fhir.r4.model.Address
      */
-    public Address convert(SiteAddress input) {
+    public Address convert(SiteAddressDTO input) {
         Address fhirAddress = new Address();
 
         if (input.getAddress1() != null) {

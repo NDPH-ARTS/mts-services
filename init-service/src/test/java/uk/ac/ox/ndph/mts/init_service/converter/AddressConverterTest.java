@@ -9,7 +9,7 @@ import org.hl7.fhir.r4.model.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import uk.ac.ox.ndph.mts.init_service.model.SiteAddress;
+import uk.ac.ox.ndph.mts.init_service.model.SiteAddressDTO;
 
 public class AddressConverterTest {
     private AddressConverter converter;
@@ -21,7 +21,7 @@ public class AddressConverterTest {
 
     @Test
     void convert_ConvertsValidAddress() {
-        SiteAddress inputAddress = new SiteAddress("address1", "address2", "address3", "address4", "address5", "city", "country", "postcode");
+        SiteAddressDTO inputAddress = new SiteAddressDTO("address1", "address2", "address3", "address4", "address5", "city", "country", "postcode");
         
         Address address = converter.convert(inputAddress);
         

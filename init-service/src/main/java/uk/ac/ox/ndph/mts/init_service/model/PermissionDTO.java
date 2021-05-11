@@ -8,6 +8,10 @@ public class PermissionDTO implements Entity {
         //constructor used for deserialization
     }
 
+    public PermissionDTO(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }

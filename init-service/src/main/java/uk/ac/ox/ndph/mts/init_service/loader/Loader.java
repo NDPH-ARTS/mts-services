@@ -2,6 +2,7 @@ package uk.ac.ox.ndph.mts.init_service.loader;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Reference;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.PractitionerDTO;
+import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
 import uk.ac.ox.ndph.mts.init_service.repository.PractitionerStore;
 import uk.ac.ox.ndph.mts.init_service.repository.RoleRepository;
@@ -70,7 +72,7 @@ public class Loader implements CommandLineRunner {
                     String.format(LoaderProgress.SERVICE_REGISTERED.message(), application));
             }
 
-            allReady = applications.containsAll(Arrays.asList("config-server"));
+            allReady = applications.containsAll(Arrays.asList("config-server", "role-service"));
             if (!allReady) {
                 Thread.sleep(5000);
             }
@@ -83,7 +85,8 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleRepository.saveAll(roles);
+            roleRepository.saveAll(roles.stream().map(r -> new Role(r.getId(), r.getPermissions()))
+                .collect(Collectors.toList()));
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();

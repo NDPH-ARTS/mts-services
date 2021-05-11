@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -30,6 +31,15 @@ public class Role extends AuditedEntity {
             inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id")
     )
     private List<Permission> permissions = new ArrayList<>();
+
+    public Role() {
+        
+    }
+    
+    public Role(String id, List<PermissionDTO> permissions) {
+        this.id = id;
+        this.permissions = permissions.stream().map(p -> new Permission(p.getId())).collect(Collectors.toList());
+    }
 
     public String getId() {
         return id;
