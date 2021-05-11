@@ -1,6 +1,7 @@
 package uk.ac.ox.ndph.mts.role_service.controller;
 
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,6 +57,11 @@ public class RoleController {
     @GetMapping(params = {"page", "size"})
     public Page<Role> getPaged(@RequestParam int page, @RequestParam int size) {
         return roleRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @GetMapping()
+    public List<Role> getAllRoles() {
+        return IteratorUtils.toList(roleRepository.findAll().iterator());
     }
 
     @GetMapping(params = "ids")
