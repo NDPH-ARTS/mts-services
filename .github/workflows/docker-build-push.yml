@@ -135,6 +135,8 @@ jobs:
     if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     needs: build
     runs-on: ubuntu-latest
+    env:
+      SAPASSWORD: $(openssl rand -base64 12)
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -142,7 +144,6 @@ jobs:
         timeout-minutes: 5
         env:
           PROFILE: dev
-          SAPASSWORD: $(openssl rand -base64 12)
           GITHUB_SHA: ${{github.sha}}
           MTS_AZURE_APP_CLIENT_ID: fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290
           AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe
@@ -172,9 +173,6 @@ jobs:
           BASE_URL: http://localhost:8080
           MTS_AZURE_UI_APP_CLIENT_ID: 59a2b30f-844b-4a69-b034-19e3d2d4d805
           MTS_AUTHORISATION_BACKEND_SCOPE: api://fa5cde1d-d6f8-4d13-9fa4-4d7a374cb290/default
-          #AZURE_CLIENT_ID: a2171b8b-4e97-4523-933a-dc18ef7ef1fe  #These seem to be unused - do we need them?  NB this isn't the current init-service ID (14fa... above)
-          #AZURE_TENANT_ID: 99804659-431f-48fa-84c1-65c9609de05b
-          #AZURE_CLIENT_SECRET: ${{ secrets.CI_CLIENT_SECRET }}
           AUTOMATION_USER_NAME: test-automation@mtsdevndph.onmicrosoft.com
           AUTOMATION_USER_PASSWORD: ${{ secrets.AUTOMATION_USER_PASSWORD }}
           BOOTSTRAP_USER_NAME: bootstrap@mtsdevndph.onmicrosoft.com

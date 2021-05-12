@@ -8,16 +8,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
 import uk.ac.ox.ndph.mts.init_service.model.Trial;
+import uk.ac.ox.ndph.mts.init_service.repository.PractitionerStore;
+import uk.ac.ox.ndph.mts.init_service.repository.RoleRepository;
+import uk.ac.ox.ndph.mts.init_service.repository.SiteStore;
 import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
-import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
-import uk.ac.ox.ndph.mts.practitionerserviceclient.model.PractitionerDTO;
-import uk.ac.ox.ndph.mts.roleserviceclient.model.PermissionDTO;
-import uk.ac.ox.ndph.mts.roleserviceclient.model.RoleDTO;
-import uk.ac.ox.ndph.mts.siteserviceclient.model.SiteDTO;
-import java.util.Arrays;
+import uk.ac.ox.ndph.mts.init_service.model.PractitionerDTO;
+import uk.ac.ox.ndph.mts.init_service.model.PermissionDTO;
+import uk.ac.ox.ndph.mts.init_service.model.Role;
+import uk.ac.ox.ndph.mts.init_service.model.RoleDTO;
+import uk.ac.ox.ndph.mts.init_service.model.SiteAddressDTO;
+import uk.ac.ox.ndph.mts.init_service.model.SiteDTO;
+
 import java.util.Collections;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
@@ -25,14 +30,14 @@ import static org.mockito.Mockito.*;
 class LoaderTest {
 
     @Mock
-    RoleServiceInvoker roleServiceInvoker;
-
+    PractitionerStore practitionerStore;
+    
     @Mock
-    SiteServiceInvoker siteServiceInvoker;
-
+    RoleRepository roleRepository;
+    
     @Mock
-    PractitionerServiceInvoker practitionerServiceInvoker;
-
+    SiteStore siteStore;
+    
     @Mock
     DiscoveryClient discoveryClient;
 
@@ -41,34 +46,28 @@ class LoaderTest {
 
     @Test
     void testLoader() throws Exception {
-        Loader loader = new Loader(mockedTrial(),
-            practitionerServiceInvoker,
-            roleServiceInvoker,
-            siteServiceInvoker,
-            initProgressReporter,
-            discoveryClient);
-
-        doReturn(Collections.singletonList("dummy-role-id")).when(roleServiceInvoker).createRoles(anyList());
-        doReturn(Collections.singletonList("dummy-site-id")).when(siteServiceInvoker).createSites(anyList());
-        doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
-            .when(discoveryClient).getServices();
-        doNothing().when(practitionerServiceInvoker).execute(anyList(), anyString());
+        Loader loader = new Loader(mockedTrial(), practitionerStore, roleRepository, siteStore,
+                            initProgressReporter, discoveryClient);
+        
+        when(roleRepository.saveAll(anyList())).thenReturn(Collections.singletonList(new Role("role", Collections.emptyList())));
+        when(siteStore.saveEntities(anyList())).thenReturn(Collections.singletonList("dummy-site-id"));
+        when(discoveryClient.getServices()).thenReturn(asList("config-server", "role-service"));
+        
 
         loader.run();
 
-        verify(roleServiceInvoker, times(1)).createRoles(anyList());
-        verify(siteServiceInvoker, times(1)).createSites(anyList());
-        verify(practitionerServiceInvoker, times(1)).execute(anyList(), anyString());
+        verify(roleRepository, times(1)).saveAll(anyList());
+        verify(siteStore, times(1)).saveEntities(anyList());
+        verify(practitionerStore, times(1)).save(any(PractitionerDTO.class));
     }
 
     @Test
     void testLoader_ThrowException() {
-        //doThrow(InterruptedException.class).when(roleServiceInvoker).execute(anyList());
-        doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
-            .when(discoveryClient).getServices();
-        when(roleServiceInvoker.createRoles(anyList())).thenThrow(new NullEntityException(anyString()));
+        when(discoveryClient.getServices()).thenReturn(asList("config-server", "role-service"));
+        when(roleRepository.saveAll(anyList())).thenThrow(new NullEntityException(anyString()));
 
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter, discoveryClient);
+        Loader loader = new Loader(mockedTrial(), practitionerStore, roleRepository, siteStore,
+                            initProgressReporter, discoveryClient);
         Assertions.assertThrows(NullEntityException.class, loader::run);
     }
 
@@ -79,11 +78,10 @@ class LoaderTest {
      */
     @Test
     void testLoader_ServicesNotRegistered_LoaderBlocked() {
-        doReturn(Arrays.asList("config-server"))
-            .when(discoveryClient).getServices();
+        doReturn(emptyList()).when(discoveryClient).getServices();
 
-        Loader loader =
-            new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter, discoveryClient);
+        Loader loader = new Loader(mockedTrial(), practitionerStore, roleRepository, siteStore,
+            initProgressReporter, discoveryClient);
 
         // start a thread for the runner
         new Thread(() -> {
@@ -102,12 +100,14 @@ class LoaderTest {
 
     @Test
     void testLoader_LoaderWaitForServices_ThenContinue() {
-        doReturn(Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"))
+        doReturn(asList("config-server", "role-service"))
             .when(discoveryClient).getServices();
 
-        when(roleServiceInvoker.createRoles(anyList())).thenThrow(new NullEntityException(anyString()));
+        when(roleRepository.saveAll(anyList())).thenThrow(new NullEntityException(anyString()));
 
-        Loader loader = new Loader(mockedTrial(), practitionerServiceInvoker, roleServiceInvoker, siteServiceInvoker, initProgressReporter, discoveryClient);
+        Loader loader = new Loader(mockedTrial(), practitionerStore, roleRepository, siteStore,
+                            initProgressReporter, discoveryClient);
+
         Assertions.assertThrows(NullEntityException.class, loader::run);
 
         // Verify the loader wasn't blocked and the number of invocations of getServices is exactly 1
@@ -121,7 +121,8 @@ class LoaderTest {
         SiteDTO site = new SiteDTO();
         site.setName("testSiteName");
         site.setAlias("testSiteAlias");
-
+        site.setAddress(new SiteAddressDTO("address1", "address2", "address3", 
+            "address4", "address5", "city", "country", "postcode"));
         PractitionerDTO practitioner = new PractitionerDTO();
         practitioner.setFamilyName("testFamilyName");
         practitioner.setGivenName("testGivenName");

@@ -102,9 +102,9 @@ services:
     image: ghcr.io/ndph-arts/init-service:${GITHUB_SHA}
     restart: "no"
     environment:
-      PRACTITIONER_SERVICE_URI: "http://practitioner-service:8081"
-      ROLE_SERVICE_URI: "http://role-service:8082"
-      SITE_SERVICE_URI: "http://site-service:8083"
+      JDBC_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      JDBC_URL: jdbc:sqlserver://sql:1433;databaseName=master;user=sa;password=${SAPASSWORD};loginTimeout=15
+      FHIR_URI: "http://fhir-api:8099"
       SPRING_PROFILES_ACTIVE: ${PROFILE:-local}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://discovery-server:8761/eureka/"
       SPRING_CLOUD_CONFIG_LABEL: "main"
@@ -115,10 +115,8 @@ services:
       AZURE_TENANT_ID: ${INIT_AZURE_TENANT_ID}
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT}
     depends_on:
-      - practitioner-service
-      - role-service
-      - site-service
-
+      - fhir-api
+      
   fhir-api:
     image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
     restart: on-failure
