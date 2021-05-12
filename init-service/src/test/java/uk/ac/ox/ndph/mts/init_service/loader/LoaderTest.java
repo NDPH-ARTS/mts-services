@@ -16,6 +16,7 @@ import uk.ac.ox.ndph.mts.init_service.model.PractitionerDTO;
 import uk.ac.ox.ndph.mts.init_service.model.PermissionDTO;
 import uk.ac.ox.ndph.mts.init_service.model.Role;
 import uk.ac.ox.ndph.mts.init_service.model.RoleDTO;
+import uk.ac.ox.ndph.mts.init_service.model.SiteAddressDTO;
 import uk.ac.ox.ndph.mts.init_service.model.SiteDTO;
 
 import java.util.Collections;
@@ -120,7 +121,8 @@ class LoaderTest {
         SiteDTO site = new SiteDTO();
         site.setName("testSiteName");
         site.setAlias("testSiteAlias");
-
+        site.setAddress(new SiteAddressDTO("address1", "address2", "address3", 
+            "address4", "address5", "city", "country", "postcode"));
         PractitionerDTO practitioner = new PractitionerDTO();
         practitioner.setFamilyName("testFamilyName");
         practitioner.setGivenName("testGivenName");

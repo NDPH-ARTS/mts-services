@@ -10,9 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.hamcrest.core.IsNull;
 import org.hl7.fhir.r4.model.Organization;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import uk.ac.ox.ndph.mts.init_service.model.SiteAddressDTO;
 import uk.ac.ox.ndph.mts.init_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.init_service.model.Trial;
 
 
 class OrganizationConverterTest {
@@ -32,7 +34,6 @@ class OrganizationConverterTest {
     private static final String POSTCODE = "postcode";
     private static final SiteAddressDTO SITE_ADDRESS = new SiteAddressDTO(ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, ADDRESS5, CITY, COUNTRY, POSTCODE);
     private static final SiteAddressDTO SITE_ADDRESS_WITH_NULLS = new SiteAddressDTO(null, null, null, null, null, null, null, null);
-    private static final String EXT = "ext";
 
     private final OrganizationConverter orgConverter = new OrganizationConverter();
     private final AddressConverter addressConverter = new AddressConverter();

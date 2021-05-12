@@ -25,7 +25,11 @@ public class SiteAddressDTO {
         this.country = country;
         this.postcode = postcode;
     }
-
+    
+    public SiteAddressDTO() {
+        //constructor used for deserialization
+    }
+    
     public String getAddress1() {
         return address1;
     }
