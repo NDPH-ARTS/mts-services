@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ox.ndph.mts.site_service.model.Response;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteNameDTO;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
 import java.util.List;
@@ -37,22 +39,25 @@ public class SiteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new Response(siteId));
     }
 
-    @PreAuthorize("@authorisationService.authorise('view-site')")
-    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), #role)")
+    @PostAuthorize("@siteServiceImpl.filterUserSites(returnObject, #role, 'view-site')")
     @GetMapping
-    public ResponseEntity<List<Site>> getSites(@RequestParam(value = "role", required = false) String role) {
-        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
-    }
-
-    @GetMapping("/assigned")
-    @PostAuthorize("@authorisationService.filterUserSites(returnObject.getBody(), null)")
-    public ResponseEntity<List<Site>> unauthorizedSites(@RequestParam(value = "role", required = false) String role) {
-        return ResponseEntity.status(HttpStatus.OK).body(siteService.findSites());
+    public List<SiteDTO> getAssignedSites(@RequestParam(value = "role", required = false) String role) {
+        return siteService.findSites();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Site> findSiteById(@PathVariable String id) {
         return ResponseEntity.ok(siteService.findSiteById(id));
+    }
+
+    @GetMapping("/parents/{id}")
+    public List<String> getParentSiteIds(@PathVariable String id) {
+        return siteService.findParentSiteIds(id);
+    }
+
+    @GetMapping("/assigned")
+    public List<SiteNameDTO> getAssignedSites() {
+        return siteService.findAssignedSites();
     }
 
 }

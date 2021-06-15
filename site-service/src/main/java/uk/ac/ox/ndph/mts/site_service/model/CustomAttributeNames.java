@@ -3,17 +3,12 @@ package uk.ac.ox.ndph.mts.site_service.model;
 /**
  * site Attribute Names
  */
-public enum AttributeNames {
-    NAME("name"),
-    ALIAS("alias"),
-    PARENT_SITE_ID("parentSiteId"),
-    SITE_TYPE("siteType"),
-    DESCRIPTION("description"),
-    STATUS("Status");
+public enum CustomAttributeNames {
+    ADDRESS("address");
 
     private final String attributeName;
 
-    AttributeNames(String attributeName) {
+    CustomAttributeNames(String attributeName) {
         this.attributeName = attributeName;
     }
 

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ox.ndph.mts.site_service.exception.InitialisationError;
-import uk.ac.ox.ndph.mts.site_service.model.Attribute;
+import uk.ac.ox.ndph.mts.site_service.model.CoreAttribute;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
 import uk.ac.ox.ndph.mts.site_service.model.SiteAttributeConfiguration;
 import uk.ac.ox.ndph.mts.site_service.model.SiteConfiguration;
@@ -32,9 +32,9 @@ public class SiteValidation implements ModelEntityValidation<Site> {
     static class AttributeData {
         private final String description;
         private final Pattern regex;
-        private final Function<Site, String> valueFunc;
+        private final Function<Site, Object> valueFunc;
 
-        AttributeData(final String description, final Pattern regex, final Function<Site, String> valueFunc) {
+        AttributeData(final String description, final Pattern regex, final Function<Site, Object> valueFunc) {
             this.description = description;
             this.regex = regex;
             this.valueFunc = valueFunc;
@@ -48,7 +48,7 @@ public class SiteValidation implements ModelEntityValidation<Site> {
             return this.regex;
         }
 
-        public String applyValueFunc(final Site site) {
+        public Object applyValueFunc(final Site site) {
             return this.valueFunc.apply(site);
         }
 
@@ -69,16 +69,18 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         // must validate between different sites
         Objects.requireNonNull(configuration, "site configuration cannot be null");
 
-        Map<Attribute, AttributeData> validationMap;
+        Map<CoreAttribute, AttributeData> validationCoreMap;
 
-        validationMap = getCoreValidationMap(configuration);
-        validateMap(validationMap);
+        // validates core attributes
+        validationCoreMap = getCoreValidationMap(configuration);
+        validateCoreMap(validationCoreMap);
+
         configurationsOfSiteTypes.put(configuration.getType(), configuration);
 
         List<SiteConfiguration> childSiteConfiguration = configuration.getChild();
         while (childSiteConfiguration != null) {
-            validationMap = getCoreValidationMap(childSiteConfiguration.get(0));
-            validateMap(validationMap);
+            validationCoreMap = getCoreValidationMap(childSiteConfiguration.get(0));
+            validateCoreMap(validationCoreMap);
             configurationsOfSiteTypes.put(childSiteConfiguration.get(0).getType(), childSiteConfiguration.get(0));
             childSiteConfiguration = childSiteConfiguration.get(0).getChild();
         }
@@ -86,10 +88,10 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         logger.info(Validations.STARTUP.message(), configuration);
     }
 
-    private Map<Attribute, AttributeData> getCoreValidationMap(SiteConfiguration configuration) {
-        Map<Attribute, AttributeData> validationMap;
+    private Map<CoreAttribute, AttributeData> getCoreValidationMap(SiteConfiguration configuration) {
+        Map<CoreAttribute, AttributeData> validationMap;
         validationMap = configuration.getAttributes().stream()
-                .map(attribute -> Pair.of(attribute, Attribute.fromString(attribute.getName())))
+                .map(attribute -> Pair.of(attribute, CoreAttribute.fromString(attribute.getName())))
                 .collect(Collectors.toMap(Pair::getRight,
                     pair -> new AttributeData(pair.getLeft().getDisplayName(),
                             Pattern.compile(getRegexStringOrDefault(pair.getLeft().getValidationRegex())),
@@ -99,8 +101,8 @@ public class SiteValidation implements ModelEntityValidation<Site> {
 
     @Override
     public ValidationResponse validateCoreAttributes(Site entity) {
-        for (final Attribute attribute : Attribute.values()) {
-            final var validation = validateCoreArgument(attribute, entity);
+        for (final CoreAttribute coreAttribute : CoreAttribute.values()) {
+            final var validation = validateCoreArgument(coreAttribute, entity);
             if (!validation.isValid()) {
                 return validation;
             }
@@ -110,27 +112,35 @@ public class SiteValidation implements ModelEntityValidation<Site> {
 
     @Override
     public ValidationResponse validateCustomAttributes(Site entity) {
-        SiteConfiguration siteConfiguration = configurationsOfSiteTypes.get(entity.getSiteType());
+        var siteConfiguration = configurationsOfSiteTypes.get(entity.getSiteType());
 
         final List<SiteAttributeConfiguration> customAttributes = siteConfiguration.getCustom();
 
         return validateCustomArgument(customAttributes, entity);
-
     }
 
-    private ValidationResponse validateCoreArgument(final Attribute attribute, final Site site) {
+    @Override
+    public ValidationResponse validateExtAttributes(Site entity) {
+        var siteConfiguration = configurationsOfSiteTypes.get(entity.getSiteType());
+
+        final List<SiteAttributeConfiguration> extAttributes = siteConfiguration.getExt();
+
+        return validateExtArgument(extAttributes, entity);
+    }
+
+    private ValidationResponse validateCoreArgument(final CoreAttribute coreAttribute, final Site site) {
 
         if (configurationsOfSiteTypes.get(site.getSiteType()) == null) {
             return invalid(String.format(Validations.ERROR.message(), "Invalid Site"));
         }
 
-        var validation = getCoreValidationMap(configurationsOfSiteTypes.get(site.getSiteType())).get(attribute);
+        var validation = getCoreValidationMap(configurationsOfSiteTypes.get(site.getSiteType())).get(coreAttribute);
 
         var value = validation.applyValueFunc(site);
         if (value == null) {
             value = "";
         }
-        if (!validation.getRegex().matcher(value.trim()).matches()) {
+        if (!validation.getRegex().matcher(value.toString().trim()).matches()) {
             return invalid(String.format(Validations.ERROR.message(), validation.getDescription()));
         }
         return ok();
@@ -156,12 +166,31 @@ public class SiteValidation implements ModelEntityValidation<Site> {
         return ok();
     }
 
+    private ValidationResponse validateExtArgument(List<SiteAttributeConfiguration> extAttributes,
+                                                      final Site site) {
+        if (extAttributes != null && site.getExtensions() != null) {
+
+            boolean result = site.getExtensions().keySet().stream()
+                    .allMatch(ext -> extAttributes.stream().anyMatch(attr -> attr.getName().equals(ext)));
+
+            if (!result) {
+                return invalid(String.format(Validations.ERROR.message(), "misconfigured extensions"));
+            }
+        }
+
+        if (extAttributes == null && site.getExtensions() != null) {
+            return invalid(String.format(Validations.ERROR.message(), "misconfigured extensions"));
+        }
+
+        return ok();
+    }
+
     /**
      * Validate the static (required) attributes configuration is present
      * @param validationMap
      */
-    private void validateMap(Map<Attribute, AttributeData> validationMap) {
-        for (final Attribute attr : Attribute.values()) {
+    private void validateCoreMap(Map<CoreAttribute, AttributeData> validationMap) {
+        for (final CoreAttribute attr : CoreAttribute.values()) {
             if (!validationMap.containsKey(attr)) {
                 throw new InitialisationError(
                         String.format(Validations.MISSING_ATTRIBUTE.message(), attr.getAttributeName()));

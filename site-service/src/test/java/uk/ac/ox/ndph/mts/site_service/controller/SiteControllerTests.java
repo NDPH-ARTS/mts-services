@@ -18,14 +18,19 @@ import uk.ac.ox.ndph.mts.site_service.exception.InvariantException;
 import uk.ac.ox.ndph.mts.site_service.exception.RestException;
 import uk.ac.ox.ndph.mts.site_service.exception.ValidationException;
 import uk.ac.ox.ndph.mts.site_service.model.Site;
+import uk.ac.ox.ndph.mts.site_service.model.SiteDTO;
+import uk.ac.ox.ndph.mts.site_service.model.SiteNameDTO;
 import uk.ac.ox.ndph.mts.site_service.service.SiteService;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -126,7 +131,10 @@ class SiteControllerTests {
     @Test
     void TestGetSite_WhenSites_Returns200AndList() throws Exception {
         // arrange
-        when(siteService.findSites()).thenReturn(Collections.singletonList(new Site("CCO", "Root")));
+        SiteDTO siteDTO = new SiteDTO("CCO", null);
+        siteDTO.setAlias("Root");
+        when(siteService.findSites()).thenReturn(Collections.singletonList(siteDTO));
+        when(siteService.filterUserSites(any(), any(), any())).thenReturn(true);
         // act
         final String result = this.mockMvc
                 .perform(get(SITES_ROUTE).contentType(MediaType.APPLICATION_JSON))
@@ -135,6 +143,7 @@ class SiteControllerTests {
         assertThat(result, stringContainsInOrder("\"name\":", "\"CCO\""));
         assertThat(result, stringContainsInOrder("\"alias\":", "\"Root\""));
         assertThat(result, stringContainsInOrder("\"parentSiteId\":", "null"));
+
     }
 
     @WithMockUser
@@ -169,6 +178,21 @@ class SiteControllerTests {
 
     @WithMockUser
     @Test
+    void TestGetSite_WhenParentIds_Returns200AndList() throws Exception {
+        // arrange
+        String id = "123";
+        List<String> siteList = Arrays.asList("123", "234", "345");
+        when(siteService.findParentSiteIds(id)).thenReturn(siteList);
+        // act
+        final String result = this.mockMvc
+            .perform(get(SITES_ROUTE + "/parents/" + id).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // assert
+        assertThat(result, stringContainsInOrder("\"123\",\"234\",\"345\""));
+    }
+
+    @WithMockUser
+    @Test
     void TestGetSite_WhenIdNotFound_Returns404() throws Exception {
         // Arrange
         final String siteId = "the-site-id";
@@ -178,6 +202,31 @@ class SiteControllerTests {
                 .perform(get(SITES_ROUTE + "/" + siteId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isNotFound());
+    }
+
+    @WithMockUser
+    @Test
+    void TestGetAssignedSites_Returns200AndAssignedSiteNames() throws Exception {
+        // Arrange
+        String site1Id = "1234";
+        String site1Name = "site1";
+        SiteNameDTO site1 = new SiteNameDTO(site1Id, site1Name);
+        String site2Id = "6789";
+        String site2Name = "site2";
+        SiteNameDTO site2 = new SiteNameDTO(site2Id, site2Name);
+        SiteNameDTO[] sites = {site1, site2};
+        when(siteService.findAssignedSites()).thenReturn(Arrays.asList(sites));
+        // Act + Assert
+        final String result = this.mockMvc
+            .perform(get(SITES_ROUTE + "/" + "assigned")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        assertThat(result, stringContainsInOrder("\"siteId\":", "\"" + site1Id + "\""));
+        assertThat(result, stringContainsInOrder("\"siteName\":", "\"" + site1Name + "\""));
+        assertThat(result, stringContainsInOrder("\"siteId\":", "\"" + site2Id + "\""));
+        assertThat(result, stringContainsInOrder("\"siteName\":", "\"" + site2Name + "\""));
+
     }
 
 }

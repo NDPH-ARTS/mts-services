@@ -5,7 +5,7 @@ spring:
       discovery:
         enabled: false
     discovery:
-      enabled: false
+      enabled: true
 # Ribbon is a client-side load balancer, this property disables the use of Eureka in Ribbon
 ribbon:
   eureka:

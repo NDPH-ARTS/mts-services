@@ -51,6 +51,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
     depends_on:
       - config-server
       - sql
@@ -79,6 +80,7 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: "main"
       SPRING_CLOUD_CONFIG_URI: "http://config-server:8888"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
+      AZURE_ACTIVEDIRECTORY_CLIENT-ID: ${MTS_AZURE_APP_CLIENT_ID}
     healthcheck:
       test: curl --fail http://localhost:8083/actuator/health
       interval: 10s
@@ -111,7 +113,7 @@ services:
       AZURE_CLIENT_ID: ${INIT_AZURE_CLIENT_ID}
       AZURE_CLIENT_SECRET: ${INIT_AZURE_CLIENT_SECRET}
       AZURE_TENANT_ID: ${INIT_AZURE_TENANT_ID}
-      LOGGING_LEVEL_ROOT: DEBUG # always debug
+      LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT}
     depends_on:
       - practitioner-service
       - role-service
@@ -210,7 +212,7 @@ services:
   #############
 
   sql:
-    image: "mcr.microsoft.com/mssql/server"
+    image: "mcr.microsoft.com/mssql/server:2017-latest"
     restart: on-failure
     environment:
       SA_PASSWORD: ${SAPASSWORD}

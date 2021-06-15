@@ -18,6 +18,13 @@ practitioner-service:
   ribbon:
     listOfServers: ${PRACTITIONER_SERVICE_URI:localhost:8081}
 
+role:
+  service:
+    name: role-service
+    uri: http://role-service
+    endpoint:
+      sites: /roles
+
 site:
   service:
     name: site-service
