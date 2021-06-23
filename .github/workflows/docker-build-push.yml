@@ -7,10 +7,11 @@ on:
   push:
     # ONLY main branch should be listed below!
     branches: [ main ]
-  # schedule only runs on the main branch
-  schedule:
+  # schedule:
+    # schedule only runs on the main branch
+    # disabled for now - just failing
     # * is a special character in YAML so you have to quote this string
-    - cron: "1 1 * * *"
+    # - cron: "1 1 * * *"
   workflow_dispatch:
 
 jobs:
