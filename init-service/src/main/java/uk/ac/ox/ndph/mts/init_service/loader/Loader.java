@@ -1,25 +1,35 @@
 package uk.ac.ox.ndph.mts.init_service.loader;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.hl7.fhir.r4.model.PractitionerRole;
+import org.hl7.fhir.r4.model.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Component;
-import uk.ac.ox.ndph.mts.init_service.model.Trial;
-import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
-import uk.ac.ox.ndph.mts.init_service.service.PractitionerServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.RoleServiceInvoker;
-import uk.ac.ox.ndph.mts.init_service.service.SiteServiceInvoker;
 
-import java.util.Arrays;
-import java.util.List;
+import uk.ac.ox.ndph.mts.init_service.exception.NullEntityException;
+import uk.ac.ox.ndph.mts.init_service.model.PractitionerDTO;
+import uk.ac.ox.ndph.mts.init_service.model.Role;
+import uk.ac.ox.ndph.mts.init_service.model.Trial;
+import uk.ac.ox.ndph.mts.init_service.repository.PractitionerStore;
+import uk.ac.ox.ndph.mts.init_service.repository.RoleRepository;
+import uk.ac.ox.ndph.mts.init_service.repository.SiteStore;
+import uk.ac.ox.ndph.mts.init_service.service.InitProgressReporter;
 
 @Component
 public class Loader implements CommandLineRunner {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
-    private final PractitionerServiceInvoker practitionerServiceInvoker;
-    private final RoleServiceInvoker roleServiceInvoker;
-    private final SiteServiceInvoker siteServiceInvoker;
+    private final PractitionerStore practitionerStore;
+    private final RoleRepository roleRepository;
+    private final SiteStore siteStore;
     private final Trial trialConfig;
     private final InitProgressReporter initProgressReporter;
     private final DiscoveryClient discoveryClient;
@@ -29,15 +39,15 @@ public class Loader implements CommandLineRunner {
 
     @Autowired
     public Loader(Trial trialConfig,
-                  PractitionerServiceInvoker practitionerServiceInvoker,
-                  RoleServiceInvoker roleServiceInvoker,
-                  SiteServiceInvoker siteServiceInvoker,
+                  PractitionerStore practitionerStore,
+                  RoleRepository roleServiceInvoker,
+                  SiteStore siteStore,
                   InitProgressReporter initProgressReporter,
                   DiscoveryClient discoveryClient) {
         this.trialConfig = trialConfig;
-        this.practitionerServiceInvoker = practitionerServiceInvoker;
-        this.roleServiceInvoker = roleServiceInvoker;
-        this.siteServiceInvoker = siteServiceInvoker;
+        this.practitionerStore = practitionerStore;
+        this.roleRepository = roleServiceInvoker;
+        this.siteStore = siteStore;
         this.initProgressReporter = initProgressReporter;
         this.discoveryClient = discoveryClient;
     }
@@ -62,8 +72,7 @@ public class Loader implements CommandLineRunner {
                     String.format(LoaderProgress.SERVICE_REGISTERED.message(), application));
             }
 
-            allReady = applications.containsAll(
-                Arrays.asList("config-server", "site-service", "role-service", "practitioner-service"));
+            allReady = applications.containsAll(Arrays.asList("config-server", "role-service"));
             if (!allReady) {
                 Thread.sleep(5000);
             }
@@ -76,13 +85,14 @@ public class Loader implements CommandLineRunner {
             var roles = trialConfig.getRoles();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_ROLES.message());
-            roleServiceInvoker.createRoles(roles);
+            roleRepository.saveAll(roles.stream().map(r -> new Role(r.getId(), r.getPermissions()))
+                .collect(Collectors.toList()));
 
             initProgressReporter.submitProgress(LoaderProgress.GET_SITES_FROM_CONFIG.message());
             var sites = trialConfig.getSites();
 
             initProgressReporter.submitProgress(LoaderProgress.CREATE_SITES.message());
-            List<String> siteIds = siteServiceInvoker.createSites(sites);
+            List<String> siteIds = siteStore.saveEntities(sites);
 
             initProgressReporter.submitProgress(LoaderProgress.GET_PERSONS_FROM_CONFIG.message());
             var persons = trialConfig.getPersons();
@@ -92,13 +102,41 @@ public class Loader implements CommandLineRunner {
             // Assumption in story https://ndph-arts.atlassian.net/browse/ARTS-164
             String siteIdForUserRoles = siteIds.get(0);
             initProgressReporter.submitProgress(LoaderProgress.CREATE_PRACTITIONER.message());
-            practitionerServiceInvoker.execute(persons, siteIdForUserRoles);
+            
+            createPractitioners(persons, siteIdForUserRoles);
+            
+            
             initProgressReporter.submitProgress(LoaderProgress.FINISHED_SUCCESSFULY.message());
         } catch (Exception ex) {
             initProgressReporter.submitProgress(ex.toString());
             initProgressReporter.submitProgress(LoaderProgress.FAILURE.message());
             throw ex;
         }
+    }
+
+
+    private void createPractitioners(List<PractitionerDTO> practitioners, String siteId) {
+        if (practitioners == null) {
+            throw new NullEntityException("No Practitioners in payload");
+        }
+
+        for (PractitionerDTO practitioner : practitioners) {
+            LOGGER.info("Starting to create practitioner(s): {}", practitioner);
+
+            String practitionerId = practitionerStore.save(practitioner);
+
+            if (practitioner.getRoles() != null) {
+                LOGGER.info("Assigning roles to practitioner(s): {} {}", practitionerId, practitioner.getRoles());
+                for (String roleId : practitioner.getRoles()) {
+                    PractitionerRole role = new PractitionerRole();
+                    role.setOrganization(new Reference("Organization/" + siteId));
+                    role.setPractitioner(new Reference("Practitioner/" + practitionerId));
+                    role.addCode().setText(roleId);
+                    practitionerStore.savePractitionerRole(role);
+                }
+            }
+        }
+        LOGGER.info("Finished creating {} practitioner", practitioners.size());
     }
 }
 
